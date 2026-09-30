@@ -147,10 +147,35 @@
 
   #chat { flex: 1 1 auto; min-height: 0; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 16px; border-radius: 16px; margin-bottom: 12px; font-size: 14px; border: 1px solid rgba(255,255,255,0.04); position: relative; -webkit-overflow-scrolling: touch; }
 
-  #chat .msg, #roomChat .msg { margin-bottom: 10px; word-wrap: break-word; padding: 9px 14px; border-radius: 18px; background: rgba(255,255,255,0.05); max-width: 80%; display: inline-block; width: auto; position: relative; line-height: 1.45; font-size: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
-  #chat .msg.mine, #roomChat .msg.mine { background: linear-gradient(135deg, rgba(76,175,80,0.22), rgba(46,125,50,0.15)); border: 1px solid rgba(76,175,80,0.28); text-align: right; float: right; border-bottom-right-radius: 6px; }
-  #chat .msg:not(.mine), #roomChat .msg:not(.mine) { float: left; border: 1px solid rgba(255,255,255,0.07); border-bottom-left-radius: 6px; }
-  #chat::after, #roomChat::after { content: ''; display: block; clear: both; }
+  /* === СООБЩЕНИЯ — ИСПРАВЛЕНО === */
+  #chat .msg, #roomChat .msg {
+    margin-bottom: 10px;
+    word-wrap: break-word;
+    padding: 9px 14px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.05);
+    max-width: 80%;
+    display: table;
+    clear: both;
+    position: relative;
+    line-height: 1.45;
+    font-size: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  #chat .msg.mine, #roomChat .msg.mine {
+    background: linear-gradient(135deg, rgba(76,175,80,0.22), rgba(46,125,50,0.15));
+    border: 1px solid rgba(76,175,80,0.28);
+    text-align: right;
+    margin-left: auto;
+    margin-right: 0;
+    border-bottom-right-radius: 6px;
+  }
+  #chat .msg:not(.mine), #roomChat .msg:not(.mine) {
+    margin-left: 0;
+    margin-right: auto;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-bottom-left-radius: 6px;
+  }
   #chat .msg.mine .nick, #roomChat .msg.mine .nick { color: #6fdc6f; }
   #chat .nick, #roomChat .nick { color: #f5c542; font-weight: 700; font-size: 12px; display: block; margin-bottom: 2px; }
   #chat .time, #roomChat .time { color: #666678; font-size: 10px; margin-left: 6px; font-weight: 500; }
@@ -172,30 +197,11 @@
   }
   .msg-circle video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .msg-circle::after { content: '🔊'; position: absolute; bottom: 8px; right: 8px; font-size: 14px; background: rgba(0,0,0,0.6); padding: 2px 6px; border-radius: 10px; opacity: 0.9; }
-  .msg-circle.playing::after { content: '🔊'; }
   .msg-circle.paused::after { content: '🔇'; }
 
   /* РЕАКЦИИ */
-  .msg-reactions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 6px;
-    clear: both;
-  }
-  .reaction-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 9px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.08);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-  }
+  .msg-reactions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; clear: both; }
+  .reaction-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.08); font-size: 13px; cursor: pointer; transition: all 0.2s; user-select: none; }
   .reaction-chip:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
   .reaction-chip.mine { background: rgba(245,197,66,0.2); border-color: rgba(245,197,66,0.4); }
   .reaction-chip .rc-count { font-size: 11px; color: #b0b0c8; font-weight: 700; }
@@ -216,18 +222,8 @@
   }
   .reaction-picker.open { display: flex; gap: 4px; }
   @keyframes reactionIn { from { opacity: 0; transform: translateY(6px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  .reaction-picker button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    padding: 4px 6px;
-    border-radius: 10px;
-    transition: all 0.15s;
-    line-height: 1;
-  }
+  .reaction-picker button { background: transparent; border: none; cursor: pointer; font-size: 24px; padding: 4px 6px; border-radius: 10px; transition: all 0.15s; line-height: 1; }
   .reaction-picker button:hover { background: rgba(255,255,255,0.1); transform: scale(1.25); }
-  .reaction-picker button:active { transform: scale(1.05); }
 
   /* EMOJI PANEL */
   .emoji-panel {
@@ -251,34 +247,11 @@
   .emoji-grid button { background: transparent; border: none; cursor: pointer; font-size: 22px; padding: 6px; border-radius: 8px; line-height: 1; transition: all 0.15s; }
   .emoji-grid button:hover { background: rgba(255,255,255,0.08); transform: scale(1.2); }
 
-  .msg-tools {
-    position: absolute;
-    top: -12px;
-    display: flex;
-    gap: 4px;
-    opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 4;
-  }
-  #chat .msg:not(.mine) .msg-tools { right: -6px; }
-  #chat .msg.mine .msg-tools { left: -6px; }
+  .msg-tools { position: absolute; top: -12px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; z-index: 4; }
+  #chat .msg:not(.mine) .msg-tools, #roomChat .msg:not(.mine) .msg-tools { right: -6px; }
+  #chat .msg.mine .msg-tools, #roomChat .msg.mine .msg-tools { left: -6px; }
   #chat .msg:hover .msg-tools, #roomChat .msg:hover .msg-tools { opacity: 1; }
-  #chat .msg.mine:hover .msg-tools, #roomChat .msg.mine:hover .msg-tools { opacity: 1; }
-  .msg-tool-btn {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: rgba(26,26,34,0.95);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: #e8e8f0;
-    cursor: pointer;
-    font-size: 12px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  }
+  .msg-tool-btn { width: 26px; height: 26px; border-radius: 50%; background: rgba(26,26,34,0.95); border: 1px solid rgba(255,255,255,0.1); color: #e8e8f0; cursor: pointer; font-size: 12px; padding: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
   .msg-tool-btn:hover { background: #f5c542; color: #000; transform: scale(1.1); border-color: transparent; }
   @media (max-width: 768px) { .msg-tools { opacity: 1; } }
 
@@ -381,7 +354,6 @@
   #photoViewer.open { display: flex; }
   #photoViewer img { max-width: 100%; max-height: 100%; border-radius: 10px; }
 
-  /* РЕДАКТИРОВАНИЕ */
   .edit-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 600; backdrop-filter: blur(8px); }
   .edit-modal.open { display: flex; }
   .edit-box { background: linear-gradient(180deg, #1a1a22, #14141c); padding: 22px; border-radius: 20px; width: 500px; max-width: 92vw; border: 1px solid rgba(255,255,255,0.08); }
@@ -393,25 +365,23 @@
   .edit-actions .save { background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; }
   .edit-actions .cancel { background: rgba(255,255,255,0.06); color: #c8c8d0; }
 
-  /* ИНДИКАТОР ЗАПИСИ КРУЖКА */
   .circle-recording {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(0,0,0,0.9);
     display: none;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     gap: 16px;
-    z-index: 30;
-    border-radius: 20px;
+    z-index: 700;
     backdrop-filter: blur(8px);
   }
   .circle-recording.open { display: flex; }
-  .circle-recording video { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 3px solid #d32f2f; }
-  .circle-recording .timer { font-size: 18px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+  .circle-recording video { width: 240px; height: 240px; border-radius: 50%; object-fit: cover; border: 3px solid #d32f2f; }
+  .circle-recording .timer { font-size: 22px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
   .circle-recording .hint { font-size: 13px; color: #aaa; }
-  .circle-recording .stop-btn { padding: 12px 28px; border-radius: 14px; border: none; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; font-weight: 800; font-size: 15px; cursor: pointer; }
+  .circle-recording .stop-btn { padding: 14px 32px; border-radius: 14px; border: none; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; font-weight: 800; font-size: 16px; cursor: pointer; }
 
   @media (max-width: 768px) {
     .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; width: 88%; max-width: 360px; z-index: 200; transition: left 0.3s; }
@@ -472,7 +442,7 @@
 <div id="circleRecording" class="circle-recording">
   <video id="circlePreview" autoplay muted playsinline></video>
   <div class="timer" id="circleTimer">0:00</div>
-  <div class="hint">Запись кружка... нажми чтобы остановить</div>
+  <div class="hint">Запись кружка...</div>
   <button class="stop-btn" id="circleStopBtn">⏹ Остановить и отправить</button>
 </div>
 
@@ -639,7 +609,7 @@
       <div class="emoji-panel" id="emojiPanel">
         <div class="emoji-grid" id="emojiGrid"></div>
       </div>
-      <button id="msgEmojiBtn" class="icon-btn" type="button" title="Эмодзи" style="width:46px;height:46px;">😊</button>
+      <button id="msgEmojiBtn" class="icon-btn" type="button" title="Эмодзи">😊</button>
       <input id="msgInput" placeholder="Сообщение..." maxlength="500" autocomplete="off">
       <button id="msgPhotoBtn" class="icon-btn" type="button" title="Фото">📎</button>
       <button id="msgCircleBtn" class="icon-btn circle-btn" type="button" title="Кружок">⚪</button>
@@ -716,7 +686,6 @@ let currentChannel = null, pollTimer = null, mediaChannel = null, flatsChannel =
 let presenceChannel = null, typingChannel = null;
 let globalPresenceChannel = null;
 let reactionsChannel = null;
-let messagesChannel = null;
 let onlineNicks = new Set();
 let unread = {}, myDms = [], locking = false;
 let photoToUpload = null, musicToUpload = null, editingMedia = null;
@@ -741,7 +710,6 @@ let voiceAudio = null;
 let voiceCurrentId = null;
 const voiceDurations = {};
 
-// Видео-кружки
 let videoRecorder = null;
 let videoStream = null;
 let videoChunks = [];
@@ -761,7 +729,6 @@ function shortTime(ts) {
   return d.toLocaleDateString().slice(0,5);
 }
 
-// ============ УВЕДОМЛЕНИЯ ============
 async function enableNotifications() {
   if (!('Notification' in window)) return alert('Браузер не поддерживает уведомления');
   const perm = await Notification.requestPermission();
@@ -770,7 +737,7 @@ async function enableNotifications() {
   if (perm === 'granted') {
     btn.textContent = '🔔';
     btn.style.color = '#4caf50';
-    new Notification('Дом', { body: 'Уведомления включены ✅', icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏠</text></svg>' });
+    new Notification('Дом', { body: 'Уведомления включены ✅' });
   } else {
     btn.textContent = '🔕';
     btn.style.color = '#8888a0';
@@ -779,16 +746,9 @@ async function enableNotifications() {
 function showNotification(title, body) {
   if (notificationPermission !== 'granted') return;
   if (!document.hidden) return;
-  try {
-    new Notification(title, {
-      body,
-      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏠</text></svg>',
-      tag: 'dom-msg'
-    });
-  } catch(e) {}
+  try { new Notification(title, { body, tag: 'dom-msg' }); } catch(e) {}
 }
 
-// ============ EMOJI PANEL ============
 function initEmojiPanel() {
   const grid = document.getElementById('emojiGrid');
   grid.innerHTML = EMOJI_LIST.map(e => '<button type="button" onclick="insertEmoji(\'' + e + '\')">' + e + '</button>').join('');
@@ -804,7 +764,6 @@ function insertEmoji(e) {
   input.focus();
 }
 
-// ============ AUTH ============
 document.getElementById('googleBtn').addEventListener('click', async () => {
   const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + window.location.pathname } });
   if (error) alert('Ошибка входа: ' + error.message);
@@ -965,7 +924,6 @@ function subscribeGlobalPresence() {
   });
 }
 
-// ============ ADMIN ============
 function updateAdminToggleVisibility() {
   const btn = document.getElementById('adminToggleBtn');
   if (!btn) return;
@@ -1135,7 +1093,6 @@ async function reloadCurrentHouse() {
   renderHouses(); renderFlats();
 }
 
-// ============ START ============
 async function startApp() {
   meEnc = encNick(me);
   document.getElementById('auth').style.display = 'none';
@@ -1194,21 +1151,15 @@ function setupUI() {
   document.getElementById('circleStopBtn').addEventListener('click', stopCircleRecording);
 }
 
-// ============ КРУЖКИ (ВИДЕО) ============
 async function startCircleRecording() {
   if (isBanned) return showBanned();
   if (!currentRoom) return;
   if (!navigator.mediaDevices || !window.MediaRecorder) return alert('Видео не поддерживается');
-
   try {
-    videoStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 480 } },
-      audio: true
-    });
+    videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 480 } }, audio: true });
     const preview = document.getElementById('circlePreview');
     preview.srcObject = videoStream;
     document.getElementById('circleRecording').classList.add('open');
-
     let mime = 'video/webm;codecs=vp9,opus';
     if (!MediaRecorder.isTypeSupported(mime)) {
       if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) mime = 'video/webm;codecs=vp8,opus';
@@ -1216,26 +1167,20 @@ async function startCircleRecording() {
       else if (MediaRecorder.isTypeSupported('video/mp4')) mime = 'video/mp4';
       else mime = '';
     }
-
     videoChunks = [];
     videoRecorder = new MediaRecorder(videoStream, mime ? { mimeType: mime } : {});
     videoStartTime = Date.now();
-
     videoRecorder.ondataavailable = e => { if (e.data && e.data.size) videoChunks.push(e.data); };
     videoRecorder.onstop = async () => {
       videoStream.getTracks().forEach(t => t.stop());
       const blob = new Blob(videoChunks, { type: mime || 'video/webm' });
-      videoRecorder = null;
-      videoStream = null;
+      videoRecorder = null; videoStream = null;
       clearInterval(videoTimerInterval);
       document.getElementById('circleRecording').classList.remove('open');
-
       if (Date.now() - videoStartTime < 1000) return;
       if (blob.size < 5000) return;
-
       await uploadCircle(blob, mime || 'video/webm');
     };
-
     videoRecorder.start();
     document.getElementById('circleTimer').textContent = '0:00';
     videoTimerInterval = setInterval(() => {
@@ -1250,9 +1195,7 @@ async function startCircleRecording() {
   }
 }
 function stopCircleRecording() {
-  if (videoRecorder && videoRecorder.state === 'recording') {
-    try { videoRecorder.stop(); } catch(e) {}
-  }
+  if (videoRecorder && videoRecorder.state === 'recording') { try { videoRecorder.stop(); } catch(e) {} }
 }
 async function uploadCircle(blob, mime) {
   const roomId = currentRoom;
@@ -1268,7 +1211,6 @@ async function uploadCircle(blob, mime) {
   if (roomId.startsWith('dm_')) { await loadMyDms(); renderDmList(); }
 }
 
-// ============ VOICE PLAYER ============
 function initVoicePlayer() {
   if (voiceAudio) return;
   voiceAudio = new Audio();
@@ -1339,7 +1281,6 @@ function voiceSeek(ev, id) {
   if (voiceAudio.duration && isFinite(voiceAudio.duration)) voiceAudio.currentTime = voiceAudio.duration * pct;
 }
 
-// ============ КРУЖКИ ВОСПРОИЗВЕДЕНИЕ ============
 function toggleCircle(el) {
   const video = el.querySelector('video');
   if (!video) return;
@@ -1353,7 +1294,6 @@ function toggleCircle(el) {
   }
 }
 
-// ============ HOUSES ============
 async function loadMyRooms() {
   const { data } = await sb.from('flats').select('house_id,number,owner_nick,owner_nick2').or('owner_nick.eq.' + meEnc + ',owner_nick2.eq.' + meEnc);
   myRooms.clear();
@@ -1522,7 +1462,6 @@ async function clickFlat(num) {
   } else openDm(f.owner_nick);
 }
 
-// ============ REALTIME ============
 function subscribeHouses() {
   if (housesChannel) return;
   housesChannel = sb.channel('houses-rt').on('postgres_changes', { event: '*', schema: 'public', table: 'houses' }, async (p) => {
@@ -1568,7 +1507,6 @@ function subscribeReactionsGlobal() {
   }).subscribe();
 }
 
-// ============ PRESENCE ============
 async function setupRoomPresence(roomId) {
   if (presenceChannel) { try { await sb.removeChannel(presenceChannel); } catch(e){} presenceChannel = null; }
   if (typingChannel) { try { await sb.removeChannel(typingChannel); } catch(e){} typingChannel = null; }
@@ -1620,7 +1558,6 @@ function hideTypingIndicator() {
   if (typingHideTimer) { clearTimeout(typingHideTimer); typingHideTimer = null; }
 }
 
-// ============ ROOMS ============
 function toggleInputRow(canWrite) {
   document.getElementById('inputRow').style.display = canWrite ? 'flex' : 'none';
   document.getElementById('noWrite').style.display = canWrite ? 'none' : 'block';
@@ -1777,7 +1714,6 @@ function renderMessages(el, list) {
       body = escapeHtml(m.text);
     }
 
-    // Реакции
     let reactionsHtml = '';
     const reactions = allReactions[m.id] || [];
     if (reactions.length) {
@@ -1821,7 +1757,6 @@ function renderMessages(el, list) {
   }
 }
 
-// ============ РЕАКЦИИ ============
 let reactionPickerElement = null;
 let reactionPickerMsgId = null;
 
@@ -1841,7 +1776,7 @@ function openReactionPicker(event, msgId) {
   picker.style.top = '-50px';
   if (rect.left < 260) picker.style.left = '0';
   else if (rect.right > window.innerWidth - 260) picker.style.right = '0';
-  else picker.style.left = '50%', picker.style.transform = 'translateX(-50%)';
+  else { picker.style.left = '50%'; picker.style.transform = 'translateX(-50%)'; }
 
   reactionPickerElement = picker;
   setTimeout(() => {
@@ -1874,7 +1809,6 @@ async function toggleReaction(msgId, emoji) {
   await refreshReactionsForCurrentRoom();
 }
 
-// ============ РЕДАКТИРОВАНИЕ ============
 function openEditModal(msgId, roomType) {
   const messages = roomType === 'main' ? allMessagesCache : allRoomMessagesCache;
   const msg = messages.find(m => m.id === msgId);
@@ -1950,7 +1884,6 @@ async function sendPhoto(file, roomId, target) {
   else document.getElementById('roomPhotoInput').value = '';
 }
 
-// ============ VOICE RECORDING ============
 async function toggleVoice(target) {
   if (isBanned) return showBanned();
   if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); return; }
@@ -1998,7 +1931,6 @@ async function uploadVoice(blob, mime, roomId) {
   if (roomId.startsWith('dm_')) { await loadMyDms(); renderDmList(); }
 }
 
-// ============ FLAT MODAL ============
 async function openFlatModal(num) {
   const f = flats[num]; if (!f) return;
   const isOwner = f.owner_nick === meEnc, isRoommate = f.owner_nick2 === meEnc;
@@ -2076,7 +2008,6 @@ async function sendRoomMsg() {
   await loadRoomMessages(); await loadMyDms(); renderDmList();
 }
 
-// ============ ROOMMATE MGMT ============
 async function sendInvite() {
   const input = document.getElementById('inviteInput');
   const target = input.value.trim();
@@ -2127,7 +2058,6 @@ async function leaveFlat() {
   closeFlatModal(); await reloadCurrentHouse(); await loadMyRooms();
 }
 
-// ============ MEDIA ============
 async function loadEditMedia() {
   photoToUpload = null; musicToUpload = null;
   document.getElementById('mediaStatus').textContent = '';
@@ -2197,7 +2127,6 @@ async function saveMedia() {
   } catch (e) { status.textContent = 'Ошибка: ' + e.message; }
 }
 
-// ============ DMS ============
 async function loadMyDms() {
   const pat1 = 'dm_' + meEnc + '__%', pat2 = 'dm_%__' + meEnc;
   const dmP = sb.from('messages').select('*').or('room_id.like.' + pat1 + ',room_id.like.' + pat2).order('created_at', { ascending: false }).limit(500);
