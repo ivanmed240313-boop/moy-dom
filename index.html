@@ -298,6 +298,9 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .cr .tm{font-size:22px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
 .cr .hh{font-size:13px;color:#aaa}
 .cr .sb{padding:14px 32px;border-radius:14px;border:none;background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;font-weight:800;font-size:16px;cursor:pointer}
+/* ===== SEASONS ===== */
+#seasons{position:fixed;inset:0;z-index:-1;pointer-events:none;display:block}
+@media(prefers-reduced-motion:reduce){#seasons{display:none}}
 @media(max-width:768px){
 .sb{position:fixed;left:-100%;top:0;height:100vh;width:88%;max-width:360px;z-index:200;transition:left .3s}
 .sb.open{left:0}
@@ -336,6 +339,8 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 </style>
 </head>
 <body>
+
+<canvas id="seasons"></canvas>
 
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 
@@ -815,6 +820,208 @@ async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!
 function subGlob(){sb.channel('glob').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},async p=>{const m=p.new;if(!isMyR(m.room_id))return;if(m.nick===meEnc)return;if(curRoom===m.room_id)return;if(rcId===m.room_id)return;unread[m.room_id]=(unread[m.room_id]||0)+1;const w=de(m.nick),pr=m.voice_url?'🎤':(m.video_url?'⚪':(m.photo_url?'📷':m.text));showNotif('💬 '+w,pr);await loadDMs();renderDMs()}).subscribe()}
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser&&!isBanned){loadM();if(rcId)loadRM();touchSeen()}});
+
+/* ============ СЕЗОНЫ ============ */
+(function(){
+const cv=document.getElementById('seasons');
+if(!cv)return;
+const ctx=cv.getContext('2d');
+let W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2);
+let particles=[];
+let animId=null,lastT=performance.now();
+
+function rnd(a,b){return a+Math.random()*(b-a);}
+
+function detectSeason(){
+  const m=new Date().getMonth();
+  if(m>=2&&m<=4)return 'spring';
+  if(m>=5&&m<=7)return 'summer';
+  if(m>=8&&m<=10)return 'autumn';
+  return 'winter';
+}
+let season=localStorage.getItem('dom_season')||detectSeason();
+window.setSeason=function(s){season=s;localStorage.setItem('dom_season',s);initParticles();};
+window.resetSeason=function(){localStorage.removeItem('dom_season');season=detectSeason();initParticles();};
+window.getSeason=()=>season;
+
+function initParticles(){
+  particles=[];
+  if(season==='autumn'){
+    const colors=['#d97706','#ea580c','#dc2626','#ca8a04','#f59e0b','#b45309','#a16207'];
+    const n=Math.min(45,Math.floor(W/28));
+    for(let i=0;i<n;i++)particles.push({
+      x:rnd(0,W),y:rnd(-H,H),size:rnd(6,14),
+      vy:rnd(0.3,0.9),vx:rnd(-0.3,0.3),
+      sway:rnd(0,Math.PI*2),swaySpd:rnd(0.008,0.02),swayAmp:rnd(0.4,1.2),
+      rot:rnd(0,Math.PI*2),rotSpd:rnd(-0.02,0.02),
+      color:colors[Math.floor(Math.random()*colors.length)],alpha:rnd(0.65,0.95)
+    });
+  }else if(season==='winter'){
+    const n=Math.min(140,Math.floor(W/10));
+    for(let i=0;i<n;i++)particles.push({
+      x:rnd(0,W),y:rnd(-H,H),size:rnd(0.8,3.2),
+      vy:rnd(0.2,0.7),vx:rnd(-0.2,0.2),
+      sway:rnd(0,Math.PI*2),swaySpd:rnd(0.005,0.015),swayAmp:rnd(0.3,0.9),
+      alpha:rnd(0.35,0.9),twinkle:rnd(0,Math.PI*2),twinkleSpd:rnd(0.02,0.05)
+    });
+  }else if(season==='spring'){
+    const colors=['#fbcfe8','#f9a8d4','#fce7f3','#ffe4e6','#f5d0fe','#e9d5ff','#fecdd3'];
+    const n=Math.min(42,Math.floor(W/30));
+    for(let i=0;i<n;i++)particles.push({
+      x:rnd(0,W),y:rnd(-H,H),size:rnd(4,9),
+      vy:rnd(0.3,0.7),vx:rnd(-0.4,0.4),
+      sway:rnd(0,Math.PI*2),swaySpd:rnd(0.01,0.025),swayAmp:rnd(0.5,1.5),
+      rot:rnd(0,Math.PI*2),rotSpd:rnd(-0.03,0.03),
+      color:colors[Math.floor(Math.random()*colors.length)],alpha:rnd(0.7,1)
+    });
+  }
+}
+
+function drawTint(){
+  let g=null;
+  if(season==='autumn'){
+    g=ctx.createRadialGradient(W/2,H,0,W/2,H,Math.max(W,H));
+    g.addColorStop(0,'rgba(180,80,20,0.10)');
+    g.addColorStop(1,'rgba(100,40,10,0)');
+  }else if(season==='winter'){
+    g=ctx.createRadialGradient(W/2,H,0,W/2,H,Math.max(W,H));
+    g.addColorStop(0,'rgba(80,120,180,0.09)');
+    g.addColorStop(1,'rgba(40,80,140,0)');
+  }else if(season==='spring'){
+    g=ctx.createRadialGradient(W/2,H,0,W/2,H,Math.max(W,H));
+    g.addColorStop(0,'rgba(240,180,210,0.08)');
+    g.addColorStop(1,'rgba(150,220,180,0)');
+  }
+  if(g){ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
+}
+
+function drawLeaf(p){
+  ctx.save();
+  ctx.globalAlpha=p.alpha;
+  ctx.translate(p.x,p.y);
+  ctx.rotate(p.rot);
+  ctx.fillStyle=p.color;
+  const s=p.size;
+  ctx.beginPath();
+  ctx.moveTo(0,-s);
+  ctx.bezierCurveTo(s*0.9,-s*0.5,s*0.9,s*0.5,0,s);
+  ctx.bezierCurveTo(-s*0.9,s*0.5,-s*0.9,-s*0.5,0,-s);
+  ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,0.18)';
+  ctx.lineWidth=0.8;
+  ctx.beginPath();ctx.moveTo(0,-s*0.8);ctx.lineTo(0,s*0.8);ctx.stroke();
+  ctx.restore();
+}
+function drawSnow(p){
+  ctx.save();
+  ctx.globalAlpha=p.alpha*(0.7+0.3*Math.sin(p.twinkle));
+  ctx.fillStyle='#fff';
+  ctx.shadowBlur=6;ctx.shadowColor='rgba(200,230,255,0.85)';
+  ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+function drawPetal(p){
+  ctx.save();
+  ctx.globalAlpha=p.alpha;
+  ctx.translate(p.x,p.y);
+  ctx.rotate(p.rot);
+  ctx.fillStyle=p.color;
+  const s=p.size;
+  ctx.beginPath();
+  ctx.moveTo(0,-s);
+  ctx.bezierCurveTo(s*0.9,-s*0.6,s*0.9,s*0.6,0,s);
+  ctx.bezierCurveTo(-s*0.6,s*0.5,-s*0.6,-s*0.5,0,-s);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawSummerSun(t){
+  const cx=W-Math.min(W*0.16,170);
+  const cy=Math.min(H*0.16,170);
+  const baseR=Math.max(W,H)*0.6;
+  const pulse=1+Math.sin(t*0.0012)*0.06;
+
+  const g=ctx.createRadialGradient(cx,cy,0,cx,cy,baseR*pulse);
+  g.addColorStop(0,'rgba(255,235,170,0.30)');
+  g.addColorStop(0.15,'rgba(255,210,110,0.20)');
+  g.addColorStop(0.40,'rgba(255,180,70,0.08)');
+  g.addColorStop(0.70,'rgba(255,150,50,0.03)');
+  g.addColorStop(1,'rgba(255,150,50,0)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  ctx.translate(cx,cy);
+  ctx.rotate(t*0.00015);
+  const rays=10,rl=baseR*0.85;
+  for(let i=0;i<rays;i++){
+    ctx.rotate(Math.PI*2/rays);
+    const rg=ctx.createLinearGradient(0,0,0,-rl);
+    rg.addColorStop(0,'rgba(255,225,140,0.10)');
+    rg.addColorStop(1,'rgba(255,225,140,0)');
+    ctx.fillStyle=rg;
+    ctx.beginPath();ctx.moveTo(-12,0);ctx.lineTo(0,-rl);ctx.lineTo(12,0);ctx.closePath();ctx.fill();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalCompositeOperation='lighter';
+  const core=ctx.createRadialGradient(cx,cy,0,cx,cy,90*pulse);
+  core.addColorStop(0,'rgba(255,245,200,0.55)');
+  core.addColorStop(0.5,'rgba(255,220,130,0.15)');
+  core.addColorStop(1,'rgba(255,200,100,0)');
+  ctx.fillStyle=core;ctx.fillRect(0,0,W,H);
+  ctx.restore();
+}
+
+function loop(t){
+  const dt=Math.min(50,t-lastT);
+  lastT=t;
+  const k=dt/16.67;
+  ctx.clearRect(0,0,W,H);
+
+  if(season==='summer'){
+    drawSummerSun(t);
+  }else{
+    drawTint();
+    for(const p of particles){
+      p.sway+=p.swaySpd*k;
+      p.y+=p.vy*k;
+      p.x+=p.vx*k+Math.sin(p.sway)*p.swayAmp*k;
+      if(p.rot!==undefined)p.rot+=p.rotSpd*k;
+      if(p.twinkle!==undefined)p.twinkle+=p.twinkleSpd*k;
+
+      if(p.y>H+30){p.y=-30;p.x=Math.random()*W;}
+      if(p.x>W+40)p.x=-40;
+      if(p.x<-40)p.x=W+40;
+
+      if(season==='autumn')drawLeaf(p);
+      else if(season==='winter')drawSnow(p);
+      else if(season==='spring')drawPetal(p);
+    }
+  }
+  animId=requestAnimationFrame(loop);
+}
+
+function resize(){
+  W=window.innerWidth;H=window.innerHeight;
+  cv.width=W*dpr;cv.height=H*dpr;
+  cv.style.width=W+'px';cv.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  initParticles();
+}
+window.addEventListener('resize',resize);
+resize();
+requestAnimationFrame(loop);
+
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden&&!localStorage.getItem('dom_season')){
+    const s=detectSeason();
+    if(s!==season){season=s;initParticles();}
+  }
+});
+})();
+/* ============ /СЕЗОНЫ ============ */
 </script>
 </body>
 </html>
