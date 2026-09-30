@@ -180,19 +180,23 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .rc.mine{background:rgba(245,197,66,.25);border-color:rgba(245,197,66,.5)}
 .rc .rn{font-size:10px;color:#d0d0d8;font-weight:700}
 .rc.mine .rn{color:#f5c542}
-.voice-msg{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;min-width:200px;user-select:none;-webkit-user-select:none;margin-top:2px}
-.voice-play-btn{width:44px;height:44px;border-radius:50%;border:none;background:#5aabff;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .15s,background .2s;font-size:16px;font-weight:900;padding:0;line-height:1;padding-left:3px}
-.msg.own .voice-play-btn{background:#4a90d9}
-.voice-play-btn:active{transform:scale(.92)}
-.voice-msg.playing .voice-play-btn{background:#f5c542;color:#000;padding:0;font-size:0}
-.voice-msg.playing .voice-play-btn::before{content:'';display:inline-block;width:10px;height:14px;background:currentColor;box-shadow:6px 0 0 currentColor}
-.voice-bar{flex:1;height:36px;position:relative;cursor:pointer;display:flex;align-items:center;gap:2px;padding:0 2px}
-.voice-bar .wb{width:2.5px;border-radius:2px;background:rgba(255,255,255,.45);transition:background .15s}
-.msg.own .voice-bar .wb{background:rgba(255,255,255,.6)}
-.voice-bar .wb.played{background:#5aabff}
+.voice-msg{display:flex;align-items:center;gap:12px;padding:8px 14px 8px 8px;min-width:230px;user-select:none;-webkit-user-select:none;margin-top:3px}
+.voice-play-btn{width:46px;height:46px;border-radius:50%;border:none;background:linear-gradient(135deg,#5aabff,#4a90d9);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .25s,box-shadow .25s;padding:0;line-height:1;font-size:0;position:relative;box-shadow:0 4px 14px rgba(90,171,255,.35)}
+.voice-play-btn::before{content:'';display:block;width:0;height:0;border-left:13px solid currentColor;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:4px;transition:all .2s}
+.voice-play-btn:hover{transform:scale(1.07);box-shadow:0 6px 20px rgba(90,171,255,.55)}
+.voice-play-btn:active{transform:scale(.93)}
+.voice-msg.playing .voice-play-btn{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#111;box-shadow:0 4px 16px rgba(245,197,66,.5)}
+.voice-msg.playing .voice-play-btn::before{width:5px;height:16px;background:currentColor;border:none;border-radius:2px;margin-left:0;position:absolute;left:calc(50% - 7px);top:50%;transform:translateY(-50%)}
+.voice-msg.playing .voice-play-btn::after{content:'';display:block;position:absolute;width:5px;height:16px;background:currentColor;border-radius:2px;left:calc(50% + 2px);top:50%;transform:translateY(-50%)}
+.voice-bar{flex:1;height:40px;position:relative;cursor:pointer;display:flex;align-items:center;gap:2px;padding:0 4px}
+.voice-bar .wb{width:2.5px;border-radius:2px;background:rgba(255,255,255,.35);transition:background .25s,transform .2s;flex-shrink:0;transform-origin:center}
+.voice-bar:hover .wb{background:rgba(255,255,255,.5)}
+.msg.own .voice-bar .wb{background:rgba(255,255,255,.4)}
+.msg.own .voice-bar:hover .wb{background:rgba(255,255,255,.55)}
+.voice-bar .wb.played{background:#7fc4ff;transform:scaleY(1.08)}
 .msg.own .voice-bar .wb.played{background:#f5c542}
-.voice-time{font-size:11px;color:rgba(255,255,255,.6);min-width:30px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;flex-shrink:0}
-.msg.other .voice-time{color:#8888a0}
+.voice-time{font-size:12px;color:rgba(255,255,255,.7);min-width:36px;text-align:right;font-variant-numeric:tabular-nums;font-weight:600;flex-shrink:0;letter-spacing:.3px}
+.msg.other .voice-time{color:#a0a0b8}
 #ctxMenu{display:none;position:fixed;z-index:8000;background:linear-gradient(180deg,#1e1e28,#16161e);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:5px;min-width:180px;box-shadow:0 20px 60px rgba(0,0,0,.75);backdrop-filter:blur(20px);animation:ctxIn .18s cubic-bezier(.34,1.56,.64,1)}
 #ctxMenu.open{display:block}
 #ctxMenu button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:8px;background:transparent;border:none;color:#e8e8f0;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:500;text-align:left;transition:background .15s}
