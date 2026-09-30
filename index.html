@@ -1286,12 +1286,16 @@ function voiceSeek(ev, id) {
 function toggleCircle(el) {
   const video = el.querySelector('video');
   if (!video) return;
+  document.querySelectorAll('.msg-circle video').forEach(v => {
+    if (v !== video) { v.pause(); v.muted = true; v.parentElement.classList.remove('playing'); v.parentElement.classList.add('paused'); }
+  });
   if (video.paused) {
-    document.querySelectorAll('.msg-circle video').forEach(v => { if (v !== video) { v.pause(); v.parentElement.classList.remove('playing'); v.parentElement.classList.add('paused'); } });
-    video.play().catch(()=>{});
+    video.muted = false;
+    video.volume = 1;
+    video.play().catch(() => { video.muted = true; video.play().catch(()=>{}); });
     el.classList.add('playing'); el.classList.remove('paused');
   } else {
-    video.pause();
+    video.pause(); video.muted = true;
     el.classList.remove('playing'); el.classList.add('paused');
   }
 }
@@ -1669,7 +1673,7 @@ async function loadMessages() {
   if (error) return;
   const { data: hidden } = await sb.from('hidden_messages').select('message_id').eq('user_nick', meEnc);
   hiddenCache = new Set((hidden || []).map(h => h.message_id));
-  allMessagesCache = (data || []).filter(m => !hiddenCache.has(m.id));
+  allMessagesCache = (data || []).filter(m => !hiddenCache.has(m.id) && !m.deleted_for_all);
   await loadReactionsFor(allMessagesCache);
   renderMessages(document.getElementById('chat'), allMessagesCache);
 }
@@ -1708,7 +1712,7 @@ function renderMessages(el, list) {
       '</div>';
     } else if (m.video_url) {
       body = '<div class="msg-circle paused" onclick="event.stopPropagation(); toggleCircle(this)" oncontextmenu="return false;">' +
-        '<video src="' + m.video_url + '" playsinline preload="metadata" muted></video>' +
+        '<video src="' + m.video_url + '" playsinline preload="metadata"></video>' +
       '</div>';
     } else if (m.photo_url) {
       body = '<img class="msg-photo" src="' + m.photo_url + '" onclick="openPhotoViewer(\'' + m.photo_url + '\')" loading="lazy" oncontextmenu="return false;">';
@@ -1739,7 +1743,7 @@ function renderMessages(el, list) {
     const tools = '<div class="msg-tools">' +
       '<button class="msg-tool-btn" title="Реакция" onclick="event.stopPropagation(); openReactionPicker(event, ' + m.id + ')">😊</button>' +
       (mine && !m.voice_url && !m.video_url && !m.photo_url ? '<button class="msg-tool-btn" title="Редактировать" onclick="event.stopPropagation(); openEditModal(' + m.id + ', \'' + (el.id === 'chat' ? 'main' : 'room') + '\')">✏️</button>' : '') +
-      '<button class="msg-tool-btn" title="Удалить у себя" onclick="event.stopPropagation(); deleteMsgForMe(' + m.id + ', event)">✕</button>' +
+      (mine ? '<button class="msg-tool-btn" title="Удалить у всех" onclick="event.stopPropagation(); deleteMsgForBoth(' + m.id + ', event)">🗑️</button>' : '') + '<button class="msg-tool-btn" title="Удалить у себя" onclick="event.stopPropagation(); deleteMsgForMe(' + m.id + ', event)">✕</button>' +
     '</div>';
 
     return '<div class="msg' + (mine ? ' mine' : '') + '" data-id="' + m.id + '">' +
@@ -1837,6 +1841,15 @@ async function saveEdit() {
   else await loadRoomMessages();
 }
 
+async function deleteMsgForBoth(msgId, ev) {
+  if (ev) ev.stopPropagation();
+  if (!confirm('Удалить это сообщение у всех?')) return;
+  const { error } = await sb.from('messages').update({ deleted_for_all: true }).eq('id', msgId);
+  if (error) return alert('Ошибка: ' + error.message);
+  document.querySelectorAll('#chat .msg[data-id="' + msgId + '"], #roomChat .msg[data-id="' + msgId + '"]').forEach(el => el.remove());
+  if (currentRoom) await loadMessages();
+  if (roomChatRoomId) await loadRoomMessages();
+}
 async function deleteMsgForMe(msgId, ev) {
   if (ev) ev.stopPropagation();
   if (!confirm('Удалить у себя?')) return;
@@ -1990,7 +2003,7 @@ async function loadRoomMessages() {
   if (myToken !== roomMsgLoadToken || roomId !== roomChatRoomId) return;
   const { data: hidden } = await sb.from('hidden_messages').select('message_id').eq('user_nick', meEnc);
   const hiddenIds = new Set((hidden || []).map(h => h.message_id));
-  allRoomMessagesCache = (data || []).filter(m => !hiddenIds.has(m.id));
+  allRoomMessagesCache = (data || []).filter(m => !hiddenIds.has(m.id) && !m.deleted_for_all);
   await loadReactionsFor(allRoomMessagesCache);
   renderMessages(document.getElementById('roomChat'), allRoomMessagesCache);
 }
