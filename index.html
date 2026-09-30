@@ -52,9 +52,23 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 .av-lg{width:48px;height:48px;font-size:20px}
 .avw{position:relative;flex-shrink:0}
 .avw .ondot{position:absolute;bottom:-1px;right:-1px;width:13px;height:13px;border-radius:50%;background:#4caf50;border:2px solid #14141c;box-shadow:0 0 8px rgba(76,175,80,.8);z-index:2}
-#myInfo{position:absolute;top:16px;right:16px;font-size:13px;color:#8888a0;z-index:5;display:flex;gap:10px;align-items:center;background:rgba(20,20,28,.65);padding:6px 8px 6px 6px;border-radius:14px;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.06)}
-#myInfo button{background:transparent;border:none;color:#f5c542;cursor:pointer;font-size:12px;font-weight:600;padding:4px 8px;border-radius:6px}
-#adminTog{display:none;position:absolute;top:16px;right:220px;background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;border:none;padding:9px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;z-index:5;transition:.25s}
+#topRight{position:absolute;top:14px;right:16px;display:flex;gap:10px;align-items:center;z-index:5}
+#userMenu{position:relative}
+.umBtn{display:flex;align-items:center;gap:10px;background:rgba(20,20,28,.7);padding:6px 14px 6px 6px;border-radius:14px;border:1px solid rgba(255,255,255,.08);cursor:pointer;color:#e8e8f0;font-family:inherit;font-size:13px;font-weight:600;transition:.2s;backdrop-filter:blur(20px)}
+.umBtn:hover{background:rgba(30,30,40,.85);border-color:rgba(245,197,66,.3)}
+.umBtn .av{width:32px;height:32px;font-size:13px}
+.umArrow{color:#8888a0;font-size:11px;margin-left:-2px;transition:transform .2s}
+.umBtn.open .umArrow{transform:rotate(180deg)}
+.umDropdown{position:absolute;top:calc(100% + 8px);right:0;background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:6px;min-width:210px;box-shadow:0 20px 60px rgba(0,0,0,.7);display:none;flex-direction:column;gap:2px;animation:fadeIn .2s;backdrop-filter:blur(20px)}
+.umDropdown.open{display:flex}
+.umDropdown button{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:transparent;border:none;color:#e8e8f0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;text-align:left;transition:.15s}
+.umDropdown button:hover{background:rgba(255,255,255,.06)}
+.umDropdown .umDiv{height:1px;background:rgba(255,255,255,.06);margin:4px 8px}
+.umDropdown .umExit{color:#ff6b6b}
+.umDropdown .umExit:hover{background:rgba(211,47,47,.12)}
+#adminMItem{display:none}
+#adminTog{display:none;background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;border:none;padding:9px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;transition:.25s;box-shadow:0 6px 20px rgba(211,47,47,.35)}
+#adminTog:hover{transform:translateY(-2px)}
 #adminTog.on{background:linear-gradient(135deg,#444,#222)}
 #app{display:none;height:100vh;overflow:hidden;position:relative}
 .layout{display:flex;height:100vh}
@@ -125,41 +139,12 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .chs{font-size:12px;color:#8888a0;font-weight:500;margin-top:2px}
 .chs.online{color:#6fdc6f}
 #chat{flex:1;min-height:0;overflow-y:auto;background:rgba(0,0,0,.4);padding:16px;border-radius:16px;margin-bottom:12px;font-size:14px;border:1px solid rgba(255,255,255,.04);position:relative;-webkit-overflow-scrolling:touch}
-#chat .msg,#roomChat .msg{
-  display:block;
-  width:fit-content;
-  width:-moz-fit-content;
-  max-width:80%;
-  margin-bottom:10px;
-  padding:9px 14px;
-  border-radius:18px;
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.07);
-  word-wrap:break-word;
-  overflow-wrap:break-word;
-  position:relative;
-  line-height:1.45;
-  font-size:14px;
-  box-shadow:0 2px 6px rgba(0,0,0,.15);
-  clear:both;
-  animation:msgIn .3s;
-}
-#chat .msg.mine,#roomChat .msg.mine{
-  background:linear-gradient(135deg,rgba(76,175,80,.22),rgba(46,125,50,.15));
-  border-color:rgba(76,175,80,.28);
-  text-align:right;
-  margin-left:auto;
-  margin-right:0;
-  border-bottom-right-radius:6px;
-}
-#chat .msg:not(.mine),#roomChat .msg:not(.mine){
-  margin-left:0;
-  margin-right:auto;
-  border-bottom-left-radius:6px;
-}
-#chat .msg.mine .nick,#roomChat .msg.mine .nick{color:#6fdc6f}
-#chat .nick,#roomChat .nick{color:#f5c542;font-weight:700;font-size:12px;display:block;margin-bottom:2px}
-#chat .time,#roomChat .time{color:#666678;font-size:10px;margin-left:6px;font-weight:500}
+#chat .msg,#rc .msg{display:block;width:fit-content;width:-moz-fit-content;max-width:80%;margin-bottom:10px;padding:9px 14px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);word-wrap:break-word;overflow-wrap:break-word;position:relative;line-height:1.45;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.15);clear:both;animation:msgIn .3s}
+#chat .msg.mine,#rc .msg.mine{background:linear-gradient(135deg,rgba(76,175,80,.22),rgba(46,125,50,.15));border-color:rgba(76,175,80,.28);text-align:right;margin-left:auto;margin-right:0;border-bottom-right-radius:6px}
+#chat .msg:not(.mine),#rc .msg:not(.mine){margin-left:0;margin-right:auto;border-bottom-left-radius:6px}
+#chat .msg.mine .nick,#rc .msg.mine .nick{color:#6fdc6f}
+#chat .nick,#rc .nick{color:#f5c542;font-weight:700;font-size:12px;display:block;margin-bottom:2px}
+#chat .time,#rc .time{color:#666678;font-size:10px;margin-left:6px;font-weight:500}
 .med{color:#8888a0!important;font-style:italic;font-size:10px;margin-left:4px}
 .mp{max-width:100%;max-height:280px;border-radius:12px;margin-top:6px;cursor:pointer;display:block}
 .mc{width:180px;height:180px;border-radius:50%;overflow:hidden;margin-top:6px;cursor:pointer;position:relative;background:#000;box-shadow:0 8px 24px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.1)}
@@ -182,9 +167,9 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .eg button{background:transparent;border:none;cursor:pointer;font-size:22px;padding:6px;border-radius:8px;line-height:1;transition:.15s}
 .eg button:hover{background:rgba(255,255,255,.08);transform:scale(1.2)}
 .mt{position:absolute;top:-12px;display:flex;gap:4px;opacity:0;transition:opacity .2s;z-index:4}
-#chat .msg:not(.mine) .mt,#roomChat .msg:not(.mine) .mt{right:-6px}
-#chat .msg.mine .mt,#roomChat .msg.mine .mt{left:-6px}
-#chat .msg:hover .mt,#roomChat .msg:hover .mt{opacity:1}
+#chat .msg:not(.mine) .mt,#rc .msg:not(.mine) .mt{right:-6px}
+#chat .msg.mine .mt,#rc .msg.mine .mt{left:-6px}
+#chat .msg:hover .mt,#rc .msg:hover .mt{opacity:1}
 .mtb{width:26px;height:26px;border-radius:50%;background:rgba(26,26,34,.95);border:1px solid rgba(255,255,255,.1);color:#e8e8f0;cursor:pointer;font-size:12px;padding:0;display:flex;align-items:center;justify-content:center;transition:.2s;box-shadow:0 4px 12px rgba(0,0,0,.4)}
 .mtb:hover{background:#f5c542;color:#000;transform:scale(1.1);border-color:transparent}
 #typ{position:absolute;bottom:62px;left:22px;font-size:12px;color:#8888a0;font-style:italic;opacity:0;transition:opacity .3s;z-index:3;pointer-events:none}
@@ -310,14 +295,16 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .mbox{width:100vw;height:100dvh;max-width:100vw;max-height:100dvh;border-radius:0;padding:12px;padding-top:56px}
 .chd{padding-right:44px}
 #chat{font-size:15px;padding:12px;border-radius:14px}
-#chat .msg,#roomChat .msg{padding:9px 12px;max-width:85%}
+#chat .msg,#rc .msg{padding:9px 12px;max-width:85%}
 .ir input{padding:13px 16px;font-size:16px}
 .ir button{width:46px;height:46px;font-size:19px}
 #adminB{top:76px;right:14px}
-#adminTog{top:76px;right:96px}
 #ap{bottom:14px;right:14px;left:14px}
-#myInfo{font-size:12px;padding:5px 10px 5px 5px;top:14px;right:14px;gap:8px}
-#myInfo #myNickLabel{display:none}
+#topRight{top:12px;right:12px;gap:6px}
+.umBtn{padding:4px 10px 4px 4px;font-size:12px}
+.umBtn .av{width:28px;height:28px;font-size:12px}
+#myNick{display:none}
+.umDropdown{min-width:190px}
 .mb{top:14px;right:14px;padding:6px 14px;font-size:12px}
 .sp{width:170px;height:170px}
 .fmb{padding:16px}
@@ -392,12 +379,22 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 </div>
 
 <div id="app">
+<div id="topRight">
 <button id="adminTog" onclick="toggleAdmin()">⚙️ Админка</button>
-<div id="myInfo">
+<div id="userMenu">
+<button class="umBtn" onclick="toggleUserMenu()">
 <span id="myAv"></span>
 <span id="myNick"></span>
-<button onclick="enableNotif()" id="notifB">🔔</button>
-<button onclick="logout()">выйти</button>
+<span class="umArrow">▾</span>
+</button>
+<div class="umDropdown" id="umDropdown">
+<button onclick="openProfile()">👤 <span>Профиль</span></button>
+<button onclick="enableNotif();closeUserMenu()" id="notifB">🔔 <span>Уведомления</span></button>
+<button id="adminMItem" onclick="toggleAdmin();closeUserMenu()">⚙️ <span>Админка</span></button>
+<div class="umDiv"></div>
+<button class="umExit" onclick="logout()">🚪 <span>Выйти</span></button>
+</div>
+</div>
 </div>
 <div class="layout">
 <aside class="sb" id="sb">
@@ -557,13 +554,18 @@ async function enableNotif(){
 if(!('Notification'in window))return alert('Нет уведомлений');
 const p=await Notification.requestPermission();notifPerm=p;
 const b=document.getElementById('notifB');
-if(p==='granted'){b.style.color='#4caf50';new Notification('Дом',{body:'Включено ✅'})}else{b.style.color='#8888a0'}
+if(p==='granted'){if(b)b.style.color='#4caf50';new Notification('Дом',{body:'Включено ✅'})}else{if(b)b.style.color='#8888a0'}
 }
 function showNotif(t,b){if(notifPerm!=='granted')return;if(!document.hidden)return;try{new Notification(t,{body:b,tag:'dom'})}catch(e){}}
 
 function initEP(){const g=document.getElementById('eg');g.innerHTML=EL.map(e=>'<button type="button" onclick="insE(\''+e+'\')">'+e+'</button>').join('')}
 function togEP(){const p=document.getElementById('ep');epOpen=!epOpen;p.classList.toggle('open',epOpen)}
 function insE(e){const i=document.getElementById('mI');i.value+=e;i.focus()}
+
+function toggleUserMenu(){const d=document.getElementById('umDropdown'),b=document.querySelector('.umBtn');d.classList.toggle('open');if(b)b.classList.toggle('open')}
+function closeUserMenu(){const d=document.getElementById('umDropdown'),b=document.querySelector('.umBtn');if(d)d.classList.remove('open');if(b)b.classList.remove('open')}
+function openProfile(){closeUserMenu();alert('Профиль: '+me+'\n(скоро)')}
+document.addEventListener('click',e=>{const um=document.getElementById('userMenu');if(um&&!um.contains(e.target))closeUserMenu()});
 
 document.getElementById('gBtn').onclick=async()=>{
 const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});
@@ -632,7 +634,7 @@ async function logout(){if(!confirm('Выйти?'))return;stopMus();if(vA){try{v
 function showBan(){document.getElementById('auth').style.display='none';document.getElementById('nickScr').style.display='none';document.getElementById('app').style.display='none';document.getElementById('banR').textContent=banR||'Доступ закрыт';document.getElementById('banO').classList.add('on')}
 
 window.addEventListener('DOMContentLoaded',async()=>{
-if('Notification'in window){notifPerm=Notification.permission;if(notifPerm==='granted')document.getElementById('notifB').style.color='#4caf50'}
+if('Notification'in window){notifPerm=Notification.permission;if(notifPerm==='granted'){const b=document.getElementById('notifB');if(b)b.style.color='#4caf50'}}
 const{data:{session}}=await sb.auth.getSession();
 if(session){curUser=session.user;await afterAuth()}else document.getElementById('auth').style.display='flex'
 });
@@ -649,7 +651,14 @@ function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{k
 gpres.on('presence',{event:'sync'},()=>{const s=gpres.presenceState();online=new Set();for(const k in s)if(k&&k!==meEnc)online.add(k);renderDMs();upChSt()})
 .subscribe(async st=>{if(st==='SUBSCRIBED')await gpres.track({nick:meEnc,since:Date.now()})})}
 
-function upAdminTog(){const b=document.getElementById('adminTog');b.style.display=iAmAdmin?'block':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка'}
+function upAdminTog(){
+const b=document.getElementById('adminTog');
+b.style.display=iAmAdmin?'inline-flex':'none';
+b.classList.toggle('on',adminMode);
+b.textContent=adminMode?'✖ Выйти':'⚙️ Админка';
+const m=document.getElementById('adminMItem');
+if(m)m.style.display=iAmAdmin?'flex':'none';
+}
 function toggleAdmin(){if(adminMode)exitAdmin();else enterAdmin()}
 function enterAdmin(){if(!iAmAdmin)return alert('Не админ');adminMode=true;document.body.classList.add('admin-mode');document.getElementById('adminB').classList.add('on');document.getElementById('ap').classList.add('on');upAdminTog();renderFlats()}
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');document.getElementById('adminB').classList.remove('on');document.getElementById('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
@@ -943,7 +952,7 @@ function startRcPt(){if(rcPt)clearInterval(rcPt);rcPt=setInterval(loadRM,3000)}
 async function sendRM(){if(isBanned)return showBan();const i=document.getElementById('rIn'),t=(i.value||'').trim();if(!t||!rcId)return;i.value='';i.focus();await sb.from('messages').insert({room_id:rcId,nick:meEnc,text:t,user_id:curUser.id});await loadRM();await loadDMs();renderDMs()}
 
 async function invite(){const i=document.getElementById('invI'),t=i.value.trim();if(!t)return;const f=flats[fmN];if(!f)return;if(f.owner_nick!==meEnc)return alert('Только хозяин');if(f.owner_nick2)return alert('Уже 2');if((f.max_people??2)<2)return alert('Запрещено');let te=null,tn=null;
-if(/^\d+$/.test(t)){const n=parseInt(t);if(n<1||n>30)return alert('Нет такой');if(n===fmN)return alert('Твоя');const tf=flats[n];if(!tf||!tf.owner_nick)return alert('Пусто');if(tf.owner_nick===meEnc)return alert('Себя');te=tf.owner_nick;tn=de(te)}else{const{data}=await sb.from('profiles').select('nick').eq('nick',t).maybeSingle();if(!data)return alert('Нет ника');te=en(data.nick);tn=data.nick;if(te===meEnc)return alert('Себя')}
+if(/^\d+$/.test(t)){const n=parseInt(t);if(n<1||n>30)return alert('Нет такой');if(n===fmN)return alert('Твоя');const tf=flats[n];if(!tf||!tf.owner_nick)return alert('Пусто');if(tf.owner_nick===meEnc)return alert('Себя');te=tf.owner_nick;tn=de(te)}else{const{data}=await sb.from('public_profiles').select('nick').eq('nick',t).maybeSingle();if(!data)return alert('Нет ника');te=en(data.nick);tn=data.nick;if(te===meEnc)return alert('Себя')}
 const inH=Object.values(flats).some(x=>x.owner_nick===te||x.owner_nick2===te);if(inH)return alert(tn+' уже живёт');const{error}=await sb.from('flats').update({owner_nick2:te}).eq('house_id',curHouse).eq('number',fmN);if(error)return alert('Ошибка: '+error.message);i.value='';alert(tn+' теперь с тобой!');await reloadHouse();await loadMyRooms();upFm();fmSw('room')}
 async function kickR(){const f=flats[fmN];if(!f||!f.owner_nick2)return;if(f.owner_nick!==meEnc)return alert('Только хозяин');if(!confirm('Выгнать '+de(f.owner_nick2)+'?'))return;await sb.from('flats').update({owner_nick2:null}).eq('house_id',curHouse).eq('number',fmN);await reloadHouse();upFm();fmSw('manage')}
 async function leaveFlat(){const f=flats[fmN];if(!f)return;const io=f.owner_nick===meEnc,ir=f.owner_nick2===meEnc;if(!confirm('Покинуть?'))return;const p={};if(io){if(f.owner_nick2){p.owner_nick=f.owner_nick2;p.owner_nick2=null}else p.owner_nick=null}else if(ir)p.owner_nick2=null;await sb.from('flats').update(p).eq('house_id',curHouse).eq('number',fmN);closeFm();await reloadHouse();await loadMyRooms()}
