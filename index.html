@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0f0f14">
+<title>Дом</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; height: 100%; overscroll-behavior: none; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: radial-gradient(ellipse at top, #1a1a24 0%, #0a0a10 60%, #050508 100%); background-attachment: fixed; color: #e8e8f0; -webkit-font-smoothing: antialiased; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(245,197,66,0.15); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(245,197,66,0.35); }
+
+  #auth { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; }
+  #auth h1 { margin: 0 0 32px; font-size: 42px; font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg, #f5c542 0%, #ff9d2e 50%, #f5c542 100%); background-size: 200% 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 4s ease-in-out infinite; }
+  @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+  .auth-tabs { display: flex; gap: 4px; margin-bottom: 22px; background: rgba(255,255,255,0.04); padding: 5px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(20px); }
+  .auth-tab { padding: 10px 24px; border-radius: 10px; cursor: pointer; color: #7a7a88; font-size: 14px; font-weight: 600; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+  .auth-tab.active { background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; box-shadow: 0 8px 24px rgba(245,197,66,0.35); }
+  .auth-form { display: flex; flex-direction: column; gap: 12px; width: 340px; max-width: 100%; }
+  .auth-form input { padding: 14px 18px; font-size: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03); color: #e8e8f0; transition: all 0.25s; font-family: inherit; }
+  .auth-form input:focus { outline: none; border-color: rgba(245,197,66,0.5); background: rgba(255,255,255,0.05); box-shadow: 0 0 0 4px rgba(245,197,66,0.08); }
+  .auth-form button { padding: 14px; font-size: 15px; border-radius: 12px; border: none; background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; cursor: pointer; font-weight: 700; transition: all 0.25s; box-shadow: 0 8px 24px rgba(245,197,66,0.25); }
+  .auth-form button:hover { transform: translateY(-2px); }
+  .auth-form button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .auth-err { color: #ff6b6b; font-size: 13px; min-height: 18px; text-align: center; }
+
+  #myInfo { position: absolute; top: 16px; right: 16px; font-size: 13px; color: #8888a0; z-index: 5; display: flex; gap: 12px; align-items: center; background: rgba(20,20,28,0.6); padding: 8px 14px; border-radius: 12px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); }
+  #myInfo button { background: transparent; border: none; color: #f5c542; cursor: pointer; font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; }
+  #adminToggleBtn { display: none; position: absolute; top: 16px; right: 200px; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; border: none; padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; z-index: 5; box-shadow: 0 6px 20px rgba(211,47,47,0.35); transition: all 0.3s; }
+  #adminToggleBtn:hover { transform: translateY(-2px); }
+  #adminToggleBtn.on { background: linear-gradient(135deg, #444, #222); }
+
+  #app { display: none; height: 100vh; overflow: hidden; position: relative; }
+  .layout { display: flex; height: 100vh; }
+  .sidebar { width: 300px; background: linear-gradient(180deg, rgba(20,20,26,0.95), rgba(14,14,20,0.98)); border-right: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-head { padding: 18px 20px; font-size: 14px; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; }
+  .sidebar-head .close-side { display: none; background: transparent; border: none; color: #8888a0; font-size: 26px; cursor: pointer; padding: 0 6px; line-height: 1; }
+  #dmList { flex: 1; overflow-y: auto; padding: 6px; }
+  .notif-empty { padding: 60px 24px; text-align: center; color: #444458; font-size: 13px; line-height: 1.7; }
+  .notif { padding: 14px 40px 14px 16px; margin-bottom: 4px; border-radius: 12px; cursor: pointer; position: relative; transition: all 0.25s; border: 1px solid transparent; }
+  .notif:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.06); }
+  .notif-room { font-size: 13px; color: #f5c542; font-weight: 700; margin-bottom: 4px; }
+  .notif-text { font-size: 13px; color: #8888a0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .notif-badge { position: absolute; right: 40px; top: 14px; background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 10px; box-shadow: 0 2px 8px rgba(245,197,66,0.4); }
+
+  /* === КРЕСТИК СКРЫТИЯ ЧАТА === */
+  .hide-chat-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: rgba(211,47,47,0.85);
+    color: #fff; border: none;
+    cursor: pointer; font-size: 12px; font-weight: bold;
+    line-height: 1; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s, transform 0.2s;
+    z-index: 3;
+  }
+  .notif:hover .hide-chat-btn { opacity: 1; }
+  .hide-chat-btn:hover { background: #d32f2f; transform: scale(1.15); }
+
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+  .menu-btn { display: none; position: absolute; top: 16px; left: 16px; z-index: 5; background: rgba(30,30,40,0.8); border: 1px solid rgba(255,255,255,0.08); color: #e8e8f0; border-radius: 10px; font-size: 20px; padding: 8px 14px; cursor: pointer; }
+  #adminBadge { display: none; position: absolute; top: 16px; right: 16px; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; padding: 8px 16px; border-radius: 12px; font-size: 12px; font-weight: 800; z-index: 6; cursor: pointer; box-shadow: 0 6px 20px rgba(211,47,47,0.4); }
+  #adminBadge.on { display: block; }
+
+  #bannedOverlay { display: none; position: fixed; inset: 0; background: radial-gradient(ellipse at center, #2a0a0a 0%, #0a0505 100%); z-index: 9999; align-items: center; justify-content: center; flex-direction: column; padding: 30px; text-align: center; }
+  #bannedOverlay.on { display: flex; }
+  #bannedOverlay h1 { color: #ff4444; font-size: 42px; margin-bottom: 20px; font-weight: 800; }
+  #bannedOverlay p { color: #aa8888; font-size: 16px; max-width: 420px; line-height: 1.7; }
+  #bannedOverlay button { margin-top: 30px; padding: 14px 32px; border-radius: 12px; border: none; background: rgba(255,255,255,0.08); color: #e8e8f0; cursor: pointer; font-weight: 700; }
+
+  #housebar { display: flex; gap: 10px; padding: 18px 20px; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.04); flex-shrink: 0; scrollbar-width: none; background: rgba(15,15,22,0.5); }
+  #housebar::-webkit-scrollbar { display: none; }
+  .housebtn { padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); color: #a0a0b8; cursor: pointer; font-size: 14px; white-space: nowrap; flex-shrink: 0; font-weight: 600; transition: all 0.3s; }
+  .housebtn:hover { background: rgba(255,255,255,0.08); color: #e8e8f0; transform: translateY(-2px); }
+  .housebtn.active { background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; border-color: transparent; box-shadow: 0 8px 24px rgba(245,197,66,0.3); }
+  .housebtn.blocked { background: linear-gradient(135deg, #5a1a1a, #3a0a0a); border-color: rgba(211,47,47,0.5); color: #ff8888; }
+  .housebtn.new { background: linear-gradient(135deg, #4caf50, #2e7d32); color: #fff; border-color: transparent; }
+
+  #house { flex: 1; display: flex; gap: 24px; justify-content: center; align-items: center; overflow: auto; padding: 32px; }
+  .entrance-wrap { display: flex; flex-direction: column; gap: 12px; align-items: stretch; animation: fadeInUp 0.5s cubic-bezier(0.34,1.56,0.64,1) backwards; }
+  .entrance-wrap:nth-child(1) { animation-delay: 0.05s; }
+  .entrance-wrap:nth-child(2) { animation-delay: 0.12s; }
+  .entrance-wrap:nth-child(3) { animation-delay: 0.19s; }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .entrance { display: flex; flex-direction: column-reverse; gap: 7px; }
+  .floor { display: flex; gap: 7px; }
+  .flat { width: 78px; height: 78px; background: linear-gradient(145deg, #26262f, #1a1a22); border: 2px solid rgba(255,255,255,0.06); border-radius: 14px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; color: #666678; user-select: none; position: relative; overflow: hidden; background-size: cover; background-position: center; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .flat:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 12px 28px rgba(0,0,0,0.5); border-color: rgba(245,197,66,0.35); }
+  .flat.mine { background: linear-gradient(145deg, #4caf50, #2e7d32); color: #fff; border-color: rgba(76,175,80,0.6); }
+  .flat.taken { background: linear-gradient(145deg, #f5c542, #d4a838); color: #000; border-color: rgba(245,197,66,0.6); }
+  .flat.blocked { border-color: #d32f2f !important; }
+  .flat.blocked::after { content: '🔒'; position: absolute; top: 4px; right: 6px; font-size: 13px; z-index: 3; }
+  body.admin-mode .flat.taken { cursor: crosshair; box-shadow: 0 0 0 3px rgba(211,47,47,0.6) inset; }
+  .flat > .num, .flat > .nick, .flat > .nick2 { position: relative; z-index: 1; text-shadow: 0 1px 4px rgba(0,0,0,0.8); }
+  .flat.has-photo > .num, .flat.has-photo > .nick, .flat.has-photo > .nick2 { color: #fff; }
+  .flat.has-photo { background-color: #0a0a10; }
+  .flat .num { font-size: 15px; font-weight: 800; }
+  .flat .nick, .flat .nick2 { font-size: 10px; margin-top: 2px; font-weight: 600; }
+  .flat.has-photo::before { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.6)); z-index: 0; }
+  .flat.mine.has-photo::before { background: linear-gradient(180deg, rgba(76,175,80,0.35), rgba(46,125,50,0.55)); }
+  .flat.taken.has-photo::before { background: linear-gradient(180deg, rgba(245,197,66,0.3), rgba(212,168,56,0.5)); }
+
+  .entrance-btn { padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); color: #a0a0b8; cursor: pointer; font-size: 13px; font-weight: 700; text-align: center; transition: all 0.3s; }
+  .entrance-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(245,197,66,0.3); color: #e8e8f0; transform: translateY(-2px); }
+  .entrance-btn.mine { background: linear-gradient(135deg, #4caf50, #2e7d32); color: #fff; border-color: transparent; }
+  .entrance-btn.blocked { background: linear-gradient(135deg, #5a1a1a, #3a0a0a); border-color: rgba(211,47,47,0.5); color: #ff8888; }
+  .entrance-btn.other-entrance { opacity: 0.3; cursor: not-allowed; }
+
+  #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 100; backdrop-filter: blur(8px); }
+  #modal.open { display: flex; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-box { background: linear-gradient(180deg, #1a1a22, #14141c); padding: 20px; border-radius: 20px; width: 540px; max-width: 92vw; height: 580px; max-height: 92vh; display: flex; flex-direction: column; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 30px 80px rgba(0,0,0,0.7); animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+  .bg-layer { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background-color: #0a0a10; }
+  .bg-layer .bg-img { position: absolute; inset: 0; background-repeat: no-repeat; }
+  .bg-layer::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.72); }
+  .modal-box > *:not(.bg-layer) { position: relative; z-index: 1; }
+  .modal-box h2 { margin: 0 0 14px; font-size: 17px; font-weight: 700; flex-shrink: 0; padding-right: 50px; }
+  #chat { flex: 1 1 auto; min-height: 0; overflow-y: auto; background: rgba(0,0,0,0.5); padding: 14px; border-radius: 14px; margin-bottom: 12px; font-size: 14px; -webkit-overflow-scrolling: touch; border: 1px solid rgba(255,255,255,0.04); position: relative; }
+  #chat .msg, #roomChat .msg { margin-bottom: 10px; word-wrap: break-word; padding: 8px 12px; border-radius: 12px; background: rgba(255,255,255,0.03); animation: msgIn 0.3s; max-width: 85%; display: inline-block; width: 100%; position: relative; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  #chat .msg.mine, #roomChat .msg.mine { background: linear-gradient(135deg, rgba(76,175,80,0.18), rgba(46,125,50,0.12)); border: 1px solid rgba(76,175,80,0.25); text-align: right; float: right; }
+  #chat .msg:not(.mine), #roomChat .msg:not(.mine) { float: left; border: 1px solid rgba(255,255,255,0.06); }
+  #chat::after, #roomChat::after { content: ''; display: block; clear: both; }
+  #chat .msg.mine .nick, #roomChat .msg.mine .nick { color: #6fdc6f; }
+  #chat .nick, #roomChat .nick { color: #f5c542; font-weight: 700; font-size: 12px; }
+  #chat .time, #roomChat .time { color: #55556a; font-size: 11px; margin-left: 8px; }
+  #chat audio, #roomChat audio { max-width: 240px; margin-top: 6px; filter: invert(0.9) hue-rotate(180deg); }
+  .msg-photo { max-width: 100%; max-height: 280px; border-radius: 10px; margin-top: 6px; cursor: pointer; display: block; transition: transform 0.2s; }
+  .msg-photo:hover { transform: scale(1.02); }
+
+  .del-msg-btn { position: absolute; top: 4px; left: -4px; transform: translateX(-50%); width: 22px; height: 22px; border-radius: 50%; background: rgba(211,47,47,0.85); color: #fff; border: none; cursor: pointer; font-size: 12px; font-weight: bold; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; z-index: 2; }
+  #chat .msg:hover .del-msg-btn, #roomChat .msg:hover .del-msg-btn { opacity: 1; }
+  #chat .msg.mine .del-msg-btn, #roomChat .msg.mine .del-msg-btn { left: auto; right: -4px; transform: translateX(50%); }
+  .del-msg-btn:hover { background: #d32f2f; }
+  @media (max-width: 768px) { .del-msg-btn { opacity: 1; width: 24px; height: 24px; font-size: 13px; } }
+
+  #typingHint { position: absolute; bottom: 60px; left: 20px; font-size: 12px; color: #8888a0; font-style: italic; opacity: 0; transition: opacity 0.3s; z-index: 3; pointer-events: none; }
+  #typingHint.visible { opacity: 1; }
+  .typing-dots span { animation: blink 1.4s infinite both; }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+  #onlineDot { position: absolute; bottom: 20px; right: 20px; width: 14px; height: 14px; border-radius: 50%; background: #444; z-index: 3; display: none; box-shadow: 0 0 0 3px rgba(0,0,0,0.4); transition: all 0.3s; }
+  #onlineDot.visible { display: block; }
+  #onlineDot.online { background: #4caf50; box-shadow: 0 0 0 3px rgba(76,175,80,0.3), 0 0 14px #4caf50; animation: pulse-green 2s infinite; }
+  @keyframes pulse-green { 0%,100% { box-shadow: 0 0 0 3px rgba(76,175,80,0.3), 0 0 14px #4caf50; } 50% { box-shadow: 0 0 0 3px rgba(76,175,80,0.6), 0 0 22px #4caf50; } }
+  #onlineLabel { position: absolute; bottom: 22px; right: 40px; font-size: 11px; color: #4caf50; display: none; font-weight: 600; }
+  #onlineLabel.visible { display: block; }
+  #onlineLabel.offline { color: #8888a0; }
+
+  .input-row { display: flex; gap: 6px; flex-shrink: 0; align-items: stretch; }
+  .input-row input { flex: 1; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.4); color: #e8e8f0; font-size: 15px; min-width: 0; font-family: inherit; transition: all 0.25s; }
+  .input-row input:focus { outline: none; border-color: rgba(245,197,66,0.5); background: rgba(0,0,0,0.6); box-shadow: 0 0 0 4px rgba(245,197,66,0.08); }
+  .input-row button { padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; cursor: pointer; font-weight: 800; font-size: 18px; flex-shrink: 0; touch-action: manipulation; transition: all 0.25s; box-shadow: 0 6px 18px rgba(245,197,66,0.3); min-width: 50px; }
+  .input-row button:hover { transform: translateY(-2px); }
+  .input-row button:active { transform: translateY(0) scale(0.94); }
+  .icon-btn { background: rgba(255,255,255,0.05) !important; color: #f5c542 !important; box-shadow: none !important; border: 1px solid rgba(255,255,255,0.08) !important; padding: 14px 14px !important; min-width: 46px !important; }
+  .voice-btn.recording { background: linear-gradient(135deg, #d32f2f, #b71c1c) !important; color: #fff !important; animation: rec-pulse 1s infinite; }
+  @keyframes rec-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+  .no-write { padding: 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(90,26,26,0.6), rgba(58,10,10,0.6)); border: 1px solid rgba(211,47,47,0.3); color: #ff8888; font-size: 13px; text-align: center; flex-shrink: 0; font-weight: 600; }
+  .modal-box .close { margin-top: 10px; padding: 10px 20px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.4); color: #a0a0b8; cursor: pointer; align-self: flex-start; flex-shrink: 0; font-weight: 600; }
+
+  .music-btn { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.6); border: 1px solid rgba(245,197,66,0.5); color: #f5c542; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; z-index: 5; transition: all 0.3s; }
+  .music-btn.playing { background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; border-color: transparent; }
+
+  #flatModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; z-index: 250; padding: 20px; backdrop-filter: blur(8px); }
+  #flatModal.open { display: flex; animation: fadeIn 0.25s ease; }
+  .fm-box { background: linear-gradient(180deg, #1a1a22, #14141c); padding: 22px; border-radius: 20px; width: 500px; max-width: 100%; max-height: 95vh; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; overflow-y: auto; }
+  .fm-box h3 { margin: 0 0 16px; font-size: 18px; font-weight: 700; }
+  .fm-tabs { display: flex; gap: 6px; margin-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px; overflow-x: auto; scrollbar-width: none; }
+  .fm-tabs::-webkit-scrollbar { display: none; }
+  .fm-tab { padding: 9px 16px; border-radius: 10px; background: rgba(255,255,255,0.04); cursor: pointer; font-size: 13px; color: #a0a0b8; font-weight: 600; white-space: nowrap; transition: all 0.3s; }
+  .fm-tab.active { background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; }
+  .fm-pane { display: flex; flex-direction: column; }
+
+  .media-section { margin-bottom: 20px; }
+  .media-section label { display: block; font-size: 13px; color: #a0a0b8; margin-bottom: 10px; font-weight: 600; }
+  .media-section input[type=file] { width: 100%; font-size: 13px; color: #c8c8d0; }
+  .square-preview { width: 220px; height: 220px; margin: 0 auto 14px; border-radius: 16px; background: #0a0a10; border: 1px solid rgba(255,255,255,0.08); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #444458; font-size: 12px; }
+  .square-preview .preview-img { position: absolute; inset: 0; background-repeat: no-repeat; }
+  .slider-row { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+  .slider-row span { font-size: 12px; color: #8888a0; min-width: 60px; font-weight: 600; }
+  .slider-row input[type=range] { flex: 1; accent-color: #f5c542; }
+  .slider-row .val { font-size: 12px; color: #f5c542; min-width: 44px; text-align: right; font-weight: 700; }
+
+  #roomChat { min-height: 200px; max-height: 40vh; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 14px; border-radius: 14px; margin-bottom: 12px; font-size: 14px; border: 1px solid rgba(255,255,255,0.04); }
+
+  .invite-box { display: flex; gap: 10px; margin-bottom: 14px; }
+  .invite-box input { flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.4); color: #e8e8f0; font-size: 14px; min-width: 0; font-family: inherit; }
+  .invite-box input:focus { outline: none; border-color: rgba(245,197,66,0.5); }
+  .invite-box button { padding: 12px 20px; border-radius: 12px; border: none; background: linear-gradient(135deg, #4caf50, #2e7d32); color: #fff; cursor: pointer; font-weight: 700; flex-shrink: 0; }
+  .invite-hint { font-size: 12px; color: #666678; margin-bottom: 14px; line-height: 1.6; }
+
+  .roommate-card { background: rgba(255,255,255,0.04); padding: 14px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.06); }
+  .roommate-card .rc-name { font-size: 15px; color: #fff; font-weight: 700; }
+  .roommate-card .rc-tag { font-size: 11px; color: #8888a0; margin-top: 3px; }
+  .roommate-card button { padding: 8px 14px; border-radius: 8px; border: none; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; cursor: pointer; font-size: 12px; font-weight: 700; }
+  .roommate-empty { color: #55556a; font-size: 13px; text-align: center; padding: 30px; }
+
+  .fm-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+  .fm-actions button { padding: 12px 20px; border-radius: 12px; border: none; cursor: pointer; font-weight: 700; font-size: 14px; transition: all 0.3s; }
+  .fm-actions .save { background: linear-gradient(135deg, #f5c542, #ff9d2e); color: #000; }
+  .fm-actions .cancel { background: rgba(255,255,255,0.06); color: #c8c8d0; }
+  .fm-actions .leave { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; margin-right: auto; }
+  .fm-status { color: #8888a0; font-size: 12px; margin-top: 10px; min-height: 18px; }
+
+  #adminPanel { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(180deg, rgba(26,26,34,0.98), rgba(20,20,28,0.98)); border: 1px solid rgba(211,47,47,0.4); border-radius: 16px; padding: 16px 20px; z-index: 150; font-size: 13px; min-width: 260px; backdrop-filter: blur(20px); }
+  #adminPanel.on { display: block; }
+  #adminPanel .title { color: #ff5555; font-weight: 800; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  #adminPanel .title button { background: transparent; border: none; color: #8888a0; cursor: pointer; font-size: 20px; padding: 0 4px; }
+  #adminPanel .hint { color: #8888a0; font-size: 12px; line-height: 1.6; margin-bottom: 12px; }
+  #adminPanel .openBtn { width: 100%; padding: 12px; border-radius: 10px; border: none; background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; cursor: pointer; font-weight: 700; font-size: 14px; }
+
+  #adminFullModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); align-items: center; justify-content: center; z-index: 400; padding: 20px; backdrop-filter: blur(12px); }
+  #adminFullModal.open { display: flex; }
+  .afm-box { background: linear-gradient(180deg, #1a1a22, #0f0f16); border: 1px solid rgba(211,47,47,0.35); border-radius: 20px; width: 680px; max-width: 100%; height: 90vh; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+  .afm-head { padding: 18px 22px; border-bottom: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+  .afm-head h3 { margin: 0; font-size: 18px; color: #ff5555; font-weight: 800; }
+  .afm-head button { background: transparent; border: none; color: #8888a0; font-size: 26px; cursor: pointer; padding: 0 6px; }
+  .afm-tabs { display: flex; gap: 6px; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; overflow-x: auto; scrollbar-width: none; }
+  .afm-tabs::-webkit-scrollbar { display: none; }
+  .afm-tab { padding: 9px 16px; border-radius: 10px; background: rgba(255,255,255,0.04); color: #a0a0b8; cursor: pointer; font-size: 13px; white-space: nowrap; font-weight: 600; }
+  .afm-tab.active { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; }
+  .afm-body { flex: 1; overflow-y: auto; padding: 18px; }
+  .afm-row { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 16px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+  .afm-row .info { flex: 1; min-width: 200px; }
+  .afm-row .title { font-size: 14px; font-weight: 700; color: #fff; }
+  .afm-row .sub { font-size: 12px; color: #8888a0; margin-top: 4px; }
+  .afm-row .sub.roommate { color: #8bc34a; }
+  .afm-row .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .afm-btn { padding: 8px 14px; border-radius: 9px; border: none; cursor: pointer; font-size: 12px; font-weight: 700; transition: all 0.25s; }
+  .afm-btn:hover { transform: translateY(-2px); }
+  .afm-btn.red { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #fff; }
+  .afm-btn.green { background: linear-gradient(135deg, #4caf50, #2e7d32); color: #fff; }
+  .afm-btn.gray { background: rgba(255,255,255,0.06); color: #c8c8d0; }
+  .afm-empty { padding: 40px 20px; text-align: center; color: #55556a; font-size: 13px; }
+  .afm-badge { display: inline-block; padding: 3px 9px; border-radius: 10px; font-size: 11px; font-weight: 700; margin-left: 8px; }
+  .afm-badge.red { background: rgba(211,47,47,0.15); color: #ff6666; }
+  .afm-badge.green { background: rgba(76,175,80,0.15); color: #8bc34a; }
+  .user-row { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 16px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; border: 1px solid rgba(255,255,255,0.05); }
+  .user-row.banned { border-left: 4px solid #d32f2f; }
+  .user-row .nick { font-size: 14px; font-weight: 700; color: #fff; flex: 1; min-width: 120px; }
+  .user-row .reason { font-size: 11px; color: #ff6666; margin-top: 4px; }
+
+  #photoViewer { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9998; align-items: center; justify-content: center; cursor: zoom-out; padding: 20px; }
+  #photoViewer.open { display: flex; }
+  #photoViewer img { max-width: 100%; max-height: 100%; border-radius: 8px; }
+
+  @media (max-width: 768px) {
+    .sidebar { position: fixed; left: -100%; top: 0; height: 100vh; width: 85%; max-width: 340px; z-index: 200; transition: left 0.3s; box-shadow: 8px 0 40px rgba(0,0,0,0.7); }
+    .sidebar.open { left: 0; }
+    .sidebar-head .close-side { display: block; }
+    .menu-btn { display: block; }
+    .hide-chat-btn { opacity: 1; width: 24px; height: 24px; font-size: 13px; }
+    .notif { padding-right: 44px; }
+    .notif-badge { right: 44px !important; }
+    #housebar { padding: 14px 14px 14px 70px; }
+    #house { gap: 12px; padding: 16px; align-items: center; justify-content: center; }
+    .entrance-wrap { gap: 8px; }
+    .entrance { gap: 5px; }
+    .floor { gap: 5px; }
+    .flat { width: 48px; height: 48px; font-size: 8px; border-radius: 10px; border-width: 1.5px; }
+    .flat .num { font-size: 13px; }
+    .flat .nick, .flat .nick2 { display: none; }
+    .entrance-btn { padding: 7px 8px; font-size: 11px; border-radius: 10px; }
+    .modal-box { width: 100vw; height: 100dvh; max-width: 100vw; max-height: 100dvh; border-radius: 0; padding: 16px; padding-top: 60px; }
+    .modal-box h2 { font-size: 15px; padding-right: 44px; }
+    #chat { font-size: 15px; padding: 10px; }
+    .input-row input { padding: 14px 14px; font-size: 16px; }
+    .input-row button { padding: 14px; font-size: 20px; min-width: 48px; }
+    .no-write { padding: 16px; font-size: 13px; }
+    .modal-box .close { padding: 12px 20px; font-size: 14px; }
+    #adminBadge { top: 76px; right: 14px; font-size: 11px; padding: 6px 12px; }
+    #adminToggleBtn { top: 76px; right: 96px; font-size: 11px; padding: 6px 12px; }
+    #adminPanel { bottom: 14px; right: 14px; left: 14px; }
+    #myInfo { font-size: 12px; padding: 6px 12px; top: 14px; right: 14px; }
+    .music-btn { top: 14px; right: 14px; padding: 6px 14px; font-size: 12px; }
+    .square-preview { width: 170px; height: 170px; }
+    .fm-box { padding: 16px; }
+    .afm-box { height: 95vh; }
+    #bannedOverlay h1 { font-size: 28px; }
+    #onlineDot { bottom: 14px; right: 14px; width: 12px; height: 12px; }
+    #onlineLabel { bottom: 16px; right: 32px; font-size: 10px; }
+  }
+  @media (max-width: 380px) {
+    .flat { width: 42px; height: 42px; }
+    .flat .num { font-size: 12px; }
+    .entrance-btn { font-size: 10px; padding: 6px 6px; }
+    .square-preview { width: 150px; height: 150px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="photoViewer" onclick="closePhotoViewer()"><img id="photoViewerImg" src=""></div>
+
+<div id="bannedOverlay">
+  <h1>🚫 Ты забанен</h1>
+  <p id="banReasonText">Твой доступ к дому закрыт администратором.</p>
+  <button onclick="logout()">Выйти</button>
+</div>
+
+<div id="auth">
+  <h1>🏠 Дом</h1>
+  <div class="auth-tabs">
+    <div class="auth-tab active" data-tab="login">Вход</div>
+    <div class="auth-tab" data-tab="signup">Регистрация</div>
+  </div>
+  <div class="auth-form">
+    <input id="emailInput" type="email" placeholder="email" autocomplete="email" inputmode="email">
+    <input id="passInput" type="password" placeholder="пароль" autocomplete="current-password">
+    <input id="nickAuthInput" type="text" placeholder="ник (только при регистрации)" maxlength="20" style="display:none">
+    <button id="authBtn" type="button">Войти</button>
+    <div class="auth-err" id="authErr"></div>
+  </div>
+</div>
+
+<div id="app">
+  <button id="adminToggleBtn" onclick="toggleAdminMode()">⚙️ Админка</button>
+  <div id="myInfo">
+    <span id="myNickLabel"></span>
+    <button onclick="logout()">выйти</button>
+  </div>
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <span>💬 Мои чаты</span>
+        <button class="close-side" id="closeSide">×</button>
+      </div>
+      <div id="dmList"></div>
+    </aside>
+    <main class="main">
+      <button class="menu-btn" id="menuBtn">☰</button>
+      <div id="adminBadge" onclick="openAdminFull()">🔴 ADMIN</div>
+      <div id="housebar"></div>
+      <div id="house"></div>
+    </main>
+  </div>
+</div>
+
+<div id="adminPanel">
+  <div class="title">
+    <span>⚙️ Админ-режим</span>
+    <button onclick="exitAdmin()">×</button>
+  </div>
+  <div class="hint">Клик по квартире — выселить.</div>
+  <button class="openBtn" onclick="openAdminFull()">⚙️ Полное меню</button>
+</div>
+
+<div id="adminFullModal">
+  <div class="afm-box">
+    <div class="afm-head">
+      <h3>⚙️ Админ-панель</h3>
+      <button onclick="closeAdminFull()">×</button>
+    </div>
+    <div class="afm-tabs">
+      <div class="afm-tab active" data-t="flats" onclick="afmSwitch('flats')">🏠 Квартиры</div>
+      <div class="afm-tab" data-t="entrances" onclick="afmSwitch('entrances')">🏢 Подъезды</div>
+      <div class="afm-tab" data-t="house" onclick="afmSwitch('house')">🏘 Дом</div>
+      <div class="afm-tab" data-t="users" onclick="afmSwitch('users')">👥 Пользователи</div>
+    </div>
+    <div class="afm-body" id="afmBody"></div>
+  </div>
+</div>
+
+<div id="flatModal">
+  <div class="fm-box">
+    <h3 id="fmTitle">🏠 Квартира</h3>
+    <div class="fm-tabs">
+      <div class="fm-tab active" data-tab="media" onclick="fmSwitch('media')">📷 Медиа</div>
+      <div class="fm-tab" data-tab="room" id="fmTabRoom" onclick="fmSwitch('room')" style="display:none">💬 Комната</div>
+      <div class="fm-tab" data-tab="manage" id="fmTabManage" onclick="fmSwitch('manage')" style="display:none">👥 Сосед</div>
+    </div>
+    <div class="fm-pane" id="fmPaneMedia">
+      <div class="media-section">
+        <label>📷 Квадратное фото квартиры</label>
+        <div class="square-preview" id="squarePreview">
+          <div class="preview-img" id="previewImg"></div>
+          <span id="previewEmpty">нет фото</span>
+        </div>
+        <input type="file" id="photoInput" accept="image/*">
+        <div class="slider-row" id="posXRow" style="display:none"><span>↔ сдвиг</span><input type="range" id="photoX" min="0" max="100" value="50"><span class="val" id="valX">50</span></div>
+        <div class="slider-row" id="posYRow" style="display:none"><span>↕ сдвиг</span><input type="range" id="photoY" min="0" max="100" value="50"><span class="val" id="valY">50</span></div>
+        <div class="slider-row" id="zoomRow" style="display:none"><span>🔍 зум</span><input type="range" id="photoZoom" min="50" max="300" value="100"><span class="val" id="valZoom">100%</span></div>
+      </div>
+      <div class="media-section">
+        <label>🎵 Музыка (mp3)</label>
+        <input type="file" id="musicInput" accept="audio/mpeg,audio/mp3,audio/*">
+        <div id="musicCurrent" style="font-size:12px;color:#666678;margin-top:6px;"></div>
+      </div>
+      <div class="fm-status" id="mediaStatus"></div>
+    </div>
+    <div class="fm-pane" id="fmPaneRoom" style="display:none">
+      <div id="roomChat"></div>
+      <div class="input-row">
+        <input id="roomInput" placeholder="Сообщение соседу..." maxlength="500" enterkeyhint="send">
+        <button id="roomPhotoBtn" class="icon-btn" type="button" title="Фото">📎</button>
+        <button id="roomVoiceBtn" class="icon-btn" type="button" title="Голосовое">🎤</button>
+        <button id="roomSendBtn" type="button">→</button>
+      </div>
+    </div>
+    <div class="fm-pane" id="fmPaneManage" style="display:none">
+      <div class="invite-hint">Напиши <b>ник</b> или <b>номер квартиры</b> в этом доме.</div>
+      <div class="invite-box">
+        <input id="inviteInput" placeholder="Ник или № квартиры" maxlength="20">
+        <button onclick="sendInvite()">Пригласить</button>
+      </div>
+      <div id="roommateInfo"></div>
+    </div>
+    <div class="fm-actions">
+      <button class="leave" id="leaveBtn" onclick="leaveFlat()" style="display:none">Покинуть</button>
+      <button class="cancel" onclick="closeFlatModal()">Закрыть</button>
+      <button class="save" id="saveMediaBtn" onclick="saveMedia()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal">
+  <div class="modal-box" id="modalBox">
+    <div class="bg-layer" id="bgLayer"></div>
+    <button class="music-btn" id="musicBtn" style="display:none;" type="button"></button>
+    <h2 id="roomTitle">Диалог</h2>
+    <div id="chat"></div>
+    <div id="typingHint">печатает<span class="typing-dots"><span>.</span><span>.</span><span>.</span></span></div>
+    <div class="input-row" id="inputRow">
+      <input id="msgInput" placeholder="Сообщение..." maxlength="500" enterkeyhint="send" autocomplete="off" autocorrect="on">
+      <button id="msgPhotoBtn" class="icon-btn" type="button" title="Фото">📎</button>
+      <button id="msgVoiceBtn" class="icon-btn" type="button" title="Голосовое">🎤</button>
+      <button id="msgSendBtn" type="button">→</button>
+    </div>
+    <div class="no-write" id="noWrite" style="display:none;">Ты можешь писать только в свой подъезд</div>
+    <button class="close" onclick="closeModal()">Закрыть</button>
+    <div id="onlineLabel"></div>
+    <div id="onlineDot"></div>
+  </div>
+</div>
+
+<input type="file" id="msgPhotoInput" accept="image/*" style="display:none">
+<input type="file" id="roomPhotoInput" accept="image/*" style="display:none">
+
+<audio id="bgAudio" loop preload="auto"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://uuhgpnjpulrazluiqreb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let adminMode = false, authTab = 'login';
+
+function encNick(n) { return Array.from(new TextEncoder().encode(n)).map(b => b.toString(16).padStart(2,'0')).join(''); }
+function decNick(s) {
+  if (!s) return '';
+  if (/^[0-9a-f]+$/.test(s) && s.length % 2 === 0) {
+    try { const b = s.match(/.{2}/g).map(x => parseInt(x,16)); return new TextDecoder().decode(new Uint8Array(b)); } catch(e){}
+  }
+  try { return decodeURIComponent(s); } catch(e) { return s; }
+}
+
+let currentUser = null, me = null, meEnc = null;
+let iAmAdmin = false;
+let isBanned = false, banReason = '';
+let houses = [], currentHouseId = null, flats = {}, houseData = null;
+let houseMedia = {};
+let currentRoom = null, currentRoomType = null, currentEntranceGlobal = null, currentPartnerEnc = null;
+let currentChannel = null, pollTimer = null, mediaChannel = null, flatsChannel = null, housesChannel = null, profileChannel = null;
+let presenceChannel = null, typingChannel = null;
+let unread = {}, myDms = [], locking = false;
+let photoToUpload = null, musicToUpload = null, editingMedia = null;
+let fmNum = null, fmIsOwner = false, fmIsRoommate = false;
+let roomChatRoomId = null, roomChatChannel = null, roomChatPollTimer = null;
+let myRooms = new Set();
+let currentMusicUrl = null;
+let afmTab = 'flats';
+let allUsers = [];
+
+let mediaRecorder = null;
+let audioChunks = [];
+let recordingStart = 0;
+let recordingTarget = null;
+
+let msgLoadToken = 0, roomMsgLoadToken = 0;
+let hiddenCache = new Set();
+let lastTypingSent = 0;
+let typingHideTimer = null;
+
+function dmRoomId(a, b) { const s = [a,b].sort(); return 'dm_' + s[0] + '__' + s[1]; }
+function partnerFromRoom(roomId) { const m = roomId.match(/^dm_(.+)__(.+)$/); if (!m) return null; return m[1] === meEnc ? m[2] : m[1]; }
+function isMyDm(roomId) { const m = roomId.match(/^dm_(.+)__(.+)$/); if (!m) return false; return m[1] === meEnc || m[2] === meEnc; }
+function isMyRoom(roomId) { return isMyDm(roomId) || myRooms.has(roomId); }
+
+// ============ AUTH ============
+document.querySelectorAll('.auth-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    authTab = t.dataset.tab;
+    document.querySelectorAll('.auth-tab').forEach(x => x.classList.toggle('active', x.dataset.tab === authTab));
+    document.getElementById('nickAuthInput').style.display = authTab === 'signup' ? 'block' : 'none';
+    document.getElementById('authBtn').textContent = authTab === 'signup' ? 'Зарегистрироваться' : 'Войти';
+    document.getElementById('authErr').textContent = '';
+  });
+});
+document.getElementById('passInput').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
+document.getElementById('nickAuthInput').addEventListener('keydown', e => { if (e.key === 'Enter') doAuth(); });
+document.getElementById('authBtn').addEventListener('click', doAuth);
+
+async function doAuth() {
+  const err = document.getElementById('authErr');
+  err.textContent = '';
+  const email = document.getElementById('emailInput').value.trim();
+  const password = document.getElementById('passInput').value;
+  if (!email || !password) return err.textContent = 'Заполни email и пароль';
+  if (password.length < 6) return err.textContent = 'Пароль минимум 6 символов';
+  document.getElementById('authBtn').disabled = true;
+  try {
+    if (authTab === 'signup') {
+      const nick = document.getElementById('nickAuthInput').value.trim();
+      if (!nick) { err.textContent = 'Введи ник'; return; }
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) { err.textContent = error.message; return; }
+      if (!data.user) { err.textContent = 'Не получилось создать аккаунт'; return; }
+      const { error: e2 } = await sb.from('profiles').insert({ id: data.user.id, nick });
+      if (e2) { err.textContent = e2.message.toLowerCase().includes('duplicate') ? 'Ник занят' : e2.message; return; }
+      currentUser = data.user; me = nick; iAmAdmin = false;
+      startApp();
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { err.textContent = error.message; return; }
+      currentUser = data.user;
+      const { data: prof, error: e3 } = await sb.from('profiles').select('nick,is_admin,banned,ban_reason').eq('id', data.user.id).single();
+      if (e3 || !prof) { err.textContent = 'Профиль не найден'; await sb.auth.signOut(); return; }
+      me = prof.nick; iAmAdmin = !!prof.is_admin; isBanned = !!prof.banned; banReason = prof.ban_reason || '';
+      if (isBanned) return showBanned();
+      startApp();
+    }
+  } finally { document.getElementById('authBtn').disabled = false; }
+}
+
+async function logout() {
+  if (!confirm('Выйти?')) return;
+  stopMusic();
+  await sb.auth.signOut();
+  location.reload();
+}
+
+function showBanned() {
+  document.getElementById('auth').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('banReasonText').textContent = banReason || 'Твой доступ к дому закрыт администратором.';
+  document.getElementById('bannedOverlay').classList.add('on');
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    const { data: prof } = await sb.from('profiles').select('nick,is_admin,banned,ban_reason').eq('id', session.user.id).single();
+    if (prof) {
+      me = prof.nick; iAmAdmin = !!prof.is_admin; isBanned = !!prof.banned; banReason = prof.ban_reason || '';
+      if (isBanned) return showBanned();
+      startApp(); return;
+    }
+  }
+  document.getElementById('auth').style.display = 'flex';
+});
+
+function subscribeMyProfile() {
+  if (profileChannel) return;
+  profileChannel = sb.channel('my-profile')
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: 'id=eq.' + currentUser.id }, (p) => {
+      if (p.new) {
+        if (p.new.banned && !isBanned) {
+          isBanned = true; banReason = p.new.ban_reason || '';
+          showBanned();
+          try { closeModal(); } catch(e){}
+          try { closeFlatModal(); } catch(e){}
+          try { closeAdminFull(); } catch(e){}
+        }
+        if (typeof p.new.is_admin !== 'undefined') {
+          iAmAdmin = !!p.new.is_admin;
+          updateAdminToggleVisibility();
+          if (!iAmAdmin && adminMode) exitAdmin();
+        }
+      }
+    }).subscribe();
+}
+
+// ============ ADMIN ============
+function updateAdminToggleVisibility() {
+  const btn = document.getElementById('adminToggleBtn');
+  if (!btn) return;
+  btn.style.display = iAmAdmin ? 'block' : 'none';
+  btn.classList.toggle('on', adminMode);
+  btn.textContent = adminMode ? '✖ Выйти' : '⚙️ Админка';
+}
+function toggleAdminMode() { if (adminMode) exitAdmin(); else enterAdmin(); }
+function enterAdmin() {
+  if (!iAmAdmin) return alert('🚫 Ты не админ');
+  adminMode = true;
+  document.body.classList.add('admin-mode');
+  document.getElementById('adminBadge').classList.add('on');
+  document.getElementById('adminPanel').classList.add('on');
+  updateAdminToggleVisibility();
+  renderFlats();
+}
+function exitAdmin() {
+  adminMode = false;
+  document.body.classList.remove('admin-mode');
+  document.getElementById('adminBadge').classList.remove('on');
+  document.getElementById('adminPanel').classList.remove('on');
+  updateAdminToggleVisibility();
+  closeAdminFull();
+  renderFlats();
+}
+function openAdminFull() {
+  if (!iAmAdmin) return alert('🚫 Ты не админ');
+  if (!adminMode) return alert('Сначала включи админ-режим кнопкой ⚙️ Админка');
+  document.getElementById('adminFullModal').classList.add('open');
+  afmSwitch('flats');
+}
+function closeAdminFull() { document.getElementById('adminFullModal').classList.remove('open'); }
+function afmSwitch(t) {
+  afmTab = t;
+  document.querySelectorAll('.afm-tab').forEach(x => x.classList.toggle('active', x.dataset.t === t));
+  afmRender();
+}
+async function afmRender() {
+  const body = document.getElementById('afmBody');
+  if (afmTab === 'flats') return afmRenderFlats(body);
+  if (afmTab === 'entrances') return afmRenderEntrances(body);
+  if (afmTab === 'house') return afmRenderHouse(body);
+  if (afmTab === 'users') return await afmRenderUsers(body);
+}
+function afmRenderFlats(body) {
+  const occupied = Object.values(flats).filter(f => f.owner_nick).sort((a,b) => a.number - b.number);
+  if (!occupied.length) { body.innerHTML = '<div class="afm-empty">Пока нет занятых квартир</div>'; return; }
+  body.innerHTML = occupied.map(f => {
+    const owner = decNick(f.owner_nick);
+    const rm = f.owner_nick2 ? decNick(f.owner_nick2) : null;
+    const mp = f.max_people ?? 2;
+    const inBlockedEnt = (houseData?.blocked_entrances || []).includes(globalEntranceOf(currentHouseId, Math.ceil(f.number/10)));
+    return '<div class="afm-row">' +
+      '<div class="info">' +
+        '<div class="title">🏠 Кв. ' + f.number + '<span class="afm-badge ' + (inBlockedEnt ? 'red' : 'green') + '">' + (inBlockedEnt ? 'закрыт' : 'ок') + '</span></div>' +
+        '<div class="sub">👤 ' + escapeHtml(owner) + (rm ? ' <span class="sub roommate">(+ ' + escapeHtml(rm) + ')</span>' : '') + '</div>' +
+        '<div class="sub">👥 Макс: <b>' + mp + '</b></div>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="afm-btn ' + (mp === 1 ? 'gray' : 'green') + '" onclick="afmToggleMax(' + f.number + ')">👥 ' + mp + '</button>' +
+        (rm ? '<button class="afm-btn gray" onclick="afmKickRoommate(' + f.number + ')">выгнать</button>' : '') +
+        '<button class="afm-btn red" onclick="afmEvict(' + f.number + ')">выселить</button>' +
+      '</div></div>';
+  }).join('');
+}
+function afmRenderEntrances(body) {
+  const blocked = houseData?.blocked_entrances || [];
+  let html = '';
+  for (let e = 1; e <= 3; e++) {
+    const g = globalEntranceOf(currentHouseId, e);
+    const isBlocked = blocked.includes(g);
+    const cnt = Object.values(flats).filter(f => f.owner_nick && Math.ceil(f.number/10) === e).length;
+    html += '<div class="afm-row"><div class="info">' +
+      '<div class="title">🏢 Подъезд ' + g + ' <span class="afm-badge ' + (isBlocked ? 'red' : 'green') + '">' + (isBlocked ? 'заблокирован' : 'открыт') + '</span></div>' +
+      '<div class="sub">Занято: ' + cnt + ' / 10</div></div>' +
+      '<div class="actions">' + (isBlocked
+        ? '<button class="afm-btn green" onclick="afmToggleEntrance(' + g + ',false)">Открыть</button>'
+        : '<button class="afm-btn red" onclick="afmToggleEntrance(' + g + ',true)">Закрыть</button>') + '</div></div>';
+  }
+  body.innerHTML = html;
+}
+function afmRenderHouse(body) {
+  const blocked = !!houseData?.blocked;
+  const cnt = Object.values(flats).filter(f => f.owner_nick).length;
+  body.innerHTML =
+    '<div class="afm-row"><div class="info">' +
+      '<div class="title">🏘 ' + escapeHtml(houseData?.name || 'Дом') + ' <span class="afm-badge ' + (blocked ? 'red' : 'green') + '">' + (blocked ? 'заблокирован' : 'открыт') + '</span></div>' +
+      '<div class="sub">Занято: ' + cnt + ' / 30</div></div>' +
+      '<div class="actions">' + (blocked
+        ? '<button class="afm-btn green" onclick="afmToggleHouse(false)">Открыть</button>'
+        : '<button class="afm-btn red" onclick="afmToggleHouse(true)">Закрыть</button>') + '</div></div>';
+}
+async function afmRenderUsers(body) {
+  body.innerHTML = '<div class="afm-empty">Загрузка...</div>';
+  const { data, error } = await sb.from('profiles').select('*').order('nick');
+  if (error) { body.innerHTML = '<div class="afm-empty">Ошибка: ' + escapeHtml(error.message) + '</div>'; return; }
+  allUsers = data || [];
+  if (!allUsers.length) { body.innerHTML = '<div class="afm-empty">Нет пользователей</div>'; return; }
+  body.innerHTML = allUsers.map(u => {
+    const banned = !!u.banned;
+    const adm = !!u.is_admin;
+    return '<div class="user-row ' + (banned ? 'banned' : '') + '">' +
+      '<div style="flex:1;min-width:140px">' +
+        '<div class="nick">' + escapeHtml(u.nick) + (banned ? ' 🚫' : '') + (adm ? ' ⚙️' : '') + '</div>' +
+        (u.ban_reason ? '<div class="reason">Причина: ' + escapeHtml(u.ban_reason) + '</div>' : '') +
+      '</div>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+        (banned
+          ? '<button class="afm-btn green" onclick="unbanUser(\'' + escapeHtml(u.nick) + '\')">Разбанить</button>'
+          : '<button class="afm-btn red" onclick="banUser(\'' + escapeHtml(u.nick) + '\')">Забанить</button>') +
+        (adm
+          ? '<button class="afm-btn gray" onclick="toggleAdminUser(\'' + escapeHtml(u.nick) + '\',false)">− админ</button>'
+          : '<button class="afm-btn gray" onclick="toggleAdminUser(\'' + escapeHtml(u.nick) + '\',true)">+ админ</button>') +
+      '</div></div>';
+  }).join('');
+}
+async function banUser(nick) {
+  if (!iAmAdmin) return alert('🚫 Нет доступа');
+  if (nick === me) return alert('Нельзя забанить себя.');
+  const reason = prompt('Причина бана для ' + nick + ':', 'нарушение правил');
+  if (reason === null) return;
+  const { error } = await sb.from('profiles').update({ banned: true, ban_reason: reason || '' }).eq('nick', nick);
+  if (error) return alert('Ошибка: ' + error.message);
+  afmRender();
+}
+async function unbanUser(nick) {
+  if (!iAmAdmin) return alert('🚫 Нет доступа');
+  if (!confirm('Разбанить ' + nick + '?')) return;
+  const { error } = await sb.from('profiles').update({ banned: false, ban_reason: null }).eq('nick', nick);
+  if (error) return alert('Ошибка: ' + error.message);
+  afmRender();
+}
+async function toggleAdminUser(nick, makeAdmin) {
+  if (!iAmAdmin) return alert('🚫 Нет доступа');
+  if (nick === me && !makeAdmin) return alert('Нельзя снять админа с себя');
+  const action = makeAdmin ? 'Сделать админом' : 'Снять админа с';
+  if (!confirm(action + ' ' + nick + '?')) return;
+  const { error } = await sb.from('profiles').update({ is_admin: makeAdmin }).eq('nick', nick);
+  if (error) return alert('Ошибка: ' + error.message);
+  afmRender();
+}
+async function afmEvict(num) {
+  if (!iAmAdmin) return alert('🚫 Нет доступа');
+  if (!confirm('Выселить всех из кв. №' + num + '?')) return;
+  const { error } = await sb.from('flats').update({ owner_nick: null, owner_nick2: null }).eq('house_id', currentHouseId).eq('number', num);
+  if (error) return alert(error.message);
+  await reloadCurrentHouse(); afmRender();
+}
+async function afmKickRoommate(num) {
+  if (!iAmAdmin) return alert('🚫 Нет доступа');
+  const f = flats[num];
+  if (!f || !f.owner_nick2) return;
+  if (!confirm('Выгнать соседа ' + decNick(f.owner_nick2) + '?')) return;
+  const { error } = await sb.from('flats').update({ owner_nick2: null }).eq('house_id', currentHouseId).eq('number', num);
+  if (error) return alert(error.message);
+  await reloadCurrentHouse(); afmRender();
+}
+async function afmToggleMax(num) {
+  if (!iAmAdmin) return alert('🚫 Нет доступа');
+  const f = flats[num];
+  if (!f) return;
+  const current = f.max_people ?? 2;
+  const next = current === 2 ? 1 : 2;
+  if (next === 1 && f.owner_nick2) {
+    if (!confirm('Установить макс=1 и выгнать соседа ' + decNick(f.owner_nick2) + '?')) return;
+    const { error } = await sb.from('flats').update({ max_people: 1, owner_nick2: null }).eq('house_id', currentHouseId).eq('number', num);
+    if (error) return alert('Ошибка: ' + error.message);
+  } else {
+    const { error } = await sb.from('flats').update({ max_people: next }).eq('house_id', currentHouseId).eq('number', num);
+    if (error) return alert('Ошибка: ' + error.message);
+  }
+  await reloadCurrentHouse(); afmRender();
+}
+async function afmToggleEntrance(globalNum, block) {
+  if (!iAmAdmin) return alert('🚫 Нет доступа');
+  const current = houseData?.blocked_entrances || [];
+  const next = block ? [...new Set([...current, globalNum])] : current.filter(x => x !== globalNum);
+  const { error } = await sb.from('houses').update({ blocked_entrances: next }).eq('id', currentHouseId);
+  if (error) return alert(error.message);
+  await reloadCurrentHouse(); afmRender();
+}
+async function afmToggleHouse(block) {
+  if (!iAmAdmin) return alert('🚫 Нет доступа');
+  if (block && !confirm('Заблокировать весь дом?')) return;
+  const { error } = await sb.from('houses').update({ blocked: block }).eq('id', currentHouseId);
+  if (error) return alert(error.message);
+  await reloadCurrentHouse(); afmRender();
+}
+async function reloadCurrentHouse() {
+  await loadHouses(); await loadFlats(); await loadHouseMedia();
+  renderHouses(); renderFlats();
+}
+
+// ============ START ============
+async function startApp() {
+  meEnc = encNick(me);
+  document.getElementById('auth').style.display = 'none';
+  document.getElementById('bannedOverlay').classList.remove('on');
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('myNickLabel').textContent = '👤 ' + me;
+
+  updateAdminToggleVisibility();
+  subscribeMyProfile();
+
+  await loadMyRooms();
+  await loadHouses();
+  if (!houses.length) await createHouse('Дом №1', 1);
+  currentHouseId = houses[0].id;
+  renderHouses();
+  await switchHouse(currentHouseId);
+  subscribeHouses();
+  subscribeFlats();
+  subscribeMediaRealtime();
+  await loadMyDms();
+  renderDmList();
+  subscribeGlobal();
+  setupUI();
+}
+
+function setupUI() {
+  document.getElementById('menuBtn').onclick = () => document.getElementById('sidebar').classList.add('open');
+  document.getElementById('closeSide').onclick = () => document.getElementById('sidebar').classList.remove('open');
+
+  const msgIn = document.getElementById('msgInput');
+  const msgBtn = document.getElementById('msgSendBtn');
+  msgBtn.addEventListener('click', (e) => { e.preventDefault(); sendMsg(); });
+  msgBtn.addEventListener('touchend', (e) => { e.preventDefault(); sendMsg(); });
+  msgIn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.keyCode === 13) { e.preventDefault(); sendMsg(); } });
+  msgIn.addEventListener('input', () => notifyTyping());
+
+  const roomIn = document.getElementById('roomInput');
+  const roomBtn = document.getElementById('roomSendBtn');
+  roomBtn.addEventListener('click', (e) => { e.preventDefault(); sendRoomMsg(); });
+  roomBtn.addEventListener('touchend', (e) => { e.preventDefault(); sendRoomMsg(); });
+  roomIn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.keyCode === 13) { e.preventDefault(); sendRoomMsg(); } });
+  roomIn.addEventListener('input', () => notifyTyping());
+
+  document.getElementById('inviteInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendInvite(); });
+
+  const mb = document.getElementById('musicBtn');
+  mb.addEventListener('click', (e) => { e.preventDefault(); toggleMusic(); });
+
+  document.getElementById('msgVoiceBtn').addEventListener('click', (e) => { e.preventDefault(); toggleVoice('main'); });
+  document.getElementById('roomVoiceBtn').addEventListener('click', (e) => { e.preventDefault(); toggleVoice('room'); });
+
+  document.getElementById('msgPhotoBtn').addEventListener('click', () => document.getElementById('msgPhotoInput').click());
+  document.getElementById('roomPhotoBtn').addEventListener('click', () => document.getElementById('roomPhotoInput').click());
+  document.getElementById('msgPhotoInput').addEventListener('change', (e) => sendPhoto(e.target.files[0], currentRoom, 'msg'));
+  document.getElementById('roomPhotoInput').addEventListener('change', (e) => sendPhoto(e.target.files[0], roomChatRoomId, 'room'));
+}
+
+async function loadMyRooms() {
+  const { data } = await sb.from('flats').select('house_id,number,owner_nick,owner_nick2').or('owner_nick.eq.' + meEnc + ',owner_nick2.eq.' + meEnc);
+  myRooms.clear();
+  (data || []).forEach(f => { if (f.owner_nick && f.owner_nick2) myRooms.add('h' + f.house_id + '_flat' + f.number + '_room'); });
+}
+async function loadHouses() {
+  const { data } = await sb.from('houses').select('*').order('id');
+  houses = data || [];
+  houseData = houses.find(h => h.id === currentHouseId) || null;
+}
+function renderHouses() {
+  const bar = document.getElementById('housebar');
+  bar.innerHTML = '';
+  houses.forEach(h => {
+    const b = document.createElement('div');
+    b.className = 'housebtn' + (h.id === currentHouseId ? ' active' : '') + (h.blocked ? ' blocked' : '');
+    b.textContent = h.blocked ? '🚫 ' + h.name : h.name;
+    b.onclick = () => switchHouse(h.id);
+    bar.appendChild(b);
+  });
+  if (allHousesFull()) {
+    const b = document.createElement('div');
+    b.className = 'housebtn new';
+    b.textContent = '+ Новый дом';
+    b.onclick = () => { const n = Math.max(...houses.map(h => h.id)) + 1; createHouse('Дом №' + n, n); };
+    bar.appendChild(b);
+  }
+}
+function allHousesFull() {
+  if (Object.keys(flats).length !== 30) return false;
+  return Object.values(flats).every(f => f.owner_nick);
+}
+async function createHouse(name, id) {
+  const houseId = id || (houses.length ? Math.max(...houses.map(h => h.id)) + 1 : 1);
+  const { data: house, error: e1 } = await sb.from('houses').insert({ id: houseId, name }).select().single();
+  if (e1) return alert('Ошибка: ' + e1.message);
+  const rows = [];
+  for (let i = 1; i <= 30; i++) rows.push({ house_id: houseId, number: i });
+  const { error: e2 } = await sb.from('flats').insert(rows);
+  if (e2) return alert('Ошибка: ' + e2.message);
+  houses.push(house); renderHouses(); await switchHouse(houseId);
+}
+async function switchHouse(houseId) {
+  currentHouseId = houseId;
+  houseData = houses.find(h => h.id === houseId) || null;
+  renderHouses();
+  await loadFlats();
+  await loadHouseMedia();
+  buildHouse();
+}
+async function loadFlats() {
+  const { data } = await sb.from('flats').select('*').eq('house_id', currentHouseId);
+  flats = {};
+  (data || []).forEach(f => flats[f.number] = f);
+}
+async function loadHouseMedia() {
+  const nicks = [];
+  Object.values(flats).forEach(f => { if (f.owner_nick) nicks.push(f.owner_nick); if (f.owner_nick2) nicks.push(f.owner_nick2); });
+  if (!nicks.length) { houseMedia = {}; return; }
+  const { data } = await sb.from('user_media').select('*').in('nick', nicks);
+  houseMedia = {};
+  (data || []).forEach(m => houseMedia[m.nick] = m);
+}
+function myFlat() { for (const n in flats) if (flats[n].owner_nick === meEnc) return Number(n); return null; }
+function myRoommateFlat() { for (const n in flats) if (flats[n].owner_nick2 === meEnc) return Number(n); return null; }
+function myGlobalEntrance() {
+  const f = myFlat() ?? myRoommateFlat();
+  if (f === null) return null;
+  return (currentHouseId - 1) * 3 + Math.ceil(f / 10);
+}
+function globalEntranceOf(houseId, localNum) { return (houseId - 1) * 3 + localNum; }
+function isEntranceBlocked(globalNum) { return (houseData?.blocked_entrances || []).includes(globalNum); }
+function isHouseBlocked() { return !!houseData?.blocked; }
+function isFlatBlocked(num) { return isHouseBlocked() || isEntranceBlocked(globalEntranceOf(currentHouseId, Math.ceil(num / 10))); }
+
+function buildHouse() {
+  const house = document.getElementById('house');
+  house.innerHTML = '';
+  let flatNum = 1;
+  for (let e = 1; e <= 3; e++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'entrance-wrap';
+    const ent = document.createElement('div');
+    ent.className = 'entrance';
+    for (let f = 0; f < 5; f++) {
+      const floor = document.createElement('div');
+      floor.className = 'floor';
+      for (let a = 0; a < 2; a++) {
+        const flat = document.createElement('div');
+        flat.className = 'flat';
+        flat.dataset.number = flatNum;
+        floor.appendChild(flat);
+        flatNum++;
+      }
+      ent.appendChild(floor);
+    }
+    const globalNum = globalEntranceOf(currentHouseId, e);
+    const btn = document.createElement('button');
+    btn.className = 'entrance-btn';
+    btn.dataset.global = globalNum;
+    btn.textContent = '🏢 Подъезд ' + globalNum;
+    btn.onclick = () => openEntranceChat(globalNum);
+    wrap.appendChild(ent); wrap.appendChild(btn);
+    house.appendChild(wrap);
+  }
+  renderFlats();
+}
+function applyPhotoToEl(el, media) {
+  if (!media || !media.photo_url) { el.style.backgroundImage = ''; el.classList.remove('has-photo'); return; }
+  const z = (media.photo_zoom ?? 100);
+  const x = (media.photo_x ?? 50);
+  const y = (media.photo_y ?? 50);
+  el.style.backgroundImage = 'url("' + media.photo_url + '")';
+  el.style.backgroundSize = z + '% ' + z + '%';
+  el.style.backgroundPosition = x + '% ' + y + '%';
+  el.classList.add('has-photo');
+}
+function renderFlats() {
+  const myEnt = myGlobalEntrance();
+  document.querySelectorAll('.flat').forEach(el => {
+    const num = el.dataset.number;
+    const f = flats[num];
+    el.classList.remove('mine', 'taken', 'has-photo', 'blocked');
+    el.style.backgroundImage = '';
+    if (isFlatBlocked(Number(num))) el.classList.add('blocked');
+    if (!f || !f.owner_nick) {
+      el.innerHTML = '<div class="num">' + num + '</div>';
+    } else {
+      const isMine = f.owner_nick === meEnc;
+      const isRoommate = f.owner_nick2 === meEnc;
+      if (isMine || isRoommate) el.classList.add('mine');
+      else el.classList.add('taken');
+      const owner = decNick(f.owner_nick);
+      const rm = f.owner_nick2 ? decNick(f.owner_nick2) : null;
+      if (rm) el.innerHTML = '<div class="num">' + num + '</div><div class="nick">' + escapeHtml(owner) + '</div><div class="nick2">' + escapeHtml(rm) + '</div>';
+      else el.innerHTML = '<div class="num">' + num + '</div><div class="nick">' + ((isMine) ? 'ты' : escapeHtml(owner)) + '</div>';
+      applyPhotoToEl(el, houseMedia[f.owner_nick]);
+    }
+    el.onclick = () => clickFlat(Number(num));
+  });
+  document.querySelectorAll('.entrance-btn').forEach(btn => {
+    const g = Number(btn.dataset.global);
+    const isMine = myEnt === g;
+    const canRead = adminMode || isMine;
+    btn.classList.toggle('mine', isMine);
+    btn.classList.toggle('blocked', isEntranceBlocked(g));
+    btn.classList.toggle('other-entrance', !canRead);
+  });
+}
+async function clickFlat(num) {
+  if (locking) return;
+  const f = flats[num];
+  if (adminMode && f && f.owner_nick) {
+    if (f.owner_nick === meEnc || f.owner_nick2 === meEnc) { openFlatModal(num); return; }
+    if (!confirm('Выселить всех из кв. №' + num + '?')) return;
+    locking = true;
+    try {
+      const { error } = await sb.from('flats').update({ owner_nick: null, owner_nick2: null }).eq('house_id', currentHouseId).eq('number', num);
+      if (error) alert(error.message);
+    } finally { await reloadCurrentHouse(); locking = false; }
+    return;
+  }
+  if (!f || !f.owner_nick) {
+    if (isHouseBlocked()) return alert('🚫 Дом заблокирован администратором.');
+    if (isEntranceBlocked(globalEntranceOf(currentHouseId, Math.ceil(num / 10)))) return alert('🚫 Подъезд заблокирован администратором.');
+    if (myFlat() !== null || myRoommateFlat() !== null) return alert('У тебя уже есть квартира в этом доме.');
+    locking = true;
+    try {
+      const { error } = await sb.from('flats').update({ owner_nick: meEnc }).eq('house_id', currentHouseId).eq('number', num).is('owner_nick', null);
+      if (error) {
+        const m = (error.message||'').toLowerCase();
+        if (m.includes('one_flat_per') || m.includes('duplicate') || m.includes('unique') || m.includes('already_has_flat')) alert('У тебя уже есть квартира в этом доме.');
+        else alert('Ошибка: ' + error.message);
+      }
+    } finally { await reloadCurrentHouse(); locking = false; }
+    return;
+  }
+  if (f.owner_nick === meEnc || f.owner_nick2 === meEnc) { openFlatModal(num); return; }
+  if (f.owner_nick2) {
+    const toOwner = confirm('Написать владельцу квартиры?\n\nOK → ' + decNick(f.owner_nick) + '\nОтмена → ' + decNick(f.owner_nick2));
+    openDm(toOwner ? f.owner_nick : f.owner_nick2);
+  } else openDm(f.owner_nick);
+}
+
+// ============ REALTIME ============
+function subscribeHouses() {
+  if (housesChannel) return;
+  housesChannel = sb.channel('houses-rt')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'houses' }, async (p) => {
+      const row = p.new || p.old;
+      if (!row) return;
+      if (p.eventType === 'INSERT') { if (!houses.find(h => h.id === row.id)) houses.push(row); }
+      else if (p.eventType === 'UPDATE') {
+        const i = houses.findIndex(h => h.id === row.id);
+        if (i >= 0) houses[i] = row; else houses.push(row);
+        if (row.id === currentHouseId) houseData = row;
+      } else if (p.eventType === 'DELETE') houses = houses.filter(h => h.id !== row.id);
+      renderHouses(); renderFlats();
+    }).subscribe();
+}
+function subscribeFlats() {
+  if (flatsChannel) return;
+  flatsChannel = sb.channel('flats-rt')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'flats' }, async (p) => {
+      const row = p.new || p.old;
+      if (!row || row.house_id !== currentHouseId) return;
+      if (p.eventType === 'DELETE') delete flats[row.number];
+      else flats[row.number] = p.new;
+      await loadHouseMedia();
+      renderFlats();
+      await loadMyRooms();
+      await loadMyDms();
+      renderDmList();
+      if (fmNum === row.number) {
+        if (p.new && (p.new.owner_nick === meEnc || p.new.owner_nick2 === meEnc)) updateFlatModalState();
+        else closeFlatModal();
+      }
+    }).subscribe();
+}
+function subscribeMediaRealtime() {
+  if (mediaChannel) return;
+  mediaChannel = sb.channel('media-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'user_media' }, async (p) => {
+      const row = p.new || p.old;
+      if (!row) return;
+      const inHouse = Object.values(flats).some(f => f.owner_nick === row.nick || f.owner_nick2 === row.nick);
+      if (inHouse) {
+        if (p.eventType === 'DELETE') delete houseMedia[row.nick];
+        else houseMedia[row.nick] = p.new;
+        renderFlats();
+      }
+      if (currentRoomType === 'dm' && currentPartnerEnc === row.nick) {
+        renderBgLayer(p.eventType === 'DELETE' ? null : p.new);
+      }
+    }).subscribe();
+}
+
+// ============ PRESENCE + TYPING ============
+async function setupRoomPresence(roomId) {
+  if (presenceChannel) { try { await sb.removeChannel(presenceChannel); } catch(e){} presenceChannel = null; }
+  if (typingChannel) { try { await sb.removeChannel(typingChannel); } catch(e){} typingChannel = null; }
+
+  presenceChannel = sb.channel('presence-' + roomId, { config: { presence: { key: meEnc } } });
+  presenceChannel
+    .on('presence', { event: 'sync' }, () => updateOnlineIndicator())
+    .subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await presenceChannel.track({ nick: meEnc, online_at: Date.now() });
+      }
+    });
+
+  typingChannel = sb.channel('typing-' + roomId);
+  typingChannel.on('broadcast', { event: 'typing' }, (payload) => {
+    if (payload.payload && payload.payload.nick !== meEnc) showTypingIndicator();
+  }).subscribe();
+}
+
+function updateOnlineIndicator() {
+  if (!presenceChannel || !currentPartnerEnc) return;
+  const state = presenceChannel.presenceState();
+  let partnerOnline = false;
+  for (const key in state) {
+    if (key === currentPartnerEnc) { partnerOnline = true; break; }
+    const arr = state[key] || [];
+    for (const p of arr) { if (p.nick === currentPartnerEnc) { partnerOnline = true; break; } }
+    if (partnerOnline) break;
+  }
+  const dot = document.getElementById('onlineDot');
+  const label = document.getElementById('onlineLabel');
+  if (!dot) return;
+  if (partnerOnline) {
+    dot.classList.add('online');
+    if (label) { label.textContent = 'онлайн'; label.classList.remove('offline'); }
+  } else {
+    dot.classList.remove('online');
+    if (label) { label.textContent = 'оффлайн'; label.classList.add('offline'); }
+  }
+}
+
+function notifyTyping() {
+  if (!typingChannel) return;
+  const now = Date.now();
+  if (now - lastTypingSent < 900) return;
+  lastTypingSent = now;
+  typingChannel.send({ type: 'broadcast', event: 'typing', payload: { nick: meEnc } });
+}
+
+function showTypingIndicator() {
+  const el = document.getElementById('typingHint');
+  if (!el) return;
+  el.classList.add('visible');
+  if (typingHideTimer) clearTimeout(typingHideTimer);
+  typingHideTimer = setTimeout(() => el.classList.remove('visible'), 2500);
+}
+function hideTypingIndicator() {
+  const el = document.getElementById('typingHint');
+  if (el) el.classList.remove('visible');
+  if (typingHideTimer) { clearTimeout(typingHideTimer); typingHideTimer = null; }
+}
+
+// ============ ROOMS ============
+function toggleInputRow(canWrite) {
+  document.getElementById('inputRow').style.display = canWrite ? 'flex' : 'none';
+  document.getElementById('noWrite').style.display = canWrite ? 'none' : 'block';
+}
+function renderBgLayer(media) {
+  const layer = document.getElementById('bgLayer');
+  layer.innerHTML = '';
+  if (!media || !media.photo_url) return;
+  const div = document.createElement('div');
+  div.className = 'bg-img';
+  div.style.backgroundImage = 'url("' + media.photo_url + '")';
+  div.style.backgroundSize = (media.photo_zoom ?? 100) + '% ' + (media.photo_zoom ?? 100) + '%';
+  div.style.backgroundPosition = (media.photo_x ?? 50) + '% ' + (media.photo_y ?? 50) + '%';
+  layer.appendChild(div);
+}
+function applyMusic(media) {
+  const musicBtn = document.getElementById('musicBtn');
+  const audio = document.getElementById('bgAudio');
+  if (media && media.music_url) {
+    currentMusicUrl = media.music_url;
+    musicBtn.style.display = 'flex';
+    audio.src = media.music_url;
+    audio.volume = 0.35;
+    const pr = audio.play();
+    if (pr && pr.then) pr.then(() => { musicBtn.textContent = '🔊 Музыка'; musicBtn.classList.add('playing'); })
+      .catch(() => { musicBtn.textContent = '🔇 Нажми'; musicBtn.classList.remove('playing'); });
+  } else { currentMusicUrl = null; musicBtn.style.display = 'none'; stopMusic(); }
+}
+function toggleMusic() {
+  const audio = document.getElementById('bgAudio'); const btn = document.getElementById('musicBtn');
+  if (!currentMusicUrl) return;
+  if (!audio.src) audio.src = currentMusicUrl;
+  if (audio.paused) audio.play().then(() => { btn.textContent = '🔊 Музыка'; btn.classList.add('playing'); }).catch(()=>{ btn.textContent = '❌ Ошибка'; });
+  else { audio.pause(); btn.textContent = '🔇 Нажми'; btn.classList.remove('playing'); }
+}
+function stopMusic() {
+  const audio = document.getElementById('bgAudio'); audio.pause(); audio.src = '';
+  currentMusicUrl = null;
+  const b = document.getElementById('musicBtn'); if (b) { b.textContent = ''; b.classList.remove('playing'); }
+}
+function clearChatEl(el) { el.innerHTML = ''; el.dataset.lastHtml = ''; el.scrollTop = 0; }
+
+async function openDm(partnerEnc) {
+  currentRoom = dmRoomId(meEnc, partnerEnc);
+  currentRoomType = 'dm';
+  currentEntranceGlobal = null;
+  currentPartnerEnc = partnerEnc;
+  document.getElementById('roomTitle').textContent = '💬 ' + decNick(partnerEnc);
+  document.getElementById('modal').classList.add('open');
+  toggleInputRow(true);
+  document.getElementById('onlineDot').classList.add('visible');
+  document.getElementById('onlineLabel').classList.add('visible');
+  delete unread[currentRoom];
+  renderDmList();
+  clearChatEl(document.getElementById('chat'));
+  await loadMessages(); subscribeMessages(); startPolling();
+  setupRoomPresence(currentRoom);
+  const { data } = await sb.from('user_media').select('*').eq('nick', partnerEnc).maybeSingle();
+  renderBgLayer(data); applyMusic(data);
+}
+async function openEntranceChat(globalNum) {
+  if (!adminMode && myGlobalEntrance() !== globalNum) return alert('🚫 Чужой подъезд. Ты можешь читать только свой.');
+  currentRoom = 'entrance_' + globalNum;
+  currentRoomType = 'entrance';
+  currentEntranceGlobal = globalNum;
+  currentPartnerEnc = null;
+  document.getElementById('roomTitle').textContent = '🏢 Подъезд ' + globalNum;
+  document.getElementById('modal').classList.add('open');
+  toggleInputRow(myGlobalEntrance() === globalNum);
+  document.getElementById('onlineDot').classList.remove('visible');
+  document.getElementById('onlineLabel').classList.remove('visible');
+  clearChatEl(document.getElementById('chat'));
+  await loadMessages(); subscribeMessages(); startPolling();
+  renderBgLayer(null); applyMusic(null);
+}
+async function closeModal() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') { try { mediaRecorder.stop(); } catch(e){} }
+  hideTypingIndicator();
+  document.getElementById('modal').classList.remove('open');
+  if (currentChannel) { sb.removeChannel(currentChannel); currentChannel = null; }
+  if (presenceChannel) { try { await sb.removeChannel(presenceChannel); } catch(e){} presenceChannel = null; }
+  if (typingChannel) { try { await sb.removeChannel(typingChannel); } catch(e){} typingChannel = null; }
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+  stopMusic();
+  currentRoom = null; currentRoomType = null; currentEntranceGlobal = null; currentPartnerEnc = null;
+  document.getElementById('bgLayer').innerHTML = '';
+  clearChatEl(document.getElementById('chat'));
+}
+
+async function loadMessages() {
+  const myToken = ++msgLoadToken;
+  const roomId = currentRoom;
+  if (!roomId) return;
+  const { data, error } = await sb.from('messages').select('*').eq('room_id', roomId).order('created_at', { ascending: true }).limit(200);
+  if (myToken !== msgLoadToken) return;
+  if (roomId !== currentRoom) return;
+  if (error) { console.error(error); return; }
+  const { data: hidden } = await sb.from('hidden_messages').select('message_id').eq('user_nick', meEnc);
+  hiddenCache = new Set((hidden || []).map(h => h.message_id));
+  const visible = (data || []).filter(m => !hiddenCache.has(m.id));
+  renderMessages(document.getElementById('chat'), visible);
+}
+
+function renderMessages(el, list) {
+  const newHtml = list.map(m => {
+    const mine = m.nick === meEnc;
+    let body;
+    if (m.voice_url) body = '<audio controls preload="metadata" src="' + m.voice_url + '"></audio>';
+    else if (m.photo_url) body = '<img class="msg-photo" src="' + m.photo_url + '" onclick="openPhotoViewer(\'' + m.photo_url + '\')" loading="lazy">';
+    else body = escapeHtml(m.text);
+    return '<div class="msg' + (mine ? ' mine' : '') + '" data-id="' + m.id + '">' +
+      '<button class="del-msg-btn" onclick="deleteMsgForMe(' + m.id + ', event)" title="Удалить у себя">✕</button>' +
+      '<span class="nick">' + escapeHtml(mine ? 'Ты' : decNick(m.nick)) + '</span>' +
+      '<span class="time">' + new Date(m.created_at).toLocaleTimeString().slice(0,5) + '</span><br>' +
+      body + '</div>';
+  }).join('');
+  const finalHtml = newHtml || '<div style="color:#55556a;text-align:center;padding:30px;">Пока пусто</div>';
+  if (el.dataset.lastHtml !== finalHtml) {
+    const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 40;
+    const first = !el.dataset.lastHtml;
+    el.innerHTML = finalHtml;
+    el.dataset.lastHtml = finalHtml;
+    if (first || atBottom) el.scrollTop = el.scrollHeight;
+  }
+}
+
+async function deleteMsgForMe(msgId, ev) {
+  ev.stopPropagation();
+  if (!confirm('Удалить это сообщение у себя? (у собеседника оно останется)')) return;
+  const { error } = await sb.from('hidden_messages').insert({ user_nick: meEnc, message_id: msgId });
+  if (error && !error.message.includes('duplicate')) return alert('Ошибка: ' + error.message);
+  hiddenCache.add(msgId);
+  const wrap = document.querySelector('#chat .msg[data-id="' + msgId + '"]');
+  if (wrap) wrap.remove();
+  const roomWrap = document.querySelector('#roomChat .msg[data-id="' + msgId + '"]');
+  if (roomWrap) roomWrap.remove();
+}
+
+function openPhotoViewer(url) {
+  document.getElementById('photoViewerImg').src = url;
+  document.getElementById('photoViewer').classList.add('open');
+}
+function closePhotoViewer() {
+  document.getElementById('photoViewer').classList.remove('open');
+}
+
+function subscribeMessages() {
+  if (currentChannel) sb.removeChannel(currentChannel);
+  if (!currentRoom) return;
+  currentChannel = sb.channel('room-' + currentRoom)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: 'room_id=eq.' + currentRoom }, () => loadMessages())
+    .subscribe();
+}
+function startPolling() { if (pollTimer) clearInterval(pollTimer); pollTimer = setInterval(loadMessages, 2000); }
+
+async function sendMsg() {
+  if (isBanned) return showBanned();
+  const input = document.getElementById('msgInput');
+  const text = (input.value || '').trim();
+  if (!text || !currentRoom) return;
+  if (currentRoomType === 'entrance' && myGlobalEntrance() !== currentEntranceGlobal) return alert('Ты можешь писать только в свой подъезд.');
+  input.value = '';
+  input.focus();
+  const { error } = await sb.from('messages').insert({ room_id: currentRoom, nick: meEnc, text, user_id: currentUser.id });
+  if (error) {
+    if (error.message.includes('row-level security')) { alert('🚫 Ты забанен или не можешь писать в эту комнату.'); return; }
+    alert(error.message); return;
+  }
+  await loadMessages();
+  if (currentRoomType === 'dm') { await loadMyDms(); renderDmList(); }
+}
+
+async function sendPhoto(file, roomId, target) {
+  if (!file || !roomId) return;
+  if (isBanned) return showBanned();
+  if (!file.type.startsWith('image/')) return alert('Только изображения');
+  if (file.size > 5 * 1024 * 1024) return alert('Файл больше 5MB');
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = 'chat/' + meEnc + '_' + Date.now() + '.' + ext;
+  const { error: upErr } = await sb.storage.from('media').upload(path, file, { contentType: file.type });
+  if (upErr) return alert('Ошибка загрузки: ' + upErr.message);
+  const url = sb.storage.from('media').getPublicUrl(path).data.publicUrl;
+  const { error } = await sb.from('messages').insert({ room_id: roomId, nick: meEnc, text: '📷 Фото', photo_url: url, user_id: currentUser.id });
+  if (error) return alert(error.message);
+  if (roomId === currentRoom) await loadMessages();
+  if (roomId === roomChatRoomId) await loadRoomMessages();
+  if (roomId.startsWith('dm_')) { await loadMyDms(); renderDmList(); }
+  if (target === 'msg') document.getElementById('msgPhotoInput').value = '';
+  else document.getElementById('roomPhotoInput').value = '';
+}
+
+// ============ VOICE ============
+async function toggleVoice(target) {
+  if (isBanned) return showBanned();
+  if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); return; }
+  if (!navigator.mediaDevices || !window.MediaRecorder) return alert('Голосовые не поддерживаются');
+  const roomIdAtStart = target === 'room' ? roomChatRoomId : currentRoom;
+  if (!roomIdAtStart) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    let mime = 'audio/webm';
+    if (!MediaRecorder.isTypeSupported(mime)) {
+      if (MediaRecorder.isTypeSupported('audio/mp4')) mime = 'audio/mp4';
+      else if (MediaRecorder.isTypeSupported('audio/ogg')) mime = 'audio/ogg';
+      else mime = '';
+    }
+    const opts = mime ? { mimeType: mime } : {};
+    mediaRecorder = new MediaRecorder(stream, opts);
+    audioChunks = [];
+    recordingTarget = target;
+    recordingStart = Date.now();
+    const btn = document.getElementById(target === 'room' ? 'roomVoiceBtn' : 'msgVoiceBtn');
+    mediaRecorder.ondataavailable = e => { if (e.data && e.data.size) audioChunks.push(e.data); };
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      const usedMime = mime || 'audio/webm';
+      const blob = new Blob(audioChunks, { type: usedMime });
+      btn.classList.remove('recording'); btn.textContent = '🎤';
+      const dur = (Date.now() - recordingStart) / 1000;
+      mediaRecorder = null; recordingTarget = null;
+      if (dur < 0.7 || blob.size < 800) return;
+      await uploadVoice(blob, usedMime, roomIdAtStart);
+    };
+    mediaRecorder.start();
+    btn.classList.add('recording'); btn.textContent = '⏺';
+  } catch (e) { alert('Нет доступа к микрофону: ' + e.message); }
+}
+async function uploadVoice(blob, mime, roomId) {
+  if (!roomId) return;
+  const ext = mime.includes('mp4') ? 'm4a' : mime.includes('ogg') ? 'ogg' : 'webm';
+  const path = 'voice/' + meEnc + '_' + Date.now() + '.' + ext;
+  const { error: upErr } = await sb.storage.from('media').upload(path, blob, { contentType: mime });
+  if (upErr) return alert('Ошибка загрузки: ' + upErr.message);
+  const url = sb.storage.from('media').getPublicUrl(path).data.publicUrl;
+  const { error } = await sb.from('messages').insert({ room_id: roomId, nick: meEnc, text: '🎤 Голосовое', voice_url: url, user_id: currentUser.id });
+  if (error) return alert(error.message);
+  if (roomId === currentRoom) await loadMessages();
+  if (roomId === roomChatRoomId) await loadRoomMessages();
+  if (roomId.startsWith('dm_')) { await loadMyDms(); renderDmList(); }
+}
+
+// ============ FLAT MODAL ============
+async function openFlatModal(num) {
+  const f = flats[num];
+  if (!f) return;
+  const isOwner = f.owner_nick === meEnc;
+  const isRoommate = f.owner_nick2 === meEnc;
+  if (!isOwner && !isRoommate) return;
+  fmNum = num; fmIsOwner = isOwner; fmIsRoommate = isRoommate;
+  document.getElementById('flatModal').classList.add('open');
+  updateFlatModalState();
+  fmSwitch('media');
+  await loadEditMedia();
+}
+function updateFlatModalState() {
+  const f = flats[fmNum];
+  if (!f) return closeFlatModal();
+  const hasRoommate = !!f.owner_nick2;
+  const isOwner = f.owner_nick === meEnc;
+  const isRoommate = f.owner_nick2 === meEnc;
+  const maxP = f.max_people ?? 2;
+  document.getElementById('fmTitle').textContent = '🏠 Квартира ' + fmNum + (isOwner ? ' (хозяин)' : ' (сосед)');
+  document.getElementById('fmTabRoom').style.display = (hasRoommate && (isOwner || isRoommate)) ? 'block' : 'none';
+  document.getElementById('fmTabManage').style.display = (isOwner && maxP >= 2) ? 'block' : 'none';
+  document.getElementById('leaveBtn').style.display = (isOwner || isRoommate) ? 'block' : 'none';
+  const info = document.getElementById('roommateInfo');
+  if (!hasRoommate) info.innerHTML = '<div class="roommate-empty">Пока никого. Пригласи кого-нибудь!</div>';
+  else info.innerHTML = '<div class="roommate-card"><div><div class="rc-name">' + escapeHtml(decNick(f.owner_nick2)) + '</div><div class="rc-tag">сосед</div></div>' +
+    (isOwner ? '<button onclick="kickRoommate()">Выгнать</button>' : '') + '</div>';
+  if (hasRoommate) {
+    roomChatRoomId = 'h' + currentHouseId + '_flat' + fmNum + '_room';
+    clearChatEl(document.getElementById('roomChat'));
+    loadRoomMessages(); subscribeRoomMessages(); startRoomPolling();
+  } else {
+    if (roomChatChannel) { sb.removeChannel(roomChatChannel); roomChatChannel = null; }
+    if (roomChatPollTimer) { clearInterval(roomChatPollTimer); roomChatPollTimer = null; }
+    roomChatRoomId = null;
+  }
+}
+function fmSwitch(tab) {
+  document.querySelectorAll('.fm-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.fm-pane').forEach(p => p.style.display = 'none');
+  const map = { media: 'fmPaneMedia', room: 'fmPaneRoom', manage: 'fmPaneManage' };
+  document.getElementById(map[tab]).style.display = 'flex';
+  document.getElementById('saveMediaBtn').style.display = tab === 'media' ? 'block' : 'none';
+}
+function closeFlatModal() {
+  if (mediaRecorder && mediaRecorder.state === 'recording' && recordingTarget === 'room') { try { mediaRecorder.stop(); } catch(e){} }
+  document.getElementById('flatModal').classList.remove('open');
+  if (roomChatChannel) { sb.removeChannel(roomChatChannel); roomChatChannel = null; }
+  if (roomChatPollTimer) { clearInterval(roomChatPollTimer); roomChatPollTimer = null; }
+  roomChatRoomId = null;
+  fmNum = null; fmIsOwner = false; fmIsRoommate = false;
+  clearChatEl(document.getElementById('roomChat'));
+}
+async function loadRoomMessages() {
+  const myToken = ++roomMsgLoadToken;
+  const roomId = roomChatRoomId;
+  if (!roomId) return;
+  const { data, error } = await sb.from('messages').select('*').eq('room_id', roomId).order('created_at', { ascending: true }).limit(200);
+  if (myToken !== roomMsgLoadToken) return;
+  if (roomId !== roomChatRoomId) return;
+  if (error) { console.error(error); return; }
+  const { data: hidden } = await sb.from('hidden_messages').select('message_id').eq('user_nick', meEnc);
+  const hiddenIds = new Set((hidden || []).map(h => h.message_id));
+  const visible = (data || []).filter(m => !hiddenIds.has(m.id));
+  renderMessages(document.getElementById('roomChat'), visible);
+}
+function subscribeRoomMessages() {
+  if (roomChatChannel) sb.removeChannel(roomChatChannel);
+  if (!roomChatRoomId) return;
+  roomChatChannel = sb.channel('room-chat-' + roomChatRoomId)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: 'room_id=eq.' + roomChatRoomId }, () => loadRoomMessages())
+    .subscribe();
+}
+function startRoomPolling() { if (roomChatPollTimer) clearInterval(roomChatPollTimer); roomChatPollTimer = setInterval(loadRoomMessages, 2000); }
+async function sendRoomMsg() {
+  if (isBanned) return showBanned();
+  const input = document.getElementById('roomInput');
+  const text = (input.value || '').trim();
+  if (!text || !roomChatRoomId) return;
+  input.value = ''; input.focus();
+  const { error } = await sb.from('messages').insert({ room_id: roomChatRoomId, nick: meEnc, text, user_id: currentUser.id });
+  if (error) {
+    if (error.message.includes('row-level security')) { alert('🚫 Ты забанен.'); return; }
+    alert(error.message); return;
+  }
+  await loadRoomMessages();
+  await loadMyDms(); renderDmList();
+}
+
+// ============ ROOMMATE MGMT ============
+async function sendInvite() {
+  const input = document.getElementById('inviteInput');
+  let target = input.value.trim();
+  if (!target) return;
+  const f = flats[fmNum];
+  if (!f) return;
+  if (f.owner_nick !== meEnc) return alert('Только хозяин может приглашать.');
+  if (f.owner_nick2) return alert('В квартире уже 2 человека.');
+  if ((f.max_people ?? 2) < 2) return alert('Админ запретил соседей.');
+  let targetEnc = null, targetNick = null;
+  if (/^\d+$/.test(target)) {
+    const n = parseInt(target);
+    if (n < 1 || n > 30) return alert('Такой квартиры нет.');
+    if (n === fmNum) return alert('Это твоя квартира.');
+    const tf = flats[n];
+    if (!tf || !tf.owner_nick) return alert('Эта квартира пуста.');
+    if (tf.owner_nick === meEnc) return alert('Нельзя пригласить себя.');
+    targetEnc = tf.owner_nick; targetNick = decNick(targetEnc);
+  } else {
+    const { data } = await sb.from('profiles').select('nick').eq('nick', target).maybeSingle();
+    if (!data) return alert('Такого ника нет.');
+    targetEnc = encNick(data.nick); targetNick = data.nick;
+    if (targetEnc === meEnc) return alert('Нельзя пригласить себя.');
+  }
+  const inHouse = Object.values(flats).some(x => x.owner_nick === targetEnc || x.owner_nick2 === targetEnc);
+  if (inHouse) return alert(targetNick + ' уже живёт в этом доме.');
+  const { error } = await sb.from('flats').update({ owner_nick2: targetEnc }).eq('house_id', currentHouseId).eq('number', fmNum);
+  if (error) {
+    if (error.message.includes('already_has_flat')) return alert(targetNick + ' уже живёт в доме.');
+    if (error.message.includes('cannot_be_roommate_with_self')) return alert('Нельзя быть соседом самому себе.');
+    return alert('Ошибка: ' + error.message);
+  }
+  input.value = '';
+  alert(targetNick + ' теперь живёт с тобой!');
+  await reloadCurrentHouse(); await loadMyRooms();
+  updateFlatModalState(); fmSwitch('room');
+}
+async function kickRoommate() {
+  const f = flats[fmNum];
+  if (!f || !f.owner_nick2) return;
+  if (f.owner_nick !== meEnc) return alert('Только хозяин может выгнать.');
+  if (!confirm('Выгнать ' + decNick(f.owner_nick2) + '?')) return;
+  const { error } = await sb.from('flats').update({ owner_nick2: null }).eq('house_id', currentHouseId).eq('number', fmNum);
+  if (error) return alert(error.message);
+  await reloadCurrentHouse(); updateFlatModalState(); fmSwitch('manage');
+}
+async function leaveFlat() {
+  const f = flats[fmNum];
+  if (!f) return;
+  const isOwner = f.owner_nick === meEnc;
+  const isRoommate = f.owner_nick2 === meEnc;
+  if (!confirm('Покинуть квартиру?')) return;
+  const patch = {};
+  if (isOwner) {
+    if (f.owner_nick2) { patch.owner_nick = f.owner_nick2; patch.owner_nick2 = null; }
+    else patch.owner_nick = null;
+  } else if (isRoommate) patch.owner_nick2 = null;
+  const { error } = await sb.from('flats').update(patch).eq('house_id', currentHouseId).eq('number', fmNum);
+  if (error) return alert(error.message);
+  closeFlatModal(); await reloadCurrentHouse(); await loadMyRooms();
+}
+
+// ============ MEDIA ============
+async function loadEditMedia() {
+  photoToUpload = null; musicToUpload = null;
+  document.getElementById('mediaStatus').textContent = '';
+  document.getElementById('photoInput').value = '';
+  document.getElementById('musicInput').value = '';
+  const { data } = await sb.from('user_media').select('*').eq('nick', meEnc).maybeSingle();
+  editingMedia = data || { photo_url: null, music_url: null, photo_x: 50, photo_y: 50, photo_zoom: 100 };
+  document.getElementById('photoX').value = editingMedia.photo_x ?? 50;
+  document.getElementById('photoY').value = editingMedia.photo_y ?? 50;
+  document.getElementById('photoZoom').value = editingMedia.photo_zoom ?? 100;
+  updatePreview();
+  document.getElementById('musicCurrent').textContent = editingMedia.music_url ? '🎵 музыка загружена' : '🎵 музыки нет';
+}
+function updatePreview() {
+  const img = document.getElementById('previewImg');
+  const empty = document.getElementById('previewEmpty');
+  const url = photoToUpload ? URL.createObjectURL(photoToUpload) : (editingMedia?.photo_url || null);
+  const x = Number(document.getElementById('photoX').value);
+  const y = Number(document.getElementById('photoY').value);
+  const z = Number(document.getElementById('photoZoom').value);
+  document.getElementById('valX').textContent = x;
+  document.getElementById('valY').textContent = y;
+  document.getElementById('valZoom').textContent = z + '%';
+  if (url) {
+    img.style.backgroundImage = 'url("' + url + '")';
+    img.style.backgroundSize = z + '% ' + z + '%';
+    img.style.backgroundPosition = x + '% ' + y + '%';
+    img.style.display = 'block'; empty.style.display = 'none';
+    document.getElementById('posXRow').style.display = 'flex';
+    document.getElementById('posYRow').style.display = 'flex';
+    document.getElementById('zoomRow').style.display = 'flex';
+  } else {
+    img.style.display = 'none'; empty.style.display = 'block';
+    document.getElementById('posXRow').style.display = 'none';
+    document.getElementById('posYRow').style.display = 'none';
+    document.getElementById('zoomRow').style.display = 'none';
+  }
+}
+document.getElementById('photoInput').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  photoToUpload = file; updatePreview();
+});
+document.getElementById('musicInput').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  musicToUpload = file;
+  document.getElementById('musicCurrent').textContent = '🎵 новая: ' + file.name;
+});
+['photoX','photoY','photoZoom'].forEach(id => { document.getElementById(id).addEventListener('input', updatePreview); });
+
+async function saveMedia() {
+  const status = document.getElementById('mediaStatus');
+  const x = Number(document.getElementById('photoX').value);
+  const y = Number(document.getElementById('photoY').value);
+  const zoom = Number(document.getElementById('photoZoom').value);
+  status.textContent = 'Сохранение...';
+  try {
+    let photo_url = null, music_url = null;
+    if (photoToUpload) {
+      const ext = (photoToUpload.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = 'photos/' + meEnc + '.' + ext;
+      const { error } = await sb.storage.from('media').upload(path, photoToUpload, { upsert: true, contentType: photoToUpload.type });
+      if (error) throw error;
+      photo_url = sb.storage.from('media').getPublicUrl(path).data.publicUrl + '?t=' + Date.now();
+    }
+    if (musicToUpload) {
+      const ext = (musicToUpload.name.split('.').pop() || 'mp3').toLowerCase();
+      const path = 'music/' + meEnc + '.' + ext;
+      const { error } = await sb.storage.from('media').upload(path, musicToUpload, { upsert: true, contentType: musicToUpload.type });
+      if (error) throw error;
+      music_url = sb.storage.from('media').getPublicUrl(path).data.publicUrl + '?t=' + Date.now();
+    }
+    const patch = { photo_x: x, photo_y: y, photo_zoom: zoom, updated_at: new Date().toISOString() };
+    if (photo_url) patch.photo_url = photo_url;
+    if (music_url) patch.music_url = music_url;
+    const { data: existing } = await sb.from('user_media').select('nick').eq('nick', meEnc).maybeSingle();
+    if (existing) {
+      const { error } = await sb.from('user_media').update(patch).eq('nick', meEnc);
+      if (error) throw error;
+    } else {
+      const { error } = await sb.from('user_media').insert({ nick: meEnc, ...patch });
+      if (error) throw error;
+    }
+    houseMedia[meEnc] = { ...(houseMedia[meEnc] || {}), ...patch };
+    renderFlats();
+    status.textContent = 'Сохранено ✓';
+  } catch (e) { status.textContent = 'Ошибка: ' + e.message; }
+}
+
+// ============ DMS ============
+async function loadMyDms() {
+  const pat1 = 'dm_' + meEnc + '__%';
+  const pat2 = 'dm_%__' + meEnc;
+  const dmP = sb.from('messages').select('*').or('room_id.like.' + pat1 + ',room_id.like.' + pat2).order('created_at', { ascending: false }).limit(500);
+  const ids = Array.from(myRooms);
+  const rmP = ids.length ? sb.from('messages').select('*').in('room_id', ids).order('created_at', { ascending: false }).limit(500) : Promise.resolve({ data: [] });
+  const [dmRes, roomRes] = await Promise.all([dmP, rmP]);
+  const byRoom = {};
+  const all = [...(dmRes.data || []), ...(roomRes.data || [])].sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  all.forEach(m => {
+    if (!byRoom[m.room_id]) {
+      const isDm = m.room_id.startsWith('dm_');
+      byRoom[m.room_id] = { room_id: m.room_id, partner: isDm ? partnerFromRoom(m.room_id) : null, isRoommate: !isDm, last: m };
+    }
+  });
+  myDms = Object.values(byRoom);
+}
+
+// ============ СКРЫТЫЕ ЧАТЫ (только у тебя) ============
+function getHiddenChats() {
+  try { return new Set(JSON.parse(localStorage.getItem('hiddenChats_' + meEnc) || '[]')); }
+  catch (e) { return new Set(); }
+}
+function saveHiddenChats(set) {
+  localStorage.setItem('hiddenChats_' + meEnc, JSON.stringify(Array.from(set)));
+}
+function hideChat(roomId, ev) {
+  if (ev) ev.stopPropagation();
+  if (!confirm('Скрыть этот чат из списка?\n\nОн пропадёт только у тебя. Если придёт новое сообщение — появится снова.')) return;
+  const h = getHiddenChats();
+  h.add(roomId);
+  saveHiddenChats(h);
+  renderDmList();
+}
+
+function renderDmList() {
+  const list = document.getElementById('dmList');
+  if (!myDms.length) { list.innerHTML = '<div class="notif-empty">Пока пусто.<br>Нажми на чужую квартиру,<br>чтобы написать жильцу</div>'; return; }
+
+  const hidden = getHiddenChats();
+
+  const sorted = [...myDms].sort((a, b) => {
+    const ua = unread[a.room_id] || 0;
+    const ub = unread[b.room_id] || 0;
+    if (ua !== ub) return ub - ua;
+    return new Date(b.last.created_at) - new Date(a.last.created_at);
+  });
+
+  const visible = sorted.filter(d => !hidden.has(d.room_id) || (unread[d.room_id] || 0) > 0);
+
+  if (!visible.length) {
+    list.innerHTML = '<div class="notif-empty">Все чаты скрыты.<br>Новое сообщение вернёт чат в список.</div>';
+    return;
+  }
+
+  list.innerHTML = visible.map(d => {
+    const cnt = unread[d.room_id] || 0;
+    let title;
+    if (d.isRoommate) {
+      const mm = d.room_id.match(/^h(\d+)_flat(\d+)_room$/);
+      title = '🏠 Комната ' + mm[2] + ' · Дом ' + mm[1];
+    } else title = '💬 ' + decNick(d.partner);
+    const preview = d.last.voice_url ? '🎤 Голосовое' : (d.last.photo_url ? '📷 Фото' : d.last.text);
+    return '<div class="notif" data-room="' + d.room_id + '" data-rm="' + (d.isRoommate ? '1' : '') + '">' +
+      '<button class="hide-chat-btn" onclick="hideChat(\'' + d.room_id + '\', event)" title="Скрыть">✕</button>' +
+      (cnt > 0 ? '<div class="notif-badge">' + cnt + '</div>' : '') +
+      '<div class="notif-room">' + escapeHtml(title) + '</div>' +
+      '<div class="notif-text">' + escapeHtml(d.last.nick === meEnc ? 'Ты: ' : '') + escapeHtml(preview) + '</div>' +
+    '</div>';
+  }).join('');
+
+  list.querySelectorAll('.notif').forEach(el => {
+    el.onclick = async () => {
+      const roomId = el.dataset.room;
+      const isRm = el.dataset.rm === '1';
+      document.getElementById('sidebar').classList.remove('open');
+      if (isRm) await openRoommateFromNotification(roomId);
+      else { const p = partnerFromRoom(roomId); if (p) openDm(p); }
+    };
+  });
+}
+
+async function openRoommateFromNotification(roomId) {
+  const m = roomId.match(/^h(\d+)_flat(\d+)_room$/);
+  if (!m) return;
+  const hid = Number(m[1]); const num = Number(m[2]);
+  if (hid !== currentHouseId) {
+    currentHouseId = hid; houseData = houses.find(h => h.id === hid) || null;
+    renderHouses(); await loadFlats(); await loadHouseMedia(); buildHouse();
+  }
+  await openFlatModal(num); fmSwitch('room');
+}
+function subscribeGlobal() {
+  sb.channel('global-msgs')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (p) => {
+      const msg = p.new;
+      if (!isMyRoom(msg.room_id)) return;
+      if (msg.nick === meEnc) return;
+      if (currentRoom === msg.room_id) return;
+      if (roomChatRoomId === msg.room_id) return;
+      unread[msg.room_id] = (unread[msg.room_id] || 0) + 1;
+      await loadMyDms(); renderDmList();
+    }).subscribe();
+}
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && currentUser && !isBanned) {
+    loadMessages();
+    if (roomChatRoomId) loadRoomMessages();
+  }
+});
+</script>
+</body>
+</html>
