@@ -67,7 +67,7 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 .umBtn .av{width:32px;height:32px;font-size:13px}
 .umArrow{color:#8888a0;font-size:11px;transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
 .umBtn.open .umArrow{transform:rotate(180deg)}
-.umDropdown{position:absolute;top:calc(100% + 8px);right:0;background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:6px;min-width:210px;box-shadow:0 20px 60px rgba(0,0,0,.7);display:none;flex-direction:column;gap:2px;animation:floatIn .25s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(20px)}
+.umDropdown{position:absolute;top:calc(100% + 8px);right:0;background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:6px;min-width:210px;box-shadow:0 20px 60px rgba(0,0,0,.7);display:none;flex-direction:column;gap:2px;animation:floatIn .25s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(20px);z-index:100}
 .umDropdown.open{display:flex}
 .umDropdown button{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:transparent;border:none;color:#e8e8f0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:500;text-align:left;transition:background .18s,transform .18s}
 .umDropdown button:hover{background:rgba(255,255,255,.06);transform:translateX(2px)}
@@ -387,6 +387,15 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .gm-ma .cr-btn{background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff}
 .gm-ma .cr-btn:hover{box-shadow:0 10px 24px rgba(160,107,255,.4)}
 .gm-ma .cr-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+/* автоподсказки ников */
+.inp-rel{position:relative}
+.sug-box{position:absolute;top:calc(100% - 8px);left:0;right:0;background:#1a1a22;border:1px solid rgba(160,107,255,.35);border-radius:12px;margin-top:6px;max-height:240px;overflow-y:auto;z-index:20;display:none;box-shadow:0 12px 40px rgba(0,0,0,.75);padding:4px}
+.sug-box.on{display:block;animation:floatIn .18s cubic-bezier(.34,1.56,.64,1)}
+.sug-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;transition:background .15s;border-radius:9px}
+.sug-item:hover{background:rgba(160,107,255,.2)}
+.sug-item .sn{flex:1;font-size:14px;font-weight:600;color:#e8e8f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sug-item .sf{font-size:11px;color:#f5c542;background:rgba(245,197,66,.12);padding:3px 9px;border-radius:8px;font-weight:700;flex-shrink:0}
+.sug-item .sf.no{background:rgba(255,255,255,.05);color:#666678}
 @media(max-width:768px){
 .sb{position:fixed;left:-100%;top:0;height:100vh;width:88%;max-width:360px;z-index:200;transition:left .3s cubic-bezier(.34,1.56,.64,1)}
 .sb.open{left:0}
@@ -472,8 +481,11 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 </div>
 <label class="gm-lbl">Название</label>
 <input id="gmName" class="gm-inp" maxlength="40" placeholder="Название группы..." autocomplete="off">
-<label class="gm-lbl">Участники <span class="hint-s">(ники через запятую или пробел)</span></label>
+<label class="gm-lbl">Участники <span class="hint-s">(начни печатать ник — появятся подсказки)</span></label>
+<div class="inp-rel">
 <input id="gmMem" class="gm-inp" placeholder="nick1, nick2..." autocomplete="off">
+<div class="sug-box" id="gmSug"></div>
+</div>
 <div class="gm-mem-list" id="gmMemList"></div>
 <div class="gm-err" id="gmErr"></div>
 </div>
@@ -497,7 +509,10 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 <label class="gm-lbl">Название</label>
 <input id="gsmName" class="gm-inp" maxlength="40" placeholder="Название...">
 <label class="gm-lbl">Участники <span class="hint-s">(добавить ники)</span></label>
+<div class="inp-rel">
 <input id="gsmAddMem" class="gm-inp" placeholder="nick1, nick2..." autocomplete="off">
+<div class="sug-box" id="gsmSug"></div>
+</div>
 <div class="gm-mem-list" id="gsmMemList"></div>
 <div class="gm-err" id="gsmErr"></div>
 </div>
@@ -724,6 +739,7 @@ let houses=[],curHouse=null,flats={},houseData=null,hm={};
 let curRoom=null,curRoomType=null,curEntG=null,curPartner=null;
 let curGroup=null;
 let groups=[];
+let allProfiles=[];
 let ch=null,pt=null,mc=null,fc=null,hc=null,pc=null,pres=null,typch=null,gpres=null,rch=null,gch=null;
 let online=new Set();
 let unread={},dms=[],lock=false;
@@ -803,7 +819,7 @@ function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{
 
 function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{key:meEnc}}});gpres.on('presence',{event:'sync'},()=>{const s=gpres.presenceState();online=new Set();for(const k in s)if(k&&k!==meEnc)online.add(k);renderDMs();upChSt()}).subscribe(async st=>{if(st==='SUBSCRIBED')await gpres.track({nick:meEnc,since:Date.now()})})}
 
-function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
+function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();await loadDMs();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
 
 function upAdminTog(){const b=document.getElementById('adminTog');b.style.display=iAmAdmin?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка';const m=document.getElementById('adminMItem');if(m)m.style.display=iAmAdmin?'flex':'none'}
 function toggleAdmin(){if(adminMode)exitAdmin();else enterAdmin()}
@@ -881,7 +897,61 @@ document.getElementById('annCloseBtn').onclick=()=>{
 };
 /* ============ /ОБЪЯВЛЕНИЯ ============ */
 
-async function start(){meEnc=en(me);document.getElementById('auth').style.display='none';document.getElementById('nickScr').style.display='none';document.getElementById('banO').classList.remove('on');document.getElementById('app').style.display='block';document.getElementById('myNick').textContent=me;document.getElementById('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();subProf();subGP();subGroups();initCtxEmojis();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn()}
+/* ============ АВТОПОДСКАЗКИ НИКОВ ============ */
+async function loadAllProfiles(){
+  try{
+    const{data:profs}=await sb.from('profiles').select('nick');
+    const{data:fl}=await sb.from('flats').select('number,owner_nick,owner_nick2');
+    const fm={};
+    (fl||[]).forEach(f=>{if(f.owner_nick)fm[f.owner_nick]=f.number;if(f.owner_nick2)fm[f.owner_nick2]=f.number});
+    allProfiles=(profs||[]).map(p=>({nick:p.nick,flat:fm[en(p.nick)]||null}));
+  }catch(e){console.error('loadAllProfiles',e);allProfiles=[]}
+}
+function attachNickSuggest(inpId,sugId){
+  const inp=document.getElementById(inpId);
+  const box=document.getElementById(sugId);
+  if(!inp||!box)return;
+  const hide=()=>box.classList.remove('on');
+  const show=()=>{
+    const val=inp.value||'';
+    const parts=val.split(/[,\n]/);
+    const raw=(parts[parts.length-1]||'').trim();
+    const cur=raw.toLowerCase();
+    if(!cur){hide();return}
+    const used=new Set(parts.slice(0,-1).map(x=>x.trim().toLowerCase()).filter(Boolean));
+    const matches=allProfiles
+      .filter(p=>p.nick.toLowerCase().includes(cur)&&!used.has(p.nick.toLowerCase())&&p.nick!==me)
+      .sort((a,b)=>{
+        const ai=a.nick.toLowerCase().startsWith(cur)?0:1;
+        const bi=b.nick.toLowerCase().startsWith(cur)?0:1;
+        if(ai!==bi)return ai-bi;
+        return a.nick.localeCompare(b.nick);
+      })
+      .slice(0,8);
+    if(!matches.length){hide();return}
+    box.innerHTML=matches.map(p=>'<div class="sug-item" data-nick="'+eh(p.nick)+'"><div class="av av-xs" style="background:linear-gradient(135deg,'+nCol(p.nick)+','+shCol(nCol(p.nick),-18)+')">'+eh(p.nick[0].toUpperCase())+'</div><div class="sn">'+eh(p.nick)+'</div>'+(p.flat?'<div class="sf">кв. '+p.flat+'</div>':'<div class="sf no">без кв.</div>')+'</div>').join('');
+    box.classList.add('on');
+    box.querySelectorAll('.sug-item').forEach(el=>{
+      el.onmousedown=e=>{
+        e.preventDefault();
+        const nick=el.dataset.nick;
+        const pr=val.split(/[,\n]/);
+        pr[pr.length-1]=nick;
+        inp.value=pr.map(x=>x.trim()).filter(Boolean).join(', ')+', ';
+        inp.focus();
+        hide();
+        inp.dispatchEvent(new Event('input'));
+      };
+    });
+  };
+  inp.addEventListener('input',show);
+  inp.addEventListener('focus',show);
+  inp.addEventListener('blur',()=>setTimeout(hide,180));
+  inp.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
+}
+/* ============ /АВТОПОДСКАЗКИ ============ */
+
+async function start(){meEnc=en(me);document.getElementById('auth').style.display='none';document.getElementById('nickScr').style.display='none';document.getElementById('banO').classList.remove('on');document.getElementById('app').style.display='block';document.getElementById('myNick').textContent=me;document.getElementById('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn()}
 
 function initCtxEmojis(){const c=document.getElementById('ctxEmojis');c.innerHTML=QR.map(e=>'<button type="button" onclick="ctxReact(\''+e+'\')">'+e+'</button>').join('')}
 
@@ -919,6 +989,8 @@ document.getElementById('gmAvaIn').onchange=e=>{const f=e.target.files[0];if(!f)
 document.getElementById('gsmAvaIn').onchange=e=>{const f=e.target.files[0];if(!f)return;gsmAvaFile=f;const el=document.getElementById('gsmAva');const em=document.getElementById('gsmAvaEmoji');el.style.backgroundImage='url("'+URL.createObjectURL(f)+'")';em.style.display='none';el.classList.add('has-photo')};
 document.getElementById('gmName').onkeydown=e=>{if(e.key==='Enter')createGroup()};
 document.getElementById('gmMem').onkeydown=e=>{if(e.key==='Enter')createGroup()};
+attachNickSuggest('gmMem','gmSug');
+attachNickSuggest('gsmAddMem','gsmSug');
 }
 function upSliderFill(id){const el=document.getElementById(id);const min=+el.min,max=+el.max,val=+el.value;const p=(val-min)/(max-min)*100;el.style.setProperty('--fill',p+'%')}
 
@@ -941,12 +1013,12 @@ function togCirc(el){const v=el.querySelector('video');if(!v)return;document.que
 
 async function loadGroups(){
   const{data,error}=await sb.from('groups').select('*').contains('members',[meEnc]);
-  if(error){console.error(error);groups=[];return}
+  if(error){console.error('loadGroups',error);groups=[];return}
   groups=data||[];
 }
-function openGm(){gmAvaFile=null;document.getElementById('gmName').value='';document.getElementById('gmMem').value='';document.getElementById('gmErr').textContent='';document.getElementById('gmAva').style.backgroundImage='';document.getElementById('gmAva').classList.remove('has-photo');document.getElementById('gmAvaEmoji').style.display='block';renderMemPreview();document.getElementById('gm').classList.add('open');setTimeout(()=>document.getElementById('gmName').focus(),100)}
-function closeGm(){document.getElementById('gm').classList.remove('open')}
-function parseNicks(s){return s.split(/[,\s]+/).map(x=>x.trim()).filter(Boolean)}
+function openGm(){gmAvaFile=null;document.getElementById('gmName').value='';document.getElementById('gmMem').value='';document.getElementById('gmErr').textContent='';document.getElementById('gmAva').style.backgroundImage='';document.getElementById('gmAva').classList.remove('has-photo');document.getElementById('gmAvaEmoji').style.display='block';document.getElementById('gmSug').classList.remove('on');renderMemPreview();document.getElementById('gm').classList.add('open');setTimeout(()=>document.getElementById('gmName').focus(),100)}
+function closeGm(){document.getElementById('gm').classList.remove('open');document.getElementById('gmSug').classList.remove('on')}
+function parseNicks(s){return s.split(/[,\n]+/).map(x=>x.trim()).filter(Boolean)}
 function renderMemPreview(){const inp=document.getElementById('gmMem');const l=document.getElementById('gmMemList');const nicks=parseNicks(inp.value);l.innerHTML=nicks.map(n=>'<div class="gm-mem">'+avH(n,'xs')+'<span>'+eh(n)+'</span><button class="x" onclick="rmMemPreview(\''+eh(n)+'\')">×</button></div>').join('')}
 function rmMemPreview(nick){const inp=document.getElementById('gmMem');const rest=parseNicks(inp.value).filter(n=>n!==nick);inp.value=rest.join(', ');renderMemPreview()}
 document.getElementById('gmMem').addEventListener('input',renderMemPreview);
@@ -978,7 +1050,8 @@ async function createGroup(){
     if(error){er.textContent='Ошибка: '+error.message;return}
     closeGm();
     await loadGroups();
-    await loadDMs();renderDMs();
+    await loadDMs();
+    renderDMs();
     openGroup(data.id);
   }finally{document.getElementById('gmCreate').disabled=false}
 }
@@ -1025,7 +1098,7 @@ function openGsm(){
   renderGsmMembers();
   document.getElementById('gsm').classList.add('open');
 }
-function closeGsm(){document.getElementById('gsm').classList.remove('open');gsmAvaFile=null}
+function closeGsm(){document.getElementById('gsm').classList.remove('open');gsmAvaFile=null;document.getElementById('gsmSug').classList.remove('on')}
 function renderGsmMembers(){
   if(!curGroup)return;
   const list=document.getElementById('gsmMemList');
@@ -1225,6 +1298,19 @@ async function loadDMs(){
       const d=m.room_id.startsWith('dm_');
       const g=m.room_id.startsWith('group_');
       br[m.room_id]={room_id:m.room_id,partner:d?pFR(m.room_id):null,isRM:!d&&!g,isGrp:g,last:m}
+    }
+  });
+  // ВАЖНО: группы без сообщений тоже попадают в список
+  groups.forEach(g=>{
+    const rid='group_'+g.id;
+    if(!br[rid]){
+      br[rid]={
+        room_id:rid,
+        partner:null,
+        isRM:false,
+        isGrp:true,
+        last:{created_at:g.created_at||new Date().toISOString(),nick:g.owner_nick||meEnc,text:'Группа создана',voice_url:null,video_url:null,photo_url:null}
+      };
     }
   });
   dms=Object.values(br);
