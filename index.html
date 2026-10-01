@@ -79,7 +79,7 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 #adminTog:hover{transform:translateY(-2px)}
 #adminTog.on{background:linear-gradient(135deg,#444,#222)}
 #app{display:none;height:100vh;overflow:hidden;position:relative;z-index:1}
-#annBanner{display:none;position:absolute;top:0;left:0;right:0;z-index:50;padding:12px 54px 12px 18px;background:linear-gradient(135deg,rgba(211,47,47,.95),rgba(183,28,28,.95));color:#fff;font-size:14px;font-weight:600;text-align:center;backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.2);animation:floatIn .4s ease both;align-items:center;justify-content:center;gap:10px}
+#annBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:9990;padding:12px 54px 12px 18px;background:linear-gradient(135deg,rgba(211,47,47,.98),rgba(183,28,28,.98));color:#fff;font-size:14px;font-weight:600;text-align:center;backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.2);animation:floatIn .4s ease both;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 #annBanner.on{display:flex}
 #annBanner .ann-ic{font-size:18px;flex-shrink:0}
 #annBanner button{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;width:28px;height:28px;cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s}
@@ -388,7 +388,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .gm-ma .cr-btn{background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff}
 .gm-ma .cr-btn:hover{box-shadow:0 10px 24px rgba(160,107,255,.4)}
 .gm-ma .cr-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-/* автоподсказки ников */
 .inp-rel{position:relative}
 .sug-box{position:absolute;top:calc(100% - 8px);left:0;right:0;background:#1a1a22;border:1px solid rgba(160,107,255,.35);border-radius:12px;margin-top:6px;max-height:240px;overflow-y:auto;z-index:20;display:none;box-shadow:0 12px 40px rgba(0,0,0,.75);padding:4px}
 .sug-box.on{display:block;animation:floatIn .18s cubic-bezier(.34,1.56,.64,1)}
@@ -397,7 +396,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .sug-item .sn{flex:1;font-size:14px;font-weight:600;color:#e8e8f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sug-item .sf{font-size:11px;color:#f5c542;background:rgba(245,197,66,.12);padding:3px 9px;border-radius:8px;font-weight:700;flex-shrink:0}
 .sug-item .sf.no{background:rgba(255,255,255,.05);color:#666678}
-/* ===== ПРОФИЛЬ ===== */
 #pf .emb{background:linear-gradient(180deg,#1a1a22,#14141c);padding:0;overflow:hidden}
 .pf-head{position:relative;height:120px}
 .pf-cover{position:absolute;inset:0;background:linear-gradient(135deg,#a06bff,#5aabff,#f5c542);opacity:.35}
@@ -816,6 +814,7 @@ let curRoom=null,curRoomType=null,curEntG=null,curPartner=null;
 let curGroup=null;
 let groups=[];
 let allProfiles=[];
+let photoCache={};
 let ch=null,pt=null,mc=null,fc=null,hc=null,pc=null,pres=null,typch=null,gpres=null,rch=null,gch=null;
 let online=new Set();
 let unread={},dms=[],lock=false;
@@ -841,7 +840,16 @@ function eh(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','
 function nCol(n){if(!n)return 'hsl(0,0%,40%)';let h=0;for(let i=0;i<n.length;i++){h=n.charCodeAt(i)+((h<<5)-h);h=h&h}return 'hsl('+(Math.abs(h)%360)+',62%,52%)'}
 function firstL(n){if(!n)return '?';const s=String(n).trim();return s?s[0].toUpperCase():'?'}
 function shCol(c,d){const m=c.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);if(!m)return c;const l=Math.max(0,Math.min(100,parseInt(m[3])+d));return 'hsl('+m[1]+','+m[2]+'%,'+l+'%)'}
-function avH(n,s){const c=s==='sm'?'av av-sm':s==='xs'?'av av-xs':s==='lg'?'av av-lg':'av';const bg=nCol(n);return '<div class="'+c+'" style="background:linear-gradient(135deg,'+bg+','+shCol(bg,-18)+')">'+eh(firstL(n))+'</div>'}
+function avH(n,s){
+  const c=s==='sm'?'av av-sm':s==='xs'?'av av-xs':s==='lg'?'av av-lg':'av';
+  const enc=en(n);
+  const url=photoCache[enc];
+  if(url){
+    return '<div class="'+c+'" style="background-image:url(\''+url+'\');background-size:cover;background-position:center;background-color:#2a2a3a"></div>';
+  }
+  const bg=nCol(n);
+  return '<div class="'+c+'" style="background:linear-gradient(135deg,'+bg+','+shCol(bg,-18)+')">'+eh(firstL(n))+'</div>';
+}
 function avOn(n,s,o){const a=avH(n,s);if(!o)return a;return '<div class="avw">'+a+'<div class="ondot"></div></div>'}
 function dmr(a,b){const s=[a,b].sort();return 'dm_'+s[0]+'__'+s[1]}
 function pFR(r){const m=r.match(/^dm_(.+)__(.+)$/);if(!m)return null;return m[1]===meEnc?m[2]:m[1]}
@@ -928,13 +936,34 @@ async function afTogHouse(b){if(!iAmAdmin)return;if(b&&!confirm('Заблоки�
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 
 /* ============ ОБЪЯВЛЕНИЯ ============ */
+let _lastAnnShown=null;
 function openAnn(){if(!iAmAdmin)return alert('Только админ');document.getElementById('annM').classList.add('open');document.getElementById('annInp').value=(houseData&&houseData.announcement)||'';document.getElementById('annErr').textContent='';setTimeout(()=>document.getElementById('annInp').focus(),100)}
 function closeAnn(){document.getElementById('annM').classList.remove('open')}
 async function postAnn(){if(!iAmAdmin)return;const er=document.getElementById('annErr');er.textContent='';const t=document.getElementById('annInp').value.trim();if(!t){er.textContent='Введи текст';return}const btn=document.getElementById('annPostBtn');btn.disabled=true;btn.textContent='Публикация...';const{error}=await sb.from('houses').update({announcement:t}).eq('id',curHouse);btn.disabled=false;btn.textContent='📢 Опубликовать';if(error){er.textContent='Ошибка: '+error.message;return}closeAnn();await loadHouses();showAnn(t);if(afT==='house')afRend()}
 async function delAnn(){if(!iAmAdmin)return;if(!confirm('Удалить объявление?'))return;await sb.from('houses').update({announcement:null}).eq('id',curHouse);document.getElementById('annBanner').classList.remove('on');await loadHouses();if(afT==='house')afRend()}
-function showAnn(t){const b=document.getElementById('annBanner');if(!t){b.classList.remove('on');return}const dis=localStorage.getItem('annDis_'+curHouse);if(dis===t){b.classList.remove('on');return}document.getElementById('annText').textContent=t;b.classList.add('on')}
+function showAnn(t){
+  const b=document.getElementById('annBanner');
+  if(!t){b.classList.remove('on');return}
+  const key='annDis_'+curHouse;
+  const dis=localStorage.getItem(key);
+  if(dis===t){b.classList.remove('on');return}
+  document.getElementById('annText').textContent=t;
+  b.classList.add('on');
+  if(t&&t!==_lastAnnShown){_lastAnnShown=t;showNotif('📢 Объявление',t.slice(0,80))}
+}
 document.getElementById('annCloseBtn').onclick=()=>{const t=document.getElementById('annText').textContent;localStorage.setItem('annDis_'+curHouse,t);document.getElementById('annBanner').classList.remove('on')};
+async function pollAnn(){if(!curHouse)return;try{const{data}=await sb.from('houses').select('announcement').eq('id',curHouse).maybeSingle();if(data){if(houseData)houseData.announcement=data.announcement;showAnn(data.announcement||null)}}catch(e){}}
 /* ============ /ОБЪЯВЛЕНИЯ ============ */
+
+/* ============ ФОТО-АВАТАРКИ ============ */
+async function loadPhotoCache(){
+  try{
+    const{data}=await sb.from('user_media').select('nick,photo_url');
+    photoCache={};
+    (data||[]).forEach(m=>{if(m.photo_url)photoCache[m.nick]=m.photo_url});
+  }catch(e){console.error('loadPhotoCache',e);photoCache={}}
+}
+/* ============ /ФОТО-АВАТАРКИ ============ */
 
 /* ============ АВТОПОДСКАЗКИ НИКОВ ============ */
 async function loadAllProfiles(){
@@ -1070,7 +1099,7 @@ async function savePf(ev){
 }
 /* ============ /ПРОФИЛЬ ============ */
 
-async function start(){meEnc=en(me);document.getElementById('auth').style.display='none';document.getElementById('nickScr').style.display='none';document.getElementById('banO').classList.remove('on');document.getElementById('app').style.display='block';document.getElementById('myNick').textContent=me;document.getElementById('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn()}
+async function start(){meEnc=en(me);document.getElementById('auth').style.display='none';document.getElementById('nickScr').style.display='none';document.getElementById('banO').classList.remove('on');document.getElementById('app').style.display='block';document.getElementById('myNick').textContent=me;document.getElementById('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadPhotoCache();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();pollAnn();setInterval(pollAnn,30000)}
 
 function initCtxEmojis(){const c=document.getElementById('ctxEmojis');c.innerHTML=QR.map(e=>'<button type="button" onclick="ctxReact(\''+e+'\')">'+e+'</button>').join('')}
 
@@ -1314,7 +1343,13 @@ async function clickFlat(n){if(lock)return;const f=flats[n];if(adminMode&&f&&f.o
 
 function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_changes',{event:'*',schema:'public',table:'houses'},async p=>{const r=p.new||p.old;if(!r)return;if(p.eventType==='INSERT'){if(!houses.find(h=>h.id===r.id))houses.push(r)}else if(p.eventType==='UPDATE'){const i=houses.findIndex(h=>h.id===r.id);if(i>=0)houses[i]=r;else houses.push(r);if(r.id===curHouse){houseData=r;showAnn(r.announcement||null);if(afT==='house')afRend()}}else if(p.eventType==='DELETE')houses=houses.filter(h=>h.id!==r.id);renderHouses();renderFlats()}).subscribe()}
 function subFlats(){if(fc)return;fc=sb.channel('flats-rt').on('postgres_changes',{event:'*',schema:'public',table:'flats'},async p=>{const r=p.new||p.old;if(!r||r.house_id!==curHouse)return;if(p.eventType==='DELETE')delete flats[r.number];else flats[r.number]=p.new;await loadHM();renderFlats();await loadMyRooms();await loadDMs();renderDMs();if(fmN===r.number){if(p.new&&(p.new.owner_nick===meEnc||p.new.owner_nick2===meEnc))upFm();else closeFm()}}).subscribe()}
-function subMed(){if(mc)return;mc=sb.channel('med-ch').on('postgres_changes',{event:'*',schema:'public',table:'user_media'},async p=>{const r=p.new||p.old;if(!r)return;const iH=Object.values(flats).some(f=>f.owner_nick===r.nick||f.owner_nick2===r.nick);if(iH){if(p.eventType==='DELETE')delete hm[r.nick];else hm[r.nick]=p.new;renderFlats()}if(curRoomType==='dm'&&curPartner===r.nick)bgLayer(p.eventType==='DELETE'?null:p.new)}).subscribe()}
+function subMed(){if(mc)return;mc=sb.channel('med-ch').on('postgres_changes',{event:'*',schema:'public',table:'user_media'},async p=>{const r=p.new||p.old;if(!r)return;
+if(p.eventType==='DELETE'){delete photoCache[r.nick]}else if(p.new.photo_url){photoCache[r.nick]=p.new.photo_url}
+const iH=Object.values(flats).some(f=>f.owner_nick===r.nick||f.owner_nick2===r.nick);
+if(iH){if(p.eventType==='DELETE')delete hm[r.nick];else hm[r.nick]=p.new;renderFlats()}
+renderDMs();
+if(curRoomType==='dm'&&curPartner===r.nick){bgLayer(p.eventType==='DELETE'?null:p.new);const pn=de(r.nick);document.getElementById('chAv').innerHTML='<div onclick="openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(r.nick))+'</div>'}
+}).subscribe()}
 function subReact(){if(rch)return;rch=sb.channel('react-rt').on('postgres_changes',{event:'*',schema:'public',table:'reactions'},async()=>{await refreshReact()}).subscribe()}
 
 async function setupPres(r){if(pres){try{await sb.removeChannel(pres)}catch(e){}pres=null}if(typch){try{await sb.removeChannel(typch)}catch(e){}typch=null}pres=sb.channel('pres-'+r,{config:{presence:{key:meEnc}}});pres.on('presence',{event:'sync'},()=>upOn()).subscribe(async st=>{if(st==='SUBSCRIBED')await pres.track({nick:meEnc})});typch=sb.channel('typ-'+r);typch.on('broadcast',{event:'typing'},p=>{if(p.payload&&p.payload.nick!==meEnc)showTyp()}).subscribe()}
@@ -1332,7 +1367,21 @@ function togMus(){const a=document.getElementById('bgA'),b=document.getElementBy
 function stopMus(){const a=document.getElementById('bgA');a.pause();a.src='';musUrl=null;const b=document.getElementById('mbB');if(b){b.textContent='';b.classList.remove('playing')}}
 function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
 
-async function openDm(p){curGroup=null;curRoom=dmr(meEnc,p);curRoomType='dm';curEntG=null;curPartner=p;const pn=de(p);document.getElementById('rt').textContent=pn;document.getElementById('chAv').innerHTML='<div onclick="openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(p))+'</div>';document.getElementById('modal').classList.add('open');document.getElementById('gearBtn').classList.remove('on');togIR(true);delete unread[curRoom];renderDMs();clrCh(document.getElementById('chat'));if(online.has(p))upChStOnline();else await upChStOffline();await loadM();subM();startPt();setupPres(curRoom);const{data}=await sb.from('user_media').select('*').eq('nick',p).maybeSingle();bgLayer(data);applyMus(data)}
+async function openDm(p){
+  curGroup=null;curRoom=dmr(meEnc,p);curRoomType='dm';curEntG=null;curPartner=p;
+  const pn=de(p);
+  // обновляем фото из кеша
+  try{const{data:um_}=await sb.from('user_media').select('photo_url').eq('nick',p).maybeSingle();if(um_&&um_.photo_url)photoCache[p]=um_.photo_url;else delete photoCache[p]}catch(e){}
+  document.getElementById('rt').textContent=pn;
+  document.getElementById('chAv').innerHTML='<div onclick="openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(p))+'</div>';
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('gearBtn').classList.remove('on');
+  togIR(true);delete unread[curRoom];renderDMs();clrCh(document.getElementById('chat'));
+  if(online.has(p))upChStOnline();else await upChStOffline();
+  await loadM();subM();startPt();setupPres(curRoom);
+  const{data}=await sb.from('user_media').select('*').eq('nick',p).maybeSingle();
+  bgLayer(data);applyMus(data);
+}
 async function openEntChat(g){if(!adminMode&&myEnt()!==g)return alert('🚫 Чужой подъезд');curGroup=null;curRoom='entrance_'+g;curRoomType='entrance';curEntG=g;curPartner=null;document.getElementById('rt').textContent='Подъезд '+g;document.getElementById('chAv').innerHTML='<div class="av av-lg" style="background:linear-gradient(135deg,#4a4a5a,#2a2a3a);font-size:22px">🏢</div>';document.getElementById('gearBtn').classList.remove('on');const st=document.getElementById('chs');if(st){st.textContent='общий чат';st.classList.remove('online')}document.getElementById('modal').classList.add('open');togIR(myEnt()===g);clrCh(document.getElementById('chat'));await loadM();subM();startPt();bgLayer(null);applyMus(null)}
 async function closeM(){if(mr&&mr.state==='recording'){try{mr.stop()}catch(e){}}if(vA){try{vA.pause()}catch(e){}}vId=null;document.querySelectorAll('.mc video').forEach(v=>v.pause());document.getElementById('modal').classList.remove('open');document.getElementById('gearBtn').classList.remove('on');if(ch){sb.removeChannel(ch);ch=null}if(pres){try{await sb.removeChannel(pres)}catch(e){}pres=null}if(typch){try{await sb.removeChannel(typch)}catch(e){}typch=null}if(pt){clearInterval(pt);pt=null}stopMus();curRoom=null;curRoomType=null;curEntG=null;curPartner=null;curGroup=null;document.getElementById('bgl').innerHTML='';clrCh(document.getElementById('chat'));epOpen=false;document.getElementById('ep').classList.remove('open');closeCtx()}
 
