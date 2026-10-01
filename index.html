@@ -723,35 +723,36 @@ function stopWork(timeUp){
   else{msg.style.color='#ff8888';msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Сделано '+workCaught+'/'+WORK_TARGETS}
   workTaskId=null;renderWork();
 }
-/* ======= КОНЕЦ ЧАСТИ 1 ======= */
-  function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();renderMyGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
+/* ======= КОНЕЦ ЧАСТИ 1 ======= *
+function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();renderMyGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
 function closeGift(){document.getElementById('giftM').classList.remove('open')}
 function renderGifts(){const list=document.getElementById('giftList');list.innerHTML=GIFTS.map(g=>{const can=myCoins>=g.price;return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>'}).join('')}
 async function renderMyGifts(){
   const box=document.getElementById('myGiftsList');if(!box)return;
   box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Загрузка...</div>';
-  const{data}=await sb.from('profiles').select('received_gifts').eq('nick',meEnc).maybeSingle();
+  const{data}=await sb.from('profiles').select('received_gifts').eq('nick',me).maybeSingle();
   const arr=((data&&data.received_gifts)||[]);
   if(!arr.length){box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Пока пусто — подаришь, и тут появятся полученные.</div>';return}
   box.innerHTML=arr.map((g,i)=>'<div class="my-gift" onclick="regift('+i+')" title="Передарить • от '+eh(de(g.from))+'"><div class="mg-e">'+g.e+'</div><div class="mg-n">'+eh(g.n||'')+'</div><div class="mg-f">от '+eh(de(g.from))+'</div></div>').join('');
 }
 async function regift(idx){
   const to=document.getElementById('giftM').dataset.to;if(!to)return;
+  const toPlain=de(to);
   const msg=document.getElementById('giftMsg');
-  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',meEnc).maybeSingle();
+  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',me).maybeSingle();
   const arr=((mp&&mp.received_gifts)||[]);
   const g=arr[idx];if(!g){msg.style.color='#ff8888';msg.textContent='Подарок не найден';return}
-  if(!confirm('Передарить '+g.e+' '+g.n+' для '+de(to)+'?'))return;
+  if(!confirm('Передарить '+g.e+' '+g.n+' для '+toPlain+'?'))return;
   arr.splice(idx,1);
-  await sb.from('profiles').update({received_gifts:arr}).eq('nick',meEnc);
-  const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',to).maybeSingle();
+  await sb.from('profiles').update({received_gifts:arr}).eq('nick',me);
+  const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',toPlain).maybeSingle();
   const tarr=((tp&&tp.received_gifts)||[]);
   tarr.unshift({e:g.e,n:g.n,from:meEnc,t:Date.now()});
   if(tarr.length>50)tarr.length=50;
-  await sb.from('profiles').update({received_gifts:tarr}).eq('nick',to);
+  await sb.from('profiles').update({received_gifts:tarr}).eq('nick',toPlain);
   const rid=dmr(meEnc,to);
   await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|regift|'+g.e+'|'+g.n,user_id:curUser.id});
-  showNotif('🎁 Передарено','Ты передарил '+g.e+' '+de(to));
+  showNotif('🎁 Передарено','Ты передарил '+g.e+' '+toPlain);
   msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.n+' передарен!';
   renderMyGifts();
   if(curRoom===rid)await loadM();
@@ -760,6 +761,7 @@ async function regift(idx){
 async function sendGift(giftId){
   const g=GIFTS.find(x=>x.id===giftId);if(!g)return;
   const to=document.getElementById('giftM').dataset.to;if(!to)return;
+  const toPlain=de(to);
   const msg=document.getElementById('giftMsg');
   if(myCoins<g.price){msg.style.color='#ff8888';msg.textContent='Не хватает монет';return}
   const{error}=await sb.from('gifts').insert({from_nick:meEnc,to_nick:to,gift_id:g.id,gift_emoji:g.e,gift_name:g.name});
@@ -767,10 +769,16 @@ async function sendGift(giftId){
   await addCoins(-g.price);
   const rid=dmr(meEnc,to);
   await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
-  try{const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',to).maybeSingle();const arr=((tp&&tp.received_gifts)||[]);arr.unshift({e:g.e,n:g.name,from:meEnc,t:Date.now()});if(arr.length>50)arr.length=50;await sb.from('profiles').update({received_gifts:arr}).eq('nick',to)}catch(e){}
+  try{
+    const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',toPlain).maybeSingle();
+    const arr=((tp&&tp.received_gifts)||[]);
+    arr.unshift({e:g.e,n:g.name,from:meEnc,t:Date.now()});
+    if(arr.length>50)arr.length=50;
+    await sb.from('profiles').update({received_gifts:arr}).eq('nick',toPlain);
+  }catch(e){}
   msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.name+' отправлен!';
   renderGifts();
-  showNotif('🎁 Подарок','Ты подарил '+g.e+' '+de(to));
+  showNotif('🎁 Подарок','Ты подарил '+g.e+' '+toPlain);
   if(curRoom===rid)await loadM();
   await loadDMs();renderDMs();
 }
