@@ -464,16 +464,16 @@ let vRec=null,vStr=null,vCh=[],vS=0,vTimer=null;
 let ctxMsgId=null,ctxMsgRoom=null,gmAvaFile=null,gsmAvaFile=null,gsmGroupId=null,pfCurrent=null,myCoins=0;
 let dutyGameActive=false,dutyGameTimer=null,dutyGameStart=0,dutyGameCaught=0,dutyGameTotal=8,dutyGameDuration=15000,dutyGameReward=0,dutyIsDuty=false;
 const GIFTS=[
-  {id:'rose',e:'🌹',name:'Роза',price:10,img:'gifts/rose.png'},
-  {id:'heart',e:'❤️',name:'Сердце',price:25,img:'gifts/heart.png'},
-  {id:'cake',e:'🎂',name:'Торт',price:50,img:'gifts/cake.png'},
-  {id:'dollar',e:'💵',name:'Доллар',price:75,img:'gifts/dollar.png'},
-  {id:'trophy',e:'🏆',name:'Кубок',price:150,img:'gifts/trophy.png'},
-  {id:'diamond',e:'💎',name:'Алмаз',price:300,img:'gifts/diamond.png'},
-  {id:'crown',e:'👑',name:'Корона',price:500,img:'gifts/crown.png'},
-  {id:'rocket',e:'🚀',name:'Ракета',price:1000,img:'gifts/rocket.png'},
-  {id:'money',e:'💰',name:'Мешок',price:2000,img:'gifts/money.png'},
-  {id:'star',e:'🌟',name:'Звезда',price:5000,img:'gifts/star.png'}
+  {id:'rose',e:'🌹',name:'Роза',price:10},
+  {id:'heart',e:'❤️',name:'Сердце',price:25},
+  {id:'cake',e:'🎂',name:'Торт',price:50},
+  {id:'dollar',e:'💵',name:'Доллар',price:75},
+  {id:'trophy',e:'🏆',name:'Кубок',price:150},
+  {id:'diamond',e:'💎',name:'Алмаз',price:300},
+  {id:'crown',e:'👑',name:'Корона',price:500},
+  {id:'rocket',e:'🚀',name:'Ракета',price:1000},
+  {id:'money',e:'💰',name:'Мешок',price:2000},
+  {id:'star',e:'🌟',name:'Звезда',price:5000}
 ];
 function en(n){return Array.from(new TextEncoder().encode(n)).map(b=>b.toString(16).padStart(2,'0')).join('')}
 function de(s){if(!s)return '';if(/^[0-9a-f]+$/.test(s)&&s.length%2===0){try{const b=s.match(/.{2}/g).map(x=>parseInt(x,16));return new TextDecoder().decode(new Uint8Array(b))}catch(e){}}try{return decodeURIComponent(s)}catch(e){return s}}
@@ -661,7 +661,13 @@ function stopMiniGame(timeUp){
 }
 function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
 function closeGift(){document.getElementById('giftM').classList.remove('open')}
-function renderGifts(){const list=document.getElementById('giftList');list.innerHTML=GIFTS.map(g=>{const can=myCoins>=g.price;return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><img src="'+g.img+'" onerror="this.outerHTML=\'<div class=&quot;gi-emoji&quot;>'+g.e+'</div>\'"></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>'}).join('')}
+function renderGifts(){
+  const list=document.getElementById('giftList');
+  list.innerHTML=GIFTS.map(g=>{
+    const can=myCoins>=g.price;
+    return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>';
+  }).join('');
+}
 async function sendGift(giftId){
   const g=GIFTS.find(x=>x.id===giftId);if(!g)return;
   const to=document.getElementById('giftM').dataset.to;if(!to)return;
@@ -671,7 +677,8 @@ async function sendGift(giftId){
   if(error){msg.style.color='#ff8888';msg.textContent='Ошибка: '+error.message;return}
   await addCoins(-g.price);
   const rid=dmr(meEnc,to);
-  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
+  const{error:me}=await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
+  if(me){msg.style.color='#ff8888';msg.textContent='Ошибка сообщения: '+me.message;return}
   try{const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',to).maybeSingle();const arr=((tp&&tp.received_gifts)||[]);arr.unshift({e:g.e,n:g.name,from:meEnc,t:Date.now()});if(arr.length>50)arr.length=50;await sb.from('profiles').update({received_gifts:arr}).eq('nick',to)}catch(e){}
   msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.name+' отправлен!';
   renderGifts();
