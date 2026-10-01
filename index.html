@@ -359,6 +359,25 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .duty-score{font-size:14px;color:#c8c8d0;text-align:center;margin-top:10px}
 .duty-score b{color:#f5c542}
 .duty-msg{font-size:13px;margin-top:12px;text-align:center;min-height:18px;color:#8bc34a;font-weight:600}
+.work-tasks{display:grid;grid-template-columns:1fr;gap:10px}
+.work-task{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s,border-color .15s}
+.work-task:hover{transform:translateY(-2px);border-color:rgba(245,197,66,.4)}
+.work-task.cd{cursor:not-allowed;opacity:.6}
+.work-task.cd:hover{transform:none;border-color:rgba(255,255,255,.08)}
+.work-task .wt-icon{font-size:32px;width:44px;text-align:center}
+.work-task .wt-name{flex:1;font-size:15px;font-weight:700}
+.work-task .wt-reward{font-size:13px;color:#f5c542;font-weight:700}
+.work-task .wt-go{font-size:11px;color:#8bc34a;background:rgba(76,175,80,.15);padding:4px 10px;border-radius:10px;font-weight:700}
+.work-task .wt-cd{font-size:12px;color:#ff8888;font-weight:700}
+.work-timer{font-size:16px;font-weight:700;color:#f5c542;text-align:center;margin-bottom:8px}
+.work-field{position:relative;height:280px;border-radius:16px;border:1px solid rgba(255,255,255,.08);overflow:hidden;touch-action:none;background:radial-gradient(circle at 50% 40%,#1a1a24,#0a0a10);cursor:crosshair}
+.work-field.dishes{background:radial-gradient(ellipse at 50% 80%,rgba(90,140,200,.22),transparent 60%),linear-gradient(180deg,#1a2430,#0a1018)}
+.work-field.vacuum{background:radial-gradient(ellipse at 50% 0%,rgba(180,140,80,.20),transparent 60%),linear-gradient(180deg,#2a1e14,#14100a)}
+.work-field.flowers{background:radial-gradient(ellipse at 50% 100%,rgba(80,180,90,.24),transparent 60%),linear-gradient(180deg,#142a18,#0a140c)}
+.work-target{position:absolute;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;transition:transform .15s,opacity .3s;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+.work-target:hover{transform:scale(1.12)}
+.work-target.clean{opacity:0;transform:scale(1.6) rotate(20deg);pointer-events:none}
+.work-mark{position:absolute;border-radius:50%;border:2px dashed rgba(245,197,66,.6);background:radial-gradient(circle at 50% 50%,rgba(245,197,66,.15),transparent 70%);pointer-events:none;animation:cleanFade 1s forwards}
 .gift-to{font-size:14px;color:#c8c8d0;margin-bottom:14px}
 .gift-to b{color:#f5c542}
 .gift-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:340px;overflow-y:auto}
@@ -421,10 +440,11 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
 <div id="afm"><div class="afb"><div class="afh"><h3>⚙️ Админ-панель</h3><button onclick="closeAdmin()">×</button></div><div class="aft"><div class="aftab act" data-t="flats" onclick="afSw('flats')">🏠 Квартиры</div><div class="aftab" data-t="ent" onclick="afSw('ent')">🏢 Подъезды</div><div class="aftab" data-t="house" onclick="afSw('house')">🏘 Дом</div><div class="aftab" data-t="users" onclick="afSw('users')">👥 Юзеры</div></div><div class="afbd" id="afB"></div></div></div>
-<div id="fm"><div class="fmb"><h3 id="fmT">🏠 Квартира</h3><div class="fmt"><div class="fmtab act" data-t="media" onclick="fmSw('media')">📷 Медиа</div><div class="fmtab" data-t="room" id="fmTR" onclick="fmSw('room')" style="display:none">💬 Комната</div><div class="fmtab" data-t="manage" id="fmTM" onclick="fmSw('manage')" style="display:none">👥 Сосед</div></div>
+<div id="fm"><div class="fmb"><h3 id="fmT">🏠 Квартира</h3><div class="fmt"><div class="fmtab act" data-t="media" onclick="fmSw('media')">📷 Медиа</div><div class="fmtab" data-t="room" id="fmTR" onclick="fmSw('room')" style="display:none">💬 Комната</div><div class="fmtab" data-t="manage" id="fmTM" onclick="fmSw('manage')" style="display:none">👥 Сосед</div><div class="fmtab" data-t="work" onclick="fmSw('work')">💼 Работа</div></div>
 <div class="fmp" id="fmPM"><div class="ms"><label>📷 Квадратное фото</label><div class="sp" id="sp"><div class="pi" id="pi"></div><span id="pe">нет фото</span></div><div class="file-row"><label class="file-btn" id="phBtn"><span>📁</span> <span>Выбрать файл</span><input type="file" id="phI" accept="image/*"></label><span class="file-name" id="phName">Файл не выбран</span></div><div class="sliders" id="slidersWrap" style="display:none;margin-top:12px"><div class="sr"><span class="ic">↔</span><input type="range" id="phX" min="0" max="100" value="50"><span class="vl" id="vX">50</span></div><div class="sr"><span class="ic">↕</span><input type="range" id="phY" min="0" max="100" value="50"><span class="vl" id="vY">50</span></div><div class="sr"><span class="ic">🔍</span><input type="range" id="phZ" min="50" max="300" value="100"><span class="vl" id="vZ">100%</span></div></div></div><div class="ms"><label>🎵 Музыка</label><div class="file-row"><label class="file-btn" id="musBtn"><span>🎵</span> <span>Выбрать файл</span><input type="file" id="musI" accept="audio/*"></label><span class="file-name" id="musName">Файл не выбран</span></div><div id="musC" style="font-size:12px;color:#666678;margin-top:8px"></div></div><div class="fms" id="mst"></div></div>
 <div class="fmp" id="fmPR" style="display:none"><div id="rc"></div><div class="ir"><input id="rIn" placeholder="Сообщение..." maxlength="500"><button id="rPB" class="ib">📎</button><button id="rVB" class="ib vb">🎤</button><button id="rSB">→</button></div></div>
 <div class="fmp" id="fmPN" style="display:none"><div class="ih">Напиши <b>ник</b> или <b>номер</b>.</div><div class="ibox"><input id="invI" placeholder="Ник или №" maxlength="20"><button onclick="invite()">Пригласить</button></div><div id="rmInfo"></div></div>
+<div class="fmp" id="fmPW" style="display:none"><div class="work-tasks" id="workTasks"></div><div class="work-game" id="workGame" style="display:none"><div class="work-timer">⏱ <span id="workTime">15.0</span>с</div><div class="work-field" id="workField"></div><div class="duty-score">✅ Сделано: <b id="workScore">0</b> / <span id="workTotal">8</span></div></div><div class="duty-msg" id="workMsg"></div></div>
 <div class="fma"><button class="lv" id="lvB" onclick="leaveFlat()" style="display:none">Покинуть</button><button class="cn" onclick="closeFm()">Закрыть</button><button class="sv" id="svB" onclick="saveM()">Сохранить</button></div></div></div>
 <div id="modal"><div class="mbox"><div class="bgl" id="bgl"></div><div class="chd"><div id="chAv"></div><div class="chi"><div class="chn" id="rt">Диалог</div><div class="chs" id="chs"></div></div><button class="gear-btn" id="gearBtn" onclick="openGsm()">⚙️</button><button class="music-btn" id="mbB" style="display:none"></button></div><div id="chat"></div><div id="typ">печатает<span class="td"><span>.</span><span>.</span><span>.</span></span></div><div class="ir" id="ir"><div class="ep" id="ep"><div class="eg" id="eg"></div></div><button id="eBtn" class="ib">😊</button><input id="mI" placeholder="Сообщение..." maxlength="500" autocomplete="off"><button id="pBtn" class="ib">📎</button><button id="cBtn" class="ib cb">⚪</button><button id="vBtn" class="ib vb">🎤</button><button id="sBtn">→</button></div><div class="nw" id="nw" style="display:none">Только в свой подъезд</div><button class="cls" onclick="closeM()">Закрыть</button></div></div>
 <input type="file" id="mPI" accept="image/*" style="display:none"><input type="file" id="rPI" accept="image/*" style="display:none">
@@ -450,6 +470,16 @@ let vA=null,vId=null,vDur={},vWaveCache={};
 let vRec=null,vStr=null,vCh=[],vS=0,vTimer=null;
 let ctxMsgId=null,ctxMsgRoom=null,gmAvaFile=null,gsmAvaFile=null,gsmGroupId=null,pfCurrent=null,myCoins=0;
 let dutyGameActive=false,dutyGameTimer=null,dutyGameStart=0,dutyGameCaught=0,dutyGameTotal=8,dutyGameDuration=15000,dutyGameReward=0,dutyIsDuty=false;
+let workActive=false,workTimer=null,workStart=0,workCaught=0,workTaskId=null,workCdInt=null;
+const WORK_TASKS=[
+  {id:'dishes',  name:'Намыть посуду',     icon:'🍽️', clean:'✨'},
+  {id:'vacuum',  name:'Пропылесосить пол', icon:'🧹', clean:'✨'},
+  {id:'flowers', name:'Полить цветы',      icon:'🌱', clean:'🌸'}
+];
+const WORK_REWARD=5;
+const WORK_COOLDOWN=30000;
+const WORK_DURATION=15000;
+const WORK_TARGETS=8;
 const GIFTS=[
   {id:'rose',e:'🌹',name:'Роза',price:10},
   {id:'heart',e:'❤️',name:'Сердце',price:25},
@@ -617,6 +647,76 @@ function stopMiniGame(timeUp){
   if(won){const le=((myEnt()-1)%3)+1;localStorage.setItem(dutyKey(le),'1');addCoins(dutyGameReward);msg.textContent='✨ Идеальная чистота! +'+dutyGameReward+' 💰';msg.style.color='#8bc34a';showNotif('🧹 Дежурство','+'+dutyGameReward+' монет!');const btn=document.getElementById('dutyStartBtn');btn.disabled=true;btn.textContent='⛔ Уже убирал сегодня';document.getElementById('dutyInfo').innerHTML+='<br><span style="color:#ff8888;font-weight:700">⛔ Ты уже убирал сегодня</span>'}else{msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Протёрто '+dutyGameCaught+'/'+dutyGameTotal;msg.style.color='#ff8888'}
   setTimeout(updateCoinsUI,100);
 }
+function workCdKey(id){return 'workCd_'+meEnc+'_'+id}
+function workCdLeft(id){const t=Number(localStorage.getItem(workCdKey(id))||0);return Math.max(0,t+WORK_COOLDOWN-Date.now())}
+function workCdSet(id){localStorage.setItem(workCdKey(id),String(Date.now()))}
+function renderWork(){
+  const wrap=document.getElementById('workTasks');if(!wrap)return;
+  if(workActive){wrap.style.display='none';return}
+  wrap.style.display='grid';
+  const anyCd=WORK_TASKS.some(t=>workCdLeft(t.id)>0);
+  wrap.innerHTML=WORK_TASKS.map(t=>{
+    const left=workCdLeft(t.id);const onCd=left>0;const sec=Math.ceil(left/1000);
+    return '<div class="work-task'+(onCd?' cd':'')+'" '+(onCd?'':'onclick="startWork(\''+t.id+'\')"')+'><div class="wt-icon">'+t.icon+'</div><div class="wt-name">'+t.name+'</div><div class="wt-reward">+'+WORK_REWARD+' 💰</div>'+(onCd?'<div class="wt-cd">⏳ '+sec+'с</div>':'<div class="wt-go">Начать</div>')+'</div>';
+  }).join('');
+  if(anyCd&&!workCdInt){workCdInt=setInterval(()=>{if(workActive||!document.getElementById('fm').classList.contains('open')){clearInterval(workCdInt);workCdInt=null;return}if(!WORK_TASKS.some(t=>workCdLeft(t.id)>0)){clearInterval(workCdInt);workCdInt=null}renderWork()},1000)}
+}
+function startWork(id){
+  if(isBanned)return showBan();
+  const task=WORK_TASKS.find(t=>t.id===id);
+  if(!task||workActive)return;
+  if(workCdLeft(id)>0)return;
+  workTaskId=id;workActive=true;workCaught=0;workStart=Date.now();
+  document.getElementById('workTasks').style.display='none';
+  const g=document.getElementById('workGame');g.style.display='block';
+  document.getElementById('workTotal').textContent=WORK_TARGETS;
+  document.getElementById('workScore').textContent='0';
+  document.getElementById('workTime').textContent=(WORK_DURATION/1000).toFixed(1);
+  const msg=document.getElementById('workMsg');msg.style.color='#c8c8d0';msg.textContent='Тыкай по цели!';
+  const f=document.getElementById('workField');f.innerHTML='';f.className='work-field '+id;
+  for(let i=0;i<WORK_TARGETS;i++)spawnWorkTarget(f,i,task);
+  if(workTimer)clearInterval(workTimer);
+  workTimer=setInterval(()=>{const elapsed=Date.now()-workStart;const left=Math.max(0,WORK_DURATION-elapsed)/1000;document.getElementById('workTime').textContent=left.toFixed(1);if(elapsed>=WORK_DURATION)stopWork(true)},80);
+}
+function spawnWorkTarget(field,idx,task){
+  const size=48+Math.random()*32;
+  const d=document.createElement('div');d.className='work-target';
+  d.style.width=size+'px';d.style.height=size+'px';d.style.fontSize=(size*0.62)+'px';
+  d.textContent=task.icon;
+  const r=field.getBoundingClientRect();
+  const cols=4,rows=Math.ceil(WORK_TARGETS/cols);
+  const padX=r.width/cols,padY=r.height/rows;
+  let x=(idx%cols)*padX+Math.random()*(padX-size);
+  let y=Math.floor(idx/cols)*padY+Math.random()*(padY-size);
+  x=Math.max(4,Math.min(r.width-size-4,x));
+  y=Math.max(4,Math.min(r.height-size-4,y));
+  d.style.left=x+'px';d.style.top=y+'px';
+  d.onclick=()=>{
+    if(!workActive)return;
+    d.classList.add('clean');d.textContent=task.clean;
+    const mark=document.createElement('div');mark.className='work-mark';
+    mark.style.left=d.style.left;mark.style.top=d.style.top;
+    mark.style.width=size+'px';mark.style.height=size+'px';
+    field.appendChild(mark);setTimeout(()=>mark.remove(),1000);
+    workCaught++;document.getElementById('workScore').textContent=workCaught;
+    if(workCaught>=WORK_TARGETS)stopWork(true);
+  };
+  field.appendChild(d);
+}
+function stopWork(timeUp){
+  if(!workActive)return;
+  workActive=false;
+  if(workTimer){clearInterval(workTimer);workTimer=null}
+  const f=document.getElementById('workField');
+  const msg=document.getElementById('workMsg');
+  document.getElementById('workGame').style.display='none';
+  f.innerHTML='';f.className='work-field';
+  const tid=workTaskId;
+  if(workCaught>=WORK_TARGETS){workCdSet(tid);addCoins(WORK_REWARD);msg.style.color='#8bc34a';msg.textContent='✨ Готово! +'+WORK_REWARD+' 💰';showNotif('💼 Работа','+'+WORK_REWARD+' монет!')}
+  else{msg.style.color='#ff8888';msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Сделано '+workCaught+'/'+WORK_TARGETS}
+  workTaskId=null;renderWork();
+}
+/* ======= КОНЕЦ ЧАСТИ 1 ======= */
 function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
 function closeGift(){document.getElementById('giftM').classList.remove('open')}
 function renderGifts(){const list=document.getElementById('giftList');list.innerHTML=GIFTS.map(g=>{const can=myCoins>=g.price;return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>'}).join('')}
@@ -876,8 +976,8 @@ async function togVoice(tgt){if(isBanned)return showBan();if(mr&&mr.state==='rec
 async function uploadV(b,m,rid){if(!rid)return;const ex=m.includes('mp4')?'m4a':'webm';const p='voice/'+meEnc+'_'+Date.now()+'.'+ex;const{error:ue}=await sb.storage.from('media').upload(p,b,{contentType:m});if(ue)return alert('Ошибка: '+ue.message);const u=sb.storage.from('media').getPublicUrl(p).data.publicUrl;await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎤 Голосовое',voice_url:u,user_id:curUser.id});if(rid===curRoom)await loadM();if(rid===rcId)await loadRM();if(rid.startsWith('dm_')||rid.startsWith('group_')){await loadDMs();renderDMs()}}
 async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;fmO=owners[0]===meEnc;document.getElementById('fm').classList.add('open');upFm();fmSw('media');await loadEditM()}
 function upFm(){const f=flats[fmN];if(!f)return closeFm();const owners=flatOwners(f);if(!owners.includes(meEnc))return closeFm();const isOwner=owners[0]===meEnc,mp=f.max_people??2,others=owners.filter(o=>o!==meEnc);document.getElementById('fmT').textContent='🏠 Квартира '+fmN+(isOwner?' (хозяин)':' (сосед)');document.getElementById('fmTR').style.display=others.length?'block':'none';document.getElementById('fmTM').style.display=(isOwner&&mp>=2)?'block':'none';document.getElementById('lvB').style.display='block';const inf=document.getElementById('rmInfo');if(!others.length)inf.innerHTML='<div class="reme">Пока никого.</div>';else inf.innerHTML=others.map(o=>'<div class="rmc">'+avH(de(o),'sm')+'<div style="flex:1;margin-left:10px"><div class="rn">'+eh(de(o))+'</div><div class="rt">сосед</div></div>'+(isOwner?'<button onclick="kickR(\''+o+'\')">Выгнать</button>':'')+'</div>').join('');if(others.length){rcId='h'+curHouse+'_flat'+fmN+'_room';clrCh(document.getElementById('rc'));loadRM();subRM();startRcPt()}else{if(rcCh){sb.removeChannel(rcCh);rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null}}
-function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');const m={media:'fmPM',room:'fmPR',manage:'fmPN'};document.getElementById(m[t]).style.display='flex';document.getElementById('svB').style.display=t==='media'?'block':'none'}
-function closeFm(){if(mr&&mr.state==='recording'&&rT==='room'){try{mr.stop()}catch(e){}}document.querySelectorAll('#rc .mc video').forEach(v=>v.pause());document.getElementById('fm').classList.remove('open');if(rcCh){sb.removeChannel(rcCh);rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;fmN=null;clrCh(document.getElementById('rc'))}
+function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');const m={media:'fmPM',room:'fmPR',manage:'fmPN',work:'fmPW'};document.getElementById(m[t]).style.display='flex';document.getElementById('svB').style.display=t==='media'?'block':'none';if(t==='work')renderWork()}
+function closeFm(){if(workActive)stopWork(false);if(workCdInt){clearInterval(workCdInt);workCdInt=null}if(mr&&mr.state==='recording'&&rT==='room'){try{mr.stop()}catch(e){}}document.querySelectorAll('#rc .mc video').forEach(v=>v.pause());document.getElementById('fm').classList.remove('open');if(rcCh){sb.removeChannel(rcCh);rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;fmN=null;clrCh(document.getElementById('rc'))}
 async function loadRM(){const tk=++rmTok,rid=rcId;if(!rid)return;const{data}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:true}).limit(200);if(tk!==rmTok||rid!==rcId)return;const{data:hid}=await sb.from('hidden_messages').select('message_id').eq('user_nick',meEnc);const hI=new Set((hid||[]).map(h=>h.message_id));rmC=(data||[]).filter(m=>!hI.has(m.id)&&!m.deleted_for_all);await loadR(rmC);renderMs(document.getElementById('rc'),rmC)}
 function subRM(){if(rcCh)sb.removeChannel(rcCh);if(!rcId)return;rcCh=sb.channel('rc-'+rcId).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+rcId},()=>loadRM()).subscribe()}
 function startRcPt(){if(rcPt)clearInterval(rcPt);rcPt=setInterval(loadRM,3000)}
