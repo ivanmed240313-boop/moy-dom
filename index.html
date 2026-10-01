@@ -549,6 +549,7 @@ sb.auth.onAuthStateChange(async(e,s)=>{if(e==='SIGNED_IN'&&s&&!curUser){curUser=
 function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+curUser.id},p=>{if(p.new){if(p.new.banned&&!isBanned){isBanned=true;banR=p.new.ban_reason||'';showBan();try{closeM()}catch(e){}try{closeFm()}catch(e){}try{closeAdmin()}catch(e){}}if(typeof p.new.is_admin!=='undefined'){iAmAdmin=!!p.new.is_admin;upAdminTog();if(!iAmAdmin&&adminMode)exitAdmin()}}if(typeof p.new.coins!=='undefined'){myCoins=p.new.coins||0;updateCoinsUI()}}).subscribe()}
 function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{key:meEnc}}});gpres.on('presence',{event:'sync'},()=>{const s=gpres.presenceState();online=new Set();for(const k in s)if(k&&k!==meEnc)online.add(k);renderDMs();upChSt()}).subscribe(async st=>{if(st==='SUBSCRIBED')await gpres.track({nick:meEnc,since:Date.now()})})}
 function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();await loadDMs();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
+function subGifts(){if(gch)return;sb.channel('gifts-rt2').on('postgres_changes',{event:'INSERT',schema:'public',table:'gifts'},async p=>{const g=p.new;if(!g)return;if(g.to_nick===meEnc)showNotif('🎁 Подарок от '+de(g.from_nick),(g.gift_emoji||'🎁')+' '+(g.gift_name||''))}).subscribe()}
 function upAdminTog(){const b=document.getElementById('adminTog');b.style.display=iAmAdmin?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка';const m=document.getElementById('adminMItem');if(m)m.style.display=iAmAdmin?'flex':'none'}
 function toggleAdmin(){if(adminMode)exitAdmin();else enterAdmin()}
 function enterAdmin(){if(!iAmAdmin)return alert('Не админ');adminMode=true;document.body.classList.add('admin-mode');document.getElementById('adminB').classList.add('on');document.getElementById('ap').classList.add('on');upAdminTog();renderFlats()}
@@ -723,37 +724,31 @@ function stopWork(timeUp){
   else{msg.style.color='#ff8888';msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Сделано '+workCaught+'/'+WORK_TARGETS}
   workTaskId=null;renderWork();
 }
-/* ======= КОНЕЦ ЧАСТИ 1 ======= *
-function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();renderMyGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
+/* ======= КОНЕЦ ЧАСТИ 1 ======= */
+  function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();renderMyGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
 function closeGift(){document.getElementById('giftM').classList.remove('open')}
 function renderGifts(){const list=document.getElementById('giftList');list.innerHTML=GIFTS.map(g=>{const can=myCoins>=g.price;return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>'}).join('')}
 async function renderMyGifts(){
   const box=document.getElementById('myGiftsList');if(!box)return;
   box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Загрузка...</div>';
-  const{data}=await sb.from('profiles').select('received_gifts').eq('nick',me).maybeSingle();
-  const arr=((data&&data.received_gifts)||[]);
-  if(!arr.length){box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Пока пусто — подаришь, и тут появятся полученные.</div>';return}
-  box.innerHTML=arr.map((g,i)=>'<div class="my-gift" onclick="regift('+i+')" title="Передарить • от '+eh(de(g.from))+'"><div class="mg-e">'+g.e+'</div><div class="mg-n">'+eh(g.n||'')+'</div><div class="mg-f">от '+eh(de(g.from))+'</div></div>').join('');
+  const{data}=await sb.from('gifts').select('*').eq('to_nick',meEnc).order('id',{ascending:false}).limit(50);
+  const arr=data||[];
+  if(!arr.length){box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Пока пусто — тебе ещё не дарили.</div>';return}
+  box.innerHTML=arr.map(g=>'<div class="my-gift" onclick="regift('+g.id+')" title="Передарить • от '+eh(de(g.from_nick))+'"><div class="mg-e">'+(g.gift_emoji||'🎁')+'</div><div class="mg-n">'+eh(g.gift_name||'')+'</div><div class="mg-f">от '+eh(de(g.from_nick))+'</div></div>').join('');
 }
-async function regift(idx){
+async function regift(giftId){
   const to=document.getElementById('giftM').dataset.to;if(!to)return;
   const toPlain=de(to);
   const msg=document.getElementById('giftMsg');
-  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',me).maybeSingle();
-  const arr=((mp&&mp.received_gifts)||[]);
-  const g=arr[idx];if(!g){msg.style.color='#ff8888';msg.textContent='Подарок не найден';return}
-  if(!confirm('Передарить '+g.e+' '+g.n+' для '+toPlain+'?'))return;
-  arr.splice(idx,1);
-  await sb.from('profiles').update({received_gifts:arr}).eq('nick',me);
-  const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',toPlain).maybeSingle();
-  const tarr=((tp&&tp.received_gifts)||[]);
-  tarr.unshift({e:g.e,n:g.n,from:meEnc,t:Date.now()});
-  if(tarr.length>50)tarr.length=50;
-  await sb.from('profiles').update({received_gifts:tarr}).eq('nick',toPlain);
+  const{data:g}=await sb.from('gifts').select('*').eq('id',giftId).maybeSingle();
+  if(!g||g.to_nick!==meEnc){msg.style.color='#ff8888';msg.textContent='Подарок не найден';return}
+  if(!confirm('Передарить '+(g.gift_emoji||'🎁')+' '+(g.gift_name||'')+' для '+toPlain+'?'))return;
+  await sb.from('gifts').delete().eq('id',giftId);
+  await sb.from('gifts').insert({from_nick:meEnc,to_nick:to,gift_id:g.gift_id,gift_emoji:g.gift_emoji,gift_name:g.gift_name});
   const rid=dmr(meEnc,to);
-  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|regift|'+g.e+'|'+g.n,user_id:curUser.id});
-  showNotif('🎁 Передарено','Ты передарил '+g.e+' '+toPlain);
-  msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.n+' передарен!';
+  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|regift|'+(g.gift_emoji||'🎁')+'|'+(g.gift_name||''),user_id:curUser.id});
+  showNotif('🎁 Передарено','Ты передарил '+(g.gift_emoji||'')+' '+toPlain);
+  msg.style.color='#8bc34a';msg.textContent='✅ '+(g.gift_emoji||'')+' '+(g.gift_name||'')+' передарен!';
   renderMyGifts();
   if(curRoom===rid)await loadM();
   await loadDMs();renderDMs();
@@ -769,20 +764,12 @@ async function sendGift(giftId){
   await addCoins(-g.price);
   const rid=dmr(meEnc,to);
   await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
-  try{
-    const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',toPlain).maybeSingle();
-    const arr=((tp&&tp.received_gifts)||[]);
-    arr.unshift({e:g.e,n:g.name,from:meEnc,t:Date.now()});
-    if(arr.length>50)arr.length=50;
-    await sb.from('profiles').update({received_gifts:arr}).eq('nick',toPlain);
-  }catch(e){}
   msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.name+' отправлен!';
   renderGifts();
   showNotif('🎁 Подарок','Ты подарил '+g.e+' '+toPlain);
   if(curRoom===rid)await loadM();
   await loadDMs();renderDMs();
 }
-function subGifts(){sb.channel('gifts-rt').on('postgres_changes',{event:'INSERT',schema:'public',table:'gifts'},async p=>{const g=p.new;if(!g)return;if(g.to_nick===meEnc)showNotif('🎁 Подарок от '+de(g.from_nick),g.gift_emoji+' '+g.gift_name)}).subscribe()}
 function openPfMine(){closeUserMenu();openProfile(null)}
 async function openProfile(nick){
   closeUserMenu();
@@ -813,10 +800,11 @@ async function openProfile(nick){
   if(isMine||isOnline){seenRow.style.display='none'}else if(p&&p.last_seen){seenRow.style.display='flex';seenT.textContent=lastSeenText(p.last_seen)}else{seenRow.style.display='none'}
   document.getElementById('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';
   document.getElementById('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
-  const giftsList=(p&&p.received_gifts)||[];
+  const{data:gl}=await sb.from('gifts').select('*').eq('to_nick',en(target)).order('id',{ascending:false}).limit(30);
+  const giftsList=gl||[];
   document.getElementById('pfGiftsWrap').style.display='block';
   if(giftsList.length){
-    document.getElementById('pfGiftsList').innerHTML=giftsList.slice(0,30).map(g=>'<div class="pf-gift" title="'+(g.n||'')+' • от '+eh(de(g.from))+'"><span style="font-size:26px;display:block;line-height:1">'+g.e+'</span><span class="pf-gn">'+eh(g.n||'')+'</span><span class="pf-gf">от '+eh(de(g.from))+'</span></div>').join('');
+    document.getElementById('pfGiftsList').innerHTML=giftsList.map(g=>'<div class="pf-gift" title="'+(g.gift_name||'')+' • от '+eh(de(g.from_nick))+'"><span style="font-size:26px;display:block;line-height:1">'+(g.gift_emoji||'🎁')+'</span><span class="pf-gn">'+eh(g.gift_name||'')+'</span><span class="pf-gf">от '+eh(de(g.from_nick))+'</span></div>').join('');
   }else{
     document.getElementById('pfGiftsList').innerHTML='<div style="font-size:12px;color:#666678;padding:4px">'+(isMine?'Тебе ещё ничего не дарили':'Пока никто не дарил')+'</div>';
   }
