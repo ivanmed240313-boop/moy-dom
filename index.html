@@ -1,4 +1,6 @@
 <!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Дом</title><link rel="icon" type="image/png" href="favicon.png"><style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a10;color:#e8e8f0;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(circle at 20% 20%,rgba(245,197,66,.06),transparent 35%),radial-gradient(circle at 80% 70%,rgba(76,175,80,.05),transparent 40%);animation:bgF 20s ease-in-out infinite;z-index:-1;pointer-events:none}
 @keyframes bgF{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(5deg) scale(1.08)}}
 @keyframes shim{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
@@ -347,17 +349,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .duty-game{margin-top:14px}
 .duty-timer{font-size:16px;font-weight:700;color:#f5c542;text-align:center;margin-bottom:8px}
 .duty-field{position:relative;height:280px;background:radial-gradient(circle at 50% 50%,#1a1a24,#0a0a10);border-radius:16px;border:1px solid rgba(255,255,255,.08);overflow:hidden;touch-action:none}
-.duty-field.floor{
-  background:
-    radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.18),transparent 60%),
-    repeating-linear-gradient(115deg,transparent 0 18px,rgba(0,0,0,.22) 18px 20px) 80% 100%/40% 45% no-repeat,
-    linear-gradient(180deg,#8fa88f 0%,#6f8a6f 70%,#5a725a 100%) 0 0/35% 100% no-repeat,
-    linear-gradient(180deg,#d8e2d8 0%,#a8b8a8 30%,#7a9a7a 100%) 35% 0/65% 60% no-repeat,
-    linear-gradient(180deg,#8a8a8a 0%,#5a5a5a 40%,#3a3a3a 100%) 0 60%/100% 40% no-repeat;
-  box-shadow:inset 0 0 80px rgba(0,0,0,.65);
-  cursor:crosshair;
-  filter:saturate(.9) brightness(.95);
-}
+.duty-field.floor{background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.18),transparent 60%),repeating-linear-gradient(115deg,transparent 0 18px,rgba(0,0,0,.22) 18px 20px) 80% 100%/40% 45% no-repeat,linear-gradient(180deg,#8fa88f 0%,#6f8a6f 70%,#5a725a 100%) 0 0/35% 100% no-repeat,linear-gradient(180deg,#d8e2d8 0%,#a8b8a8 30%,#7a9a7a 100%) 35% 0/65% 60% no-repeat,linear-gradient(180deg,#8a8a8a 0%,#5a5a5a 40%,#3a3a3a 100%) 0 60%/100% 40% no-repeat;box-shadow:inset 0 0 80px rgba(0,0,0,.65);cursor:crosshair;filter:saturate(.9) brightness(.95)}
 .duty-field.shaking{animation:shake .15s}
 .duty-dirt{position:absolute;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(90,70,40,.95),rgba(50,35,20,.9) 60%,rgba(30,20,10,.85));box-shadow:0 0 12px rgba(0,0,0,.6),inset -3px -3px 8px rgba(0,0,0,.5);cursor:pointer;user-select:none;animation:dirtIn .25s both;transition:transform .15s,opacity .3s}
 .duty-dirt:hover{transform:scale(1.08)}
@@ -373,7 +365,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .gift-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);cursor:pointer;text-align:center;transition:transform .2s}
 .gift-item:hover{background:rgba(245,197,66,.1);border-color:rgba(245,197,66,.4);transform:translateY(-2px)}
 .gift-item .gi-icon{width:64px;height:64px;display:flex;align-items:center;justify-content:center}
-.gift-item .gi-icon img{width:64px;height:64px;object-fit:contain}
 .gift-item .gi-emoji{font-size:44px;line-height:64px;animation:giftPulse 2s infinite}
 .gift-item .gi-n{font-size:12px;color:#c8c8d0;font-weight:600}
 .gift-item .gi-p{font-size:12px;color:#f5c542;font-weight:700}
@@ -381,13 +372,11 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .gift-msg{display:flex;align-items:center;gap:12px;padding:10px 14px;background:linear-gradient(135deg,rgba(245,197,66,.15),rgba(255,157,46,.08));border:1px solid rgba(245,197,66,.4);border-radius:14px;cursor:pointer;margin-top:4px;transition:transform .2s}
 .gift-msg:hover{transform:scale(1.03)}
 .gift-msg-icon{width:56px;height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.gift-msg-icon img{width:56px;height:56px;object-fit:contain}
 .gift-msg-icon .gi-emoji{font-size:42px;animation:giftPulse 2s infinite}
 .gift-msg-txt{flex:1;min-width:0}
 .gift-msg-title{font-size:14px;font-weight:800;color:#f5c542;margin-bottom:2px}
 .gift-msg-sub{font-size:11px;color:#8888a0}
-.pf-gift{background:rgba(255,255,255,.05);padding:4px 8px;border-radius:10px;line-height:1;cursor:pointer}
-.pf-gift .pf-gift-gif{width:44px;height:44px;object-fit:contain;display:block}
+.pf-gift{background:rgba(255,255,255,.05);padding:4px 8px;border-radius:10px;line-height:1;font-size:28px;cursor:pointer}
 @media(max-width:768px){
 .sb{position:fixed;left:-100%;top:0;height:100vh;width:88%;max-width:360px;z-index:200;transition:left .3s}
 .sb.open{left:0}.sb-h .cs{display:block}.mbtn{display:block}.hc{opacity:1}
@@ -569,12 +558,7 @@ function openDuty(){
   dutyIsDuty=isDuty;
   const reward=isDuty?50:0;
   const done=localStorage.getItem(dutyKey(myLe))==='1';
-  document.getElementById('dutyInfo').innerHTML=
-    '🏢 Сегодня дежурит подъезд <b>'+gd.ent+'</b><br>'+
-    '👑 Дежурный: <b>'+(gd.person?de(gd.person.nick):'—')+'</b>'+(gd.person?' (кв. '+gd.person.flat+')':'')+'<br>'+
-    '🏠 Ты в подъезде <b>'+myLe+'</b><br>'+
-    (isDuty?'<span style="color:#8bc34a;font-weight:700">✅ Ты дежурный! Награда: 50 💰</span>':'<span style="color:#ff8888">Сегодня дежурит другой подъезд</span>')+
-    (done?'<br><span style="color:#ff8888;font-weight:700">⛔ Ты уже убирал сегодня</span>':'');
+  document.getElementById('dutyInfo').innerHTML='🏢 Сегодня дежурит подъезд <b>'+gd.ent+'</b><br>👑 Дежурный: <b>'+(gd.person?de(gd.person.nick):'—')+'</b>'+(gd.person?' (кв. '+gd.person.flat+')':'')+'<br>🏠 Ты в подъезде <b>'+myLe+'</b><br>'+(isDuty?'<span style="color:#8bc34a;font-weight:700">✅ Ты дежурный! Награда: 50 💰</span>':'<span style="color:#ff8888">Сегодня дежурит другой подъезд</span>')+(done?'<br><span style="color:#ff8888;font-weight:700">⛔ Ты уже убирал сегодня</span>':'');
   dutyGameReward=reward;dutyGameActive=false;
   document.getElementById('dutyGame').style.display='none';
   const btn=document.getElementById('dutyStartBtn');
@@ -617,18 +601,7 @@ function spawnDirt(field,idx){
   x=Math.max(4,Math.min(r.width-size-4,x));
   y=Math.max(4,Math.min(r.height-size*0.75-4,y));
   d.style.left=x+'px';d.style.top=y+'px';
-  d.onclick=()=>{
-    if(!dutyGameActive)return;
-    d.classList.add('clean');
-    const mark=document.createElement('div');mark.className='duty-cleaned-mark';
-    mark.style.left=d.style.left;mark.style.top=d.style.top;
-    mark.style.width=size+'px';mark.style.height=size*0.75+'px';
-    field.appendChild(mark);setTimeout(()=>mark.remove(),1200);
-    field.classList.add('shaking');setTimeout(()=>field.classList.remove('shaking'),150);
-    dutyGameCaught++;
-    document.getElementById('dutyScore').textContent=dutyGameCaught;
-    if(dutyGameCaught>=dutyGameTotal)stopMiniGame(true);
-  };
+  d.onclick=()=>{if(!dutyGameActive)return;d.classList.add('clean');const mark=document.createElement('div');mark.className='duty-cleaned-mark';mark.style.left=d.style.left;mark.style.top=d.style.top;mark.style.width=size+'px';mark.style.height=size*0.75+'px';field.appendChild(mark);setTimeout(()=>mark.remove(),1200);field.classList.add('shaking');setTimeout(()=>field.classList.remove('shaking'),150);dutyGameCaught++;document.getElementById('dutyScore').textContent=dutyGameCaught;if(dutyGameCaught>=dutyGameTotal)stopMiniGame(true)};
   field.appendChild(d);
 }
 function stopMiniGame(timeUp){
@@ -641,31 +614,12 @@ function stopMiniGame(timeUp){
   document.getElementById('dutyStartBtn').style.display='block';
   document.getElementById('dutyGame').style.display='none';
   field.classList.remove('floor','shaking');field.innerHTML='';
-  if(won){
-    const le=((myEnt()-1)%3)+1;
-    localStorage.setItem(dutyKey(le),'1');
-    addCoins(dutyGameReward);
-    msg.textContent='✨ Идеальная чистота! +'+dutyGameReward+' 💰';
-    msg.style.color='#8bc34a';
-    showNotif('🧹 Дежурство','+'+dutyGameReward+' монет!');
-    const btn=document.getElementById('dutyStartBtn');
-    btn.disabled=true;btn.textContent='⛔ Уже убирал сегодня';
-    document.getElementById('dutyInfo').innerHTML+='<br><span style="color:#ff8888;font-weight:700">⛔ Ты уже убирал сегодня</span>';
-  }else{
-    msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Протёрто '+dutyGameCaught+'/'+dutyGameTotal;
-    msg.style.color='#ff8888';
-  }
+  if(won){const le=((myEnt()-1)%3)+1;localStorage.setItem(dutyKey(le),'1');addCoins(dutyGameReward);msg.textContent='✨ Идеальная чистота! +'+dutyGameReward+' 💰';msg.style.color='#8bc34a';showNotif('🧹 Дежурство','+'+dutyGameReward+' монет!');const btn=document.getElementById('dutyStartBtn');btn.disabled=true;btn.textContent='⛔ Уже убирал сегодня';document.getElementById('dutyInfo').innerHTML+='<br><span style="color:#ff8888;font-weight:700">⛔ Ты уже убирал сегодня</span>'}else{msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Протёрто '+dutyGameCaught+'/'+dutyGameTotal;msg.style.color='#ff8888'}
   setTimeout(updateCoinsUI,100);
 }
 function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
 function closeGift(){document.getElementById('giftM').classList.remove('open')}
-function renderGifts(){
-  const list=document.getElementById('giftList');
-  list.innerHTML=GIFTS.map(g=>{
-    const can=myCoins>=g.price;
-    return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>';
-  }).join('');
-}
+function renderGifts(){const list=document.getElementById('giftList');list.innerHTML=GIFTS.map(g=>{const can=myCoins>=g.price;return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>'}).join('')}
 async function sendGift(giftId){
   const g=GIFTS.find(x=>x.id===giftId);if(!g)return;
   const to=document.getElementById('giftM').dataset.to;if(!to)return;
@@ -675,8 +629,7 @@ async function sendGift(giftId){
   if(error){msg.style.color='#ff8888';msg.textContent='Ошибка: '+error.message;return}
   await addCoins(-g.price);
   const rid=dmr(meEnc,to);
-  const{error:me}=await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
-  if(me){msg.style.color='#ff8888';msg.textContent='Ошибка сообщения: '+me.message;return}
+  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
   try{const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',to).maybeSingle();const arr=((tp&&tp.received_gifts)||[]);arr.unshift({e:g.e,n:g.name,from:meEnc,t:Date.now()});if(arr.length>50)arr.length=50;await sb.from('profiles').update({received_gifts:arr}).eq('nick',to)}catch(e){}
   msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.name+' отправлен!';
   renderGifts();
@@ -717,7 +670,7 @@ async function openProfile(nick){
   document.getElementById('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
   const giftsList=(p&&p.received_gifts)||[];
   document.getElementById('pfGiftsWrap').style.display=giftsList.length?'block':'none';
-  document.getElementById('pfGiftsList').innerHTML=giftsList.slice(0,30).map(g=>{const gd=GIFTS.find(x=>x.id===g.id||x.e===g.e);if(gd)return '<div class="pf-gift" title="от '+eh(de(g.from))+'"><img class="pf-gift-gif" src="'+gd.img+'" onerror="this.outerHTML=\''+g.e+'\'"></div>';return '<div class="pf-gift" title="от '+eh(de(g.from))+'">'+g.e+'</div>'}).join('');
+  document.getElementById('pfGiftsList').innerHTML=giftsList.slice(0,30).map(g=>'<div class="pf-gift" title="от '+eh(de(g.from))+'">'+g.e+'</div>').join('');
   const acts=document.getElementById('pfActions');
   if(isMine){acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button>'}
   else{acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="edit" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000" onclick="openGift(\''+en(target)+'\')">🎁 Подарить</button>'}
@@ -790,7 +743,7 @@ document.getElementById('dutyM').addEventListener('click',e=>{if(e.target.id==='
 document.getElementById('giftM').addEventListener('click',e=>{if(e.target.id==='giftM')closeGift()});
 }
 function upSliderFill(id){const el=document.getElementById(id);const min=+el.min,max=+el.max,val=+el.value;const p=(val-min)/(max-min)*100;el.style.setProperty('--fill',p+'%')}
-function openCtx(e,msgId,roomType){e.preventDefault();e.stopPropagation();ctxMsgId=msgId;ctxMsgRoom=roomType;const menu=document.getElementById('ctxMenu');const msgs=roomType==='main'?msgC:rmC;const m=msgs.find(x=>x.id===msgId);if(!m)return;const mine=m.nick===meEnc;const isText=!m.voice_url&&!m.video_url&&!m.photo_url&&!m.text.startsWith('🎁GIFT|');let html='';if(mine&&isText)html+='<button onclick="ctxEdit()">✏️ Редактировать</button>';html+='<div class="div"></div>';if(mine)html+='<button class="red" onclick="ctxDelBoth()">🗑️ Удалить у всех</button>';html+='<button class="red" onclick="ctxDelMe()">✕ Удалить у себя</button>';document.getElementById('ctxActions').innerHTML=html;menu.style.left='0px';menu.style.top='0px';menu.classList.add('open');const w=menu.offsetWidth,h=menu.offsetHeight;let x=e.clientX,y=e.clientY;if(x+w>window.innerWidth)x=window.innerWidth-w-10;if(y+h>window.innerHeight)y=window.innerHeight-h-10;if(x<10)x=10;if(y<10)y=10;menu.style.left=x+'px';menu.style.top=y+'px'}
+function openCtx(e,msgId,roomType){e.preventDefault();e.stopPropagation();ctxMsgId=msgId;ctxMsgRoom=roomType;const menu=document.getElementById('ctxMenu');const msgs=roomType==='main'?msgC:rmC;const m=msgs.find(x=>x.id===msgId);if(!m)return;const mine=m.nick===meEnc;const isText=!m.voice_url&&!m.video_url&&!m.photo_url&&!(m.text&&m.text.startsWith('🎁GIFT|'));let html='';if(mine&&isText)html+='<button onclick="ctxEdit()">✏️ Редактировать</button>';html+='<div class="div"></div>';if(mine)html+='<button class="red" onclick="ctxDelBoth()">🗑️ Удалить у всех</button>';html+='<button class="red" onclick="ctxDelMe()">✕ Удалить у себя</button>';document.getElementById('ctxActions').innerHTML=html;menu.style.left='0px';menu.style.top='0px';menu.classList.add('open');const w=menu.offsetWidth,h=menu.offsetHeight;let x=e.clientX,y=e.clientY;if(x+w>window.innerWidth)x=window.innerWidth-w-10;if(y+h>window.innerHeight)y=window.innerHeight-h-10;if(x<10)x=10;if(y<10)y=10;menu.style.left=x+'px';menu.style.top=y+'px'}
 function closeCtx(){const m=document.getElementById('ctxMenu');if(m)m.classList.remove('open');ctxMsgId=null;ctxMsgRoom=null}
 function ctxEdit(){const id=ctxMsgId,rt=ctxMsgRoom;closeCtx();openEm(id,rt)}
 function ctxDelMe(){const id=ctxMsgId;closeCtx();delMe(id)}
@@ -873,20 +826,7 @@ function applyMus(m){const b=document.getElementById('mbB'),a=document.getElemen
 function togMus(){const a=document.getElementById('bgA'),b=document.getElementById('mbB');if(!musUrl)return;const key='musOff_'+(curPartner||'x');if(!a.src)a.src=musUrl;if(a.paused){a.play().then(()=>{b.textContent='🔊';b.classList.add('playing');localStorage.setItem(key,'0')}).catch(()=>{})}else{a.pause();b.textContent='🔇';b.classList.remove('playing');localStorage.setItem(key,'1')}}
 function stopMus(){const a=document.getElementById('bgA');a.pause();a.src='';musUrl=null;const b=document.getElementById('mbB');if(b){b.textContent='';b.classList.remove('playing')}}
 function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
-async function openDm(p){
-  curGroup=null;curRoom=dmr(meEnc,p);curRoomType='dm';curEntG=null;curPartner=p;
-  const pn=de(p);
-  try{const{data:um_}=await sb.from('user_media').select('photo_url').eq('nick',p).maybeSingle();if(um_&&um_.photo_url)photoCache[p]=um_.photo_url;else delete photoCache[p]}catch(e){}
-  document.getElementById('rt').textContent=pn;
-  document.getElementById('chAv').innerHTML='<div onclick="openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(p))+'</div>';
-  document.getElementById('modal').classList.add('open');
-  document.getElementById('gearBtn').classList.remove('on');
-  togIR(true);delete unread[curRoom];renderDMs();clrCh(document.getElementById('chat'));
-  if(online.has(p))upChStOnline();else await upChStOffline();
-  await loadM();subM();startPt();setupPres(curRoom);
-  const{data}=await sb.from('user_media').select('*').eq('nick',p).maybeSingle();
-  bgLayer(data);applyMus(data);
-}
+async function openDm(p){curGroup=null;curRoom=dmr(meEnc,p);curRoomType='dm';curEntG=null;curPartner=p;const pn=de(p);try{const{data:um_}=await sb.from('user_media').select('photo_url').eq('nick',p).maybeSingle();if(um_&&um_.photo_url)photoCache[p]=um_.photo_url;else delete photoCache[p]}catch(e){}document.getElementById('rt').textContent=pn;document.getElementById('chAv').innerHTML='<div onclick="openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(p))+'</div>';document.getElementById('modal').classList.add('open');document.getElementById('gearBtn').classList.remove('on');togIR(true);delete unread[curRoom];renderDMs();clrCh(document.getElementById('chat'));if(online.has(p))upChStOnline();else await upChStOffline();await loadM();subM();startPt();setupPres(curRoom);const{data}=await sb.from('user_media').select('*').eq('nick',p).maybeSingle();bgLayer(data);applyMus(data)}
 async function openEntChat(g){if(!adminMode&&myEnt()!==g)return alert('🚫 Чужой подъезд');curGroup=null;curRoom='entrance_'+g;curRoomType='entrance';curEntG=g;curPartner=null;document.getElementById('rt').textContent='Подъезд '+g;document.getElementById('chAv').innerHTML='<div class="av av-lg" style="background:linear-gradient(135deg,#4a4a5a,#2a2a3a);font-size:22px">🏢</div>';document.getElementById('gearBtn').classList.remove('on');const st=document.getElementById('chs');if(st){st.textContent='общий чат';st.classList.remove('online')}document.getElementById('modal').classList.add('open');togIR(myEnt()===g);clrCh(document.getElementById('chat'));await loadM();subM();startPt();bgLayer(null);applyMus(null)}
 async function closeM(){if(mr&&mr.state==='recording'){try{mr.stop()}catch(e){}}if(vA){try{vA.pause()}catch(e){}}vId=null;document.querySelectorAll('.mc video').forEach(v=>v.pause());document.getElementById('modal').classList.remove('open');document.getElementById('gearBtn').classList.remove('on');if(ch){sb.removeChannel(ch);ch=null}if(pres){try{await sb.removeChannel(pres)}catch(e){}pres=null}if(typch){try{await sb.removeChannel(typch)}catch(e){}typch=null}if(pt){clearInterval(pt);pt=null}stopMus();curRoom=null;curRoomType=null;curEntG=null;curPartner=null;curGroup=null;document.getElementById('bgl').innerHTML='';clrCh(document.getElementById('chat'));epOpen=false;document.getElementById('ep').classList.remove('open');closeCtx()}
 async function loadM(){const tk=++mTok,rid=curRoom;if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:true}).limit(200);if(tk!==mTok||rid!==curRoom)return;if(error)return;const{data:hid}=await sb.from('hidden_messages').select('message_id').eq('user_nick',meEnc);hidC=new Set((hid||[]).map(h=>h.message_id));msgC=(data||[]).filter(m=>!hidC.has(m.id)&&!m.deleted_for_all);await loadR(msgC);renderMs(document.getElementById('chat'),msgC)}
@@ -901,9 +841,8 @@ const onctx='oncontextmenu="openCtx(event,'+m.id+',\''+rt+'\')"';
 let body;
 if(m.text&&m.text.startsWith('🎁GIFT|')){
   const parts=m.text.split('|');
-  const gid=parts[1],ge=parts[2],gn=parts[3];
-  const gd=GIFTS.find(x=>x.id===gid)||{img:'gifts/'+gid+'.png',e:ge,name:gn};
-  body='<div class="gift-msg"><div class="gift-msg-icon"><img src="'+gd.img+'" onerror="this.outerHTML=\'<div class=&quot;gi-emoji&quot;>'+ge+'</div>\'"></div><div class="gift-msg-txt"><div class="gift-msg-title">'+ge+' '+gn+'</div><div class="gift-msg-sub">'+(mine?'Ты подарил':'Тебе подарили')+'</div></div></div>';
+  const ge=parts[2]||'🎁',gn=parts[3]||'Подарок';
+  body='<div class="gift-msg"><div class="gift-msg-icon"><div class="gi-emoji">'+ge+'</div></div><div class="gift-msg-txt"><div class="gift-msg-title">'+ge+' '+gn+'</div><div class="gift-msg-sub">'+(mine?'Ты подарил':'Тебе подарили')+'</div></div></div>';
 }
 else if(m.voice_url){const wave=genWave(m.id);body='<div class="voice-msg" data-msg-id="'+m.id+'" '+onctx+'><button class="voice-play-btn" onclick="event.stopPropagation();togVoiceMsg('+m.id+',\''+m.voice_url+'\')">▶</button><div class="voice-bar" onclick="event.stopPropagation();voiceSeek(event,'+m.id+')">'+wave.map(h=>'<span class="wb" style="height:'+h+'%"></span>').join('')+'</div><span class="voice-time">'+fT(vDur[m.id]||0)+'</span></div>'}
 else if(m.video_url){body='<div class="mc paused" onclick="event.stopPropagation();togCirc(this)" '+onctx+'><video src="'+m.video_url+'" playsinline preload="metadata"></video></div>'}
