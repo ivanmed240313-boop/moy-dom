@@ -819,6 +819,13 @@ async function openProfile(nick){
   document.getElementById('pfErr').textContent='';
   document.getElementById('pf').classList.add('open');
 }
+  const acts=document.getElementById('pfActions');
+  if(isMine){acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button>'}
+  else{acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="edit" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000" onclick="openGift(\''+en(target)+'\')">🎁 Подарить</button>'}
+  document.getElementById('pfEdit').classList.remove('on');
+  document.getElementById('pfErr').textContent='';
+  document.getElementById('pf').classList.add('open');
+}
 function closePf(){document.getElementById('pf').classList.remove('open');pfCurrent=null}
 async function startPfEdit(){const{data:p}=await sb.from('profiles').select('*').eq('nick',me).maybeSingle();document.getElementById('pfEmojiInp').value=(p&&p.status_emoji)||'';document.getElementById('pfStatusInp').value=(p&&p.status)||'';document.getElementById('pfBioInp').value=(p&&p.bio)||'';document.getElementById('pfErr').textContent='';document.getElementById('pfEdit').classList.add('on');setTimeout(()=>document.getElementById('pfStatusInp').focus(),100)}
 function cancelPfEdit(){document.getElementById('pfEdit').classList.remove('on')}
