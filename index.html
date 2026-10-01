@@ -723,7 +723,7 @@ function stopWork(timeUp){
   else{msg.style.color='#ff8888';msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Сделано '+workCaught+'/'+WORK_TARGETS}
   workTaskId=null;renderWork();
 }
-/* ======= КОНЕЦ ЧАСТИ 1 ======= */ 
+/* ======= КОНЕЦ ЧАСТИ 1 ======= */
 function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();renderMyGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
 function closeGift(){document.getElementById('giftM').classList.remove('open')}
 function renderGifts(){const list=document.getElementById('giftList');list.innerHTML=GIFTS.map(g=>{const can=myCoins>=g.price;return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>'}).join('')}
@@ -732,7 +732,7 @@ async function renderMyGifts(){
   box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Загрузка...</div>';
   const{data}=await sb.from('profiles').select('received_gifts').eq('nick',meEnc).maybeSingle();
   const arr=((data&&data.received_gifts)||[]);
-  if(!arr.length){box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">У тебя пока нет подарков — их можно передарить, если получишь.</div>';return}
+  if(!arr.length){box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Пока пусто — подаришь, и тут появятся полученные.</div>';return}
   box.innerHTML=arr.map((g,i)=>'<div class="my-gift" onclick="regift('+i+')" title="Передарить • от '+eh(de(g.from))+'"><div class="mg-e">'+g.e+'</div><div class="mg-n">'+eh(g.n||'')+'</div><div class="mg-f">от '+eh(de(g.from))+'</div></div>').join('');
 }
 async function regift(idx){
@@ -806,8 +806,12 @@ async function openProfile(nick){
   document.getElementById('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';
   document.getElementById('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
   const giftsList=(p&&p.received_gifts)||[];
-  document.getElementById('pfGiftsWrap').style.display=giftsList.length?'block':'none';
-  document.getElementById('pfGiftsList').innerHTML=giftsList.slice(0,30).map(g=>'<div class="pf-gift" title="'+(g.n||'')+' • от '+eh(de(g.from))+'"><span style="font-size:26px;display:block;line-height:1">'+g.e+'</span><span class="pf-gn">'+eh(g.n||'')+'</span><span class="pf-gf">от '+eh(de(g.from))+'</span></div>').join('');
+  document.getElementById('pfGiftsWrap').style.display='block';
+  if(giftsList.length){
+    document.getElementById('pfGiftsList').innerHTML=giftsList.slice(0,30).map(g=>'<div class="pf-gift" title="'+(g.n||'')+' • от '+eh(de(g.from))+'"><span style="font-size:26px;display:block;line-height:1">'+g.e+'</span><span class="pf-gn">'+eh(g.n||'')+'</span><span class="pf-gf">от '+eh(de(g.from))+'</span></div>').join('');
+  }else{
+    document.getElementById('pfGiftsList').innerHTML='<div style="font-size:12px;color:#666678;padding:4px">'+(isMine?'Тебе ещё ничего не дарили':'Пока никто не дарил')+'</div>';
+  }
   const acts=document.getElementById('pfActions');
   if(isMine){acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button>'}
   else{acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="edit" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000" onclick="openGift(\''+en(target)+'\')">🎁 Подарить</button>'}
