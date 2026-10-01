@@ -940,12 +940,29 @@ async function unBan(n){if(!iAmAdmin)return;if(!confirm('Разбанить '+n+
 async function togAdm(n,m){if(!iAmAdmin)return;if(n===me&&!m)return alert('Себя нельзя');if(!confirm((m?'Сделать':'Снять')+' админа: '+n+'?'))return;await sb.from('profiles').update({is_admin:m}).eq('nick',n);afRend()}
 async function afEvict(n){if(!iAmAdmin)return;if(!confirm('Выселить всех?'))return;await sb.from('flats').update({owner_nicks:[],owner_nick:null,owner_nick2:null}).eq('house_id',curHouse).eq('number',n);await reloadHouse();afRend()}
 async function afKick(n){if(!iAmAdmin)return;const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners[1])return;if(!confirm('Выгнать '+de(owners[1])+'?'))return;const newOwners=owners.slice(0,1);await sb.from('flats').update({owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:null}).eq('house_id',curHouse).eq('number',n);await reloadHouse();afRend()}
-async function afMax(n){if(!iAmAdmin)return;const f=flats[n];if(!f)return;const owners=flatOwners(f);const cur=f.max_people??9999;const val=prompt('Сколько мест? (1-9999)\n0 = безлимит (9999)',String(cur));if(val===null)return;let nx=parseInt(val);if(isNaN(nx))nx=9999;if(nx===0)nx=9999;nx=Math.max(1,Math.min(9999,nx));if(nx<owners.length){if(!confirm('Мест меньше чем жильцов ('+owners.length+'). Лишние будут выселены?'))return;const newOwners=owners.slice(0,nx);await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',curHouse).eq('number',n)}else{await sb.from('flats').update({max_people:nx}).eq('house_id',curHouse).eq('number',n)}await reloadHouse();afRend()}
+async function afMax(n){
+  if(!iAmAdmin)return;
+  const f=flats[n];if(!f)return;
+  const owners=flatOwners(f);
+  const cur=f.max_people??2;
+  const val=prompt('Сколько мест? (1-9999)\nСейчас: '+cur,String(cur));
+  if(val===null)return;
+  let nx=parseInt(val);
+  if(isNaN(nx))nx=2;
+  nx=Math.max(1,Math.min(9999,nx));
+  if(nx<owners.length){
+    if(!confirm('Мест меньше чем жильцов ('+owners.length+'). Лишние будут выселены?'))return;
+    const newOwners=owners.slice(0,nx);
+    await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',curHouse).eq('number',n)
+  }else{
+    await sb.from('flats').update({max_people:nx}).eq('house_id',curHouse).eq('number',n)
+  }
+  await reloadHouse();afRend();
+}
 async function afTogEnt(g,b){if(!iAmAdmin)return;const c=houseData?.blocked_entrances||[];const nx=b?[...new Set([...c,g])]:c.filter(x=>x!==g);await sb.from('houses').update({blocked_entrances:nx}).eq('id',curHouse);await reloadHouse();afRend()}
 async function afTogHouse(b){if(!iAmAdmin)return;if(b&&!confirm('Заблокировать дом?'))return;await sb.from('houses').update({blocked:b}).eq('id',curHouse);await reloadHouse();afRend()}
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 
-/* ОБЪЯВЛЕНИЯ */
 let _lastAnnShown=null;
 function openAnn(){if(!iAmAdmin)return alert('Только админ');document.getElementById('annM').classList.add('open');document.getElementById('annInp').value=(houseData&&houseData.announcement)||'';document.getElementById('annErr').textContent='';setTimeout(()=>document.getElementById('annInp').focus(),100)}
 function closeAnn(){document.getElementById('annM').classList.remove('open')}
@@ -964,7 +981,6 @@ function showAnn(t){
 document.getElementById('annCloseBtn').onclick=()=>{const t=document.getElementById('annText').textContent;localStorage.setItem('annDis_'+curHouse,t);document.getElementById('annBanner').classList.remove('on')};
 async function pollAnn(){if(!curHouse)return;try{const{data}=await sb.from('houses').select('announcement').eq('id',curHouse).maybeSingle();if(data){if(houseData)houseData.announcement=data.announcement;showAnn(data.announcement||null)}}catch(e){}}
 
-/* ФОТО-АВАТАРКИ */
 async function loadPhotoCache(){
   try{
     const{data}=await sb.from('user_media').select('nick,photo_url');
@@ -973,7 +989,6 @@ async function loadPhotoCache(){
   }catch(e){console.error('loadPhotoCache',e);photoCache={}}
 }
 
-/* АВТОПОДСКАЗКИ */
 async function loadAllProfiles(){
   try{
     const{data:profs}=await sb.from('profiles').select('nick');
@@ -1025,7 +1040,6 @@ function attachNickSuggest(inpId,sugId){
   inp.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
 }
 
-/* ПРОФИЛЬ */
 function openPfMine(){closeUserMenu();openProfile(null)}
 async function openProfile(nick){
   closeUserMenu();
@@ -1053,9 +1067,9 @@ async function openProfile(nick){
   const bio=document.getElementById('pfBio');
   bio.textContent=(p&&p.bio)?p.bio:(isMine?'Расскажи о себе в редактировании':'');
   const{data:fl}=await sb.from('flats').select('house_id,number,owner_nicks');
-  let myFlat=null;
-  (fl||[]).forEach(x=>{if((x.owner_nicks||[]).includes(en(target)))myFlat=x});
-  document.getElementById('pfFlat').textContent=myFlat?('Квартира '+myFlat.number+(myFlat.house_id?' (Дом '+myFlat.house_id+')':'')):'Не заселён';
+  let myF=null;
+  (fl||[]).forEach(x=>{if((x.owner_nicks||[]).includes(en(target)))myF=x});
+  document.getElementById('pfFlat').textContent=myF?('Квартира '+myF.number+(myF.house_id?' (Дом '+myF.house_id+')':'')):'Не заселён';
   let regText='Недавно';
   if(p&&p.created_at){const d=new Date(p.created_at);const days=Math.floor((Date.now()-d)/86400000);regText=d.toLocaleDateString('ru-RU')+(days>=1?' · '+days+' дн.':'')}
   document.getElementById('pfReg').textContent='С нами: '+regText;
@@ -1334,7 +1348,6 @@ if(p.eventType==='DELETE'){delete photoCache[r.nick]}else if(p.new.photo_url){ph
 const iH=Object.values(flats).some(f=>flatOwners(f).includes(r.nick));
 if(iH){if(p.eventType==='DELETE')delete hm[r.nick];else hm[r.nick]=p.new;renderFlats()}
 renderDMs();
-const myEnc2=en(me);
 if(curRoomType==='dm'&&curPartner===r.nick){bgLayer(p.eventType==='DELETE'?null:p.new);const pn=de(r.nick);document.getElementById('chAv').innerHTML='<div onclick="openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(r.nick))+'</div>'}
 }).subscribe()}
 function subReact(){if(rch)return;rch=sb.channel('react-rt').on('postgres_changes',{event:'*',schema:'public',table:'reactions'},async()=>{await refreshReact()}).subscribe()}
@@ -1437,7 +1450,7 @@ async function leaveFlat(){const f=flats[fmN];if(!f)return;const owners=flatOwne
 
 async function loadEditM(){phU=null;musU=null;document.getElementById('mst').textContent='';const phBtn=document.getElementById('phBtn'),phName=document.getElementById('phName'),musBtn=document.getElementById('musBtn'),musName=document.getElementById('musName');phBtn.classList.remove('has');phName.classList.remove('has');phName.textContent='Файл не выбран';document.querySelector('#phBtn span:last-child').textContent='Выбрать файл';musBtn.classList.remove('has');musName.classList.remove('has');musName.textContent='Файл не выбран';document.querySelector('#musBtn span:last-child').textContent='Выбрать файл';document.getElementById('phI').value='';document.getElementById('musI').value='';const{data}=await sb.from('user_media').select('*').eq('nick',meEnc).maybeSingle();editM=data||{photo_url:null,music_url:null,photo_x:50,photo_y:50,photo_zoom:100};document.getElementById('phX').value=editM.photo_x??50;document.getElementById('phY').value=editM.photo_y??50;document.getElementById('phZ').value=editM.photo_zoom??100;['phX','phY','phZ'].forEach(upSliderFill);upPrev();document.getElementById('musC').textContent=editM.music_url?'🎵 загружена':'🎵 нет'}
 function upPrev(){const i=document.getElementById('pi'),e=document.getElementById('pe');const u=phU?URL.createObjectURL(phU):(editM?.photo_url||null);const x=Number(document.getElementById('phX').value),y=Number(document.getElementById('phY').value),z=Number(document.getElementById('phZ').value);document.getElementById('vX').textContent=x;document.getElementById('vY').textContent=y;document.getElementById('vZ').textContent=z+'%';const sw=document.getElementById('slidersWrap');if(u){i.style.backgroundImage='url("'+u+'")';i.style.backgroundSize=z+'% '+z+'%';i.style.backgroundPosition=x+'% '+y+'%';i.style.display='block';e.style.display='none';sw.style.display='flex'}else{i.style.display='none';e.style.display='block';sw.style.display='none'}}
-async function saveM(){const s=document.getElementById('mst');const x=Number(document.getElementById('phX').value),y=Number(document.getElementById('phY').value),z=Number(document.getElementById('phZ').value);s.textContent='Сохранение...';try{let pu=null,mu=null;if(phU){const ex=(phU.name.split('.').pop()||'jpg').toLowerCase();const p='photos/'+meEnc+'.'+ex;await sb.storage.from('media').upload(p,phU,{upsert:true,contentType:phU.type});pu=sb.storage.from('media').getPublicUrl(p).data.publicUrl+'?t='+Date.now()}if(musU){const ex=(musU.name.split('.').pop()||'mp3').toLowerCase();const p='music/'+meEnc+'.'+ex;await sb.storage.from('media').upload(p,musU,{upsert:true,contentType:musU.type});mu=sb.storage.from('media').getPublicUrl(p).data.publicUrl+'?t='+Date.now()}const pt={photo_x:x,photo_y:y,photo_zoom:z,updated_at:new Date().toISOString()};if(pu)pt.photo_url=pu;if(mu)pt.music_url=mu;const{data:ex}=await sb.from('user_media').select('nick').eq('nick',meEnc).maybeSingle();if(ex)await sb.from('user_media').update(pt).eq('nick',meEnc);else await sb.from('user_media').insert({nick:meEnc,...pt});hm[meEnc]={...(hm[meEnc]||{}),...pt};photoCache[meEnc]=pt.photo_url||photoCache[meEnc];renderFlats();renderDMs();s.textContent='Сохранено ✓';s.style.color='#8bc34a';setTimeout(()=>{s.textContent='';s.style.color='#8888a0'},1500)}catch(e){s.textContent='Ошибка: '+e.message;s.style.color='#ff6b6b'}}
+async function saveM(){const s=document.getElementById('mst');const x=Number(document.getElementById('phX').value),y=Number(document.getElementById('phY').value),z=Number(document.getElementById('phZ').value);s.textContent='Сохранение...';try{let pu=null,mu=null;if(phU){const ex=(phU.name.split('.').pop()||'jpg').toLowerCase();const p='photos/'+meEnc+'.'+ex;await sb.storage.from('media').upload(p,phU,{upsert:true,contentType:phU.type});pu=sb.storage.from('media').getPublicUrl(p).data.publicUrl+'?t='+Date.now()}if(musU){const ex=(musU.name.split('.').pop()||'mp3').toLowerCase();const p='music/'+meEnc+'.'+ex;await sb.storage.from('media').upload(p,musU,{upsert:true,contentType:musU.type});mu=sb.storage.from('media').getPublicUrl(p).data.publicUrl+'?t='+Date.now()}const pt={photo_x:x,photo_y:y,photo_zoom:z,updated_at:new Date().toISOString()};if(pu)pt.photo_url=pu;if(mu)pt.music_url=mu;const{data:ex}=await sb.from('user_media').select('nick').eq('nick',meEnc).maybeSingle();if(ex)await sb.from('user_media').update(pt).eq('nick',meEnc);else await sb.from('user_media').insert({nick:meEnc,...pt});hm[meEnc]={...(hm[meEnc]||{}),...pt};if(pt.photo_url)photoCache[meEnc]=pt.photo_url;renderFlats();renderDMs();s.textContent='Сохранено ✓';s.style.color='#8bc34a';setTimeout(()=>{s.textContent='';s.style.color='#8888a0'},1500)}catch(e){s.textContent='Ошибка: '+e.message;s.style.color='#ff6b6b'}}
 
 async function loadDMs(){
   const p1='dm_'+meEnc+'__%',p2='dm_%__'+meEnc;
@@ -1494,7 +1507,6 @@ function subGlob(){sb.channel('glob').on('postgres_changes',{event:'INSERT',sche
 
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser&&!isBanned){loadM();if(rcId)loadRM();touchSeen()}});
 
-/* СЕЗОНЫ */
 (function(){
 const cv=document.getElementById('seasons');
 if(!cv)return;
