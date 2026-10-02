@@ -1102,7 +1102,7 @@ async function openProfile(nick){
   if(isMine){
     const b=frameBonusPct(myFrame);
     const bonusTxt=b?' <span style="color:#8bc34a">(+'+b+'%)</span>':'';
-    acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button><button class="frames" onclick="closePf();openFrames()">🖼 Рамки'+bonusTxt+'</button>';
+    acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button><button class="frames" onclick="closePf();openFrames()">⬜ Рамки'+bonusTxt+'</button>';
   }else{
     acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button>';
   }
