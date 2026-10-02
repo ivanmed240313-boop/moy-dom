@@ -455,9 +455,8 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 <div id="modal"><div class="mbox"><div class="bgl" id="bgl"></div><div class="chd"><div id="chAv"></div><div class="chi"><div class="chn" id="rt">Диалог</div><div class="chs" id="chs"></div></div><button class="gear-btn" id="gearBtn" onclick="openGsm()">⚙️</button><button class="music-btn" id="mbB" style="display:none"></button></div><div id="chat"></div><div id="typ">печатает<span class="td"><span>.</span><span>.</span><span>.</span></span></div><div class="ir" id="ir"><div class="ep" id="ep"><div class="eg" id="eg"></div></div><button id="eBtn" class="ib">😊</button><input id="mI" placeholder="Сообщение..." maxlength="500" autocomplete="off"><button id="pBtn" class="ib">📎</button><button id="cBtn" class="ib cb">⚪</button><button id="vBtn" class="ib vb">🎤</button><button id="sBtn">→</button></div><div class="nw" id="nw" style="display:none">Только в свой подъезд</div><button class="cls" onclick="closeM()">Закрыть</button></div></div>
 <input type="file" id="mPI" accept="image/*" style="display:none"><input type="file" id="rPI" accept="image/*" style="display:none">
 <audio id="bgA" loop preload="auto"></audio>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const SU='https://uuhgpnjpulrazluiqreb.supabase.co',SK='sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+const SU='https://uuhgpnjpulrazluiqreb.supabase.co',SK='sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
 const sb=window.supabase.createClient(SU,SK);
 const QR=['❤️','👍','😂','🔥','😮','😢','🙏','💯'];
 const EL=('😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥸 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🫡 🤫 😶 😐 😑 😬 🙄 😯 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 💕 💞 💓 💗 💖 💘 💝 💟 👍 👎 👌 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐️ 🖖 👋 🤝 🙏 ✊ 👊 🤛 🤜 💪 🔥 💯 ✨ ⭐ 🌟 💫 ⚡ 💥 🎉 🎊 🎁 🎈 🏆 🥇 🥈 🥉 🎯 🎮 ⚽ 🏀 🍕 🍔 🍟 🍿 🍩 🍪 🎂 🍰 🍫 ☕ 🍵 🍺 🍻 🥂 🥤 🍎 🍌 🍇 🍓 🍑 🍉 🌹 🌷 🌻 🌺 🌸 🌼 💐 🌴 🌲 🌳 🌵 🍀 🌈 ☀️ 🌙 ☁️ ⛅ 🌧️ ⛈️ ❄️ ☃️ 💧 🌊 🎵 🎶 🎤 🎧 🎸 🎹 🎺 🥁 🎬 📸 📷 💻 🖥️ ⌨️ 🖱️ 💡 🔦 📱 ☎️ 📞 🚀 ✈️ 🚗 🚕 🏠 🏡 🏘️ 🏢 🏰').split(' ');
