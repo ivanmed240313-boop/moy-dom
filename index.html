@@ -137,7 +137,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .flat.frame-angelic{border-color:#ffffff!important;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important;z-index:15!important}
 .flat.frame-devil{border-color:#8b0000!important;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important;z-index:15!important}
 .flat.frame-angelic:hover,.flat.frame-devil:hover{z-index:20!important}
-/* Halo + horns — всегда поверх */
+/* Halo + horns */
 .halo{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:55%;height:9px;border:3px solid #fff7c0;border-radius:50%;background:radial-gradient(ellipse at 50% 50%, rgba(255,247,192,0.75), rgba(255,224,102,0.35) 60%, transparent 80%);pointer-events:none;z-index:999;animation:haloPulse 2s ease-in-out infinite}
 .horn{position:absolute;top:-28px;width:22%;height:38%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 80'><defs><linearGradient id='hg' x1='0.2' x2='0.8' y1='0' y2='1'><stop offset='0' stop-color='%234a0000'/><stop offset='0.35' stop-color='%23b00000'/><stop offset='0.7' stop-color='%238b0000'/><stop offset='1' stop-color='%232a0000'/></linearGradient></defs><path d='M20,1 C24,14 34,32 35,52 C35.5,66 28,77 20,78 C12,77 4.5,66 5,52 C6,32 16,14 20,1 Z' fill='url(%23hg)' stroke='%23ff2200' stroke-width='1.4' stroke-linejoin='round'/><path d='M20,6 C22,18 28,32 29,48 C29.5,60 25,72 20,74 C15,72 10.5,60 11,48 C12,32 18,18 20,6 Z' fill='%23ff3333' opacity='0.25'/></svg>");background-size:contain;background-repeat:no-repeat;background-position:center bottom;pointer-events:none;z-index:999;filter:drop-shadow(0 0 5px #ff2200) drop-shadow(0 0 12px #8b0000)}
 .horn.hl{left:22%;--hr:-20deg;transform-origin:60% 100%;transform:rotate(-20deg);animation:hornTwitch 2.2s ease-in-out infinite}
@@ -447,12 +447,12 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .vac-cursor{position:absolute;width:56px;height:56px;border-radius:50%;border:2px dashed rgba(245,197,66,.8);background:radial-gradient(circle at 50% 50%,rgba(245,197,66,.25),transparent 70%);pointer-events:none;transform:translate(-50%,-50%);transition:opacity .2s;z-index:10;display:none;box-shadow:0 0 14px rgba(245,197,66,.6)}
 .work-field.vacuum .vac-cursor.on{display:block}
 /* Мини-игра 3: цветы */
-.flower{position:absolute;width:70px;height:90px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;user-select:none;touch-action:none}
-.flower-icon{font-size:42px;line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6));transition:transform .2s}
+.flower{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;user-select:none;touch-action:none;cursor:pointer}
+.flower-icon{line-height:1;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6));transition:transform .2s}
 .flower.watered .flower-icon{transform:scale(1.15)}
-.flower-bar{width:80%;height:6px;background:rgba(0,0,0,.5);border-radius:4px;margin-top:6px;overflow:hidden;border:1px solid rgba(255,255,255,.15)}
-.flower-fill{height:100%;width:0%;background:linear-gradient(90deg,#4fc3f7,#2196f3);transition:width .1s linear}
-.flower.full .flower-bar{border-color:#4caf50}
+.flower-bar{height:8px;background:rgba(0,0,0,.5);border-radius:4px;margin-top:8px;overflow:hidden;border:1px solid rgba(255,255,255,.15)}
+.flower-fill{height:100%;width:0%;background:linear-gradient(90deg,#4fc3f7,#2196f3);transition:width .05s linear}
+.flower.full .flower-bar{border-color:#4caf50;box-shadow:0 0 10px #4caf50aa}
 .flower.full .flower-fill{background:linear-gradient(90deg,#4caf50,#2e7d32)}
 /* Магазин рамок */
 .frames-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:460px;overflow-y:auto;padding:2px}
@@ -588,9 +588,9 @@ let workActive=false,workTimer=null,workStart=0,workCaught=0,workTaskId=null,wor
 let workGameHandlers=null;
 
 const WORK_TASKS=[
-  {id:'dishes',  name:'Намыть посуду',     icon:'🍽️', clean:'✨', desc:'Кликай по тарелкам — с каждой смывается грязь (1–3 клика)'},
-  {id:'vacuum',  name:'Пропылесосить пол', icon:'🧹', clean:'✨', desc:'Води мышкой по полу — пыль всасывается в радиусе'},
-  {id:'flowers', name:'Полить цветы',      icon:'🌱', clean:'🌸', desc:'Зажми каждый цветок — полоска воды растёт. Отпустишь — спадёт'}
+  {id:'dishes',  name:'Намыть посуду',     icon:'🍽️', clean:'✨', target:8, desc:'Кликай по тарелкам — с каждой смывается грязь (1–3 клика)'},
+  {id:'vacuum',  name:'Пропылесосить пол', icon:'🧹', clean:'✨', target:8, desc:'Води мышкой по полу — 8 пятен пыли нужно всосать'},
+  {id:'flowers', name:'Полить цветы',      icon:'🌱', clean:'🌸', target:3, desc:'Зажми каждый цветок — полоска воды растёт. Отпустишь — спадёт'}
 ];
 const WORK_REWARD=5,WORK_COOLDOWN=30000,WORK_DURATION=15000,WORK_TARGETS=8;
 
@@ -839,18 +839,13 @@ function renderWork(){
 function clearWorkHandlers(){
   if(!workGameHandlers)return;
   const f=$('workField');
-  if(workGameHandlers.field&&workGameHandlers.field!==f){
-    const of=workGameHandlers.field;
-    if(workGameHandlers.onMove)of.removeEventListener('mousemove',workGameHandlers.onMove);
-    if(workGameHandlers.onTouchMove)of.removeEventListener('touchmove',workGameHandlers.onTouchMove);
-    if(workGameHandlers.onUp)of.removeEventListener('mouseup',workGameHandlers.onUp);
-    if(workGameHandlers.onLeave)of.removeEventListener('mouseleave',workGameHandlers.onLeave);
-  }else if(f){
+  if(f){
     if(workGameHandlers.onMove)f.removeEventListener('mousemove',workGameHandlers.onMove);
     if(workGameHandlers.onTouchMove)f.removeEventListener('touchmove',workGameHandlers.onTouchMove);
     if(workGameHandlers.onUp)f.removeEventListener('mouseup',workGameHandlers.onUp);
     if(workGameHandlers.onLeave)f.removeEventListener('mouseleave',workGameHandlers.onLeave);
   }
+  if(workGameHandlers.extraCleanup)workGameHandlers.extraCleanup();
   workGameHandlers=null;
 }
 
@@ -862,27 +857,28 @@ function startWork(id){
   workTaskId=id;workActive=true;workCaught=0;workStart=Date.now();
   $('workTasks').style.display='none';
   const g=$('workGame');g.style.display='block';
-  $('workTotal').textContent=WORK_TARGETS;
+  const target=task.target||WORK_TARGETS;
+  $('workTotal').textContent=target;
   $('workScore').textContent='0';
   $('workTime').textContent=(WORK_DURATION/1000).toFixed(1);
   const msg=$('workMsg');msg.style.color='#c8c8d0';
   const f=$('workField');f.innerHTML='';f.className='work-field '+id;
   clearWorkHandlers();
-  if(id==='dishes')initDishesGame(f,msg);
-  else if(id==='vacuum')initVacuumGame(f,msg);
-  else initFlowersGame(f,msg);
+  if(id==='dishes')initDishesGame(f,msg,target);
+  else if(id==='vacuum')initVacuumGame(f,msg,target);
+  else initFlowersGame(f,msg,target);
   if(workTimer)clearInterval(workTimer);
   workTimer=setInterval(()=>{const elapsed=Date.now()-workStart;const left=Math.max(0,WORK_DURATION-elapsed)/1000;$('workTime').textContent=left.toFixed(1);if(elapsed>=WORK_DURATION)stopWork(true)},80);
 }
 
 /* ---------- ИГРА 1: ТАРЕЛКИ ---------- */
-function initDishesGame(field,msg){
-  msg.textContent='🍽️ Кликай по тарелкам — смывай грязь (1–3 клика на тарелку)';
+function initDishesGame(field,msg,target){
+  msg.textContent='🍽️ Кликай по тарелкам — смывай грязь (1–3 клика)';
   const r=field.getBoundingClientRect();
-  const cols=4,rows=Math.ceil(WORK_TARGETS/cols);
+  const cols=4,rows=Math.ceil(target/cols);
   const padX=r.width/cols,padY=r.height/rows;
   const plateSize=Math.min(70,Math.floor(Math.min(padX,padY)*0.75));
-  for(let i=0;i<WORK_TARGETS;i++){
+  for(let i=0;i<target;i++){
     const ci=i%cols,cj=Math.floor(i/cols);
     const x=ci*padX+Math.random()*(padX-plateSize);
     const y=cj*padY+Math.random()*(padY-plateSize);
@@ -909,7 +905,7 @@ function initDishesGame(field,msg){
         plate.style.pointerEvents='none';
         workCaught++;
         $('workScore').textContent=workCaught;
-        if(workCaught>=WORK_TARGETS)stopWork(true);
+        if(workCaught>=target)stopWork(true);
       }
     };
     field.appendChild(plate);
@@ -917,13 +913,13 @@ function initDishesGame(field,msg){
 }
 
 /* ---------- ИГРА 2: ПЫЛЕСОС ---------- */
-function initVacuumGame(field,msg){
-  msg.textContent='🧹 Води мышкой по полу — пыль всасывается в радиусе';
+function initVacuumGame(field,msg,target){
+  msg.textContent='🧹 Води мышкой по полу — всоси все '+target+' пятен';
   const r=field.getBoundingClientRect();
-  const N=40;
+  const N=target;
   const dirts=[];
   for(let i=0;i<N;i++){
-    const size=8+Math.random()*14;
+    const size=32+Math.random()*20;
     const el=document.createElement('div');
     el.className='vac-dirt';
     el.style.width=size+'px';
@@ -932,7 +928,7 @@ function initVacuumGame(field,msg){
     const y=Math.random()*(r.height-size*0.7-8)+4;
     el.style.left=x+'px';
     el.style.top=y+'px';
-    el.style.opacity=String(0.55+Math.random()*0.4);
+    el.style.opacity=String(0.75+Math.random()*0.25);
     field.appendChild(el);
     dirts.push({el,x:x+size/2,y:y+size*0.35,r:size/2,hp:2,alive:true});
   }
@@ -947,22 +943,25 @@ function initVacuumGame(field,msg){
     cur.classList.add('on');
     cur.style.left=cx+'px';
     cur.style.top=cy+'px';
-    const range=48;
+    const range=60;
     for(const d of dirts){
       if(!d.alive)continue;
       const dx=d.x-cx,dy=d.y-cy;
       const dist=Math.sqrt(dx*dx+dy*dy);
       if(dist<range){
-        d.hp-=(1-dist/range)*0.5;
+        d.hp-=(1-dist/range)*0.7;
         d.el.style.transform='scale('+Math.max(0.3,d.hp/2)+')';
-        d.el.style.opacity=String(Math.max(0,d.hp/2*(0.55+Math.random()*0.4)));
+        d.el.style.opacity=String(Math.max(0,d.hp/2*(0.75+Math.random()*0.25)));
         if(d.hp<=0){
           d.alive=false;
           d.el.classList.add('cleaned');
           setTimeout(()=>d.el.remove(),300);
           workCaught++;
           $('workScore').textContent=workCaught;
-          if(workCaught>=N)stopWork(true);
+          if(workCaught>=N){
+            stopWork(true);
+            return;
+          }
         }
       }
     }
@@ -973,42 +972,40 @@ function initVacuumGame(field,msg){
 }
 
 /* ---------- ИГРА 3: ЦВЕТЫ ---------- */
-function initFlowersGame(field,msg){
-  msg.textContent='🌱 Зажми каждый цветок — полоска воды растёт';
+function initFlowersGame(field,msg,target){
+  msg.textContent='🌱 Зажми каждый из '+target+' цветков — полоска воды растёт';
   const r=field.getBoundingClientRect();
-  const cols=4,rows=Math.ceil(WORK_TARGETS/cols);
-  const padX=r.width/cols,padY=r.height/rows;
+  const N=target;
   const flowerTypes=['🌱','🌿','🍀','☘️','🌾'];
   const bloomTypes=['🌸','🌺','🌻','🌷','💐'];
-  let holdTimer=null,holdIdx=-1;
+  let holdIdx=-1;
   const flowers=[];
-  for(let i=0;i<WORK_TARGETS;i++){
-    const ci=i%cols,cj=Math.floor(i/cols);
-    const w=60;
-    const x=ci*padX+Math.random()*(padX-w);
-    const y=cj*padY+Math.random()*(padY-90);
+  for(let i=0;i<N;i++){
+    const w=90;
+    const cx=r.width/2+(i-(N-1)/2)*Math.min(140,r.width/(N+1));
+    const cy=r.height/2-40;
+    const x=Math.max(8,Math.min(r.width-w-8,cx-w/2));
+    const y=Math.max(8,Math.min(r.height-100,cy));
     const el=document.createElement('div');
     el.className='flower';
-    el.style.left=Math.max(4,x)+'px';
-    el.style.top=Math.max(4,y)+'px';
+    el.style.left=x+'px';
+    el.style.top=y+'px';
+    el.style.width=w+'px';
     const icon=flowerTypes[i%flowerTypes.length];
     const bloom=bloomTypes[i%bloomTypes.length];
-    el.innerHTML='<div class="flower-icon">'+icon+'</div><div class="flower-bar"><div class="flower-fill"></div></div>';
+    el.innerHTML='<div class="flower-icon" style="font-size:64px">'+icon+'</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';
     el.dataset.bloom=bloom;
-    el.dataset.water='0';
-    el.dataset.done='0';
     field.appendChild(el);
-    const obj={el,water:0,icon:icon,bloom:bloom,index:i,done:false};
-    flowers.push(obj);
+    flowers.push({el,water:0,icon,bloom,index:i,done:false});
   }
   const tick=()=>{
     if(!workActive)return;
     for(const fl of flowers){
       if(fl.done)continue;
       if(fl.index===holdIdx){
-        fl.water=Math.min(100,fl.water+3.5);
+        fl.water=Math.min(100,fl.water+5);
       }else{
-        fl.water=Math.max(0,fl.water-1.2);
+        fl.water=Math.max(0,fl.water-0.8);
       }
       const fill=fl.el.querySelector('.flower-fill');
       if(fill)fill.style.width=fl.water+'%';
@@ -1019,7 +1016,7 @@ function initFlowersGame(field,msg){
         if(ic)ic.textContent=fl.bloom;
         workCaught++;
         $('workScore').textContent=workCaught;
-        if(workCaught>=WORK_TARGETS)stopWork(true);
+        if(workCaught>=N){stopWork(true);return}
       }else if(fl.water>=50&&!fl.el.classList.contains('watered')){
         fl.el.classList.add('watered');
       }else if(fl.water<50&&fl.el.classList.contains('watered')){
@@ -1036,7 +1033,7 @@ function initFlowersGame(field,msg){
       if(fl.done)continue;
       const r2=fl.el.getBoundingClientRect();
       const ex=r2.left-rect.left,ey=r2.top-rect.top;
-      if(px>=ex&&px<=ex+r2.width&&py>=ey&&py<=ey+r2.height){
+      if(px>=ex-10&&px<=ex+r2.width+10&&py>=ey-10&&py<=ey+r2.height+10){
         holdIdx=fl.index;return;
       }
     }
@@ -1046,8 +1043,6 @@ function initFlowersGame(field,msg){
   field.addEventListener('touchstart',onDown,{passive:true});
   window.addEventListener('mouseup',onUp);
   field.addEventListener('touchend',onUp);
-  if(workGameHandlers){}
-  window.__flowerOnDown=onDown;
   const interval=setInterval(()=>{
     if(!workActive){clearInterval(interval);return}
     tick();
@@ -1068,11 +1063,12 @@ function stopWork(timeUp){
   const f=$('workField');
   const msg=$('workMsg');
   $('workGame').style.display='none';
-  if(workGameHandlers&&workGameHandlers.extraCleanup)workGameHandlers.extraCleanup();
   clearWorkHandlers();
   f.innerHTML='';f.className='work-field';
   const tid=workTaskId;
-  if(workCaught>=WORK_TARGETS){
+  const task=WORK_TASKS.find(t=>t.id===tid);
+  const target=(task&&task.target)||WORK_TARGETS;
+  if(workCaught>=target){
     workCdSet(tid);
     const r=withBonus(WORK_REWARD);
     addCoins(r);
@@ -1081,7 +1077,7 @@ function stopWork(timeUp){
     showNotif('💼 Работа','+'+r+' монет!');
   }else{
     msg.style.color='#ff8888';
-    msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Сделано '+workCaught+'/'+WORK_TARGETS;
+    msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Сделано '+workCaught+'/'+target;
   }
   workTaskId=null;renderWork();
 }
