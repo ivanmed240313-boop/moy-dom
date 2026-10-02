@@ -457,8 +457,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 <audio id="bgA" loop preload="auto"></audio>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  <script>
-const SU='https://uuhgpnjpulrazluiqreb.supabase.co',SK='sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
+  const SU='https://uuhgpnjpulrazluiqreb.supabase.co',SK='sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
 const sb=window.supabase.createClient(SU,SK);
 const QR=['❤️','👍','😂','🔥','😮','😢','🙏','💯'];
 const EL=('😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥸 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🫡 🤫 😶 😐 😑 😬 🙄 😯 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 💕 💞 💓 💗 💖 💘 💝 💟 👍 👎 👌 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐️ 🖖 👋 🤝 🙏 ✊ 👊 🤛 🤜 💪 🔥 💯 ✨ ⭐ 🌟 💫 ⚡ 💥 🎉 🎊 🎁 🎈 🏆 🥇 🥈 🥉 🎯 🎮 ⚽ 🏀 🍕 🍔 🍟 🍿 🍩 🍪 🎂 🍰 🍫 ☕ 🍵 🍺 🍻 🥂 🥤 🍎 🍌 🍇 🍓 🍑 🍉 🌹 🌷 🌻 🌺 🌸 🌼 💐 🌴 🌲 🌳 🌵 🍀 🌈 ☀️ 🌙 ☁️ ⛅ 🌧️ ⛈️ ❄️ ☃️ 💧 🌊 🎵 🎶 🎤 🎧 🎸 🎹 🎺 🥁 🎬 📸 📷 💻 🖥️ ⌨️ 🖱️ 💡 🔦 📱 ☎️ 📞 🚀 ✈️ 🚗 🚕 🏠 🏡 🏘️ 🏢 🏰').split(' ');
@@ -518,6 +517,7 @@ function isMyR(r){return isDm(r)||isGrp(r)||myRooms.has(r)}
 function fT(s){if(!s||!isFinite(s)||s<0)return '0:00';const m=Math.floor(s/60),ss=Math.floor(s%60);return m+':'+(ss<10?'0':'')+ss}
 function sT(t){const d=new Date(t),n=new Date();if(d.toDateString()===n.toDateString())return d.toLocaleTimeString().slice(0,5);const y=new Date(n);y.setDate(n.getDate()-1);if(d.toDateString()===y.toDateString())return 'вчера';return d.toLocaleDateString().slice(0,5)}
 function lastSeenText(iso){if(!iso)return 'был(а) недавно';const d=new Date(iso),n=new Date(),diff=(n-d)/1000;if(diff<60)return 'был(а) только что';if(diff<3600)return 'был(а) '+Math.floor(diff/60)+' мин назад';if(diff<86400)return 'был(а) '+Math.floor(diff/3600)+' ч назад';if(diff<172800)return 'был(а) вчера';return 'был(а) '+d.toLocaleDateString()}
+
 async function touchSeen(){if(!curUser)return;try{await sb.from('profiles').update({last_seen:new Date().toISOString()}).eq('id',curUser.id)}catch(e){}}
 setInterval(touchSeen,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser)touchSeen()});
@@ -1021,7 +1021,7 @@ async function regiftFromProfile(idx){
   await openProfile(null);
 }
 
-/* === МЕДИА === */
+/* === МЕДИА КВАРТИРЫ === */
 async function loadEditM(){
   try{
     phU=null;musU=null;
@@ -1087,6 +1087,7 @@ async function saveM(){
   }catch(e){s.textContent='Ошибка: '+e.message;s.style.color='#ff6b6b'}
 }
 
+/* === СТАРТ === */
 async function start(){
   if(_started)return;
   _started=true;
@@ -1173,7 +1174,6 @@ $('dutyM').addEventListener('click',e=>{if(e.target.id==='dutyM')closeDuty()});
 $('giftM').addEventListener('click',e=>{if(e.target.id==='giftM')closeGift()});
 }
 
-/* === ЧАТЫ / РЕАКЦИИ / ГРУППЫ / МУЗЫКА / КОНТЕКСТ / КРУЖКИ / ГОЛОСОВЫЕ === */
 function openCtx(e,msgId,roomType){e.preventDefault();e.stopPropagation();ctxMsgId=msgId;ctxMsgRoom=roomType;const menu=$('ctxMenu');const msgs=roomType==='main'?msgC:rmC;const m=msgs.find(x=>x.id===msgId);if(!m)return;const mine=m.nick===meEnc;const isText=!m.voice_url&&!m.video_url&&!m.photo_url&&!(m.text&&m.text.startsWith('🎁GIFT|'));let html='';if(mine&&isText)html+='<button onclick="ctxEdit()">✏️ Редактировать</button>';html+='<div class="div"></div>';if(mine)html+='<button class="red" onclick="ctxDelBoth()">🗑️ Удалить у всех</button>';html+='<button class="red" onclick="ctxDelMe()">✕ Удалить у себя</button>';$('ctxActions').innerHTML=html;menu.style.left='0px';menu.style.top='0px';menu.classList.add('open');const w=menu.offsetWidth,h=menu.offsetHeight;let x=e.clientX,y=e.clientY;if(x+w>window.innerWidth)x=window.innerWidth-w-10;if(y+h>window.innerHeight)y=window.innerHeight-h-10;if(x<10)x=10;if(y<10)y=10;menu.style.left=x+'px';menu.style.top=y+'px'}
 function closeCtx(){const m=$('ctxMenu');if(m)m.classList.remove('open');ctxMsgId=null;ctxMsgRoom=null}
 function ctxEdit(){const id=ctxMsgId,rt=ctxMsgRoom;closeCtx();openEm(id,rt)}
@@ -1353,7 +1353,6 @@ async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!
 function subGlob(){sb.channel('glob').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},async p=>{const m=p.new;if(!isMyR(m.room_id))return;if(m.nick===meEnc)return;if(curRoom===m.room_id)return;if(rcId===m.room_id)return;unread[m.room_id]=(unread[m.room_id]||0)+1;const w=de(m.nick),pr=m.voice_url?'🎤':(m.video_url?'⚪':(m.photo_url?'📷':(m.text&&m.text.startsWith('🎁GIFT|')?'🎁 Подарок':m.text)));showNotif('💬 '+w,pr);await loadDMs();renderDMs()}).subscribe()}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser&&!isBanned){loadM();if(rcId)loadRM();touchSeen()}});
 
-/* === СЕЗОНЫ === */
 (function(){
 const cv=document.getElementById('seasons');if(!cv)return;
 const ctx=cv.getContext('2d');let W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2);let particles=[];let lastT=performance.now();
