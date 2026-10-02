@@ -818,7 +818,16 @@ async function sendGift(giftId){
   if(curRoom===rid)await loadM();
   await loadDMs();renderDMs();
 }
-let giftsCh=null; function subGifts(){   if(giftsCh)return;   giftsCh=sb.channel('gifts-rt')     .on('postgres_changes',{event:'INSERT',schema:'public',table:'gifts'},async p=>{       const g=p.new;if(!g)return;       if(g.to_nick===meEnc)showNotif('🎁 Подарок от '+de(g.from_nick),g.gift_emoji+' '+g.gift_name);     })     .subscribe(); }
+let giftsCh=null; function subGifts(){
+  const exists=sb.getChannels().some(c=>c.topic==='realtime:gifts-rt');
+  if(exists)return;
+  sb.channel('gifts-rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'gifts'},async p=>{
+      const g=p.new;if(!g)return;
+      if(g.to_nick===meEnc)showNotif('🎁 Подарок от '+de(g.from_nick),g.gift_emoji+' '+g.gift_name);
+    })
+    .subscribe();
+}
 function openPfMine(){closeUserMenu();openProfile(null)}
 async function openProfile(nick){
   closeUserMenu();
