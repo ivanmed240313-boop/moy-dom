@@ -541,6 +541,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SU='https://uuhgpnjpulrazluiqreb.supabase.co',SK='sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
+const OWNER_ID='81fe9ad5-a02b-4e57-8c59-1cf2d60e842c'; // только этот id может менять монеты
 const sb=window.supabase.createClient(SU,SK);
 const QR=['❤️','👍','😂','🔥','😮','😢','🙏','💯'];
 const EL=('😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥸 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🫡 🤫 😶 😐 😑 😬 🙄 😯 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 💕 💞 💓 💗 💖 💘 💝 💟 👍 👎 👌 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐️ 🖖 👋 🤝 🙏 ✊ 👊 🤛 🤜 💪 🔥 💯 ✨ ⭐ 🌟 💫 ⚡ 💥 🎉 🎊 🎁 🎈 🏆 🥇 🥈 🥉 🎯 🎮 ⚽ 🏀 🍕 🍔 🍟 🍿 🍩 🍪 🎂 🍰 🍫 ☕ 🍵 🍺 🍻 🥂 🥤 🍎 🍌 🍇 🍓 🍑 🍉 🌹 🌷 🌻 🌺 🌸 🌼 💐 🌴 🌲 🌳 🌵 🍀 🌈 ☀️ 🌙 ☁️ ⛅ 🌧️ ⛈️ ❄️ ☃️ 💧 🌊 🎵 🎶 🎤 🎧 🎸 🎹 🎺 🥁 🎬 📸 📷 💻 🖥️ ⌨️ 🖱️ 💡 🔦 📱 ☎️ 📞 🚀 ✈️ 🚗 🚕 🏠 🏡 🏘️ 🏢 🏰').split(' ');
@@ -686,20 +687,53 @@ async function afUsers(b){
         +(u.ban_reason?'<div class="rs">'+eh(u.ban_reason)+'</div>':'')
       +'</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
-        +'<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 100)">💰 +100</button>'
-        +'<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 1000)">💰 +1000</button>'
-        +'<button class="afbtn r" onclick="admCoins(\''+nickEnc+'\', -100)">💸 −100</button>'
-        +'<button class="afbtn gr" onclick="admCoinsCustom(\''+nickEnc+'\')">✏️ Своя</button>'
-        +'<button class="afbtn gr" onclick="admSetCoins(\''+nickEnc+'\')">🎯 Ровно</button>'
++(curUser&&curUser.id===OWNER_ID
+  ?'<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 100)">💰 +100</button>'
+   +'<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 1000)">💰 +1000</button>'
+   +'<button class="afbtn r" onclick="admCoins(\''+nickEnc+'\', -100)">💸 −100</button>'
+   +'<button class="afbtn gr" onclick="admCoinsCustom(\''+nickEnc+'\')">✏️ Своя</button>'
+   +'<button class="afbtn gr" onclick="admSetCoins(\''+nickEnc+'\')">🎯 Ровно</button>'
+  :'')
         +(bn?'<button class="afbtn g" onclick="unBan(\''+nickEnc+'\')">Разбанить</button>':'<button class="afbtn r" onclick="banU(\''+nickEnc+'\')">Забанить</button>')
         +(ad?'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>')
       +'</div></div>';
   }).join('');
 }
 function toggleBannedView(){showBanned=!showBanned;afRend()}
-async function admCoins(nick,delta){if(!iAmAdmin)return;const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();if(!p){alert('Юзер не найден');return}const cur=p.coins||0;const next=Math.max(0,cur+delta);const{error}=await sb.from('profiles').update({coins:next}).eq('nick',nick);if(error)return alert('Ошибка: '+error.message);if(nick===me){myCoins=next;updateCoinsUI()}afRend()}
-async function admCoinsCustom(nick){if(!iAmAdmin)return;const val=prompt('На сколько изменить? (можно с минусом, например: 500 или -300)','100');if(val===null)return;const delta=parseInt(val);if(isNaN(delta)||delta===0)return alert('Некорректное число');await admCoins(nick,delta)}
-async function admSetCoins(nick){if(!iAmAdmin)return;const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();if(!p){alert('Юзер не найден');return}const cur=p.coins||0;const val=prompt('Установить РОВНО сколько монет? (текущее: '+cur+')',String(cur));if(val===null)return;const target=parseInt(val);if(isNaN(target)||target<0)return alert('Некорректное число');const{error}=await sb.from('profiles').update({coins:target}).eq('nick',nick);if(error)return alert('Ошибка: '+error.message);if(nick===me){myCoins=target;updateCoinsUI()}afRend()}
+async function admCoins(nick,delta){
+  if(!iAmAdmin)return;
+  if(!curUser||curUser.id!==OWNER_ID)return alert('Только владелец сайта может менять монеты');
+  const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:nick,p_delta:delta});
+  if(error)return alert('Ошибка: '+error.message);
+  if(data&&data.ok===false)return alert(data.error||'Ошибка');
+  if(nick===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}
+  afRend();
+}
+async function admCoinsCustom(nick){
+  if(!iAmAdmin)return;
+  if(!curUser||curUser.id!==OWNER_ID)return alert('Только владелец сайта может менять монеты');
+  const val=prompt('На сколько изменить? (можно с минусом, например: 500 или -300)','100');
+  if(val===null)return;
+  const delta=parseInt(val);
+  if(isNaN(delta)||delta===0)return alert('Некорректное число');
+  await admCoins(nick,delta);
+}
+async function admSetCoins(nick){
+  if(!iAmAdmin)return;
+  if(!curUser||curUser.id!==OWNER_ID)return alert('Только владелец сайта может менять монеты');
+  const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();
+  if(!p){alert('Юзер не найден');return}
+  const cur=p.coins||0;
+  const val=prompt('Установить РОВНО сколько монет? (текущее: '+cur+')',String(cur));
+  if(val===null)return;
+  const target=parseInt(val);
+  if(isNaN(target)||target<0)return alert('Некорректное число');
+  const{data,error}=await sb.rpc('owner_set_coins',{p_target_nick:nick,p_value:target});
+  if(error)return alert('Ошибка: '+error.message);
+  if(data&&data.ok===false)return alert(data.error||'Ошибка');
+  if(nick===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}
+  afRend();
+}
 async function banU(n){if(!iAmAdmin)return;if(n===me)return alert('Себя нельзя');const r=prompt('Причина','нарушение');if(r===null)return;await sb.from('profiles').update({banned:true,ban_reason:r||''}).eq('nick',n);afRend()}
 async function unBan(n){if(!iAmAdmin)return;if(!confirm('Разбанить '+n+'?'))return;await sb.from('profiles').update({banned:false,ban_reason:null}).eq('nick',n);afRend()}
 async function togAdm(n,m){if(!iAmAdmin)return;if(n===me&&!m)return alert('Себя нельзя');if(!confirm((m?'Сделать':'Снять')+' админа?'))return;await sb.from('profiles').update({is_admin:m}).eq('nick',n);afRend()}
