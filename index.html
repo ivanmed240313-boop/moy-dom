@@ -738,22 +738,23 @@ async function renderMyGifts(){
   box.innerHTML=arr.map((g,i)=>'<div class="my-gift" onclick="regift('+i+')" title="Передарить • от '+eh(de(g.from))+'"><div class="mg-e">'+g.e+'</div><div class="mg-n">'+eh(g.n||'')+'</div><div class="mg-f">от '+eh(de(g.from))+'</div></div>').join('');
 }
 async function regift(idx){
-  const to=document.getElementById('giftM').dataset.to;if(!to)return;
+  const toEnc=document.getElementById('giftM').dataset.to;if(!toEnc)return;
+  const toDec=de(toEnc);
   const msg=document.getElementById('giftMsg');
-  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',meEnc).maybeSingle();
+  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',me).maybeSingle();
   const arr=((mp&&mp.received_gifts)||[]);
   const g=arr[idx];if(!g){msg.style.color='#ff8888';msg.textContent='Подарок не найден';return}
-  if(!confirm('Передарить '+g.e+' '+g.n+' для '+de(to)+'?'))return;
+  if(!confirm('Передарить '+g.e+' '+g.n+' для '+toDec+'?'))return;
   arr.splice(idx,1);
-  await sb.from('profiles').update({received_gifts:arr}).eq('nick',meEnc);
-  const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',to).maybeSingle();
+  await sb.from('profiles').update({received_gifts:arr}).eq('nick',me);
+  const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',toDec).maybeSingle();
   const tarr=((tp&&tp.received_gifts)||[]);
   tarr.unshift({e:g.e,n:g.n,from:meEnc,t:Date.now()});
   if(tarr.length>50)tarr.length=50;
-  await sb.from('profiles').update({received_gifts:tarr}).eq('nick',to);
-  const rid=dmr(meEnc,to);
+  await sb.from('profiles').update({received_gifts:tarr}).eq('nick',toDec);
+  const rid=dmr(meEnc,toEnc);
   await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|regift|'+g.e+'|'+g.n,user_id:curUser.id});
-  showNotif('🎁 Передарено','Ты передарил '+g.e+' '+de(to));
+  showNotif('🎁 Передарено','Ты передарил '+g.e+' '+toDec);
   msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.n+' передарен!';
   renderMyGifts();
   if(curRoom===rid)await loadM();
@@ -794,18 +795,26 @@ async function regiftFromProfile(idx){
 
 async function sendGift(giftId){
   const g=GIFTS.find(x=>x.id===giftId);if(!g)return;
-  const to=document.getElementById('giftM').dataset.to;if(!to)return;
+  const toEnc=document.getElementById('giftM').dataset.to;if(!toEnc)return;
+  const toDec=de(toEnc);
   const msg=document.getElementById('giftMsg');
   if(myCoins<g.price){msg.style.color='#ff8888';msg.textContent='Не хватает монет';return}
-  const{error}=await sb.from('gifts').insert({from_nick:meEnc,to_nick:to,gift_id:g.id,gift_emoji:g.e,gift_name:g.name});
+  const{error}=await sb.from('gifts').insert({from_nick:meEnc,to_nick:toEnc,gift_id:g.id,gift_emoji:g.e,gift_name:g.name});
   if(error){msg.style.color='#ff8888';msg.textContent='Ошибка: '+error.message;return}
   await addCoins(-g.price);
-  const rid=dmr(meEnc,to);
+  const rid=dmr(meEnc,toEnc);
   await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
-  try{const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',to).maybeSingle();const arr=((tp&&tp.received_gifts)||[]);arr.unshift({e:g.e,n:g.name,from:meEnc,t:Date.now()});if(arr.length>50)arr.length=50;await sb.from('profiles').update({received_gifts:arr}).eq('nick',to)}catch(e){}
+  try{
+    const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',toDec).maybeSingle();
+    const arr=((tp&&tp.received_gifts)||[]);
+    arr.unshift({e:g.e,n:g.name,from:meEnc,t:Date.now()});
+    if(arr.length>50)arr.length=50;
+    const{error:e2}=await sb.from('profiles').update({received_gifts:arr}).eq('nick',toDec);
+    if(e2)console.error('gift save err:',e2);
+  }catch(e){console.error(e)}
   msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.name+' отправлен!';
   renderGifts();
-  showNotif('🎁 Подарок','Ты подарил '+g.e+' '+de(to));
+  showNotif('🎁 Подарок','Ты подарил '+g.e+' '+toDec);
   if(curRoom===rid)await loadM();
   await loadDMs();renderDMs();
 }
