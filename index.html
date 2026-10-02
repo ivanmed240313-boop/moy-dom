@@ -1135,39 +1135,33 @@ async function leaveFlat(){const f=flats[fmN];if(!f)return;const owners=flatOwne
 
 /* ====== ИСПРАВЛЕНО: защита от null + span:last-of-type ====== */
 async function loadEditM(){
-  phU=null;musU=null;
+  try{
+    phU=null;musU=null;
+    const $=(id)=>document.getElementById(id);
+    const setTxt=(id,t)=>{const el=$(id);if(el)el.textContent=t};
+    const rmCls=(id,c)=>{const el=$(id);if(el)el.classList.remove(c)};
+    const setSp=(id,t)=>{const el=$(id);if(el){const sp=el.querySelector('span:last-of-type');if(sp)sp.textContent=t}};
+    const setV=(id,v)=>{const el=$(id);if(el)el.value=v};
 
-  const mst=document.getElementById('mst'); if(mst)mst.textContent='';
-  const phBtn=document.getElementById('phBtn');
-  const phName=document.getElementById('phName');
-  const musBtn=document.getElementById('musBtn');
-  const musName=document.getElementById('musName');
-  const phI=document.getElementById('phI');
-  const musI=document.getElementById('musI');
-  const phX=document.getElementById('phX');
-  const phY=document.getElementById('phY');
-  const phZ=document.getElementById('phZ');
-  const musC=document.getElementById('musC');
+    setTxt('mst','');
+    rmCls('phBtn','has');setSp('phBtn','Выбрать файл');
+    rmCls('phName','has');setTxt('phName','Файл не выбран');
+    rmCls('musBtn','has');setSp('musBtn','Выбрать файл');
+    rmCls('musName','has');setTxt('musName','Файл не выбран');
+    setV('phI','');setV('musI','');
 
-  if(phBtn){phBtn.classList.remove('has');const sp=phBtn.querySelector('span:last-of-type');if(sp)sp.textContent='Выбрать файл';}
-  if(phName){phName.classList.remove('has');phName.textContent='Файл не выбран';}
-  if(musBtn){musBtn.classList.remove('has');const sp=musBtn.querySelector('span:last-of-type');if(sp)sp.textContent='Выбрать файл';}
-  if(musName){musName.classList.remove('has');musName.textContent='Файл не выбран';}
-  if(phI)phI.value='';
-  if(musI)musI.value='';
+    let data=null;
+    try{const r=await sb.from('user_media').select('*').eq('nick',meEnc).maybeSingle();data=r.data;}catch(e){}
+    editM=data||{photo_url:null,music_url:null,photo_x:50,photo_y:50,photo_zoom:100};
 
-  const{data}=await sb.from('user_media').select('*').eq('nick',meEnc).maybeSingle();
-  editM=data||{photo_url:null,music_url:null,photo_x:50,photo_y:50,photo_zoom:100};
-
-  if(phX)phX.value=editM.photo_x??50;
-  if(phY)phY.value=editM.photo_y??50;
-  if(phZ)phZ.value=editM.photo_zoom??100;
-  ['phX','phY','phZ'].forEach(id=>{if(document.getElementById(id))upSliderFill(id)});
-
-  upPrev();
-  if(musC)musC.textContent=editM.music_url?'🎵 загружена':'🎵 нет';
+    setV('phX',editM.photo_x??50);
+    setV('phY',editM.photo_y??50);
+    setV('phZ',editM.photo_zoom??100);
+    ['phX','phY','phZ'].forEach(id=>{if($(id))upSliderFill(id)});
+    try{upPrev()}catch(e){}
+    setTxt('musC',editM.music_url?'🎵 загружена':'🎵 нет');
+  }catch(err){console.error('loadEditM fatal:',err)}
 }
-
 /* ====== ИСПРАВЛЕНО: защита от null ====== */
 function upPrev(){
   const i=document.getElementById('pi');
