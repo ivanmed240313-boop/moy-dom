@@ -690,16 +690,24 @@ async function afUsers(b){
   usersAll=data||[];
 
   const bannedCount=usersAll.filter(u=>u.banned).length;
-  let top='<div class="afr" style="border-left:4px solid #d32f2f">'
+  const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);
+
+  /* Верхняя панель: переключатель показа забаненных */
+  let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'">'
     +'<div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div>'
-    +'<div class="su">Очистить бан-лист — снять бан со всех сразу</div></div>'
+    +'<div class="su">'+(showBanned?'Сейчас показаны ВСЕ, включая забаненных':'Забаненные скрыты из списка')+'</div></div>'
     +'<div class="ac">'
-    +(bannedCount?'<button class="afbtn g" onclick="clearAllBans()">🧹 Очистить бан-лист</button>':'<span style="color:#8bc34a;font-weight:700;font-size:12px">✅ Бан-лист пуст</span>')
+    +(showBanned
+      ?'<button class="afbtn gr" onclick="toggleBannedView()">👁 Скрыть забаненных</button>'
+      :'<button class="afbtn r" onclick="toggleBannedView()">👁 Показать забаненных ('+bannedCount+')</button>')
     +'</div></div>';
 
-  if(!usersAll.length){b.innerHTML=top+'<div class="afe">Пусто</div>';return}
+  if(!visible.length){
+    b.innerHTML=top+'<div class="afe">'+(bannedCount?'Все юзеры забанены (скрыты)':'Пусто')+'</div>';
+    return;
+  }
 
-  b.innerHTML=top+usersAll.map(u=>{
+  b.innerHTML=top+visible.map(u=>{
     const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;
     const nickEnc=eh(u.nick);
     return '<div class="ur '+(bn?'banned':'')+'">'
@@ -724,6 +732,11 @@ async function afUsers(b){
   }).join('');
 }
 
+/* Переключатель показа забаненных */
+function toggleBannedView(){
+  showBanned=!showBanned;
+  afRend();
+}
 async function admCoins(nick, delta){
   if(!iAmAdmin)return;
   const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();
@@ -755,16 +768,6 @@ async function admSetCoins(nick){
   const{error}=await sb.from('profiles').update({coins:target}).eq('nick',nick);
   if(error)return alert('Ошибка: '+error.message);
   if(nick===me){myCoins=target;updateCoinsUI()}
-  afRend();
-}
-async function clearAllBans(){
-  if(!iAmAdmin)return;
-  const{data:list}=await sb.from('profiles').select('nick').eq('banned',true);
-  const cnt=(list||[]).length;
-  if(!cnt)return alert('Никто не забанен');
-  if(!confirm('Снять бан со ВСЕХ ('+cnt+' чел.)?'))return;
-  const{error}=await sb.from('profiles').update({banned:false,ban_reason:null}).eq('banned',true);
-  if(error)return alert('Ошибка: '+error.message);
   afRend();
 }
 
