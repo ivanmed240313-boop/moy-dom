@@ -395,7 +395,15 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .gift-msg-txt{flex:1;min-width:0}
 .gift-msg-title{font-size:14px;font-weight:800;color:#f5c542;margin-bottom:2px}
 .gift-msg-sub{font-size:11px;color:#8888a0}
-.pf-gift{background:rgba(255,255,255,.05);padding:4px 8px;border-radius:10px;line-height:1;font-size:28px;cursor:pointer}
+/* ====== ИЗМЕНЕНО: подарки в своём профиле кликабельны ====== */
+.pf-gift{background:rgba(255,255,255,.05);padding:4px 8px;border-radius:10px;line-height:1;font-size:28px;position:relative;display:inline-flex;flex-direction:column;align-items:center;min-width:64px}
+.pf-gift .pf-gn{font-size:10px;color:#c8c8d0;margin-top:2px}
+.pf-gift .pf-gf{font-size:9px;color:#666678;margin-top:1px}
+.pf-gift.clickable{cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s}
+.pf-gift.clickable:hover{background:rgba(245,197,66,.15);transform:scale(1.08);box-shadow:0 4px 12px rgba(245,197,66,.25)}
+.pf-gift.clickable::after{content:'↗';position:absolute;top:0;right:4px;font-size:11px;opacity:.75;color:#f5c542;font-weight:800}
+.pf-gift-hint{font-size:11px;color:#8888a0;margin-top:8px;font-style:italic}
+/* ====== /ИЗМЕНЕНО ====== */
 @media(max-width:768px){
 .sb{position:fixed;left:-100%;top:0;height:100vh;width:88%;max-width:360px;z-index:200;transition:left .3s}
 .sb.open{left:0}.sb-h .cs{display:block}.mbtn{display:block}.hc{opacity:1}
@@ -423,7 +431,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 <div id="annM" class="em"><div class="emb" style="width:460px"><h3>📢 Объявление для дома</h3><textarea id="annInp" placeholder="Напиши объявление..." maxlength="500"></textarea><div class="ema"><button class="cn" onclick="closeAnn()">Отмена</button><button class="sv" onclick="postAnn()" id="annPostBtn">📢 Опубликовать</button></div><div class="fms" id="annErr" style="color:#ff6b6b"></div></div></div>
 <div id="dutyM" class="em" style="z-index:670"><div class="emb" style="width:520px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🧹 Дежурство</div><button class="pf-close" onclick="closeDuty()">✕</button></div><div class="duty-body"><div class="duty-info" id="dutyInfo"></div><div class="duty-coins">💰 Монет: <b id="dutyCoins">0</b></div><button class="duty-start" id="dutyStartBtn" onclick="startMiniGame()">▶ Начать уборку</button><div class="duty-game" id="dutyGame" style="display:none"><div class="duty-timer">⏱ <span id="dutyTime">15.0</span>с</div><div class="duty-field" id="dutyField"></div><div class="duty-score">🧽 Протёрто: <b id="dutyScore">0</b> / 8</div></div><div class="duty-msg" id="dutyMsg"></div></div></div></div>
 <div id="giftM" class="em" style="z-index:670"><div class="emb" style="width:480px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🎁 Магазин</div><button class="pf-close" onclick="closeGift()">✕</button></div><div class="duty-body"><div class="duty-coins">💰 Твои монеты: <b id="giftCoins">0</b></div><div class="gift-to">Кому: <b id="giftTo">—</b></div><div class="gift-list" id="giftList"></div><div class="duty-msg" id="giftMsg"></div></div></div></div>
-<div id="pf" class="em" style="z-index:660"><div class="emb" style="width:420px;padding:0;overflow:hidden"><div class="pf-head"><div class="pf-cover"></div><div class="pf-av" id="pfAv"></div><button class="pf-close" onclick="closePf()">✕</button></div><div class="pf-body"><div class="pf-name"><span id="pfNick"></span><span class="pf-online" id="pfOnline" style="display:none">● в сети</span></div><div class="pf-status" id="pfStatus"></div><div class="pf-bio" id="pfBio"></div><div class="pf-row"><span class="pf-ic">🏠</span><span id="pfFlat">—</span></div><div class="pf-row"><span class="pf-ic">📅</span><span id="pfReg">—</span></div><div class="pf-row"><span class="pf-ic">💬</span><span id="pfMsgs">—</span></div><div class="pf-row" id="pfCoinsRow" style="display:none"><span class="pf-ic">💰</span><span id="pfCoinsInfo">—</span></div><div class="pf-row" id="pfSeenRow"><span class="pf-ic">🕐</span><span id="pfSeen">—</span></div><div id="pfGiftsWrap" style="margin-top:12px;display:none"><div style="font-size:12px;color:#8888a0;margin-bottom:6px;font-weight:600">🎁 Подарки:</div><div id="pfGiftsList" style="display:flex;flex-wrap:wrap;gap:6px"></div></div></div><div class="pf-actions" id="pfActions"></div><div class="pf-edit" id="pfEdit"><label class="gm-lbl">Статус</label><div class="pf-status-edit"><input id="pfEmojiInp" maxlength="2" placeholder="😎" class="pf-emoji-inp"><input id="pfStatusInp" maxlength="40" placeholder="Чем занят?" class="gm-inp" style="margin-bottom:0"></div><label class="gm-lbl" style="margin-top:14px">О себе</label><textarea id="pfBioInp" maxlength="200" placeholder="Пара слов..." class="gm-inp" style="min-height:80px;resize:vertical;margin-bottom:0"></textarea><div class="gm-err" id="pfErr"></div><div class="pf-edit-actions"><button class="cn" onclick="cancelPfEdit()">Отмена</button><button class="cr-btn" onclick="savePf(event)">Сохранить</button></div></div></div></div>
+<div id="pf" class="em" style="z-index:660"><div class="emb" style="width:420px;padding:0;overflow:hidden"><div class="pf-head"><div class="pf-cover"></div><div class="pf-av" id="pfAv"></div><button class="pf-close" onclick="closePf()">✕</button></div><div class="pf-body"><div class="pf-name"><span id="pfNick"></span><span class="pf-online" id="pfOnline" style="display:none">● в сети</span></div><div class="pf-status" id="pfStatus"></div><div class="pf-bio" id="pfBio"></div><div class="pf-row"><span class="pf-ic">🏠</span><span id="pfFlat">—</span></div><div class="pf-row"><span class="pf-ic">📅</span><span id="pfReg">—</span></div><div class="pf-row"><span class="pf-ic">💬</span><span id="pfMsgs">—</span></div><div class="pf-row" id="pfCoinsRow" style="display:none"><span class="pf-ic">💰</span><span id="pfCoinsInfo">—</span></div><div class="pf-row" id="pfSeenRow"><span class="pf-ic">🕐</span><span id="pfSeen">—</span></div><div id="pfGiftsWrap" style="margin-top:12px;display:none"><div id="pfGiftsTitle" style="font-size:12px;color:#8888a0;margin-bottom:6px;font-weight:600">🎁 Подарки:</div><div id="pfGiftsList" style="display:flex;flex-wrap:wrap;gap:6px"></div><div id="pfGiftsHint" class="pf-gift-hint" style="display:none"></div></div></div><div class="pf-actions" id="pfActions"></div><div class="pf-edit" id="pfEdit"><label class="gm-lbl">Статус</label><div class="pf-status-edit"><input id="pfEmojiInp" maxlength="2" placeholder="😎" class="pf-emoji-inp"><input id="pfStatusInp" maxlength="40" placeholder="Чем занят?" class="gm-inp" style="margin-bottom:0"></div><label class="gm-lbl" style="margin-top:14px">О себе</label><textarea id="pfBioInp" maxlength="200" placeholder="Пара слов..." class="gm-inp" style="min-height:80px;resize:vertical;margin-bottom:0"></textarea><div class="gm-err" id="pfErr"></div><div class="pf-edit-actions"><button class="cn" onclick="cancelPfEdit()">Отмена</button><button class="cr-btn" onclick="savePf(event)">Сохранить</button></div></div></div></div>
 <div id="gm"><div class="gmb"><div class="gmh"><h3>👥 Новая группа</h3><button onclick="closeGm()">×</button></div><div class="gmbd"><div class="gm-ava-wrap"><label class="gm-ava" id="gmAva" for="gmAvaIn"><input type="file" id="gmAvaIn" accept="image/*"><span id="gmAvaEmoji">👥</span></label></div><label class="gm-lbl">Название</label><input id="gmName" class="gm-inp" maxlength="40" placeholder="Название..." autocomplete="off"><label class="gm-lbl">Участники</label><div class="inp-rel"><input id="gmMem" class="gm-inp" placeholder="nick1, nick2..." autocomplete="off"><div class="sug-box" id="gmSug"></div></div><div class="gm-mem-list" id="gmMemList"></div><div class="gm-err" id="gmErr"></div></div><div class="gm-ma"><button class="cn" onclick="closeGm()">Отмена</button><button class="cr-btn" id="gmCreate" onclick="createGroup()">Создать</button></div></div></div>
 <div id="gsm"><div class="gmb"><div class="gmh"><h3>⚙️ Настройки группы</h3><button onclick="closeGsm()">×</button></div><div class="gmbd"><div class="gm-ava-wrap"><label class="gm-ava" id="gsmAva" for="gsmAvaIn"><input type="file" id="gsmAvaIn" accept="image/*"><span id="gsmAvaEmoji">👥</span></label></div><label class="gm-lbl">Название</label><input id="gsmName" class="gm-inp" maxlength="40"><label class="gm-lbl">Участники</label><div class="inp-rel"><input id="gsmAddMem" class="gm-inp" placeholder="nick1, nick2..."><div class="sug-box" id="gsmSug"></div></div><div class="gm-mem-list" id="gsmMemList"></div><div class="gm-err" id="gsmErr"></div></div><div class="gm-ma"><button class="cn" onclick="closeGsm()">Закрыть</button><button class="cr-btn" onclick="saveGroupSettings()">Сохранить</button></div></div></div>
 <div id="cr" class="cr"><video id="crV" autoplay muted playsinline></video><div class="tm" id="crT">0:00</div><div class="hh">Запись кружка...</div><button class="sb" id="crS">⏹ Остановить</button></div>
@@ -717,6 +725,7 @@ function stopWork(timeUp){
   workTaskId=null;renderWork();
 }
 /* ======= КОНЕЦ ЧАСТИ 1 ======= */
+  /* ======= КОНЕЦ ЧАСТИ 1 ======= */
   function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();renderMyGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
 function closeGift(){document.getElementById('giftM').classList.remove('open')}
 function renderGifts(){const list=document.getElementById('giftList');list.innerHTML=GIFTS.map(g=>{const can=myCoins>=g.price;return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>'}).join('')}
@@ -750,6 +759,39 @@ async function regift(idx){
   if(curRoom===rid)await loadM();
   await loadDMs();renderDMs();
 }
+
+/* ====== ДОБАВЛЕНО: передаривание прямо из своего профиля ====== */
+async function regiftFromProfile(idx){
+  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',meEnc).maybeSingle();
+  const arr=((mp&&mp.received_gifts)||[]);
+  const g=arr[idx];
+  if(!g){alert('Подарок не найден');return}
+  const to=prompt('🎁 Передарить «'+g.e+' '+g.n+'»?\n\nВведи ник получателя:','');
+  if(to===null)return;
+  const toNick=(to||'').trim();
+  if(!toNick){alert('Пустой ник');return}
+  if(toNick===me){alert('Нельзя передарить себе');return}
+  const{data:tp}=await sb.from('public_profiles').select('nick').eq('nick',toNick).maybeSingle();
+  if(!tp){alert('Ник «'+toNick+'» не найден');return}
+  if(!confirm('Передарить «'+g.e+' '+g.n+'» для '+toNick+'?'))return;
+  arr.splice(idx,1);
+  const{error:e1}=await sb.from('profiles').update({received_gifts:arr}).eq('nick',meEnc);
+  if(e1){alert('Ошибка: '+e1.message);return}
+  const toEnc=en(toNick);
+  const{data:rp}=await sb.from('profiles').select('received_gifts').eq('nick',toEnc).maybeSingle();
+  const rarr=((rp&&rp.received_gifts)||[]);
+  rarr.unshift({e:g.e,n:g.n,from:meEnc,t:Date.now()});
+  if(rarr.length>50)rarr.length=50;
+  await sb.from('profiles').update({received_gifts:rarr}).eq('nick',toEnc);
+  const rid=dmr(meEnc,toEnc);
+  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|regift|'+g.e+'|'+g.n,user_id:curUser.id});
+  showNotif('🎁 Передарено','Ты передарил '+g.e+' для '+toNick);
+  if(curRoom===rid)await loadM();
+  await loadDMs();renderDMs();
+  await openProfile(null);
+}
+/* ====== /ДОБАВЛЕНО ====== */
+
 async function sendGift(giftId){
   const g=GIFTS.find(x=>x.id===giftId);if(!g)return;
   const to=document.getElementById('giftM').dataset.to;if(!to)return;
@@ -798,13 +840,27 @@ async function openProfile(nick){
   if(isMine||isOnline){seenRow.style.display='none'}else if(p&&p.last_seen){seenRow.style.display='flex';seenT.textContent=lastSeenText(p.last_seen)}else{seenRow.style.display='none'}
   document.getElementById('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';
   document.getElementById('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
+
+  /* ====== ИЗМЕНЕНО: подарки — с разным заголовком и кликабельностью ====== */
   const giftsList=(p&&p.received_gifts)||[];
   document.getElementById('pfGiftsWrap').style.display='block';
+  const titleEl=document.getElementById('pfGiftsTitle');
+  const hintEl=document.getElementById('pfGiftsHint');
+  if(titleEl)titleEl.textContent=isMine?'🎁 Тебе подарили:':'🎁 Дарили:';
   if(giftsList.length){
-    document.getElementById('pfGiftsList').innerHTML=giftsList.slice(0,30).map(g=>'<div class="pf-gift" title="'+(g.n||'')+' • от '+eh(de(g.from))+'"><span style="font-size:26px;display:block;line-height:1">'+g.e+'</span><span class="pf-gn">'+eh(g.n||'')+'</span><span class="pf-gf">от '+eh(de(g.from))+'</span></div>').join('');
+    document.getElementById('pfGiftsList').innerHTML=giftsList.slice(0,30).map((g,i)=>{
+      const clickable=isMine;
+      const onClick=clickable?' onclick="regiftFromProfile('+i+')"':'';
+      const cls='pf-gift'+(clickable?' clickable':'');
+      return '<div class="'+cls+'"'+onClick+' title="'+(g.n||'')+' • от '+eh(de(g.from))+'"><span style="font-size:26px;display:block;line-height:1">'+g.e+'</span><span class="pf-gn">'+eh(g.n||'')+'</span><span class="pf-gf">от '+eh(de(g.from))+'</span></div>';
+    }).join('');
+    if(hintEl){hintEl.style.display=isMine?'block':'none';hintEl.textContent=isMine?'Нажми на подарок, чтобы передарить его другому':''}
   }else{
     document.getElementById('pfGiftsList').innerHTML='<div style="font-size:12px;color:#666678;padding:4px">'+(isMine?'Тебе ещё ничего не дарили':'Пока никто не дарил')+'</div>';
+    if(hintEl)hintEl.style.display='none';
   }
+  /* ====== /ИЗМЕНЕНО ====== */
+
   const acts=document.getElementById('pfActions');
   if(isMine){acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button>'}
   else{acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="edit" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000" onclick="openGift(\''+en(target)+'\')">🎁 Подарить</button>'}
