@@ -395,7 +395,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .gift-msg-txt{flex:1;min-width:0}
 .gift-msg-title{font-size:14px;font-weight:800;color:#f5c542;margin-bottom:2px}
 .gift-msg-sub{font-size:11px;color:#8888a0}
-/* ====== ИЗМЕНЕНО: подарки в своём профиле кликабельны ====== */
+/* ====== ПОДАРКИ: кликабельные в своём профиле ====== */
 .pf-gift{background:rgba(255,255,255,.05);padding:4px 8px;border-radius:10px;line-height:1;font-size:28px;position:relative;display:inline-flex;flex-direction:column;align-items:center;min-width:64px}
 .pf-gift .pf-gn{font-size:10px;color:#c8c8d0;margin-top:2px}
 .pf-gift .pf-gf{font-size:9px;color:#666678;margin-top:1px}
@@ -403,7 +403,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .pf-gift.clickable:hover{background:rgba(245,197,66,.15);transform:scale(1.08);box-shadow:0 4px 12px rgba(245,197,66,.25)}
 .pf-gift.clickable::after{content:'↗';position:absolute;top:0;right:4px;font-size:11px;opacity:.75;color:#f5c542;font-weight:800}
 .pf-gift-hint{font-size:11px;color:#8888a0;margin-top:8px;font-style:italic}
-/* ====== /ИЗМЕНЕНО ====== */
 @media(max-width:768px){
 .sb{position:fixed;left:-100%;top:0;height:100vh;width:88%;max-width:360px;z-index:200;transition:left .3s}
 .sb.open{left:0}.sb-h .cs{display:block}.mbtn{display:block}.hc{opacity:1}
@@ -459,6 +458,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 <audio id="bgA" loop preload="auto"></audio>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+  <script>
 const SU='https://uuhgpnjpulrazluiqreb.supabase.co',SK='sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
 const sb=window.supabase.createClient(SU,SK);
 const QR=['❤️','👍','😂','🔥','😮','😢','🙏','💯'];
@@ -468,7 +468,7 @@ let curUser=null,me=null,meEnc=null,iAmAdmin=false,isBanned=false,banR='';
 let houses=[],curHouse=null,flats={},houseData=null,hm={};
 let curRoom=null,curRoomType=null,curEntG=null,curPartner=null;
 let curGroup=null,groups=[],allProfiles=[],photoCache={};
-let ch=null,pt=null,mc=null,fc=null,hc=null,pc=null,pres=null,typch=null,gpres=null,rch=null,gch=null;
+let ch=null,pt=null,mc=null,fc=null,hc=null,pc=null,pres=null,typch=null,gpres=null,rch=null,gch=null,giftsCh=null;
 let online=new Set(),unread={},dms=[],lock=false;
 let phU=null,musU=null,editM=null,fmN=null,fmO=false,fmR=false,rcId=null,rcCh=null,rcPt=null,myRooms=new Set(),musUrl=null,afT='flats',usersAll=[];
 let mr=null,aCh=[],rS=0,rT=null,mTok=0,rmTok=0;
@@ -479,6 +479,7 @@ let vRec=null,vStr=null,vCh=[],vS=0,vTimer=null;
 let ctxMsgId=null,ctxMsgRoom=null,gmAvaFile=null,gsmAvaFile=null,gsmGroupId=null,pfCurrent=null,myCoins=0;
 let dutyGameActive=false,dutyGameTimer=null,dutyGameStart=0,dutyGameCaught=0,dutyGameTotal=8,dutyGameDuration=15000,dutyGameReward=0,dutyIsDuty=false;
 let workActive=false,workTimer=null,workStart=0,workCaught=0,workTaskId=null,workCdInt=null;
+let _started=false;
 const WORK_TASKS=[
   {id:'dishes',  name:'Намыть посуду',     icon:'🍽️', clean:'✨'},
   {id:'vacuum',  name:'Пропылесосить пол', icon:'🧹', clean:'✨'},
@@ -550,6 +551,17 @@ sb.auth.onAuthStateChange(async(e,s)=>{if(e==='SIGNED_IN'&&s&&!curUser){curUser=
 function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+curUser.id},p=>{if(p.new){if(p.new.banned&&!isBanned){isBanned=true;banR=p.new.ban_reason||'';showBan();try{closeM()}catch(e){}try{closeFm()}catch(e){}try{closeAdmin()}catch(e){}}if(typeof p.new.is_admin!=='undefined'){iAmAdmin=!!p.new.is_admin;upAdminTog();if(!iAmAdmin&&adminMode)exitAdmin()}}if(typeof p.new.coins!=='undefined'){myCoins=p.new.coins||0;updateCoinsUI()}}).subscribe()}
 function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{key:meEnc}}});gpres.on('presence',{event:'sync'},()=>{const s=gpres.presenceState();online=new Set();for(const k in s)if(k&&k!==meEnc)online.add(k);renderDMs();upChSt()}).subscribe(async st=>{if(st==='SUBSCRIBED')await gpres.track({nick:meEnc,since:Date.now()})})}
 function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();await loadDMs();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
+/* ====== ИСПРАВЛЕНО: защита от двойного вызова ====== */
+function subGifts(){
+  if(giftsCh)return;
+  if(sb.getChannels().some(c=>c.topic==='realtime:gifts-rt')){giftsCh=true;return;}
+  giftsCh=sb.channel('gifts-rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'gifts'},async p=>{
+      const g=p.new;if(!g)return;
+      if(g.to_nick===meEnc)showNotif('🎁 Подарок от '+de(g.from_nick),g.gift_emoji+' '+g.gift_name);
+    })
+    .subscribe();
+}
 function upAdminTog(){const b=document.getElementById('adminTog');b.style.display=iAmAdmin?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка';const m=document.getElementById('adminMItem');if(m)m.style.display=iAmAdmin?'flex':'none'}
 function toggleAdmin(){if(adminMode)exitAdmin();else enterAdmin()}
 function enterAdmin(){if(!iAmAdmin)return alert('Не админ');adminMode=true;document.body.classList.add('admin-mode');document.getElementById('adminB').classList.add('on');document.getElementById('ap').classList.add('on');upAdminTog();renderFlats()}
@@ -725,45 +737,75 @@ function stopWork(timeUp){
   workTaskId=null;renderWork();
 }
 /* ======= КОНЕЦ ЧАСТИ 1 ======= */
-  /* ======= КОНЕЦ ЧАСТИ 1 ======= */
-  function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();renderMyGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
+function openGift(toNick){if(!toNick||toNick===me)return;document.getElementById('giftTo').textContent=de(toNick);document.getElementById('giftM').dataset.to=toNick;document.getElementById('giftMsg').textContent='';renderGifts();loadCoins();document.getElementById('giftM').classList.add('open')}
 function closeGift(){document.getElementById('giftM').classList.remove('open')}
 function renderGifts(){const list=document.getElementById('giftList');list.innerHTML=GIFTS.map(g=>{const can=myCoins>=g.price;return '<div class="gift-item'+(can?'':' locked')+'" onclick="sendGift(\''+g.id+'\')"><div class="gi-icon"><div class="gi-emoji">'+g.e+'</div></div><div class="gi-n">'+g.name+'</div><div class="gi-p">'+g.price+' 💰</div></div>'}).join('')}
-async function renderMyGifts(){
-  const box=document.getElementById('myGiftsList');if(!box)return;
-  box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Загрузка...</div>';
-  const{data}=await sb.from('profiles').select('received_gifts').eq('nick',meEnc).maybeSingle();
-  const arr=((data&&data.received_gifts)||[]);
-  if(!arr.length){box.innerHTML='<div style="font-size:11px;color:#666678;padding:6px">Пока пусто — подаришь, и тут появятся полученные.</div>';return}
-  box.innerHTML=arr.map((g,i)=>'<div class="my-gift" onclick="regift('+i+')" title="Передарить • от '+eh(de(g.from))+'"><div class="mg-e">'+g.e+'</div><div class="mg-n">'+eh(g.n||'')+'</div><div class="mg-f">от '+eh(de(g.from))+'</div></div>').join('');
-}
-async function regift(idx){
+
+/* ====== ИСПРАВЛЕНО: sendGift через RPC, hex для сообщения, декод для profiles ====== */
+async function sendGift(giftId){
+  const g=GIFTS.find(x=>x.id===giftId);if(!g)return;
   const toEnc=document.getElementById('giftM').dataset.to;if(!toEnc)return;
   const toDec=de(toEnc);
   const msg=document.getElementById('giftMsg');
-  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',me).maybeSingle();
-  const arr=((mp&&mp.received_gifts)||[]);
-  const g=arr[idx];if(!g){msg.style.color='#ff8888';msg.textContent='Подарок не найден';return}
-  if(!confirm('Передарить '+g.e+' '+g.n+' для '+toDec+'?'))return;
-  arr.splice(idx,1);
-  await sb.from('profiles').update({received_gifts:arr}).eq('nick',me);
-  const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',toDec).maybeSingle();
-  const tarr=((tp&&tp.received_gifts)||[]);
-  tarr.unshift({e:g.e,n:g.n,from:meEnc,t:Date.now()});
-  if(tarr.length>50)tarr.length=50;
-  await sb.from('profiles').update({received_gifts:tarr}).eq('nick',toDec);
+  if(myCoins<g.price){msg.style.color='#ff8888';msg.textContent='Не хватает монет';return}
+
+  const{error}=await sb.from('gifts').insert({from_nick:meEnc,to_nick:toEnc,gift_id:g.id,gift_emoji:g.e,gift_name:g.name});
+  if(error){msg.style.color='#ff8888';msg.textContent='Ошибка: '+error.message;return}
+
+  await addCoins(-g.price);
+
   const rid=dmr(meEnc,toEnc);
-  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|regift|'+g.e+'|'+g.n,user_id:curUser.id});
-  showNotif('🎁 Передарено','Ты передарил '+g.e+' '+toDec);
-  msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.n+' передарен!';
-  renderMyGifts();
+  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
+
+  const{error:rpcErr}=await sb.rpc('send_gift_to_user',{
+    p_to_nick:  toDec,
+    p_from_hex: meEnc,
+    p_emoji:    g.e,
+    p_name:     g.name
+  });
+  if(rpcErr)console.error('RPC gift err:',rpcErr);
+
+  msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.name+' отправлен!';
+  renderGifts();
+  showNotif('🎁 Подарок','Ты подарил '+g.e+' '+toDec);
   if(curRoom===rid)await loadM();
   await loadDMs();renderDMs();
 }
 
-/* ====== ДОБАВЛЕНО: передаривание прямо из своего профиля ====== */
+/* ====== ИСПРАВЛЕНО: regift через RPC ====== */
+async function regift(idx){
+  const toEnc=document.getElementById('giftM').dataset.to;if(!toEnc)return;
+  const toDec=de(toEnc);
+  const msg=document.getElementById('giftMsg');
+
+  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',me).maybeSingle();
+  const arr=((mp&&mp.received_gifts)||[]);
+  const g=arr[idx];if(!g){msg.style.color='#ff8888';msg.textContent='Подарок не найден';return}
+  if(!confirm('Передарить '+g.e+' '+g.n+' для '+toDec+'?'))return;
+
+  arr.splice(idx,1);
+  await sb.from('profiles').update({received_gifts:arr}).eq('nick',me);
+
+  const{error:rpcErr}=await sb.rpc('send_gift_to_user',{
+    p_to_nick:  toDec,
+    p_from_hex: meEnc,
+    p_emoji:    g.e,
+    p_name:     g.n
+  });
+  if(rpcErr){msg.style.color='#ff8888';msg.textContent='Ошибка: '+rpcErr.message;return}
+
+  const rid=dmr(meEnc,toEnc);
+  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|regift|'+g.e+'|'+g.n,user_id:curUser.id});
+
+  showNotif('🎁 Передарено','Ты передарил '+g.e+' '+toDec);
+  msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.n+' передарен!';
+  if(curRoom===rid)await loadM();
+  await loadDMs();renderDMs();
+}
+
+/* ====== НОВОЕ: передаривание из своего профиля ====== */
 async function regiftFromProfile(idx){
-  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',meEnc).maybeSingle();
+  const{data:mp}=await sb.from('profiles').select('received_gifts').eq('nick',me).maybeSingle();
   const arr=((mp&&mp.received_gifts)||[]);
   const g=arr[idx];
   if(!g){alert('Подарок не найден');return}
@@ -772,62 +814,34 @@ async function regiftFromProfile(idx){
   const toNick=(to||'').trim();
   if(!toNick){alert('Пустой ник');return}
   if(toNick===me){alert('Нельзя передарить себе');return}
+
   const{data:tp}=await sb.from('public_profiles').select('nick').eq('nick',toNick).maybeSingle();
   if(!tp){alert('Ник «'+toNick+'» не найден');return}
   if(!confirm('Передарить «'+g.e+' '+g.n+'» для '+toNick+'?'))return;
+
   arr.splice(idx,1);
-  const{error:e1}=await sb.from('profiles').update({received_gifts:arr}).eq('nick',meEnc);
+  const{error:e1}=await sb.from('profiles').update({received_gifts:arr}).eq('nick',me);
   if(e1){alert('Ошибка: '+e1.message);return}
+
+  const{error:rpcErr}=await sb.rpc('send_gift_to_user',{
+    p_to_nick:  toNick,
+    p_from_hex: meEnc,
+    p_emoji:    g.e,
+    p_name:     g.n
+  });
+  if(rpcErr){alert('Ошибка: '+rpcErr.message);return}
+
   const toEnc=en(toNick);
-  const{data:rp}=await sb.from('profiles').select('received_gifts').eq('nick',toEnc).maybeSingle();
-  const rarr=((rp&&rp.received_gifts)||[]);
-  rarr.unshift({e:g.e,n:g.n,from:meEnc,t:Date.now()});
-  if(rarr.length>50)rarr.length=50;
-  await sb.from('profiles').update({received_gifts:rarr}).eq('nick',toEnc);
   const rid=dmr(meEnc,toEnc);
   await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|regift|'+g.e+'|'+g.n,user_id:curUser.id});
+
   showNotif('🎁 Передарено','Ты передарил '+g.e+' для '+toNick);
   if(curRoom===rid)await loadM();
   await loadDMs();renderDMs();
   await openProfile(null);
 }
-/* ====== /ДОБАВЛЕНО ====== */
+/* ====== /НОВОЕ ====== */
 
-async function sendGift(giftId){
-  const g=GIFTS.find(x=>x.id===giftId);if(!g)return;
-  const toEnc=document.getElementById('giftM').dataset.to;if(!toEnc)return;
-  const toDec=de(toEnc);
-  const msg=document.getElementById('giftMsg');
-  if(myCoins<g.price){msg.style.color='#ff8888';msg.textContent='Не хватает монет';return}
-  const{error}=await sb.from('gifts').insert({from_nick:meEnc,to_nick:toEnc,gift_id:g.id,gift_emoji:g.e,gift_name:g.name});
-  if(error){msg.style.color='#ff8888';msg.textContent='Ошибка: '+error.message;return}
-  await addCoins(-g.price);
-  const rid=dmr(meEnc,toEnc);
-  await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'🎁GIFT|'+g.id+'|'+g.e+'|'+g.name,user_id:curUser.id});
-  try{
-    const{data:tp}=await sb.from('profiles').select('received_gifts').eq('nick',toDec).maybeSingle();
-    const arr=((tp&&tp.received_gifts)||[]);
-    arr.unshift({e:g.e,n:g.name,from:meEnc,t:Date.now()});
-    if(arr.length>50)arr.length=50;
-    const{error:e2}=await sb.from('profiles').update({received_gifts:arr}).eq('nick',toDec);
-    if(e2)console.error('gift save err:',e2);
-  }catch(e){console.error(e)}
-  msg.style.color='#8bc34a';msg.textContent='✅ '+g.e+' '+g.name+' отправлен!';
-  renderGifts();
-  showNotif('🎁 Подарок','Ты подарил '+g.e+' '+toDec);
-  if(curRoom===rid)await loadM();
-  await loadDMs();renderDMs();
-}
-let giftsCh=null; function subGifts(){
-  const exists=sb.getChannels().some(c=>c.topic==='realtime:gifts-rt');
-  if(exists)return;
-  sb.channel('gifts-rt')
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'gifts'},async p=>{
-      const g=p.new;if(!g)return;
-      if(g.to_nick===meEnc)showNotif('🎁 Подарок от '+de(g.from_nick),g.gift_emoji+' '+g.gift_name);
-    })
-    .subscribe();
-}
 function openPfMine(){closeUserMenu();openProfile(null)}
 async function openProfile(nick){
   closeUserMenu();
@@ -859,7 +873,7 @@ async function openProfile(nick){
   document.getElementById('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';
   document.getElementById('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
 
-  /* ====== ИЗМЕНЕНО: подарки — с разным заголовком и кликабельностью ====== */
+  /* ====== ПОДАРКИ: свой — кликабельные, чужой — просмотр ====== */
   const giftsList=(p&&p.received_gifts)||[];
   document.getElementById('pfGiftsWrap').style.display='block';
   const titleEl=document.getElementById('pfGiftsTitle');
@@ -877,7 +891,7 @@ async function openProfile(nick){
     document.getElementById('pfGiftsList').innerHTML='<div style="font-size:12px;color:#666678;padding:4px">'+(isMine?'Тебе ещё ничего не дарили':'Пока никто не дарил')+'</div>';
     if(hintEl)hintEl.style.display='none';
   }
-  /* ====== /ИЗМЕНЕНО ====== */
+  /* ====== /ПОДАРКИ ====== */
 
   const acts=document.getElementById('pfActions');
   if(isMine){acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button>'}
@@ -909,13 +923,30 @@ function attachNickSuggest(inpId,sugId){
   inp.addEventListener('blur',()=>setTimeout(hide,180));
   inp.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
 }
-let _started=false;
+/* ====== ИСПРАВЛЕНО: защита от двойного вызова ====== */
 async function start(){
   if(_started)return;
   _started=true;
   meEnc=en(me);
   document.getElementById('auth').style.display='none';
-  /* ...остальное без изменений... */document.getElementById('nickScr').style.display='none';document.getElementById('banO').classList.remove('on');document.getElementById('app').style.display='block';document.getElementById('myNick').textContent=me;document.getElementById('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();subProf();subGP();subGroups();subGifts();initCtxEmojis();await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();pollAnn();setInterval(pollAnn,30000);setInterval(loadPhotoCache,60000);setInterval(loadCoins,60000)}
+  document.getElementById('nickScr').style.display='none';
+  document.getElementById('banO').classList.remove('on');
+  document.getElementById('app').style.display='block';
+  document.getElementById('myNick').textContent=me;
+  document.getElementById('myAv').innerHTML=avH(me,'sm');
+  initVP();initEP();upAdminTog();
+  subProf();subGP();subGroups();subGifts();
+  initCtxEmojis();
+  await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadHouses();
+  if(!houses.length)await createHouse('Дом №1',1);
+  curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);
+  subHouses();subFlats();subMed();subReact();
+  await loadGroups();await loadDMs();renderDMs();subGlob();
+  setupUI();updateSeasonBtn();pollAnn();
+  setInterval(pollAnn,30000);
+  setInterval(loadPhotoCache,60000);
+  setInterval(loadCoins,60000);
+}
 function initCtxEmojis(){const c=document.getElementById('ctxEmojis');c.innerHTML=QR.map(e=>'<button type="button" onclick="ctxReact(\''+e+'\')">'+e+'</button>').join('')}
 function magnetize(btn){const s=0.35,t=14;btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const dx=(e.clientX-cx)/(r.width/2),dy=(e.clientY-cy)/(r.height/2);const tx=dx*s*r.width*0.15,ty=dy*s*r.height*0.15;btn.style.transform='translate('+tx+'px,'+ty+'px) perspective(500px) rotateX('+(-dy*t)+'deg) rotateY('+(dx*t)+'deg) scale(1.06)';btn.style.zIndex='10'});btn.addEventListener('mouseleave',()=>{btn.style.transform='';btn.style.zIndex=''})}
 function setupUI(){
@@ -940,9 +971,10 @@ document.getElementById('rPI').onchange=e=>sendPhoto(e.target.files[0],rcId,'roo
 document.getElementById('eBtn').onclick=togEP;
 document.getElementById('cBtn').onclick=startCirc;
 document.getElementById('crS').onclick=stopCirc;
-document.getElementById('phI').onchange=e=>{const f=e.target.files[0];if(!f)return;phU=f;const b=document.getElementById('phBtn'),n=document.getElementById('phName');b.classList.add('has');n.classList.add('has');n.textContent=f.name;document.querySelector('#phBtn span:last-child').textContent='Заменить';upPrev()};
-document.getElementById('musI').onchange=e=>{const f=e.target.files[0];if(!f)return;musU=f;const b=document.getElementById('musBtn'),n=document.getElementById('musName');b.classList.add('has');n.classList.add('has');n.textContent=f.name;document.querySelector('#musBtn span:last-child').textContent='Заменить';document.getElementById('musC').textContent='🎵 новая: '+f.name};
-['phX','phY','phZ'].forEach(id=>document.getElementById(id).oninput=()=>{upSliderFill(id);upPrev()});
+/* ====== ИСПРАВЛЕНО: span:last-of-type ====== */
+document.getElementById('phI').onchange=e=>{const f=e.target.files[0];if(!f)return;phU=f;const b=document.getElementById('phBtn'),n=document.getElementById('phName');b.classList.add('has');n.classList.add('has');n.textContent=f.name;const sp=b.querySelector('span:last-of-type');if(sp)sp.textContent='Заменить';upPrev()};
+document.getElementById('musI').onchange=e=>{const f=e.target.files[0];if(!f)return;musU=f;const b=document.getElementById('musBtn'),n=document.getElementById('musName');b.classList.add('has');n.classList.add('has');n.textContent=f.name;const sp=b.querySelector('span:last-of-type');if(sp)sp.textContent='Заменить';const mc=document.getElementById('musC');if(mc)mc.textContent='🎵 новая: '+f.name};
+['phX','phY','phZ'].forEach(id=>{const el=document.getElementById(id);if(el)el.oninput=()=>{upSliderFill(id);upPrev()}});
 document.addEventListener('click',e=>{if(!e.target.closest('#ctxMenu'))closeCtx()});
 document.addEventListener('scroll',closeCtx,true);
 window.addEventListener('blur',closeCtx);
@@ -956,7 +988,7 @@ document.getElementById('pf').addEventListener('click',e=>{if(e.target.id==='pf'
 document.getElementById('dutyM').addEventListener('click',e=>{if(e.target.id==='dutyM')closeDuty()});
 document.getElementById('giftM').addEventListener('click',e=>{if(e.target.id==='giftM')closeGift()});
 }
-function upSliderFill(id){const el=document.getElementById(id);const min=+el.min,max=+el.max,val=+el.value;const p=(val-min)/(max-min)*100;el.style.setProperty('--fill',p+'%')}
+function upSliderFill(id){const el=document.getElementById(id);if(!el)return;const min=+el.min,max=+el.max,val=+el.value;const p=(val-min)/(max-min)*100;el.style.setProperty('--fill',p+'%')}
 function openCtx(e,msgId,roomType){e.preventDefault();e.stopPropagation();ctxMsgId=msgId;ctxMsgRoom=roomType;const menu=document.getElementById('ctxMenu');const msgs=roomType==='main'?msgC:rmC;const m=msgs.find(x=>x.id===msgId);if(!m)return;const mine=m.nick===meEnc;const isText=!m.voice_url&&!m.video_url&&!m.photo_url&&!(m.text&&m.text.startsWith('🎁GIFT|'));let html='';if(mine&&isText)html+='<button onclick="ctxEdit()">✏️ Редактировать</button>';html+='<div class="div"></div>';if(mine)html+='<button class="red" onclick="ctxDelBoth()">🗑️ Удалить у всех</button>';html+='<button class="red" onclick="ctxDelMe()">✕ Удалить у себя</button>';document.getElementById('ctxActions').innerHTML=html;menu.style.left='0px';menu.style.top='0px';menu.classList.add('open');const w=menu.offsetWidth,h=menu.offsetHeight;let x=e.clientX,y=e.clientY;if(x+w>window.innerWidth)x=window.innerWidth-w-10;if(y+h>window.innerHeight)y=window.innerHeight-h-10;if(x<10)x=10;if(y<10)y=10;menu.style.left=x+'px';menu.style.top=y+'px'}
 function closeCtx(){const m=document.getElementById('ctxMenu');if(m)m.classList.remove('open');ctxMsgId=null;ctxMsgRoom=null}
 function ctxEdit(){const id=ctxMsgId,rt=ctxMsgRoom;closeCtx();openEm(id,rt)}
@@ -1100,8 +1132,66 @@ async function sendRM(){if(isBanned)return showBan();const i=document.getElement
 async function invite(){const i=document.getElementById('invI'),t=i.value.trim();if(!t)return;const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return alert('Только хозяин');const mp=f.max_people??2;if(owners.length>=mp)return alert('Мест нет');let te=null,tn=null;if(/^\d+$/.test(t)){const n=parseInt(t);if(n<1||n>30)return alert('Нет такой');if(n===fmN)return alert('Твоя');const tf=flats[n];const tfOwners=flatOwners(tf);if(!tfOwners.length)return alert('Пусто');if(tfOwners[0]===meEnc)return alert('Себя');te=tfOwners[0];tn=de(te)}else{const{data}=await sb.from('public_profiles').select('nick').eq('nick',t).maybeSingle();if(!data)return alert('Нет ника');te=en(data.nick);tn=data.nick;if(te===meEnc)return alert('Себя')}const inH=Object.values(flats).some(x=>flatOwners(x).includes(te));if(inH)return alert(tn+' уже живёт');const newOwners=[...owners,te];const{error}=await sb.from('flats').update({owner_nicks:newOwners,owner_nick:newOwners[0],owner_nick2:newOwners[1]||null}).eq('house_id',curHouse).eq('number',fmN);if(error)return alert('Ошибка: '+error.message);i.value='';alert(tn+' теперь с тобой!');await reloadHouse();await loadMyRooms();upFm();fmSw('room')}
 async function kickR(o){const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return alert('Только хозяин');if(!o||o===meEnc)return;if(!confirm('Выгнать '+de(o)+'?'))return;const newOwners=owners.filter(x=>x!==o);await sb.from('flats').update({owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',curHouse).eq('number',fmN);await reloadHouse();upFm();fmSw('manage')}
 async function leaveFlat(){const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;if(!confirm('Покинуть?'))return;const newOwners=owners.filter(x=>x!==meEnc);await sb.from('flats').update({owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',curHouse).eq('number',fmN);closeFm();await reloadHouse();await loadMyRooms()}
-async function loadEditM(){phU=null;musU=null;document.getElementById('mst').textContent='';const phBtn=document.getElementById('phBtn'),phName=document.getElementById('phName'),musBtn=document.getElementById('musBtn'),musName=document.getElementById('musName');phBtn.classList.remove('has');phName.classList.remove('has');phName.textContent='Файл не выбран';document.querySelector('#phBtn span:last-of-type').textContent='Выбрать файл';musBtn.classList.remove('has');musName.classList.remove('has');musName.textContent='Файл не выбран';document.querySelector('#musBtn span:last-child').textContent='Выбрать файл';document.getElementById('phI').value='';document.getElementById('musI').value='';const{data}=await sb.from('user_media').select('*').eq('nick',meEnc).maybeSingle();editM=data||{photo_url:null,music_url:null,photo_x:50,photo_y:50,photo_zoom:100};document.getElementById('phX').value=editM.photo_x??50;document.getElementById('phY').value=editM.photo_y??50;document.getElementById('phZ').value=editM.photo_zoom??100;['phX','phY','phZ'].forEach(upSliderFill);upPrev();document.getElementById('musC').textContent=editM.music_url?'🎵 загружена':'🎵 нет'}
-function upPrev(){const i=document.getElementById('pi'),e=document.getElementById('pe');const u=phU?URL.createObjectURL(phU):(editM?.photo_url||null);const x=Number(document.getElementById('phX').value),y=Number(document.getElementById('phY').value),z=Number(document.getElementById('phZ').value);document.getElementById('vX').textContent=x;document.getElementById('vY').textContent=y;document.getElementById('vZ').textContent=z+'%';const sw=document.getElementById('slidersWrap');if(u){i.style.backgroundImage='url("'+u+'")';i.style.backgroundSize=z+'% '+z+'%';i.style.backgroundPosition=x+'% '+y+'%';i.style.display='block';e.style.display='none';sw.style.display='flex'}else{i.style.display='none';e.style.display='block';sw.style.display='none'}}
+
+/* ====== ИСПРАВЛЕНО: защита от null + span:last-of-type ====== */
+async function loadEditM(){
+  phU=null;musU=null;
+
+  const mst=document.getElementById('mst'); if(mst)mst.textContent='';
+  const phBtn=document.getElementById('phBtn');
+  const phName=document.getElementById('phName');
+  const musBtn=document.getElementById('musBtn');
+  const musName=document.getElementById('musName');
+  const phI=document.getElementById('phI');
+  const musI=document.getElementById('musI');
+  const phX=document.getElementById('phX');
+  const phY=document.getElementById('phY');
+  const phZ=document.getElementById('phZ');
+  const musC=document.getElementById('musC');
+
+  if(phBtn){phBtn.classList.remove('has');const sp=phBtn.querySelector('span:last-of-type');if(sp)sp.textContent='Выбрать файл';}
+  if(phName){phName.classList.remove('has');phName.textContent='Файл не выбран';}
+  if(musBtn){musBtn.classList.remove('has');const sp=musBtn.querySelector('span:last-of-type');if(sp)sp.textContent='Выбрать файл';}
+  if(musName){musName.classList.remove('has');musName.textContent='Файл не выбран';}
+  if(phI)phI.value='';
+  if(musI)musI.value='';
+
+  const{data}=await sb.from('user_media').select('*').eq('nick',meEnc).maybeSingle();
+  editM=data||{photo_url:null,music_url:null,photo_x:50,photo_y:50,photo_zoom:100};
+
+  if(phX)phX.value=editM.photo_x??50;
+  if(phY)phY.value=editM.photo_y??50;
+  if(phZ)phZ.value=editM.photo_zoom??100;
+  ['phX','phY','phZ'].forEach(id=>{if(document.getElementById(id))upSliderFill(id)});
+
+  upPrev();
+  if(musC)musC.textContent=editM.music_url?'🎵 загружена':'🎵 нет';
+}
+
+/* ====== ИСПРАВЛЕНО: защита от null ====== */
+function upPrev(){
+  const i=document.getElementById('pi');
+  const e=document.getElementById('pe');
+  const elX=document.getElementById('phX');
+  const elY=document.getElementById('phY');
+  const elZ=document.getElementById('phZ');
+  if(!elX||!elY||!elZ)return;
+  const u=phU?URL.createObjectURL(phU):(editM?.photo_url||null);
+  const x=Number(elX.value),y=Number(elY.value),z=Number(elZ.value);
+  const vX=document.getElementById('vX');if(vX)vX.textContent=x;
+  const vY=document.getElementById('vY');if(vY)vY.textContent=y;
+  const vZ=document.getElementById('vZ');if(vZ)vZ.textContent=z+'%';
+  const sw=document.getElementById('slidersWrap');
+  if(u){
+    if(i){i.style.backgroundImage='url("'+u+'")';i.style.backgroundSize=z+'% '+z+'%';i.style.backgroundPosition=x+'% '+y+'%';i.style.display='block';}
+    if(e)e.style.display='none';
+    if(sw)sw.style.display='flex';
+  }else{
+    if(i)i.style.display='none';
+    if(e)e.style.display='block';
+    if(sw)sw.style.display='none';
+  }
+}
 async function saveM(){const s=document.getElementById('mst');const x=Number(document.getElementById('phX').value),y=Number(document.getElementById('phY').value),z=Number(document.getElementById('phZ').value);s.textContent='Сохранение...';try{let pu=null,mu=null;if(phU){const ex=(phU.name.split('.').pop()||'jpg').toLowerCase();const p='photos/'+meEnc+'.'+ex;await sb.storage.from('media').upload(p,phU,{upsert:true,contentType:phU.type});pu=sb.storage.from('media').getPublicUrl(p).data.publicUrl+'?t='+Date.now()}if(musU){const ex=(musU.name.split('.').pop()||'mp3').toLowerCase();const p='music/'+meEnc+'.'+ex;await sb.storage.from('media').upload(p,musU,{upsert:true,contentType:musU.type});mu=sb.storage.from('media').getPublicUrl(p).data.publicUrl+'?t='+Date.now()}const pt={photo_x:x,photo_y:y,photo_zoom:z,updated_at:new Date().toISOString()};if(pu)pt.photo_url=pu;if(mu)pt.music_url=mu;const{data:ex}=await sb.from('user_media').select('nick').eq('nick',meEnc).maybeSingle();if(ex)await sb.from('user_media').update(pt).eq('nick',meEnc);else await sb.from('user_media').insert({nick:meEnc,...pt});hm[meEnc]={...(hm[meEnc]||{}),...pt};if(pt.photo_url)photoCache[meEnc]=pt.photo_url;renderFlats();renderDMs();s.textContent='Сохранено ✓';s.style.color='#8bc34a';setTimeout(()=>{s.textContent='';s.style.color='#8888a0'},1500)}catch(e){s.textContent='Ошибка: '+e.message;s.style.color='#ff6b6b'}}
 async function loadDMs(){
   const p1='dm_'+meEnc+'__%',p2='dm_%__'+meEnc;
