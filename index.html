@@ -17,6 +17,9 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes cosmicPulse{0%,100%{box-shadow:0 0 25px #6b4affcc,0 0 50px #a06bff88}50%{box-shadow:0 0 40px #a06bffdd,0 0 75px #6b4affaa}}
 @keyframes diamondShine{0%,100%{box-shadow:0 0 25px #ffffffcc,0 0 50px #b0e0ffaa}50%{box-shadow:0 0 45px #ffffff,0 0 85px #b0e0ff}}
 @keyframes legendaryGlow{0%,100%{box-shadow:0 0 0 3px #ff9d2e,0 0 30px #ff9d2ecc,0 0 60px #f5c54288}50%{box-shadow:0 0 0 3px #f5c542,0 0 50px #ff9d2eff,0 0 95px #f5c542cc}}
+@keyframes angelGlow{0%,100%{box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffffdd,0 0 65px #c8e8ffaa,inset 0 0 20px #ffffff55}50%{box-shadow:0 0 0 3px #ffffff,0 0 55px #ffffff,0 0 100px #c8e8ffdd,inset 0 0 28px #ffffff88}}
+@keyframes devilGlow{0%,100%{box-shadow:0 0 0 3px #8b0000,0 0 28px #ff0000cc,0 0 60px #ff440088,inset 0 0 18px #8b000088}50%{box-shadow:0 0 0 3px #ff0000,0 0 50px #ff0000ff,0 0 95px #ff4400dd,inset 0 0 26px #8b0000cc}}
+@keyframes rainbowShift{0%{box-shadow:0 0 0 3px #ff0055,0 0 22px #ff0055cc,0 0 45px #ff005588}16%{box-shadow:0 0 0 3px #ffaa00,0 0 22px #ffaa00cc,0 0 45px #ffaa0088}33%{box-shadow:0 0 0 3px #ffee00,0 0 22px #ffee00cc,0 0 45px #ffee0088}50%{box-shadow:0 0 0 3px #00ff88,0 0 22px #00ff88cc,0 0 45px #00ff8888}66%{box-shadow:0 0 0 3px #00aaff,0 0 22px #00aaffcc,0 0 45px #00aaff88}83%{box-shadow:0 0 0 3px #a06bff,0 0 22px #a06bffcc,0 0 45px #a06bff88}100%{box-shadow:0 0 0 3px #ff0055,0 0 22px #ff0055cc,0 0 45px #ff005588}}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(245,197,66,.15);border-radius:3px}
 #seasons{position:fixed;inset:0;z-index:-1;pointer-events:none;display:block;background:transparent}
 #auth{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;z-index:1}
@@ -128,6 +131,12 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .flat.frame-cosmic{border-color:#6b4aff!important;animation:cosmicPulse 4s ease-in-out infinite}
 .flat.frame-diamond{border-color:#ffffff!important;animation:diamondShine 3s ease-in-out infinite}
 .flat.frame-legendary{border-color:transparent!important;animation:legendaryGlow 2s ease-in-out infinite}
+.flat.frame-rainbow{border-color:transparent!important;animation:rainbowShift 3s linear infinite}
+.flat.frame-angelic{border-color:#ffffff!important;animation:angelGlow 2.5s ease-in-out infinite}
+.flat.frame-angelic::before{content:'👼';position:absolute;top:-2px;right:-2px;font-size:16px;z-index:4;text-shadow:0 0 8px #fff,0 0 16px #c8e8ff;animation:pulse 2s infinite;background:transparent!important}
+.flat.frame-devil{border-color:#8b0000!important;animation:devilGlow 2s ease-in-out infinite}
+.flat.frame-devil::before{content:'😈';position:absolute;top:-2px;right:-2px;font-size:16px;z-index:4;text-shadow:0 0 8px #ff0000,0 0 16px #8b0000;animation:pulse 1.5s infinite;background:transparent!important}
+.flat.frame-angelic::after,.flat.frame-devil::after{content:''!important;display:none!important}
 .ebtn{padding:11px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#a0a0b8;cursor:pointer;font-size:13px;font-weight:700;text-align:center;transform-style:preserve-3d}
 .ebtn:hover{background:rgba(255,255,255,.08)}
 .ebtn.mine{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;border-color:transparent}
@@ -334,7 +343,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #pf .emb{background:linear-gradient(180deg,#1a1a22,#14141c);padding:0;overflow:hidden}
 .pf-head{position:relative;height:120px}
 .pf-cover{position:absolute;inset:0;background:linear-gradient(135deg,#a06bff,#5aabff,#f5c542);opacity:.35}
-.pf-av{position:absolute;left:24px;bottom:-40px;width:90px;height:90px;border-radius:50%;border:4px solid #1a1a22;background-size:cover;background-position:center;background-color:#2a2a3a;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff}
+.pf-av{position:absolute;left:24px;bottom:-40px;width:90px;height:90px;border-radius:50%;border:4px solid #1a1a22;background-size:cover;background-position:center;background-color:#2a2a3a;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff;transition:box-shadow .3s}
 .pf-av.has-img{color:transparent}
 .pf-av.frame-bronze{border-color:#cd7f32;box-shadow:0 0 16px #cd7f32aa}
 .pf-av.frame-silver{border-color:#c0c0c0;box-shadow:0 0 18px #c0c0c0cc}
@@ -351,6 +360,11 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .pf-av.frame-cosmic{border-color:#6b4aff;animation:cosmicPulse 4s ease-in-out infinite}
 .pf-av.frame-diamond{border-color:#ffffff;animation:diamondShine 3s ease-in-out infinite}
 .pf-av.frame-legendary{border-color:transparent;animation:legendaryGlow 2s ease-in-out infinite}
+.pf-av.frame-rainbow{border-color:transparent;animation:rainbowShift 3s linear infinite}
+.pf-av.frame-angelic{border-color:#ffffff;animation:angelGlow 2.5s ease-in-out infinite}
+.pf-av.frame-angelic::before{content:'👼';position:absolute;top:-6px;right:-6px;font-size:20px;z-index:5;text-shadow:0 0 10px #fff,0 0 20px #c8e8ff;animation:pulse 2s infinite}
+.pf-av.frame-devil{border-color:#8b0000;animation:devilGlow 2s ease-in-out infinite}
+.pf-av.frame-devil::before{content:'😈';position:absolute;top:-6px;right:-6px;font-size:20px;z-index:5;text-shadow:0 0 10px #ff0000,0 0 20px #8b0000;animation:pulse 1.5s infinite}
 .pf-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:16px;cursor:pointer}
 .pf-body{padding:48px 24px 16px}
 .pf-name{font-size:22px;font-weight:800;color:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -418,7 +432,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fr-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;transition:transform .2s,border-color .2s}
 .fr-item:hover{transform:translateY(-2px)}
 .fr-item.active{border-color:rgba(245,197,66,.6);background:rgba(245,197,66,.08)}
-.fr-preview{width:56px;height:56px;border-radius:14px;background:#1a1a22;border:3px solid #444;flex-shrink:0}
+.fr-preview{width:56px;height:56px;border-radius:14px;background:#1a1a22;border:3px solid #444;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center}
 .fr-preview.frame-bronze{border-color:#cd7f32;box-shadow:0 0 10px #cd7f32aa,inset 0 0 8px #cd7f3255}
 .fr-preview.frame-silver{border-color:#c0c0c0;box-shadow:0 0 12px #c0c0c0cc,inset 0 0 8px #c0c0c066}
 .fr-preview.frame-gold{border-color:#ffd700;box-shadow:0 0 14px #ffd700dd,inset 0 0 10px #ffd70066}
@@ -434,6 +448,11 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fr-preview.frame-cosmic{border-color:#6b4aff;box-shadow:0 0 22px #6b4affdd,0 0 42px #a06bff88,inset 0 0 12px #6b4aff55}
 .fr-preview.frame-diamond{border-color:#ffffff;box-shadow:0 0 22px #ffffffdd,0 0 42px #b0e0ffaa,inset 0 0 12px #ffffff55}
 .fr-preview.frame-legendary{border-color:#ff9d2e;box-shadow:0 0 0 3px #ff9d2e,0 0 30px #ff9d2ecc,0 0 55px #f5c54288;animation:legendaryGlow 2s ease-in-out infinite}
+.fr-preview.frame-rainbow{border-color:transparent;box-shadow:0 0 0 3px #ff0055,0 0 22px #ff0055cc;animation:rainbowShift 3s linear infinite}
+.fr-preview.frame-angelic{border-color:#ffffff;box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffffdd,0 0 55px #c8e8ffaa;animation:angelGlow 2.5s ease-in-out infinite}
+.fr-preview.frame-angelic::after{content:'👼';position:absolute;top:-6px;right:-6px;font-size:16px;text-shadow:0 0 6px #fff}
+.fr-preview.frame-devil{border-color:#8b0000;box-shadow:0 0 0 3px #8b0000,0 0 28px #ff0000cc,0 0 50px #ff440088;animation:devilGlow 2s ease-in-out infinite}
+.fr-preview.frame-devil::after{content:'😈';position:absolute;top:-6px;right:-6px;font-size:16px;text-shadow:0 0 6px #ff0000}
 .fr-name{font-size:12px;font-weight:700;color:#c8c8d0}
 .fr-btn{width:100%;padding:7px 8px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:11px;font-family:inherit}
 .fr-btn.fr-buy{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
@@ -512,11 +531,14 @@ const FRAMES=[
   {id:'neon-green', name:'Неон зелёный',price:1200},
   {id:'neon-pink',  name:'Неон розовый',price:1500},
   {id:'ice',        name:'Лёд',         price:2000},
+  {id:'rainbow',    name:'Радужная',    price:2500},
   {id:'fire',       name:'Огонь',       price:3000},
   {id:'holographic',name:'Голограмма',  price:5000},
   {id:'cosmic',     name:'Космос',      price:7500},
   {id:'diamond',    name:'Алмаз',       price:12000},
-  {id:'legendary',  name:'Легендарная', price:25000}
+  {id:'legendary',  name:'Легендарная', price:25000},
+  {id:'angelic',    name:'👼 Ангельская',price:50000},
+  {id:'devil',      name:'😈 Дьявольская',price:50000}
 ];
 
 let adminMode=false,pendingUser=null,curEmail='',emId=null,emRoom=null,notifPerm='default',epOpen=false;
@@ -533,6 +555,7 @@ let lastTyp=0,typH=null;
 let vA=null,vId=null,vDur={},vWaveCache={};
 let vRec=null,vStr=null,vCh=[],vS=0,vTimer=null;
 let ctxMsgId=null,ctxMsgRoom=null,gmAvaFile=null,gsmAvaFile=null,gsmGroupId=null,pfCurrent=null,myCoins=0,myFrame='none',myOwnedFrames=['none'];
+let showBanned=false;
 let dutyGameActive=false,dutyGameTimer=null,dutyGameStart=0,dutyGameCaught=0,dutyGameTotal=8,dutyGameDuration=15000,dutyGameReward=0,dutyIsDuty=false;
 let workActive=false,workTimer=null,workStart=0,workCaught=0,workTaskId=null,workCdInt=null;
 
@@ -679,20 +702,13 @@ async function afRend(){const b=$('afB');if(afT==='flats')return afFlats(b);if(a
 function afFlats(b){const o=Object.values(flats).filter(f=>flatOwners(f).length).sort((a,b)=>a.number-b.number);if(!o.length){b.innerHTML='<div class="afe">Нет занятых</div>';return}b.innerHTML=o.map(f=>{const owners=flatOwners(f).map(de),mp=f.max_people??2,bl=(houseData?.blocked_entrances||[]).includes(gloEnt(curHouse,Math.ceil(f.number/10)));return '<div class="afr"><div class="info"><div class="ti">🏠 Кв. '+f.number+'<span class="afbdg '+(bl?'r':'g')+'">'+(bl?'закрыт':'ок')+'</span></div><div class="su">👤 '+owners.map((o,i)=>eh(o)+(i===0?' 👑':'')).join(', ')+'</div><div class="su">👥 <b>'+owners.length+'/'+mp+'</b></div></div><div class="ac"><button class="afbtn g" onclick="afMax('+f.number+')">👥 Мест: '+mp+'</button><button class="afbtn r" onclick="afEvict('+f.number+')">выселить</button></div></div>'}).join('')}
 function afEnt(b){const bl=houseData?.blocked_entrances||[];let h='';for(let e=1;e<=3;e++){const g=gloEnt(curHouse,e),is=bl.includes(g),c=Object.values(flats).filter(f=>flatOwners(f).length&&Math.ceil(f.number/10)===e).length;h+='<div class="afr"><div class="info"><div class="ti">🏢 Подъезд '+g+' <span class="afbdg '+(is?'r':'g')+'">'+(is?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/10</div></div><div class="ac">'+(is?'<button class="afbtn g" onclick="afTogEnt('+g+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogEnt('+g+',true)">Закрыть</button>')+'</div></div>'}b.innerHTML=h}
 function afHouse(b){const bl=!!houseData?.blocked,c=Object.values(flats).filter(f=>flatOwners(f).length).length;const ann=houseData?.announcement||'';let h='<div class="afr"><div class="info"><div class="ti">🏘 '+eh(houseData?.name||'Дом')+' <span class="afbdg '+(bl?'r':'g')+'">'+(bl?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/30</div></div><div class="ac">'+(bl?'<button class="afbtn g" onclick="afTogHouse(false)">Открыть</button>':'<button class="afbtn r" onclick="afTogHouse(true)">Закрыть</button>')+'<button class="afbtn gr" onclick="openAnn()">📢 Объявление</button></div></div>';if(ann){h+='<div class="afr" style="border-left:4px solid #f5c542"><div class="info"><div class="ti">📢 Текущее объявление</div><div class="su" style="margin-top:8px;white-space:pre-wrap;color:#c8c8d0">'+eh(ann)+'</div></div><div class="ac"><button class="afbtn r" onclick="delAnn()">Удалить</button></div></div>'}b.innerHTML=h}
-
-/* ============================================================
-   ЮЗЕРЫ + УПРАВЛЕНИЕ МОНЕТАМИ + ОЧИСТКА БАН-ЛИСТА
-   ============================================================ */
 async function afUsers(b){
   b.innerHTML='<div class="afe">Загрузка...</div>';
   const{data,error}=await sb.from('profiles').select('*').order('nick');
   if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}
   usersAll=data||[];
-
   const bannedCount=usersAll.filter(u=>u.banned).length;
   const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);
-
-  /* Верхняя панель: переключатель показа забаненных */
   let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'">'
     +'<div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div>'
     +'<div class="su">'+(showBanned?'Сейчас показаны ВСЕ, включая забаненных':'Забаненные скрыты из списка')+'</div></div>'
@@ -701,21 +717,14 @@ async function afUsers(b){
       ?'<button class="afbtn gr" onclick="toggleBannedView()">👁 Скрыть забаненных</button>'
       :'<button class="afbtn r" onclick="toggleBannedView()">👁 Показать забаненных ('+bannedCount+')</button>')
     +'</div></div>';
-
-  if(!visible.length){
-    b.innerHTML=top+'<div class="afe">'+(bannedCount?'Все юзеры забанены (скрыты)':'Пусто')+'</div>';
-    return;
-  }
-
+  if(!visible.length){b.innerHTML=top+'<div class="afe">'+(bannedCount?'Все юзеры забанены (скрыты)':'Пусто')+'</div>';return}
   b.innerHTML=top+visible.map(u=>{
     const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;
     const nickEnc=eh(u.nick);
     return '<div class="ur '+(bn?'banned':'')+'">'
       +avH(u.nick,'sm')
       +'<div style="flex:1;min-width:140px;margin-left:4px">'
-        +'<div class="nk" style="cursor:pointer" onclick="openProfile(\''+nickEnc+'\')">'
-          +eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')
-        +'</div>'
+        +'<div class="nk" style="cursor:pointer" onclick="openProfile(\''+nickEnc+'\')">'+eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')+'</div>'
         +'<div class="rs" style="color:#f5c542;font-size:12px;margin-top:3px">💰 '+coins+' монет</div>'
         +(u.ban_reason?'<div class="rs">'+eh(u.ban_reason)+'</div>':'')
       +'</div>'
@@ -731,18 +740,12 @@ async function afUsers(b){
     +'</div>';
   }).join('');
 }
-
-/* Переключатель показа забаненных */
-function toggleBannedView(){
-  showBanned=!showBanned;
-  afRend();
-}
-async function admCoins(nick, delta){
+function toggleBannedView(){showBanned=!showBanned;afRend()}
+async function admCoins(nick,delta){
   if(!iAmAdmin)return;
   const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();
   if(!p){alert('Юзер не найден');return}
-  const cur=p.coins||0;
-  const next=Math.max(0,cur+delta);
+  const cur=p.coins||0;const next=Math.max(0,cur+delta);
   const{error}=await sb.from('profiles').update({coins:next}).eq('nick',nick);
   if(error)return alert('Ошибка: '+error.message);
   if(nick===me){myCoins=next;updateCoinsUI()}
@@ -770,7 +773,6 @@ async function admSetCoins(nick){
   if(nick===me){myCoins=target;updateCoinsUI()}
   afRend();
 }
-
 async function banU(n){if(!iAmAdmin)return;if(n===me)return alert('Себя нельзя');const r=prompt('Причина','нарушение');if(r===null)return;await sb.from('profiles').update({banned:true,ban_reason:r||''}).eq('nick',n);afRend()}
 async function unBan(n){if(!iAmAdmin)return;if(!confirm('Разбанить '+n+'?'))return;await sb.from('profiles').update({banned:false,ban_reason:null}).eq('nick',n);afRend()}
 async function togAdm(n,m){if(!iAmAdmin)return;if(n===me&&!m)return alert('Себя нельзя');if(!confirm((m?'Сделать':'Снять')+' админа?'))return;await sb.from('profiles').update({is_admin:m}).eq('nick',n);afRend()}
@@ -797,7 +799,6 @@ async function loadPhotoCache(){
 }
 function getFrame(nick){const enc=en(nick);return frameCache[enc]||'none'}
 
-/* === МОНЕТЫ === */
 async function loadCoins(){
   try{const{data}=await sb.from('profiles').select('coins,active_frame,owned_frames').eq('nick',me).maybeSingle();
     myCoins=(data&&data.coins)||0;
@@ -813,12 +814,10 @@ function updateCoinsUI(){
 }
 async function addCoins(n){myCoins=Math.max(0,myCoins+n);try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI()}
 
-/* === РАМКИ === */
 function openFrames(){$('framesMsg').textContent='';renderFramesList();loadCoins();$('framesM').classList.add('open')}
 function closeFrames(){$('framesM').classList.remove('open')}
 function renderFramesList(){
-  const list=$('framesList');
-  if(!list)return;
+  const list=$('framesList');if(!list)return;
   list.innerHTML=FRAMES.map(f=>{
     const owned=myOwnedFrames.includes(f.id);
     const isActive=myFrame===f.id;
@@ -849,12 +848,11 @@ async function setFrame(id){
   if(error)return alert('Ошибка: '+error.message);
   myFrame=id;frameCache[meEnc]=id;
   renderFramesList();renderFlats();
-  if($('pf').classList.contains('open')){const av=$('pfAv');if(av){av.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon-blue','frame-neon-pink','frame-neon-green','frame-fire','frame-ice','frame-holographic','frame-cosmic','frame-diamond','frame-legendary');if(id!=='none')av.classList.add('frame-'+id)}}
+  if($('pf').classList.contains('open')){const av=$('pfAv');if(av){av.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon-blue','frame-neon-pink','frame-neon-green','frame-fire','frame-ice','frame-holographic','frame-cosmic','frame-diamond','frame-legendary','frame-rainbow','frame-angelic','frame-devil');if(id!=='none')av.classList.add('frame-'+id)}}
   $('framesMsg').style.color='#8bc34a';$('framesMsg').textContent='✅ Рамка надета!';
   setTimeout(()=>{$('framesMsg').textContent=''},1500);
 }
 
-/* === ДЕЖУРСТВО === */
 function entranceOf(n){return Math.ceil(Number(n)/10)}
 function getEntranceResidents(localEnt){const res=[];for(const k in flats){const n=Number(k);if(entranceOf(n)===localEnt){flatOwners(flats[k]).forEach(o=>res.push({nick:o,flat:n}))}}res.sort((a,b)=>a.nick.localeCompare(b.nick));return res}
 function getTodayDutyEntrance(){const start=new Date(new Date().getFullYear(),0,0);const dayOfYear=Math.floor((Date.now()-start)/86400000);return (dayOfYear%3)+1}
@@ -927,7 +925,6 @@ function stopMiniGame(timeUp){
   setTimeout(updateCoinsUI,100);
 }
 
-/* === РАБОТА === */
 function workCdKey(id){return 'workCd_'+meEnc+'_'+id}
 function workCdLeft(id){const t=Number(localStorage.getItem(workCdKey(id))||0);return Math.max(0,t+WORK_COOLDOWN-Date.now())}
 function workCdSet(id){localStorage.setItem(workCdKey(id),String(Date.now()))}
@@ -998,7 +995,6 @@ function stopWork(timeUp){
   workTaskId=null;renderWork();
 }
 
-/* === ПРОФИЛЬ === */
 function openPfMine(){closeUserMenu();openProfile(null)}
 async function openProfile(nick){
   closeUserMenu();
@@ -1007,7 +1003,7 @@ async function openProfile(nick){
   const isMine=(!nick||nick===me);
   const av=$('pfAv');
   av.classList.remove('has-img');
-  av.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon-blue','frame-neon-pink','frame-neon-green','frame-fire','frame-ice','frame-holographic','frame-cosmic','frame-diamond','frame-legendary');
+  av.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon-blue','frame-neon-pink','frame-neon-green','frame-fire','frame-ice','frame-holographic','frame-cosmic','frame-diamond','frame-legendary','frame-rainbow','frame-angelic','frame-devil');
   av.style.backgroundImage='';av.style.background='';
   try{
     const{data:um}=await sb.from('user_media').select('photo_url').eq('nick',en(target)).maybeSingle();
@@ -1019,7 +1015,6 @@ async function openProfile(nick){
   }
   const fr=getFrame(target);
   if(fr&&fr!=='none')av.classList.add('frame-'+fr);
-
   $('pfNick').textContent=target;
   const isOnline=online.has(en(target));
   $('pfOnline').style.display=(!isMine&&isOnline)?'inline':'none';
@@ -1043,7 +1038,6 @@ async function openProfile(nick){
   else seenRow.style.display='none';
   $('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';
   $('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
-
   const acts=$('pfActions');
   if(isMine){
     acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button><button class="frames" onclick="closePf();openFrames()">🖼 Рамки</button>';
@@ -1208,7 +1202,7 @@ function renderFlats(){
   document.querySelectorAll('.flat').forEach(el=>{
     const n=el.dataset.number,f=flats[n];
     el.classList.remove('mine','taken','has-photo','blk');
-    el.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon-blue','frame-neon-pink','frame-neon-green','frame-fire','frame-ice','frame-holographic','frame-cosmic','frame-diamond','frame-legendary');
+    el.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon-blue','frame-neon-pink','frame-neon-green','frame-fire','frame-ice','frame-holographic','frame-cosmic','frame-diamond','frame-legendary','frame-rainbow','frame-angelic','frame-devil');
     el.style.backgroundImage='';
     if(isFlatBlk(Number(n)))el.classList.add('blk');
     const owners=flatOwners(f);
