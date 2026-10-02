@@ -553,7 +553,96 @@ async function afRend(){const b=document.getElementById('afB');if(afT==='flats')
 function afFlats(b){const o=Object.values(flats).filter(f=>flatOwners(f).length).sort((a,b)=>a.number-b.number);if(!o.length){b.innerHTML='<div class="afe">Нет занятых</div>';return}b.innerHTML=o.map(f=>{const owners=flatOwners(f).map(de),mp=f.max_people??2,bl=(houseData?.blocked_entrances||[]).includes(gloEnt(curHouse,Math.ceil(f.number/10)));return '<div class="afr"><div class="info"><div class="ti">🏠 Кв. '+f.number+'<span class="afbdg '+(bl?'r':'g')+'">'+(bl?'закрыт':'ок')+'</span></div><div class="su">👤 '+owners.map((o,i)=>eh(o)+(i===0?' 👑':'')).join(', ')+'</div><div class="su">👥 <b>'+owners.length+'/'+mp+'</b></div></div><div class="ac"><button class="afbtn g" onclick="afMax('+f.number+')">👥 Мест: '+mp+'</button><button class="afbtn r" onclick="afEvict('+f.number+')">выселить</button></div></div>'}).join('')}
 function afEnt(b){const bl=houseData?.blocked_entrances||[];let h='';for(let e=1;e<=3;e++){const g=gloEnt(curHouse,e),is=bl.includes(g),c=Object.values(flats).filter(f=>flatOwners(f).length&&Math.ceil(f.number/10)===e).length;h+='<div class="afr"><div class="info"><div class="ti">🏢 Подъезд '+g+' <span class="afbdg '+(is?'r':'g')+'">'+(is?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/10</div></div><div class="ac">'+(is?'<button class="afbtn g" onclick="afTogEnt('+g+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogEnt('+g+',true)">Закрыть</button>')+'</div></div>'}b.innerHTML=h}
 function afHouse(b){const bl=!!houseData?.blocked,c=Object.values(flats).filter(f=>flatOwners(f).length).length;const ann=houseData?.announcement||'';let h='<div class="afr"><div class="info"><div class="ti">🏘 '+eh(houseData?.name||'Дом')+' <span class="afbdg '+(bl?'r':'g')+'">'+(bl?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/30</div></div><div class="ac">'+(bl?'<button class="afbtn g" onclick="afTogHouse(false)">Открыть</button>':'<button class="afbtn r" onclick="afTogHouse(true)">Закрыть</button>')+'<button class="afbtn gr" onclick="openAnn()">📢 Объявление</button></div></div>';if(ann){h+='<div class="afr" style="border-left:4px solid #f5c542"><div class="info"><div class="ti">📢 Текущее объявление</div><div class="su" style="margin-top:8px;white-space:pre-wrap;color:#c8c8d0">'+eh(ann)+'</div></div><div class="ac"><button class="afbtn r" onclick="delAnn()">Удалить</button></div></div>'}b.innerHTML=h}
-async function afUsers(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('profiles').select('*').order('nick');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}usersAll=data||[];if(!usersAll.length){b.innerHTML='<div class="afe">Пусто</div>';return}b.innerHTML=usersAll.map(u=>{const bn=!!u.banned,ad=!!u.is_admin;return '<div class="ur '+(bn?'banned':'')+'">'+avH(u.nick,'sm')+'<div style="flex:1;min-width:140px;margin-left:4px"><div class="nk" style="cursor:pointer" onclick="openProfile(\''+eh(u.nick)+'\')">'+eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')+'</div>'+(u.ban_reason?'<div class="rs">'+eh(u.ban_reason)+'</div>':'')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap">'+(bn?'<button class="afbtn g" onclick="unBan(\''+eh(u.nick)+'\')">Разбанить</button>':'<button class="afbtn r" onclick="banU(\''+eh(u.nick)+'\')">Забанить</button>')+(ad?'<button class="afbtn gr" onclick="togAdm(\''+eh(u.nick)+'\',false)">−адм</button>':'<button class="afbtn gr" onclick="togAdm(\''+eh(u.nick)+'\',true)">+адм</button>')+'</div></div>'}).join('')}
+async function afUsers(b){
+  b.innerHTML='<div class="afe">Загрузка...</div>';
+  const{data,error}=await sb.from('profiles').select('*').order('nick');
+  if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}
+  usersAll=data||[];
+
+  /* Верхняя панель: очистить весь бан-лист */
+  const bannedCount=usersAll.filter(u=>u.banned).length;
+  let top='<div class="afr" style="border-left:4px solid #d32f2f">'
+    +'<div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div>'
+    +'<div class="su">Очистить бан-лист — снять все баны со всех сразу</div></div>'
+    +'<div class="ac">'
+    +(bannedCount?'<button class="afbtn g" onclick="clearAllBans()">🧹 Очистить бан-лист</button>':'<span style="color:#8bc34a;font-weight:700;font-size:12px">✅ Бан-лист пуст</span>')
+    +'</div></div>';
+
+  if(!usersAll.length){b.innerHTML=top+'<div class="afe">Пусто</div>';return}
+
+  b.innerHTML=top+usersAll.map(u=>{
+    const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;
+    const nickEnc=eh(u.nick);
+    return '<div class="ur '+(bn?'banned':'')+'">'
+      +avH(u.nick,'sm')
+      +'<div style="flex:1;min-width:140px;margin-left:4px">'
+        +'<div class="nk" style="cursor:pointer" onclick="openProfile(\''+nickEnc+'\')">'
+          +eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')
+        +'</div>'
+        +'<div class="rs" style="color:#f5c542;font-size:12px;margin-top:3px">💰 '+coins+' монет</div>'
+        +(u.ban_reason?'<div class="rs">'+eh(u.ban_reason)+'</div>':'')
+      +'</div>'
+      +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
+        /* Монеты */
+        +'<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 100)">💰 +100</button>'
+        +'<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 1000)">💰 +1000</button>'
+        +'<button class="afbtn r" onclick="admCoins(\''+nickEnc+'\', -100)">💸 −100</button>'
+        +'<button class="afbtn gr" onclick="admCoinsCustom(\''+nickEnc+'\')">✏️ Своя</button>'
+        +'<button class="afbtn gr" onclick="admSetCoins(\''+nickEnc+'\')">🎯 Ровно</button>'
+        /* Бан / админ */
+        +(bn?'<button class="afbtn g" onclick="unBan(\''+nickEnc+'\')">Разбанить</button>':'<button class="afbtn r" onclick="banU(\''+nickEnc+'\')">Забанить</button>')
+        +(ad?'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>')
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+/* === ВЫДАТЬ/СПИСАТЬ МОНЕТЫ === */
+async function admCoins(nick, delta){
+  if(!iAmAdmin)return;
+  const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();
+  if(!p){alert('Юзер не найден');return}
+  const cur=p.coins||0;
+  const next=Math.max(0,cur+delta);
+  const{error}=await sb.from('profiles').update({coins:next}).eq('nick',nick);
+  if(error)return alert('Ошибка: '+error.message);
+  if(nick===me){myCoins=next;updateCoinsUI()}
+  afRend();
+}
+async function admCoinsCustom(nick){
+  if(!iAmAdmin)return;
+  const val=prompt('На сколько изменить? (можно с минусом, например: 500 или -300)','100');
+  if(val===null)return;
+  const delta=parseInt(val);
+  if(isNaN(delta)||delta===0)return alert('Некорректное число');
+  await admCoins(nick,delta);
+}
+async function admSetCoins(nick){
+  if(!iAmAdmin)return;
+  const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();
+  if(!p){alert('Юзер не найден');return}
+  const cur=p.coins||0;
+  const val=prompt('Установить РОВНО сколько монет? (текущее: '+cur+')',String(cur));
+  if(val===null)return;
+  const target=parseInt(val);
+  if(isNaN(target)||target<0)return alert('Некорректное число');
+  const{error}=await sb.from('profiles').update({coins:target}).eq('nick',nick);
+  if(error)return alert('Ошибка: '+error.message);
+  if(nick===me){myCoins=target;updateCoinsUI()}
+  afRend();
+}
+
+/* === ОЧИСТИТЬ ВЕСЬ БАН-ЛИСТ === */
+async function clearAllBans(){
+  if(!iAmAdmin)return;
+  const{data:list}=await sb.from('profiles').select('nick').eq('banned',true);
+  const cnt=(list||[]).length;
+  if(!cnt)return alert('Никто не забанен');
+  if(!confirm('Снять бан со ВСЕХ ('+cnt+' чел.)?'))return;
+  const{error}=await sb.from('profiles').update({banned:false,ban_reason:null}).eq('banned',true);
+  if(error)return alert('Ошибка: '+error.message);
+  afRend();
+}
 async function banU(n){if(!iAmAdmin)return;if(n===me)return alert('Себя нельзя');const r=prompt('Причина','нарушение');if(r===null)return;await sb.from('profiles').update({banned:true,ban_reason:r||''}).eq('nick',n);afRend()}
 async function unBan(n){if(!iAmAdmin)return;if(!confirm('Разбанить '+n+'?'))return;await sb.from('profiles').update({banned:false,ban_reason:null}).eq('nick',n);afRend()}
 async function togAdm(n,m){if(!iAmAdmin)return;if(n===me&&!m)return alert('Себя нельзя');if(!confirm((m?'Сделать':'Снять')+' админа?'))return;await sb.from('profiles').update({is_admin:m}).eq('nick',n);afRend()}
