@@ -654,15 +654,52 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!isOwner())return alert('Только владелец сайта');if(!adminMode)return alert('Включи админ-режим');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
+
+async function autoCheckNewHouse(){
+  if(lock)return;
+  if(!houses.length)return;
+  try{
+    const{data,error}=await sb.from('flats').select('house_id,owner_nicks,owner_nick');
+    if(error)return;
+    const byHouse={};
+    (data||[]).forEach(f=>{
+      const h=Number(f.house_id);
+      if(!byHouse[h])byHouse[h]={total:0,taken:0};
+      byHouse[h].total++;
+      const o=flatOwners(f);
+      if(o.length)byHouse[h].taken++;
+    });
+    let allFull=houses.length>0;
+    for(const h of houses){
+      const s=byHouse[h.id]||{total:0,taken:0};
+      if(s.total===0||s.taken<s.total){allFull=false;break}
+    }
+    if(allFull){
+      const nextId=Math.max(...houses.map(h=>Number(h.id)||0))+1;
+      const name='Дом №'+nextId;
+      const{data:nh,error:e1}=await sb.from('houses').insert({id:nextId,name}).select().single();
+      if(e1)return;
+      const rows=[];
+      for(let k=1;k<=30;k++)rows.push({house_id:nextId,number:k});
+      const{error:e2}=await sb.from('flats').insert(rows);
+      if(e2){await sb.from('houses').delete().eq('id',nextId);return}
+      houses.push(nh);
+      renderHouses();
+      try{showNotif('🏘 Новый дом',name+' создан (все дома были полны)')}catch(e){}
+    }
+  }catch(e){console.warn('[autoCheckNewHouse]',e)}
+}
 async function afRend(){const b=$('afB');if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return await afUsers(b)}
-function afFlats(b){const o=Object.values(flats).filter(f=>flatOwners(f).length).sort((a,b)=>a.number-b.number);if(!o.length){b.innerHTML='<div class="afe">Нет занятых</div>';return}b.innerHTML=o.map(f=>{const owners=flatOwners(f).map(de),mp=f.max_people??2,bl=(houseData?.blocked_entrances||[]).includes(gloEnt(curHouse,Math.ceil(f.number/10)));return '<div class="afr"><div class="info"><div class="ti">🏠 Кв. '+f.number+'<span class="afbdg '+(bl?'r':'g')+'">'+(bl?'закрыт':'ок')+'</span></div><div class="su">👤 '+owners.map((o,i)=>eh(o)+(i===0?' 👑':'')).join(', ')+'</div><div class="su">👥 <b>'+owners.length+'/'+mp+'</b></div></div><div class="ac"><button class="afbtn g" onclick="afMax('+f.number+')">👥 Мест: '+mp+'</button><button class="afbtn r" onclick="afEvict('+f.number+')">выселить</button></div></div>'}).join('')}
+function afFlats(b){const o=Object.values(flats).filter(f=>flatOwners(f).length).sort((a,b)=>a.number-b.number);if(!o.length){b.innerHTML='<div class="afe">Нет занятых</div>';return}const off=(Number(curHouse)-1)*30;b.innerHTML=o.map(f=>{const owners=flatOwners(f).map(de),mp=f.max_people??2,bl=(houseData?.blocked_entrances||[]).includes(gloEnt(curHouse,Math.ceil(f.number/10)));return '<div class="afr"><div class="info"><div class="ti">🏠 Кв. '+(off+Number(f.number))+'<span class="afbdg '+(bl?'r':'g')+'">'+(bl?'закрыт':'ок')+'</span></div><div class="su">👤 '+owners.map((o,i)=>eh(o)+(i===0?' 👑':'')).join(', ')+'</div><div class="su">👥 <b>'+owners.length+'/'+mp+'</b></div></div><div class="ac"><button class="afbtn g" onclick="afMax('+f.number+')">👥 Мест: '+mp+'</button><button class="afbtn r" onclick="afEvict('+f.number+')">выселить</button></div></div>'}).join('')}
 function afEnt(b){const bl=houseData?.blocked_entrances||[];let h='';for(let e=1;e<=3;e++){const g=gloEnt(curHouse,e),is=bl.includes(g),c=Object.values(flats).filter(f=>flatOwners(f).length&&Math.ceil(f.number/10)===e).length;h+='<div class="afr"><div class="info"><div class="ti">🏢 Подъезд '+g+' <span class="afbdg '+(is?'r':'g')+'">'+(is?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/10</div></div><div class="ac">'+(is?'<button class="afbtn g" onclick="afTogEnt('+g+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogEnt('+g+',true)">Закрыть</button>')+'</div></div>'}b.innerHTML=h}
 function afHouse(b){
   const bl=!!houseData?.blocked,c=Object.values(flats).filter(f=>flatOwners(f).length).length;
   const ann=houseData?.announcement||'';
+  const totalHouses=houses.length;
+  const myRoomsFull=houses.filter(h=>h.id!==curHouse).length===0?'':'';
   let createBlock='';
   if(isOwner()){
-    createBlock='<div class="afr" style="border-left:4px solid #d32f2f"><div class="info"><div class="ti">🏗 Управление домами</div><div class="su">Создать новый дом с 30 квартирами</div></div><div class="ac"><button class="afbtn r" onclick="quickCreateHouse()">➕ Создать новый дом</button></div></div>';
+    createBlock='<div class="afr" style="border-left:4px solid #d32f2f"><div class="info"><div class="ti">🏗 Управление домами</div><div class="su">Всего домов: <b>'+totalHouses+'</b>. Новые дома создаются автоматически, когда <b>все</b> существующие дома полностью заполнены. Также можно создать вручную.</div></div><div class="ac"><button class="afbtn r" onclick="quickCreateHouse()">➕ Создать новый дом</button></div></div>';
   }
   let h=createBlock+'<div class="afr"><div class="info"><div class="ti">🏘 '+eh(houseData?.name||'Дом')+' <span class="afbdg '+(bl?'r':'g')+'">'+(bl?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/30</div></div><div class="ac">'+(bl?'<button class="afbtn g" onclick="afTogHouse(false)">Открыть</button>':'<button class="afbtn r" onclick="afTogHouse(true)">Закрыть</button>')+'<button class="afbtn gr" onclick="openAnn()">📢 Объявление</button></div></div>';
   if(ann){h+='<div class="afr" style="border-left:4px solid #f5c542"><div class="info"><div class="ti">📢 Текущее объявление</div><div class="su" style="margin-top:8px;white-space:pre-wrap;color:#c8c8d0">'+eh(ann)+'</div></div><div class="ac"><button class="afbtn r" onclick="delAnn()">Удалить</button></div></div>'}
@@ -784,34 +821,58 @@ function decorateFrame(el,frameId){
   else if(frameId==='devil'){const hl=document.createElement('div');hl.className='horn hl';const hr=document.createElement('div');hr.className='horn hr';el.appendChild(hl);el.appendChild(hr)}
 }
 
+function globalFlatNum(localNum){return (Number(curHouse)-1)*30+Number(localNum)}
 function entranceOf(n){return Math.ceil(Number(n)/10)}
-function getEntranceResidents(localEnt){const res=[];for(const k in flats){const n=Number(k);if(entranceOf(n)===localEnt){flatOwners(flats[k]).forEach(o=>res.push({nick:o,flat:n}))}}res.sort((a,b)=>a.nick.localeCompare(b.nick));return res}
-function getTodayDutyEntrance(){const start=new Date(new Date().getFullYear(),0,0);const dayOfYear=Math.floor((Date.now()-start)/86400000);return (dayOfYear%3)+1}
-function getTodayDutyGlobal(){const le=getTodayDutyEntrance();const res=getEntranceResidents(le);if(!res.length)return {ent:le,person:null};const start=new Date(new Date().getFullYear(),0,0);const dayOfYear=Math.floor((Date.now()-start)/86400000);const week=Math.floor(dayOfYear/3);return {ent:le,person:res[week%res.length]}}
+function getDutyPersonForEntrance(localEnt){
+  const d=new Date();
+  const start=new Date(d.getFullYear(),0,0);
+  const day=Math.floor((d-start)/86400000);
+  const slot=day%10;
+  const base=(localEnt-1)*10;
+  for(let i=0;i<10;i++){
+    const aptNum=base+((slot+i)%10)+1;
+    const f=flats[aptNum];
+    if(f&&flatOwners(f).length){
+      const owners=flatOwners(f);
+      const oi=day%owners.length;
+      return {ent:localEnt,flat:aptNum,owner:owners[oi],ownerNick:de(owners[oi])};
+    }
+  }
+  return {ent:localEnt,flat:null,owner:null,ownerNick:null};
+}
+function getTodayDutyGlobal(){const le=1;const res=[];return {ent:le,person:null}}
 function dutyKey(localEnt){const d=new Date();const day=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();return 'dutyDone_'+curHouse+'_'+localEnt+'_'+day}
 function openDuty(){
   const myE=myEnt();if(myE===null)return alert('Сначала заселись в квартиру');
   const myLe=((myE-1)%3)+1;
-  const gd=getTodayDutyGlobal();
-  const isDuty=(gd.person&&gd.person.nick===meEnc&&gd.ent===myLe);
-  dutyIsDuty=isDuty;
-  const baseReward=isDuty?50:0;const reward=withBonus(baseReward);dutyGameReward=reward;
-  const done=localStorage.getItem(dutyKey(myLe))==='1';
-  const bonusNote=baseReward>0&&reward>baseReward?' <span style="color:#8bc34a;font-weight:700">(+'+(reward-baseReward)+' от рамки)</span>':'';
-  $('dutyInfo').innerHTML='🏢 Сегодня дежурит подъезд <b>'+gd.ent+'</b><br>👑 Дежурный: <b>'+(gd.person?de(gd.person.nick):'—')+'</b>'+(gd.person?' (кв. '+gd.person.flat+')':'')+'<br>🏠 Ты в подъезде <b>'+myLe+'</b><br>'+(isDuty?'<span style="color:#8bc34a;font-weight:700">✅ Ты дежурный! Награда: '+reward+' 💰</span>'+bonusNote:'<span style="color:#ff8888">Сегодня дежурит другой подъезд</span>')+(done?'<br><span style="color:#ff8888;font-weight:700">⛔ Ты уже убирал сегодня</span>':'');
+  let iAmDutyToday=false,myDutyEnt=0,infoHtml='';
+  for(let le=1;le<=3;le++){
+    const gEnt=gloEnt(curHouse,le);
+    const duty=getDutyPersonForEntrance(le);
+    const isMe=(duty.owner===meEnc);
+    if(isMe){iAmDutyToday=true;myDutyEnt=le}
+    const isMyEnt=(le===myLe);
+    infoHtml+='<div style="margin-bottom:6px;'+(isMe?'color:#8bc34a;font-weight:700':'')+'">🏢 <b>Подъезд '+gEnt+'</b> — '+(duty.ownerNick?'👑 '+(isMe?'Ты':eh(duty.ownerNick))+' (кв. '+globalFlatNum(duty.flat)+')':'<span style="color:#666678">нет жильцов</span>')+(isMyEnt?' <span style="color:#f5c542">← твой</span>':'')+'</div>';
+  }
+  const reward=withBonus(50);
+  dutyIsDuty=iAmDutyToday;dutyGameReward=reward;
+  const doneKey=iAmDutyToday?dutyKey(myDutyEnt):null;
+  const done=doneKey&&localStorage.getItem(doneKey)==='1';
+  $('dutyInfo').innerHTML='📋 <b>Дежурные на сегодня:</b><br>'+infoHtml+(iAmDutyToday?'<div style="margin-top:10px;color:#8bc34a;font-weight:700">✅ Ты дежурный по подъезду '+gloEnt(curHouse,myDutyEnt)+'! Награда: '+reward+' 💰</div>':'<div style="margin-top:10px;color:#ff8888">Сегодня дежурят другие — жди своего дня</div>')+(done?'<div style="color:#ff8888;font-weight:700">⛔ Ты уже убирал сегодня</div>':'');
   dutyGameActive=false;$('dutyGame').style.display='none';
+  $('dutyMsg').textContent='';
   const btn=$('dutyStartBtn');btn.style.display='block';
-  if(!isDuty){btn.disabled=true;btn.textContent='🚫 Сегодня не твой подъезд'}
+  if(!iAmDutyToday){btn.disabled=true;btn.textContent='🚫 Сегодня не твой день'}
   else if(done){btn.disabled=true;btn.textContent='⛔ Уже убирал сегодня'}
   else{btn.disabled=false;btn.textContent='🧹 Начать уборку ('+reward+' 💰)'}
-  $('dutyMsg').textContent='';
   const field=$('dutyField');field.innerHTML='';field.classList.remove('floor','shaking');
   $('dutyM').classList.add('open');loadCoins();
 }
 function closeDuty(){stopMiniGame();$('dutyM').classList.remove('open')}
 function startMiniGame(){
   if(!dutyIsDuty)return;
-  if(localStorage.getItem(dutyKey(((myEnt()-1)%3)+1))==='1')return;
+  const myLe=((myEnt()-1)%3)+1;
+  if(localStorage.getItem(dutyKey(myLe))==='1')return;
   dutyGameActive=true;dutyGameCaught=0;dutyGameStart=Date.now();
   $('dutyScore').textContent='0';$('dutyStartBtn').style.display='none';$('dutyGame').style.display='block';
   $('dutyMsg').textContent='🧹 Протри пол — тыкай по грязи!';$('dutyMsg').style.color='#c8c8d0';
@@ -1117,8 +1178,8 @@ async function openProfile(nick){
   $('pfBio').textContent=(p&&p.bio)?p.bio:(isMine?'Расскажи о себе':'');
   let myF=null;
   try{const{data:fl}=await sb.from('flats').select('house_id,number,owner_nicks');(fl||[]).forEach(x=>{if((x.owner_nicks||[]).includes(en(target)))myF=x})}catch(e){}
-  const globalNum=myF?((Number(myF.house_id)-1)*30+Number(myF.number)):null;
-  $('pfFlat').textContent=myF?('Квартира '+globalNum+(myF.house_id?' (Дом '+myF.house_id+')':'')):'Не заселён';
+  const gNum=myF?((Number(myF.house_id)-1)*30+Number(myF.number)):null;
+  $('pfFlat').textContent=myF?('Квартира '+gNum+(myF.house_id?' (Дом '+myF.house_id+')':'')):'Не заселён';
   let regText='Недавно';
   if(p&&p.created_at){const d=new Date(p.created_at);const days=Math.floor((Date.now()-d)/86400000);regText=d.toLocaleDateString('ru-RU')+(days>=1?' · '+days+' дн.':'')}
   $('pfReg').textContent='С нами: '+regText;
@@ -1165,7 +1226,7 @@ function attachNickSuggest(inpId,sugId){
   inp.addEventListener('blur',()=>setTimeout(hide,180));
   inp.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
 }
-async function start(){meEnc=en(me);$('auth').style.display='none';$('nickScr').style.display='none';$('banO').classList.remove('on');$('app').style.display='block';$('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();pollAnn();setInterval(pollAnn,30000);setInterval(loadPhotoCache,60000);setInterval(loadCoins,60000)}
+async function start(){meEnc=en(me);$('auth').style.display='none';$('nickScr').style.display='none';$('banO').classList.remove('on');$('app').style.display='block';$('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();pollAnn();setInterval(pollAnn,30000);setInterval(loadPhotoCache,60000);setInterval(loadCoins,60000);setTimeout(autoCheckNewHouse,4000);setInterval(autoCheckNewHouse,30000)}
 function initCtxEmojis(){const c=$('ctxEmojis');c.innerHTML=QR.map(e=>'<button type="button" onclick="ctxReact(\''+e+'\')">'+e+'</button>').join('')}
 function magnetize(btn){const s=0.35,t=14;btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const dx=(e.clientX-cx)/(r.width/2),dy=(e.clientY-cy)/(r.height/2);const tx=dx*s*r.width*0.15,ty=dy*s*r.height*0.15;btn.style.transform='translate('+tx+'px,'+ty+'px) perspective(500px) rotateX('+(-dy*t)+'deg) rotateY('+(dx*t)+'deg) scale(1.06)';btn.style.zIndex='10'});btn.addEventListener('mouseleave',()=>{btn.style.transform='';btn.style.zIndex=''})}
 function setupUI(){
@@ -1273,7 +1334,7 @@ function buildHouse(){const h=$('house');h.innerHTML='';let n=1;for(let e=1;e<=3
 function applyPh(el,m){if(!m||!m.photo_url){el.style.backgroundImage='';el.classList.remove('has-photo');return}const z=m.photo_zoom??100,x=m.photo_x??50,y=m.photo_y??50;el.style.backgroundImage='url("'+m.photo_url+'")';el.style.backgroundSize=z+'% '+z+'%';el.style.backgroundPosition=x+'% '+y+'%';el.classList.add('has-photo')}
 function renderFlats(){
   const myE=myEnt();
-  const offset=(Number(curHouse)-1)*30;
+  const off=(Number(curHouse)-1)*30;
   document.querySelectorAll('.flat').forEach(el=>{
     const n=el.dataset.number,f=flats[n];
     el.classList.remove('mine','taken','has-photo','blk');
@@ -1282,13 +1343,13 @@ function renderFlats(){
     el.querySelectorAll(':scope > .halo, :scope > .horn').forEach(x=>x.remove());
     if(isFlatBlk(Number(n)))el.classList.add('blk');
     const owners=flatOwners(f);
-    const displayNum=offset+Number(n);
-    if(!owners.length)el.innerHTML='<div class="num">'+displayNum+'</div>';
+    const dn=off+Number(n);
+    if(!owners.length)el.innerHTML='<div class="num">'+dn+'</div>';
     else{
       const meIn=owners.includes(meEnc);
       if(meIn)el.classList.add('mine');else el.classList.add('taken');
       const names=owners.map(de);
-      let html='<div class="num">'+displayNum+'</div>';
+      let html='<div class="num">'+dn+'</div>';
       html+='<div class="nick">'+(meIn&&owners[0]===meEnc?'ты':eh(names[0]))+'</div>';
       if(names[1]){html+='<div class="nick2">'+eh(names[1])+(names.length>2?' +'+(names.length-2):'')+'</div>'}
       el.innerHTML=html;
@@ -1300,9 +1361,9 @@ function renderFlats(){
   });
   document.querySelectorAll('.ebtn').forEach(b=>{const g=Number(b.dataset.global),im=myE===g,cr=adminMode||im;b.classList.toggle('mine',im);b.classList.toggle('blk',isEntBlk(g));b.classList.toggle('oth',!cr)})
 }
-async function clickFlat(n){if(lock)return;const f=flats[n];const owners=flatOwners(f);if(adminMode&&owners.length){if(owners.includes(meEnc)){openFm(n);return}if(!confirm('Выселить всех?'))return;lock=true;try{await sb.from('flats').update({owner_nicks:[],owner_nick:null,owner_nick2:null}).eq('house_id',curHouse).eq('number',n)}finally{await reloadHouse();lock=false}return}if(!owners.length){if(isHouseBlk())return alert('🚫 Дом заблокирован');if(isEntBlk(gloEnt(curHouse,Math.ceil(n/10))))return alert('🚫 Подъезд заблокирован');if(myFlat()!==null||myRFlat()!==null)return alert('У тебя уже есть квартира');lock=true;try{const{error}=await sb.from('flats').update({owner_nicks:[meEnc],owner_nick:meEnc,owner_nick2:null}).eq('house_id',curHouse).eq('number',n).is('owner_nick',null);if(error){const m=(error.message||'').toLowerCase();if(m.includes('one_flat')||m.includes('duplicate')||m.includes('unique'))alert('Уже есть квартира');else alert('Ошибка: '+error.message)}}finally{await reloadHouse();lock=false}return}if(owners.includes(meEnc)){openFm(n);return}openDm(owners[0])}
+async function clickFlat(n){if(lock)return;const f=flats[n];const owners=flatOwners(f);if(adminMode&&owners.length){if(owners.includes(meEnc)){openFm(n);return}if(!confirm('Выселить всех?'))return;lock=true;try{await sb.from('flats').update({owner_nicks:[],owner_nick:null,owner_nick2:null}).eq('house_id',curHouse).eq('number',n)}finally{await reloadHouse();lock=false}return}if(!owners.length){if(isHouseBlk())return alert('🚫 Дом заблокирован');if(isEntBlk(gloEnt(curHouse,Math.ceil(n/10))))return alert('🚫 Подъезд заблокирован');if(myFlat()!==null||myRFlat()!==null)return alert('У тебя уже есть квартира');lock=true;try{const{error}=await sb.from('flats').update({owner_nicks:[meEnc],owner_nick:meEnc,owner_nick2:null}).eq('house_id',curHouse).eq('number',n).is('owner_nick',null);if(error){const m=(error.message||'').toLowerCase();if(m.includes('one_flat')||m.includes('duplicate')||m.includes('unique'))alert('Уже есть квартира');else alert('Ошибка: '+error.message)}}finally{await reloadHouse();lock=false;setTimeout(autoCheckNewHouse,500)}return}if(owners.includes(meEnc)){openFm(n);return}openDm(owners[0])}
 function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_changes',{event:'*',schema:'public',table:'houses'},async p=>{const r=p.new||p.old;if(!r)return;if(p.eventType==='INSERT'){if(!houses.find(h=>h.id===r.id))houses.push(r)}else if(p.eventType==='UPDATE'){const i=houses.findIndex(h=>h.id===r.id);if(i>=0)houses[i]=r;else houses.push(r);if(r.id===curHouse){houseData=r;showAnn(r.announcement||null);if(afT==='house')afRend()}}else if(p.eventType==='DELETE')houses=houses.filter(h=>h.id!==r.id);renderHouses();renderFlats()}).subscribe()}
-function subFlats(){if(fc)return;fc=sb.channel('flats-rt').on('postgres_changes',{event:'*',schema:'public',table:'flats'},async p=>{const r=p.new||p.old;if(!r||r.house_id!==curHouse)return;if(p.eventType==='DELETE')delete flats[r.number];else flats[r.number]=p.new;await loadHM();renderFlats();await loadMyRooms();await loadDMs();renderDMs();if(fmN===r.number){const owners=flatOwners(p.new);if(owners.includes(meEnc))upFm();else closeFm()}}).subscribe()}
+function subFlats(){if(fc)return;fc=sb.channel('flats-rt').on('postgres_changes',{event:'*',schema:'public',table:'flats'},async p=>{const r=p.new||p.old;if(!r||r.house_id!==curHouse)return;if(p.eventType==='DELETE')delete flats[r.number];else flats[r.number]=p.new;await loadHM();renderFlats();await loadMyRooms();await loadDMs();renderDMs();if(fmN===r.number){const owners=flatOwners(p.new);if(owners.includes(meEnc))upFm();else closeFm()}setTimeout(autoCheckNewHouse,500)}).subscribe()}
 function subMed(){if(mc)return;mc=sb.channel('med-ch').on('postgres_changes',{event:'*',schema:'public',table:'user_media'},async p=>{const r=p.new||p.old;if(!r)return;if(p.eventType==='DELETE'){delete photoCache[r.nick]}else if(p.new.photo_url){photoCache[r.nick]=p.new.photo_url}const iH=Object.values(flats).some(f=>flatOwners(f).includes(r.nick));if(iH){if(p.eventType==='DELETE')delete hm[r.nick];else hm[r.nick]=p.new;renderFlats()}renderDMs();if(curRoomType==='dm'&&curPartner===r.nick){bgLayer(p.eventType==='DELETE'?null:p.new);const pn=de(r.nick);$('chAv').innerHTML='<div onclick="openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(r.nick))+'</div>'}}).subscribe()}
 function subReact(){if(rch)return;rch=sb.channel('react-rt').on('postgres_changes',{event:'*',schema:'public',table:'reactions'},async()=>{await refreshReact()}).subscribe()}
 async function setupPres(r){if(pres){try{await sb.removeChannel(pres)}catch(e){}pres=null}if(typch){try{await sb.removeChannel(typch)}catch(e){}typch=null}pres=sb.channel('pres-'+r,{config:{presence:{key:meEnc}}});pres.on('presence',{event:'sync'},()=>upOn()).subscribe(async st=>{if(st==='SUBSCRIBED')await pres.track({nick:meEnc})});typch=sb.channel('typ-'+r);typch.on('broadcast',{event:'typing'},p=>{if(p.payload&&p.payload.nick!==meEnc)showTyp()}).subscribe()}
