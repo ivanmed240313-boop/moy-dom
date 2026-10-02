@@ -135,10 +135,14 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .flat.frame-legendary{border-color:transparent!important;animation:legendaryGlow 2s ease-in-out infinite}
 .flat.frame-rainbow{border-color:transparent!important;animation:rainbowShift 3s linear infinite}
 .flat.frame-angelic{border-color:#ffffff!important;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important;z-index:15!important}
-.flat.frame-devil{border-color:#8b0000!important;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important;z-index:15!important}
+.flat.frame-devil-br{border-color:#8b0000!important;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important;z-index:15!important}
+.flat.frame-devil-br:hover{z-index:20!important}
 .flat.frame-angelic:hover,.flat.frame-devil:hover{z-index:20!important}
 .halo{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:55%;height:9px;border:3px solid #fff7c0;border-radius:50%;background:radial-gradient(ellipse at 50% 50%, rgba(255,247,192,0.75), rgba(255,224,102,0.35) 60%, transparent 80%);pointer-events:none;z-index:999;animation:haloPulse 2s ease-in-out infinite}
-.horn{position:absolute;top:-28px;width:22%;height:38%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 80'><defs><linearGradient id='hg' x1='0.2' x2='0.8' y1='0' y2='1'><stop offset='0' stop-color='%234a0000'/><stop offset='0.35' stop-color='%23b00000'/><stop offset='0.7' stop-color='%238b0000'/><stop offset='1' stop-color='%232a0000'/></linearGradient></defs><path d='M20,1 C24,14 34,32 35,52 C35.5,66 28,77 20,78 C12,77 4.5,66 5,52 C6,32 16,14 20,1 Z' fill='url(%23hg)' stroke='%23ff2200' stroke-width='1.4' stroke-linejoin='round'/><path d='M20,6 C22,18 28,32 29,48 C29.5,60 25,72 20,74 C15,72 10.5,60 11,48 C12,32 18,18 20,6 Z' fill='%23ff3333' opacity='0.25'/></svg>");background-size:contain;background-repeat:no-repeat;background-position:center bottom;pointer-events:none;z-index:999;filter:drop-shadow(0 0 5px #ff2200) drop-shadow(0 0 12px #8b0000)}
+.horn{position:absolute;top:-30px;width:26%;height:46%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 90'><defs><linearGradient id='hg' x1='0.5' y1='0' x2='0.5' y2='1'><stop offset='0' stop-color='%23ff5555'/><stop offset='0.15' stop-color='%23ff1a1a'/><stop offset='0.45' stop-color='%23cc0000'/><stop offset='0.75' stop-color='%237a0000'/><stop offset='1' stop-color='%232a0000'/></linearGradient><linearGradient id='hgH' x1='0.3' y1='0' x2='0.6' y2='0.5'><stop offset='0' stop-color='%23ffdddd' stop-opacity='0.85'/><stop offset='1' stop-color='%23ffdddd' stop-opacity='0'/></linearGradient><radialGradient id='hGlow' cx='0.5' cy='0.6' r='0.55'><stop offset='0' stop-color='%23ff4444' stop-opacity='0.75'/><stop offset='1' stop-color='%23ff0000' stop-opacity='0'/></radialGradient></defs><ellipse cx='20' cy='60' rx='9' ry='22' fill='url(%23hGlow)'/><path d='M20,0 C21,3 22.5,9 25,18 C28.5,30 34,46 34.5,58 C35,68 30,79 20,88 C10,79 5,68 5.5,58 C6,46 11.5,30 15,18 C17.5,9 19,3 20,0 Z' fill='url(%23hg)' stroke='%23ff2200' stroke-width='1.6' stroke-linejoin='round'/><path d='M20,10 C21,14 23,22 25,32 C27.5,44 31,56 31,62 C31,70 26,78 20,84 C14,78 9,70 9,62 C9,56 12.5,44 15,32 C17,22 19,14 20,10 Z' fill='%23ff3333' opacity='0.35'/><path d='M18,6 C18.5,10 19,16 19.5,24 C19.8,30 20,36 20,42' stroke='url(%23hgH)' stroke-width='1.1' fill='none' stroke-linecap='round'/></svg>");background-size:contain;background-repeat:no-repeat;background-position:center bottom;pointer-events:none;z-index:999;filter:drop-shadow(0 0 6px #ff2200) drop-shadow(0 0 14px #8b0000) drop-shadow(0 0 24px #ff000066)}
+.horn.hl{left:18%;--hr:-24deg;transform-origin:60% 100%;transform:rotate(-24deg);animation:hornTwitch 2.2s ease-in-out infinite}
+.horn.hr{right:18%;--hr:24deg;transform-origin:40% 100%;transform:rotate(24deg);animation:hornTwitch 2.2s ease-in-out infinite}
+.horn.br{bottom:-32px;top:auto;right:14%;left:auto;width:24%;height:42%;--hr:155deg;transform-origin:50% 100%;transform:rotate(155deg);animation:hornTwitch 2.4s ease-in-out infinite;filter:drop-shadow(0 0 6px #ff2200) drop-shadow(0 0 14px #8b0000) drop-shadow(0 0 24px #ff000066)}
 .horn.hl{left:22%;--hr:-20deg;transform-origin:60% 100%;transform:rotate(-20deg);animation:hornTwitch 2.2s ease-in-out infinite}
 .horn.hr{right:22%;--hr:20deg;transform-origin:40% 100%;transform:rotate(20deg);animation:hornTwitch 2.2s ease-in-out infinite}
 .ebtn{padding:11px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#a0a0b8;cursor:pointer;font-size:13px;font-weight:700;text-align:center;transform-style:preserve-3d}
@@ -366,7 +370,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .pf-av.frame-legendary{border-color:transparent;animation:legendaryGlow 2s ease-in-out infinite}
 .pf-av.frame-rainbow{border-color:transparent;animation:rainbowShift 3s linear infinite}
 .pf-av.frame-angelic{border-color:#ffffff;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important;z-index:5}
-.pf-av.frame-devil{border-color:#8b0000;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important;z-index:5}
+.pf-av.frame-devil-br{border-color:#8b0000;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important;z-index:5}
 .pf-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);color:#fff;font-size:16px;cursor:pointer}
 .pf-body{padding:48px 24px 16px}
 .pf-name{font-size:22px;font-weight:800;color:#fff;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -472,7 +476,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fr-preview.frame-legendary{border-color:#ff9d2e;box-shadow:0 0 0 3px #ff9d2e,0 0 30px #ff9d2ecc,0 0 55px #f5c54288;animation:legendaryGlow 2s ease-in-out infinite}
 .fr-preview.frame-rainbow{border-color:transparent;box-shadow:0 0 0 3px #ff0055,0 0 22px #ff0055cc;animation:rainbowShift 3s linear infinite}
 .fr-preview.frame-angelic{border-color:#ffffff;box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffffdd,0 0 55px #c8e8ffaa;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important}
-.fr-preview.frame-devil{border-color:#8b0000;box-shadow:0 0 0 3px #8b0000,0 0 28px #ff0000cc,0 0 50px #ff440088;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important}
+.fr-preview.frame-devil-br{border-color:#8b0000;box-shadow:0 0 0 3px #8b0000,0 0 28px #ff0000cc,0 0 50px #ff440088;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important}
 .fr-name{font-size:12px;font-weight:700;color:#c8c8d0}
 .fr-btn{width:100%;padding:7px 8px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:11px;font-family:inherit}
 .fr-btn.fr-buy{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
@@ -560,7 +564,8 @@ const FRAMES=[
   {id:'diamond',    name:'Алмаз',       price:12000},
   {id:'legendary',  name:'Легендарная', price:25000},
   {id:'angelic',    name:'👼 Ангельская',price:50000},
-  {id:'devil',      name:'😈 Дьявольская',price:50000}
+  {id:'devil',      name:'😈 Дьявольская',price:50000},
+  {id:'devil-br',   name:'😈 Дьявол (угол)',price:50000}
 ];
 const FRAME_BONUS={angelic:5,devil:5,legendary:2};
 
@@ -858,8 +863,8 @@ function decorateFrame(el,frameId){
   el.querySelectorAll(':scope > .halo, :scope > .horn').forEach(x=>x.remove());
   if(frameId==='angelic'){const h=document.createElement('div');h.className='halo';el.appendChild(h)}
   else if(frameId==='devil'){const hl=document.createElement('div');hl.className='horn hl';const hr=document.createElement('div');hr.className='horn hr';el.appendChild(hl);el.appendChild(hr)}
+  else if(frameId==='devil-br'){const h=document.createElement('div');h.className='horn br';el.appendChild(h)}
 }
-
 function entranceOf(n){return Math.ceil(Number(n)/10)}
 function getDutyPersonForEntrance(localEnt){
   const d=new Date();
@@ -1191,7 +1196,7 @@ async function openProfile(nick){
   const isMine=(!nick||nick===me);
   const av=$('pfAv');
   av.classList.remove('has-img');
-  av.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon-blue','frame-neon-pink','frame-neon-green','frame-fire','frame-ice','frame-holographic','frame-cosmic','frame-diamond','frame-legendary','frame-rainbow','frame-angelic','frame-devil');
+    av.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon-blue','frame-neon-pink','frame-neon-green','frame-fire','frame-ice','frame-holographic','frame-cosmic','frame-diamond','frame-legendary','frame-rainbow','frame-angelic','frame-devil','frame-devil-br');
   av.style.backgroundImage='';av.style.background='';
   try{
     const{data:um}=await sb.from('user_media').select('photo_url').eq('nick',en(target)).maybeSingle();
