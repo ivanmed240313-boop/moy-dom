@@ -764,7 +764,7 @@ function openAdmin(){if(!isOwner())return alert('Только владелец �
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
 
-const APP_VERSION='1.0';
+const APP_VERSION='1.1';
 (function(){
   function fmt(d){
     const p=n=>String(n).padStart(2,'0');
