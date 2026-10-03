@@ -1369,7 +1369,7 @@ function openJob(){
   const weTag=isWE?' <span style="color:#8bc34a;font-weight:700">+50% выходные</span>':'';
   const weDone=(st.weekendShifts&&st.weekendShifts>0)?'<div class="row"><span>🌟 Смен в выходные:</span><b>'+st.weekendShifts+'</b></div>':'';
   let rewardTxt;
-  if(j.type==='weld'||st.job==='welder'){rewardTxt='до '+Math.round(j.maxReward*mult)+' 💰'+weTag}
+  if(st.job==='welder'){rewardTxt='до '+Math.round(j.maxReward*mult)+' 💰'+weTag}
   else{rewardTxt='+'+Math.round(j.reward*mult)+weTag}
   const status='<div class="job-status'+(st.missedDays>0?' warn':'')+'"><div class="row"><span>'+j.icon+' Работа:</span><b>'+j.name+'</b></div><div class="row"><span>💰 Оплата за смену:</span><b>'+rewardTxt+'</b></div><div class="row"><span>✅ Смен отработано:</span><b>'+(st.finishedDays||0)+'</b></div>'+weDone+missedTxt+'</div>';
   const quitBtn='<button class="duty-start" style="background:linear-gradient(135deg,#5a1a1a,#3a0a0a);color:#ff8888;margin-top:14px" onclick="jobQuit()">🚪 Уволиться</button>';
@@ -1445,7 +1445,7 @@ function jobStartTask(taskIdx){
 function jobTeacherCheck(taskIdx){
   const body=$('jobBody');
   const totalErr=5,totalSheets=9;
-  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Осталось найти: <b id="jobLeft">'+totalErr+'</b></div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Найди и кликни по листочкам с ошибкой ❌ (клик по чистому — штраф 1 сек)</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Осталось найти: <b id="jobLeft">'+totalErr+'</b></div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по листочку с ошибкой ❌ — зачёт. Клик по чистому — <b style="color:#8bc34a">+1 секунда бонусом</b>.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
   const field=$('jobField');
   const r=field.getBoundingClientRect();
   const errIdx=new Set();
@@ -1477,7 +1477,19 @@ function jobTeacherCheck(taskIdx){
         const lEl=$('jobLeft');if(lEl)lEl.textContent=(totalErr-found);
         if(found>=totalErr)jobFinishTask(taskIdx,true,1);
       } else {
-        _jobTaskState.penalty+=1;
+        _jobTaskState.timeBonus=(_jobTaskState.timeBonus||0)+1;
+        el.style.boxShadow='0 0 18px #4caf50,0 3px 10px rgba(0,0,0,.5)';
+        el.style.borderColor='#4caf50';
+        setTimeout(()=>{el.style.boxShadow='0 3px 10px rgba(0,0,0,.5)';el.style.borderColor='rgba(0,0,0,.15)'},400);
+        const fl=document.createElement('span');
+        fl.textContent='+1с';
+        fl.style.cssText='position:absolute;pointer-events:none;font-weight:900;color:#4caf50;z-index:9999;font-size:15px;text-shadow:0 2px 6px #000;transition:transform .7s ease-out,opacity .7s';
+        fl.style.left=(px+w/2)+'px';
+        fl.style.top=(py-6)+'px';
+        fl.style.transform='translate(-50%,0)';
+        field.appendChild(fl);
+        requestAnimationFrame(()=>{fl.style.transform='translate(-50%,-30px)';fl.style.opacity='0'});
+        setTimeout(()=>fl.remove(),750);
       }
     };
     field.appendChild(el);
@@ -1485,11 +1497,11 @@ function jobTeacherCheck(taskIdx){
   const start=Date.now();
   _jobTaskState={timer:setInterval(()=>{
     if(!_jobTaskState||_jobTaskState.done)return;
-    const elapsed=(Date.now()-start)/1000-_jobTaskState.penalty;
-    const left=Math.max(0,25-elapsed);
+    const elapsed=(Date.now()-start)/1000;
+    const left=Math.max(0,25-elapsed+(_jobTaskState.timeBonus||0));
     const tEl=$('jobTime');if(tEl)tEl.textContent=left.toFixed(1);
     if(left<=0)jobFinishTask(taskIdx,false,0);
-  },80),done:false,penalty:0};
+  },80),done:false,timeBonus:0};
 }
 
 /* ========== TEACHER 2/3 — Решить примеры ========== */
@@ -1511,7 +1523,6 @@ function jobTeacherMath(taskIdx){
     return {text,ans};
   };
   let solved=0;
-  let placed=0,tries=0;
   const placedPos=[];
   const posFree=(px,py,w,h)=>{
     for(const p of placedPos){
@@ -1603,13 +1614,9 @@ function jobTeacherDictation(taskIdx){
     'На лугу паслись каровы, а возле дома лаяла сабака. В корзине лежали яблоки, грушы и спелые сливы. '+
     'Бабушка вязала тёплый наск, а дедушка читал газету. Вечером вся семья села за большой стол. '+
     'На столе стоял самовар и пирог с капустой. В окно светило яркое сонце, и было очень тепло.').split(' ');
-  const errWords={
-    'Селёный':'Зелёный','трапинке':'тропинке','каровы':'коровы','сабака':'собака',
-    'грушы':'груши','наск':'носки','сонце':'солнце','пирог':'пирог'
-  };
   const errList=['Селёный','трапинке','каровы','сабака','грушы','наск','сонце'];
   const totalErr=errList.length;
-  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">40.0</span>с · Найдено ошибок: <b id="jobLeft">0</b>/'+totalErr+'</div><div class="job-field" style="cursor:default;padding:0"><div class="job-dict-wrap" id="jobDict"></div></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по слову с ошибкой. Клик по правильному слову — штраф 1 сек.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">40.0</span>с · Найдено ошибок: <b id="jobLeft">0</b>/'+totalErr+'</div><div class="job-field" style="cursor:default;padding:0"><div class="job-dict-wrap" id="jobDict"></div></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по слову с ошибкой — зачёт. Клик по правильному слову — <b style="color:#8bc34a">+1 секунда бонусом</b>.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
   const wrap=$('jobDict');
   let found=0;
   text.forEach(w=>{
@@ -1627,9 +1634,20 @@ function jobTeacherDictation(taskIdx){
         const lEl=$('jobLeft');if(lEl)lEl.textContent=found;
         if(found>=totalErr)jobFinishTask(taskIdx,true,1);
       } else {
-        _jobTaskState.penalty+=1;
-        span.style.animation='shake .3s';
-        setTimeout(()=>span.style.animation='',300);
+        _jobTaskState.timeBonus=(_jobTaskState.timeBonus||0)+1;
+        span.style.background='rgba(76,175,80,.35)';
+        span.style.borderColor='#4caf50';
+        setTimeout(()=>{span.style.background='';span.style.borderColor=''},400);
+        const fl=document.createElement('span');
+        fl.textContent='+1с';
+        fl.style.cssText='position:fixed;pointer-events:none;font-weight:900;color:#4caf50;z-index:9999;font-size:15px;text-shadow:0 2px 6px #000;transition:transform .7s ease-out,opacity .7s';
+        const r=span.getBoundingClientRect();
+        fl.style.left=(r.left+r.width/2)+'px';
+        fl.style.top=(r.top-6)+'px';
+        fl.style.transform='translate(-50%,0)';
+        document.body.appendChild(fl);
+        requestAnimationFrame(()=>{fl.style.transform='translate(-50%,-30px)';fl.style.opacity='0'});
+        setTimeout(()=>fl.remove(),750);
       }
     };
     wrap.appendChild(span);
@@ -1638,11 +1656,11 @@ function jobTeacherDictation(taskIdx){
   const start=Date.now();
   _jobTaskState={timer:setInterval(()=>{
     if(!_jobTaskState||_jobTaskState.done)return;
-    const elapsed=(Date.now()-start)/1000-_jobTaskState.penalty;
-    const left=Math.max(0,40-elapsed);
+    const elapsed=(Date.now()-start)/1000;
+    const left=Math.max(0,40-elapsed+(_jobTaskState.timeBonus||0));
     const tEl=$('jobTime');if(tEl)tEl.textContent=left.toFixed(1);
     if(left<=0)jobFinishTask(taskIdx,false,0);
-  },80),done:false,penalty:0};
+  },80),done:false,timeBonus:0};
 }
 
 /* ========== POLICE 1/3 — Патруль центра (ловля) ========== */
@@ -1732,8 +1750,8 @@ function jobPoliceRadar(taskIdx){
       const lEl=$('jobLeft');if(lEl)lEl.textContent=Math.min(shots+1,totalShots);
       const resEl=$('jobWeldResult');
       const pct=Math.round(prec*100);
-      const speed=Math.round(30+(pos/r.width)*120);
-      if(resEl)resEl.textContent='Замер '+shots+': '+speed+' км/ч · точность '+pct+'%';
+      const kmh=Math.round(30+(pos/r.width)*120);
+      if(resEl)resEl.textContent='Замер '+shots+': '+kmh+' км/ч · точность '+pct+'%';
       if(shots>=totalShots){
         const avg=precisions.reduce((a,b)=>a+b,0)/precisions.length;
         jobFinishTask(taskIdx,true,avg);
@@ -1765,14 +1783,14 @@ function jobRadarStop(){
 /* ========== POLICE 3/3 — Проверить документы ========== */
 function jobPoliceDocs(taskIdx){
   const body=$('jobBody');
-  const total=6,real=3;
-  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Проверено: <b id="jobLeft">0</b>/'+total+'</div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по настоящему паспорту ✅ = пропустить. Клик по поддельному ❌ = штраф 2 сек. Всего пройти нужно 6 док-ов.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  const total=6,fakeCount=3,realCount=total-fakeCount;
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Пропущено: <b id="jobLeft">0</b>/'+realCount+'</div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по настоящему ✅ = пропустить. Клик по поддельному ❌ = штраф 2 сек. Всего настоящих: <b>'+realCount+'</b>.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
   const field=$('jobField');
   const r=field.getBoundingClientRect();
   const names=['Иванов','Петров','Сидоров','Кузнецов','Смирнов','Попов','Козлов','Лебедев','Новиков'];
   const fakes=new Set();
-  while(fakes.size<real)fakes.add(Math.floor(Math.random()*total));
-  let checked=0;
+  while(fakes.size<fakeCount)fakes.add(Math.floor(Math.random()*total));
+  let approved=0;
   for(let i=0;i<total;i++){
     const isFake=fakes.has(i);
     const el=document.createElement('div');
@@ -1797,9 +1815,9 @@ function jobPoliceDocs(taskIdx){
       if(el.classList.contains('approved')||el.classList.contains('rejected'))return;
       if(!isFake){
         el.classList.add('approved');
-        checked++;
-        const lEl=$('jobLeft');if(lEl)lEl.textContent=checked;
-        if(checked>=total)jobFinishTask(taskIdx,true,1);
+        approved++;
+        const lEl=$('jobLeft');if(lEl)lEl.textContent=approved;
+        if(approved>=realCount)jobFinishTask(taskIdx,true,1);
       } else {
         el.classList.add('rejected');
         _jobTaskState.penalty+=2;
@@ -1821,7 +1839,7 @@ function jobPoliceDocs(taskIdx){
 /* ========== WELDER 1/3 — Сварить шов (классический timing) ========== */
 function jobWelderSeam(taskIdx){
   const body=$('jobBody');
-  body.innerHTML='<div class="job-timer">🔧 Попытка <b>'+(taskIdx+1)+'</b> из 3 · Точно попади в зелёную зону</div><div class="job-weld-bar" id="jobWeldBar"><div class="job-weld-zone" id="jobWeldZone"></div><div class="job-weld-marker" id="jobWeldMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Стоп» когда бегунок в зелёной зоне. Чем ближе к центру — тем больше монет!</div><button class="duty-start" style="margin-top:14px" onclick="jobWeldStop()">⏹ СТОП</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
+  body.innerHTML='<div class="job-timer">🔧 Сварить шов · Точно попади в зелёную зону</div><div class="job-weld-bar" id="jobWeldBar"><div class="job-weld-zone" id="jobWeldZone"></div><div class="job-weld-marker" id="jobWeldMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Стоп», когда бегунок в зелёной зоне. Чем ближе к центру — тем больше монет!</div><button class="duty-start" style="margin-top:14px" onclick="jobWeldStop()">⏹ СТОП</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
   const bar=$('jobWeldBar');
   const zone=$('jobWeldZone');
   const marker=$('jobWeldMarker');
@@ -1841,14 +1859,15 @@ function jobWelderSeam(taskIdx){
     marker.style.left=pos+'px';
     _jobTaskState.raf=requestAnimationFrame(step);
   };
-  _jobTaskState={raf:null,done:false,pos:0,zoneCenter,zoneHalf,getPos:()=>pos,start:step};
+  _jobTaskState={raf:null,done:false,zoneCenter,zoneHalf,getPos:()=>pos,taskIdx:taskIdx};
   step();
 }
 function jobWeldStop(){
   if(!_jobTaskState||_jobTaskState.done)return;
   _jobTaskState.done=true;
   if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);
-  const pos=_jobTaskState.getPos?_jobTaskState.getPos():_jobTaskState.pos;
+  const taskIdx=_jobTaskState.taskIdx;
+  const pos=_jobTaskState.getPos();
   const zoneCenter=_jobTaskState.zoneCenter;
   const zoneHalf=_jobTaskState.zoneHalf;
   const diff=Math.abs(pos-zoneCenter);
@@ -1949,7 +1968,6 @@ function jobWelderCut(taskIdx){
   const lineH=lr.height;
   let progress=0;
   let pressing=false;
-  let cursorX=null;
   let lastX=null;
   const TOL=lineH*0.9;
   let done=false;
@@ -1985,7 +2003,6 @@ function jobWelderCut(taskIdx){
     if(cy<lineTop-TOL||cy>lineBottom+TOL)return;
     if(cx<lineLeft-10||cx>lineRight+10)return;
     pressing=true;
-    cursorX=cx;
     lastX=cx;
   };
   const onMove=(e)=>{
@@ -2077,7 +2094,6 @@ async function jobFinishTask(taskIdx,won,precision){
   openJob();
 }
 
-/* ===== Всё, что было дальше в оригинале — без изменений ===== */
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 let _lastAnnShown=null;
 function openAnn(houseId){if(!hasAdmin())return showToast('Только админам','error');_annHouseId=Number(houseId);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||'';$('annErr').textContent='';setTimeout(()=>$('annInp').focus(),100)}
