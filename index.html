@@ -507,7 +507,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #pf .emb.fr-bg-vhs .pf-fx i.static.c{background:#00ffff;box-shadow:0 0 6px #00ffff}
 @keyframes pfVhsStatic{0%{transform:translate(0,0);opacity:0}5%{opacity:1}95%{opacity:.7}100%{transform:translate(var(--dx,30px),var(--dy,20px));opacity:0}}
 @media(max-width:600px){#pf .emb .pf-fx{display:none !important}}
-/* v1.7 JOB SYSTEM */
+/* v2.0 JOB SYSTEM — 9 unique tasks (3 per job) */
 .job-pick{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
 .job-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 12px;cursor:pointer;text-align:center;transition:.2s;font-family:inherit}
 .job-card:hover{border-color:rgba(245,197,66,.5);transform:translateY(-2px)}
@@ -545,21 +545,33 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .job-weld-zone{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,rgba(76,175,80,.2),rgba(76,175,80,.55),rgba(76,175,80,.2));border-left:2px solid #4caf50;border-right:2px solid #4caf50}
 .job-weld-marker{position:absolute;top:-6px;bottom:-6px;width:6px;background:linear-gradient(180deg,#ffd700,#ff9d2e);box-shadow:0 0 12px #ffd700;border-radius:3px;transform:translateX(-50%)}
 .job-weld-result{font-size:26px;font-weight:900;text-align:center;margin:14px 0;color:#f5c542}
-/* v1.9 NEON COLOR PICKER */
-.neon-picker{margin-top:14px;padding:14px 16px;border-radius:14px;background:rgba(0,0,0,.35);border:1px solid rgba(var(--neon-rgb),.5);box-shadow:0 0 20px rgba(var(--neon-rgb),.2)}
-.neon-picker .np-title{font-size:14px;font-weight:800;color:#fff;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.neon-picker .np-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.neon-picker .np-color{width:56px;height:44px;border-radius:12px;border:2px solid rgba(255,255,255,.15);background:transparent;cursor:pointer;padding:0;overflow:hidden}
-.neon-picker .np-rgb{flex:1;min-width:120px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.4);color:#e8e8f0;font-size:14px;font-family:'Courier New',monospace}
-.neon-picker .np-rgb:focus{outline:none;border-color:rgba(var(--neon-rgb),.7)}
-.neon-picker .np-apply{padding:11px 16px;border-radius:12px;border:none;background:linear-gradient(135deg,#5aabff,#4a90d9);color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
-.neon-picker .np-saved-title{font-size:12px;color:#8888a0;margin:14px 0 8px;font-weight:600}
-.neon-picker .np-saved{display:flex;flex-wrap:wrap;gap:8px;min-height:32px}
-.neon-picker .np-chip{position:relative;width:36px;height:36px;border-radius:10px;border:2px solid rgba(255,255,255,.15);cursor:pointer;transition:transform .15s}
-.neon-picker .np-chip:hover{transform:scale(1.1)}
-.neon-picker .np-chip .np-x{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#d32f2f;color:#fff;border:2px solid #1a1a22;font-size:10px;line-height:14px;text-align:center;cursor:pointer;padding:0;font-weight:700}
-.neon-picker .np-save-btn{width:100%;margin-top:10px;padding:11px;border-radius:12px;border:1px dashed rgba(var(--neon-rgb),.6);background:rgba(var(--neon-rgb),.08);color:rgb(var(--neon-rgb));font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:.15s}
-.neon-picker .np-save-btn:hover{background:rgba(var(--neon-rgb),.15)}
+/* v2.0 new minigame styles */
+.job-math-q{position:absolute;font-size:22px;font-weight:900;color:#fff;background:rgba(20,20,30,.9);border:2px solid rgba(245,197,66,.5);border-radius:12px;padding:8px 14px;cursor:pointer;user-select:none;box-shadow:0 4px 14px rgba(0,0,0,.5);transition:transform .15s}
+.job-math-q:hover{transform:scale(1.06)}
+.job-math-q.solved{opacity:0;transform:scale(1.4);pointer-events:none}
+.job-word{display:inline-block;padding:2px 6px;margin:3px;border-radius:6px;cursor:pointer;font-size:18px;background:rgba(255,255,255,.05);border:1px solid transparent;user-select:none;transition:.15s}
+.job-word:hover{background:rgba(255,255,255,.12)}
+.job-word.err{background:rgba(255,60,60,.25);border-color:#ff4444;text-decoration:line-through}
+.job-dict-wrap{height:100%;padding:14px;overflow:auto;font-size:18px;line-height:1.9;color:#e8e8f0;font-family:'Georgia',serif;text-align:center}
+.job-radar-zone{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,rgba(76,175,80,.25),rgba(76,175,80,.6),rgba(76,175,80,.25));border-left:2px solid #4caf50;border-right:2px solid #4caf50}
+.job-radar-marker{position:absolute;top:-8px;bottom:-8px;width:8px;background:linear-gradient(180deg,#ff4444,#cc0000);box-shadow:0 0 14px #ff4444;border-radius:4px;transform:translateX(-50%)}
+.job-radar-speed{position:absolute;bottom:-32px;left:50%;transform:translateX(-50%);font-size:16px;font-weight:900;color:#f5c542;white-space:nowrap}
+.job-doc{position:absolute;width:90px;height:120px;border-radius:8px;background:linear-gradient(180deg,#fff,#e8e8e8);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 4px 12px rgba(0,0,0,.55);border:2px solid rgba(0,0,0,.2);user-select:none;transition:transform .15s}
+.job-doc:hover{transform:scale(1.06)}
+.job-doc.real{border-color:#22aa44}
+.job-doc.fake{border-color:#dd2233;background:linear-gradient(180deg,#fff2f2,#e8d8d8)}
+.job-doc .d-photo{width:44px;height:44px;border-radius:50%;background:#d0d0d0;display:flex;align-items:center;justify-content:center;font-size:24px}
+.job-doc .d-stamp{font-size:22px}
+.job-doc.approved{animation:cleanFade .4s forwards;pointer-events:none}
+.job-doc.rejected{animation:shake .3s;border-color:#ff0000!important}
+.job-measure-track{position:relative;height:60px;border-radius:12px;background:linear-gradient(90deg,#1a1a24,#2a2a3a);border:1px solid rgba(255,255,255,.1);overflow:hidden;margin:20px 0}
+.job-measure-zone{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,rgba(76,175,80,.15),rgba(76,175,80,.5),rgba(76,175,80,.15));border-left:2px solid #4caf50;border-right:2px solid #4caf50}
+.job-measure-needle{position:absolute;top:0;bottom:0;width:5px;background:#ffd700;box-shadow:0 0 12px #ffd700;transform:translateX(-50%);border-radius:3px}
+.job-measure-value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:900;color:#fff;pointer-events:none;text-shadow:0 2px 6px #000}
+.job-cut-field{position:relative;height:220px;border-radius:16px;border:1px solid rgba(255,255,255,.08);overflow:hidden;background:radial-gradient(circle at 50% 40%,#26262f,#0a0a10);cursor:crosshair;touch-action:none}
+.job-cut-line{position:absolute;height:34px;background:linear-gradient(180deg,#f5c542,#ff9d2e);border-radius:6px;box-shadow:0 0 14px rgba(245,197,66,.5);cursor:crosshair}
+.job-cut-progress{position:absolute;top:0;left:0;bottom:0;background:rgba(255,255,255,.4);border-radius:6px;pointer-events:none}
+.job-cut-done{background:linear-gradient(180deg,#4caf50,#2e7d32)!important;box-shadow:0 0 20px #4caf50!important}
 @media(max-width:500px){.job-pick{grid-template-columns:1fr}.job-card{display:flex;align-items:center;gap:14px;text-align:left;padding:12px 14px}.job-card .ji{font-size:32px;margin:0}.job-card .jn{margin:0}.job-card .jr{margin-left:auto}.job-field{height:200px}}
 .duty-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);position:relative}
 .duty-title{font-size:18px;font-weight:800;background:linear-gradient(135deg,#f5c542,#ff9d2e);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -1152,7 +1164,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-const APP_VERSION='1.9';
+const APP_VERSION='2.0';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -1274,11 +1286,17 @@ async function afEvict(houseId,n){if(!hasAdmin())return showToast('Только 
 async function afMax(houseId,n){if(!hasAdmin())return showToast('Только админам','error');const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const owners=flatOwners(f);const cur=f.max_people??2;const val=prompt('Сколько мест? (1-9999)',String(cur));if(val===null)return;let nx=parseInt(val);if(isNaN(nx))nx=2;nx=Math.max(1,Math.min(9999,nx));if(nx<owners.length){const ok=await askConfirm('Уменьшить места?','Лишние '+(owners.length-nx)+' жильц. будут выселены.','Продолжить',true);if(!ok)return;const newOwners=owners.slice(0,nx);await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',houseId).eq('number',n)}else{await sb.from('flats').update({max_people:nx}).eq('house_id',houseId).eq('number',n)}await reloadHouse();await afRend()}
 async function afTogEnt(g,b){if(!hasAdmin())return showToast('Только админам','error');const c=houseData?.blocked_entrances||[];const nx=b?[...new Set([...c,g])]:c.filter(x=>x!==g);await sb.from('houses').update({blocked_entrances:nx}).eq('id',curHouse);await reloadHouse();afRend()}
 async function afTogHouse(houseId,blocked){if(!hasAdmin())return showToast('Только админам','error');if(blocked){const ok=await askConfirm('Заблокировать дом?','Дом '+houseId+' будет закрыт. В него нельзя заселиться.','Заблокировать',true);if(!ok)return}await sb.from('houses').update({blocked:blocked}).eq('id',houseId);await loadHouses();renderHouses();await afRend()}
-/* ===== v1.7 JOB SYSTEM + v1.8 WEEKEND + v1.9 FIX ===== */
+/* ===== v2.0 JOB SYSTEM — 9 UNIQUE TASKS (3 PER JOB) ===== */
 const JOBS={
-  teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,type:'check',tasks:['Проверить контрольные','Проверить домашку','Проверить тесты']},
-  police:{id:'police',name:'Полицейский',icon:'👮',reward:750,type:'fines',tasks:['Патруль центра','Проверить документы','Оформить штрафы']},
-  welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,type:'weld',tasks:['Сварить шов №1','Сварить шов №2','Сварить шов №3']}
+  teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,
+    tasks:['Проверить контрольные','Решить примеры','Проверить диктант'],
+    types:['check','math','dictation']},
+  police:{id:'police',name:'Полицейский',icon:'👮',reward:750,
+    tasks:['Патруль центра','Замерить скорость','Проверить документы'],
+    types:['patrol','radar','docs']},
+  welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,
+    tasks:['Сварить шов №1','Замерить детали','Нарезать металл'],
+    types:['seam','measure','cut']}
 };
 const JOB_TASKS_PER_DAY=3;
 const JOB_BAN_DAYS=30;
@@ -1351,7 +1369,7 @@ function openJob(){
   const weTag=isWE?' <span style="color:#8bc34a;font-weight:700">+50% выходные</span>':'';
   const weDone=(st.weekendShifts&&st.weekendShifts>0)?'<div class="row"><span>🌟 Смен в выходные:</span><b>'+st.weekendShifts+'</b></div>':'';
   let rewardTxt;
-  if(j.type==='weld'){rewardTxt='до '+Math.round(j.maxReward*mult)+' 💰'+weTag}
+  if(j.type==='weld'||st.job==='welder'){rewardTxt='до '+Math.round(j.maxReward*mult)+' 💰'+weTag}
   else{rewardTxt='+'+Math.round(j.reward*mult)+weTag}
   const status='<div class="job-status'+(st.missedDays>0?' warn':'')+'"><div class="row"><span>'+j.icon+' Работа:</span><b>'+j.name+'</b></div><div class="row"><span>💰 Оплата за смену:</span><b>'+rewardTxt+'</b></div><div class="row"><span>✅ Смен отработано:</span><b>'+(st.finishedDays||0)+'</b></div>'+weDone+missedTxt+'</div>';
   const quitBtn='<button class="duty-start" style="background:linear-gradient(135deg,#5a1a1a,#3a0a0a);color:#ff8888;margin-top:14px" onclick="jobQuit()">🚪 Уволиться</button>';
@@ -1364,14 +1382,14 @@ function openJob(){
     body.innerHTML=weBanner+status+'<div class="duty-msg" style="color:#8bc34a;font-size:15px;padding:24px 0">✅ Смена выполнена!'+(isWE?' <b style="color:#8bc34a">(+50% за выходной учтено)</b>':'')+' Возвращайся завтра.</div>'+quitBtn;
     $('jobM').classList.add('open');return;
   }
-  body.innerHTML=weBanner+status+'<div class="job-tasks">'+j.tasks.map((t,i)=>'<div class="job-task'+(i<st.tasksDone?' done':'')+'" '+(i<st.tasksDone?'':'onclick="jobStartTask('+i+')"')+'><div class="jt-ic">'+['📋','🎯','✅'][i]+'</div><div class="jt-name">'+t+'<div style="font-size:11px;color:#8888a0;font-weight:400;margin-top:2px">Задание '+(i+1)+' из 3</div></div><div class="jt-go">'+(i<st.tasksDone?'✓ Готово':'Начать')+'</div></div>').join('')+'</div><div class="duty-msg" id="jobTaskMsg"></div>'+quitBtn;
+  const icons=['📋','🎯','✅'];
+  body.innerHTML=weBanner+status+'<div class="job-tasks">'+j.tasks.map((t,i)=>'<div class="job-task'+(i<st.tasksDone?' done':'')+'" '+(i<st.tasksDone?'':'onclick="jobStartTask('+i+')"')+'><div class="jt-ic">'+icons[i]+'</div><div class="jt-name">'+t+'<div style="font-size:11px;color:#8888a0;font-weight:400;margin-top:2px">Задание '+(i+1)+' из 3</div></div><div class="jt-go">'+(i<st.tasksDone?'✓ Готово':'Начать')+'</div></div>').join('')+'</div><div class="duty-msg" id="jobTaskMsg"></div>'+quitBtn;
   $('jobM').classList.add('open');
 }
 function closeJob(){$('jobM').classList.remove('open');jobStopTask()}
 function jobPick(id){
   if(!JOBS[id])return;
   const st=jobLoad()||jobDefault();
-  /* v1.9: полный сброс при смене работы */
   st.job=id;
   st.day=null;
   st.tasksDone=0;
@@ -1390,18 +1408,41 @@ async function jobQuit(){
   jobSave(st);
   openJob();
 }
+/* ===== v2.0 DISPATCHER + 9 UNIQUE MINI-GAMES ===== */
 let _jobTaskState=null;
-function jobStopTask(){if(_jobTaskState){if(_jobTaskState.timer)clearInterval(_jobTaskState.timer);if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);_jobTaskState=null}}
+function jobStopTask(){
+  if(_jobTaskState){
+    if(_jobTaskState.timer)clearInterval(_jobTaskState.timer);
+    if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);
+    if(_jobTaskState.interval)clearInterval(_jobTaskState.interval);
+    if(_jobTaskState.handlers&&_jobTaskState.handlers.length){
+      _jobTaskState.handlers.forEach(h=>{
+        try{h.el.removeEventListener(h.ev,h.fn,h.opt||false)}catch(e){}
+        if(h.win)try{window.removeEventListener(h.ev,h.fn,h.opt||false)}catch(e){}
+      });
+    }
+    _jobTaskState=null;
+  }
+}
 function jobStartTask(taskIdx){
   jobStopTask();
   const st=jobLoad()||jobDefault();
   if(!st.job)return;
   const j=JOBS[st.job];
-  if(j.type==='check')jobTeacherTask(taskIdx);
-  else if(j.type==='fines')jobPoliceTask(taskIdx);
-  else if(j.type==='weld')jobWelderTask(taskIdx);
+  const type=j.types[taskIdx];
+  if(type==='check')jobTeacherCheck(taskIdx);
+  else if(type==='math')jobTeacherMath(taskIdx);
+  else if(type==='dictation')jobTeacherDictation(taskIdx);
+  else if(type==='patrol')jobPolicePatrol(taskIdx);
+  else if(type==='radar')jobPoliceRadar(taskIdx);
+  else if(type==='docs')jobPoliceDocs(taskIdx);
+  else if(type==='seam')jobWelderSeam(taskIdx);
+  else if(type==='measure')jobWelderMeasure(taskIdx);
+  else if(type==='cut')jobWelderCut(taskIdx);
 }
-function jobTeacherTask(taskIdx){
+
+/* ========== TEACHER 1/3 — Проверить контрольные (поиск ошибок) ========== */
+function jobTeacherCheck(taskIdx){
   const body=$('jobBody');
   const totalErr=5,totalSheets=9;
   body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Осталось найти: <b id="jobLeft">'+totalErr+'</b></div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Найди и кликни по листочкам с ошибкой ❌ (клик по чистому — штраф 1 сек)</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
@@ -1450,10 +1491,165 @@ function jobTeacherTask(taskIdx){
     if(left<=0)jobFinishTask(taskIdx,false,0);
   },80),done:false,penalty:0};
 }
-function jobPoliceTask(taskIdx){
+
+/* ========== TEACHER 2/3 — Решить примеры ========== */
+function jobTeacherMath(taskIdx){
+  const body=$('jobBody');
+  const totalQ=4;
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">30.0</span>с · Решено: <b id="jobLeft">0</b>/'+totalQ+'</div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по примеру → выбери правильный ответ. Ошибка — штраф 1 сек.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  const field=$('jobField');
+  const r=field.getBoundingClientRect();
+  const genEx=()=>{
+    const a=Math.floor(Math.random()*9)+2;
+    const b=Math.floor(Math.random()*9)+2;
+    const ops=['+','-','×'];
+    const op=ops[Math.floor(Math.random()*ops.length)];
+    let ans,text;
+    if(op==='+'){ans=a+b;text=a+' + '+b}
+    else if(op==='-'){ans=Math.abs(a-b);text=Math.max(a,b)+' − '+Math.min(a,b)}
+    else{const x=Math.floor(Math.random()*6)+2,y=Math.floor(Math.random()*6)+2;ans=x*y;text=x+' × '+y}
+    return {text,ans};
+  };
+  let solved=0;
+  let placed=0,tries=0;
+  const placedPos=[];
+  const posFree=(px,py,w,h)=>{
+    for(const p of placedPos){
+      if(Math.abs(p.x-px)<w+20&&Math.abs(p.y-py)<h+20)return false;
+    }
+    return true;
+  };
+  for(let i=0;i<totalQ;i++){
+    const q=genEx();
+    let px=0,py=0,w=180,h=70;
+    let ok=false,tt=0;
+    while(!ok&&tt<80){
+      px=10+Math.random()*(r.width-w-20);
+      py=10+Math.random()*(r.height-h-20);
+      if(px<0)px=10;if(py<0)py=10;
+      if(posFree(px,py,w,h)){ok=true;break}
+      tt++;
+    }
+    placedPos.push({x:px,y:py});
+    const el=document.createElement('div');
+    el.className='job-math-q';
+    el.style.left=px+'px';el.style.top=py+'px';
+    el.textContent=q.text+' = ?';
+    el.dataset.ans=q.ans;
+    el.onclick=()=>{
+      if(!_jobTaskState||_jobTaskState.done)return;
+      if(el.classList.contains('solved'))return;
+      openMathAnswers(el,q,()=>{
+        el.classList.add('solved');
+        solved++;
+        const lEl=$('jobLeft');if(lEl)lEl.textContent=solved;
+        if(solved>=totalQ)jobFinishTask(taskIdx,true,1);
+      },()=>{_jobTaskState.penalty+=1});
+    };
+    field.appendChild(el);
+  }
+  const start=Date.now();
+  _jobTaskState={timer:setInterval(()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    const elapsed=(Date.now()-start)/1000-_jobTaskState.penalty;
+    const left=Math.max(0,30-elapsed);
+    const tEl=$('jobTime');if(tEl)tEl.textContent=left.toFixed(1);
+    if(left<=0)jobFinishTask(taskIdx,false,0);
+  },80),done:false,penalty:0};
+}
+function openMathAnswers(anchor,q,onOk,onErr){
+  const field=$('jobField');
+  if(!field)return;
+  const oldPop=field.querySelector('.job-math-pop');
+  if(oldPop)oldPop.remove();
+  const ar=anchor.getBoundingClientRect();
+  const fr=field.getBoundingClientRect();
+  const pop=document.createElement('div');
+  pop.className='job-math-pop';
+  pop.style.cssText='position:absolute;z-index:30;display:flex;gap:6px;padding:6px;background:rgba(20,20,30,.97);border:1px solid rgba(245,197,66,.55);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.7)';
+  const opts=[q.ans];
+  while(opts.length<3){
+    const d=q.ans+(Math.floor(Math.random()*9)-4);
+    if(d!==q.ans&&d>0&&!opts.includes(d))opts.push(d);
+  }
+  opts.sort(()=>Math.random()-0.5);
+  opts.forEach(o=>{
+    const b=document.createElement('button');
+    b.style.cssText='padding:8px 14px;border-radius:9px;border:none;cursor:pointer;font-weight:800;font-size:16px;font-family:inherit;background:rgba(255,255,255,.08);color:#e8e8f0';
+    b.textContent=o;
+    b.onclick=(e)=>{
+      e.stopPropagation();
+      pop.remove();
+      if(o===q.ans)onOk();else{onErr();anchor.style.animation='shake .3s';setTimeout(()=>anchor.style.animation='',300)}
+    };
+    pop.appendChild(b);
+  });
+  let px=ar.left-fr.left-20,py=ar.bottom-fr.top+6;
+  if(px+180>fr.width)px=fr.width-190;
+  if(py+60>fr.height)py=ar.top-fr.top-60;
+  if(px<6)px=6;if(py<6)py=6;
+  pop.style.left=px+'px';pop.style.top=py+'px';
+  field.appendChild(pop);
+  setTimeout(()=>{
+    const close=(e)=>{if(!pop.contains(e.target)){pop.remove();document.removeEventListener('click',close)}};
+    document.addEventListener('click',close);
+  },50);
+}
+
+/* ========== TEACHER 3/3 — Проверить диктант ========== */
+function jobTeacherDictation(taskIdx){
+  const body=$('jobBody');
+  const text=('Селёный лес шумел ветвями, и по небу плыли лёгкие облака. Мальчик бежал по трапинке к речке. '+
+    'На лугу паслись каровы, а возле дома лаяла сабака. В корзине лежали яблоки, грушы и спелые сливы. '+
+    'Бабушка вязала тёплый наск, а дедушка читал газету. Вечером вся семья села за большой стол. '+
+    'На столе стоял самовар и пирог с капустой. В окно светило яркое сонце, и было очень тепло.').split(' ');
+  const errWords={
+    'Селёный':'Зелёный','трапинке':'тропинке','каровы':'коровы','сабака':'собака',
+    'грушы':'груши','наск':'носки','сонце':'солнце','пирог':'пирог'
+  };
+  const errList=['Селёный','трапинке','каровы','сабака','грушы','наск','сонце'];
+  const totalErr=errList.length;
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">40.0</span>с · Найдено ошибок: <b id="jobLeft">0</b>/'+totalErr+'</div><div class="job-field" style="cursor:default;padding:0"><div class="job-dict-wrap" id="jobDict"></div></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по слову с ошибкой. Клик по правильному слову — штраф 1 сек.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  const wrap=$('jobDict');
+  let found=0;
+  text.forEach(w=>{
+    const clean=w.replace(/[.,!?;:]/g,'');
+    const span=document.createElement('span');
+    span.className='job-word';
+    span.textContent=w;
+    span.dataset.clean=clean;
+    span.onclick=()=>{
+      if(!_jobTaskState||_jobTaskState.done)return;
+      if(span.classList.contains('err'))return;
+      if(errList.includes(clean)){
+        span.classList.add('err');
+        found++;
+        const lEl=$('jobLeft');if(lEl)lEl.textContent=found;
+        if(found>=totalErr)jobFinishTask(taskIdx,true,1);
+      } else {
+        _jobTaskState.penalty+=1;
+        span.style.animation='shake .3s';
+        setTimeout(()=>span.style.animation='',300);
+      }
+    };
+    wrap.appendChild(span);
+    wrap.appendChild(document.createTextNode(' '));
+  });
+  const start=Date.now();
+  _jobTaskState={timer:setInterval(()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    const elapsed=(Date.now()-start)/1000-_jobTaskState.penalty;
+    const left=Math.max(0,40-elapsed);
+    const tEl=$('jobTime');if(tEl)tEl.textContent=left.toFixed(1);
+    if(left<=0)jobFinishTask(taskIdx,false,0);
+  },80),done:false,penalty:0};
+}
+
+/* ========== POLICE 1/3 — Патруль центра (ловля) ========== */
+function jobPolicePatrol(taskIdx){
   const body=$('jobBody');
   const totalCr=5,totalPeople=9;
-  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Осталось штрафов: <b id="jobLeft">'+totalCr+'</b></div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по 🔴 красному нарушителю = штраф. Клик по обычному — штраф 1 сек.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Осталось задержать: <b id="jobLeft">'+totalCr+'</b></div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по 🔴 красному нарушителю = задержание. Клик по обычному — штраф 1 сек.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
   const field=$('jobField');
   const r=field.getBoundingClientRect();
   const crIdx=new Set();
@@ -1499,7 +1695,131 @@ function jobPoliceTask(taskIdx){
     if(left<=0)jobFinishTask(taskIdx,false,0);
   },80),done:false,penalty:0};
 }
-function jobWelderTask(taskIdx){
+
+/* ========== POLICE 2/3 — Замерить скорость (радар) ========== */
+function jobPoliceRadar(taskIdx){
+  const body=$('jobBody');
+  const totalShots=3;
+  body.innerHTML='<div class="job-timer">🎯 Замер <b id="jobLeft">1</b>/'+totalShots+' · Осталось времени: <span id="jobTime">30.0</span>с</div><div class="job-field" id="jobField" style="padding:26px 20px"><div class="job-weld-bar" id="jobRadarBar" style="position:relative;height:44px"><div class="job-radar-zone" id="jobRadarZone"></div><div class="job-radar-marker" id="jobRadarMarker"></div><div class="job-radar-speed" id="jobRadarSpeed">0 км/ч</div></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Измерить», когда бегунок в зелёной зоне</div><button class="duty-start" style="margin-top:14px" onclick="jobRadarStop()">📸 Измерить</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
+  const bar=$('jobRadarBar');
+  const zone=$('jobRadarZone');
+  const marker=$('jobRadarMarker');
+  const speedEl=$('jobRadarSpeed');
+  const r=bar.getBoundingClientRect();
+  const zoneW=Math.max(40,r.width*0.14);
+  const zoneLeft=(r.width-zoneW)/2;
+  zone.style.left=zoneLeft+'px';
+  zone.style.width=zoneW+'px';
+  const zoneCenter=r.width/2;
+  const zoneHalf=zoneW/2;
+  let pos=0,dir=1,speed=0.8+Math.random()*0.5;
+  let shots=0;
+  const precisions=[];
+  const step=()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    pos+=dir*speed;
+    if(pos<=0){pos=0;dir=1}
+    if(pos>=r.width){pos=r.width;dir=-1}
+    marker.style.left=pos+'px';
+    const kmh=Math.round(30+(pos/r.width)*120);
+    if(speedEl)speedEl.textContent=kmh+' км/ч';
+    _jobTaskState.raf=requestAnimationFrame(step);
+  };
+  _jobTaskState={raf:null,done:false,getPos:()=>pos,zoneCenter,zoneHalf,precisions,shots,totalShots,
+    onHit:(prec)=>{
+      shots++;
+      precisions.push(prec);
+      const lEl=$('jobLeft');if(lEl)lEl.textContent=Math.min(shots+1,totalShots);
+      const resEl=$('jobWeldResult');
+      const pct=Math.round(prec*100);
+      const speed=Math.round(30+(pos/r.width)*120);
+      if(resEl)resEl.textContent='Замер '+shots+': '+speed+' км/ч · точность '+pct+'%';
+      if(shots>=totalShots){
+        const avg=precisions.reduce((a,b)=>a+b,0)/precisions.length;
+        jobFinishTask(taskIdx,true,avg);
+      } else {
+        speed=0.8+Math.random()*0.5;
+      }
+    }
+  };
+  step();
+  const start=Date.now();
+  _jobTaskState.timer=setInterval(()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    const elapsed=(Date.now()-start)/1000;
+    const left=Math.max(0,30-elapsed);
+    const tEl=$('jobTime');if(tEl)tEl.textContent=left.toFixed(1);
+    if(left<=0)jobFinishTask(taskIdx,false,0);
+  },100);
+}
+function jobRadarStop(){
+  if(!_jobTaskState||_jobTaskState.done)return;
+  const pos=_jobTaskState.getPos();
+  const zc=_jobTaskState.zoneCenter;
+  const zh=_jobTaskState.zoneHalf;
+  let prec=1-Math.abs(pos-zc)/zh;
+  if(prec<0)prec=0;if(prec>1)prec=1;
+  if(_jobTaskState.onHit)_jobTaskState.onHit(prec);
+}
+
+/* ========== POLICE 3/3 — Проверить документы ========== */
+function jobPoliceDocs(taskIdx){
+  const body=$('jobBody');
+  const total=6,real=3;
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Проверено: <b id="jobLeft">0</b>/'+total+'</div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по настоящему паспорту ✅ = пропустить. Клик по поддельному ❌ = штраф 2 сек. Всего пройти нужно 6 док-ов.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  const field=$('jobField');
+  const r=field.getBoundingClientRect();
+  const names=['Иванов','Петров','Сидоров','Кузнецов','Смирнов','Попов','Козлов','Лебедев','Новиков'];
+  const fakes=new Set();
+  while(fakes.size<real)fakes.add(Math.floor(Math.random()*total));
+  let checked=0;
+  for(let i=0;i<total;i++){
+    const isFake=fakes.has(i);
+    const el=document.createElement('div');
+    el.className='job-doc '+(isFake?'fake':'real');
+    el.innerHTML='<div class="d-photo">'+(isFake?'🤥':'🧑')+'</div><div style="font-size:10px;font-weight:800;color:#111;text-align:center;padding:0 4px">'+names[i%names.length]+'</div><div class="d-stamp">'+(isFake?'⚠️':'✔️')+'</div>';
+    const w=90,h=120;
+    let placed=false,tries=0,px=0,py=0;
+    while(!placed&&tries<50){
+      px=10+Math.random()*(r.width-w-20);
+      py=10+Math.random()*(r.height-h-20);
+      placed=true;
+      const others=field.querySelectorAll('.job-doc');
+      for(const o of others){
+        const ox=parseFloat(o.style.left),oy=parseFloat(o.style.top);
+        if(Math.abs(ox-px)<w+8&&Math.abs(oy-py)<h+8){placed=false;break}
+      }
+      tries++;
+    }
+    el.style.left=px+'px';el.style.top=py+'px';
+    el.onclick=()=>{
+      if(!_jobTaskState||_jobTaskState.done)return;
+      if(el.classList.contains('approved')||el.classList.contains('rejected'))return;
+      if(!isFake){
+        el.classList.add('approved');
+        checked++;
+        const lEl=$('jobLeft');if(lEl)lEl.textContent=checked;
+        if(checked>=total)jobFinishTask(taskIdx,true,1);
+      } else {
+        el.classList.add('rejected');
+        _jobTaskState.penalty+=2;
+        setTimeout(()=>el.classList.remove('rejected'),350);
+      }
+    };
+    field.appendChild(el);
+  }
+  const start=Date.now();
+  _jobTaskState={timer:setInterval(()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    const elapsed=(Date.now()-start)/1000-_jobTaskState.penalty;
+    const left=Math.max(0,25-elapsed);
+    const tEl=$('jobTime');if(tEl)tEl.textContent=left.toFixed(1);
+    if(left<=0)jobFinishTask(taskIdx,false,0);
+  },80),done:false,penalty:0};
+}
+
+/* ========== WELDER 1/3 — Сварить шов (классический timing) ========== */
+function jobWelderSeam(taskIdx){
   const body=$('jobBody');
   body.innerHTML='<div class="job-timer">🔧 Попытка <b>'+(taskIdx+1)+'</b> из 3 · Точно попади в зелёную зону</div><div class="job-weld-bar" id="jobWeldBar"><div class="job-weld-zone" id="jobWeldZone"></div><div class="job-weld-marker" id="jobWeldMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Стоп» когда бегунок в зелёной зоне. Чем ближе к центру — тем больше монет!</div><button class="duty-start" style="margin-top:14px" onclick="jobWeldStop()">⏹ СТОП</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
   const bar=$('jobWeldBar');
@@ -1553,10 +1873,173 @@ function jobWeldStop(){
     }
   },700);
 }
+
+/* ========== WELDER 2/3 — Замерить детали (штангенциркуль) ========== */
+function jobWelderMeasure(taskIdx){
+  const body=$('jobBody');
+  const totalShots=3;
+  const targetMM=(Math.random()*40+10).toFixed(1);
+  body.innerHTML='<div class="job-timer">📏 Замер <b id="jobLeft">1</b>/'+totalShots+' · Цель: <b>'+targetMM+' мм</b></div><div class="job-field" id="jobField" style="padding:26px 20px;cursor:default"><div class="job-measure-track" id="jobMeasureTrack"><div class="job-measure-zone" id="jobMeasureZone"></div><div class="job-measure-needle" id="jobMeasureNeedle"></div><div class="job-measure-value" id="jobMeasureValue">0.0 мм</div></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Зафиксировать», когда игла в допуске</div><button class="duty-start" style="margin-top:14px" onclick="jobMeasureStop()">📏 Зафиксировать</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
+  const track=$('jobMeasureTrack');
+  const zone=$('jobMeasureZone');
+  const needle=$('jobMeasureNeedle');
+  const valEl=$('jobMeasureValue');
+  const r=track.getBoundingClientRect();
+  const zoneW=Math.max(50,r.width*0.10);
+  const zoneLeft=(r.width-zoneW)/2;
+  zone.style.left=zoneLeft+'px';
+  zone.style.width=zoneW+'px';
+  const zoneCenter=r.width/2;
+  const zoneHalf=zoneW/2;
+  const scale=targetMM/r.width;
+  let pos=r.width*0.1,dir=1,speed=1.1+Math.random()*0.5;
+  const step=()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    pos+=dir*speed;
+    if(pos<=0){pos=0;dir=1}
+    if(pos>=r.width){pos=r.width;dir=-1}
+    needle.style.left=pos+'px';
+    if(valEl)valEl.textContent=(pos*scale).toFixed(1)+' мм';
+    _jobTaskState.raf=requestAnimationFrame(step);
+  };
+  let shots=0;
+  const precisions=[];
+  _jobTaskState={raf:null,done:false,getPos:()=>pos,zoneCenter,zoneHalf,
+    onHit:(prec)=>{
+      shots++;
+      precisions.push(prec);
+      const lEl=$('jobLeft');if(lEl)lEl.textContent=Math.min(shots+1,totalShots);
+      const resEl=$('jobWeldResult');
+      const pct=Math.round(prec*100);
+      const mm=(pos*scale).toFixed(1);
+      if(resEl)resEl.textContent='Замер '+shots+': '+mm+' мм · точность '+pct+'%';
+      if(shots>=totalShots){
+        const avg=precisions.reduce((a,b)=>a+b,0)/precisions.length;
+        jobFinishTask(taskIdx,true,avg);
+      } else {
+        speed=1.1+Math.random()*0.5;
+      }
+    }
+  };
+  step();
+}
+function jobMeasureStop(){
+  if(!_jobTaskState||_jobTaskState.done)return;
+  const pos=_jobTaskState.getPos();
+  const zc=_jobTaskState.zoneCenter;
+  const zh=_jobTaskState.zoneHalf;
+  let prec=1-Math.abs(pos-zc)/zh;
+  if(prec<0)prec=0;if(prec>1)prec=1;
+  if(_jobTaskState.onHit)_jobTaskState.onHit(prec);
+}
+
+/* ========== WELDER 3/3 — Нарезать металл (обвод мышкой) ========== */
+function jobWelderCut(taskIdx){
+  const body=$('jobBody');
+  body.innerHTML='<div class="job-timer">✂️ Прогресс: <b id="jobLeft">0</b>% · Держи ЛКМ и веди вдоль линии</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Зажми и веди курсор слева направо. Отпустишь — прогресс медленно падает.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  const field=$('jobField');
+  const line=$('jobCutLine');
+  const prog=$('jobCutProg');
+  const fr=field.getBoundingClientRect();
+  const lr=line.getBoundingClientRect();
+  const lineLeft=lr.left-fr.left;
+  const lineRight=lr.right-fr.left;
+  const lineTop=lr.top-fr.top;
+  const lineBottom=lr.bottom-fr.top;
+  const lineH=lr.height;
+  let progress=0;
+  let pressing=false;
+  let cursorX=null;
+  let lastX=null;
+  const TOL=lineH*0.9;
+  let done=false;
+  const updateProg=()=>{
+    const pct=Math.max(0,Math.min(100,Math.round(progress)));
+    if(prog)prog.style.width=pct+'%';
+    const lEl=$('jobLeft');if(lEl)lEl.textContent=pct;
+    if(pct>=100&&!done){
+      done=true;
+      line.classList.add('job-cut-done');
+      const prec=1;
+      const st=jobLoad()||jobDefault();
+      if(!st.weldPrecisions)st.weldPrecisions=[];
+      st.weldPrecisions[taskIdx]=prec;
+      st.tasksDone=Math.max(st.tasksDone,taskIdx+1);
+      jobSave(st);
+      setTimeout(()=>{
+        const st2=jobLoad()||jobDefault();
+        if(st2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(taskIdx,true,prec);
+        else openJob();
+      },500);
+    }
+  };
+  const posOf=(e)=>{
+    const rect=field.getBoundingClientRect();
+    const cx=(e.clientX!==undefined?e.clientX:(e.touches&&e.touches[0]?e.touches[0].clientX:0))-rect.left;
+    const cy=(e.clientY!==undefined?e.clientY:(e.touches&&e.touches[0]?e.touches[0].clientY:0))-rect.top;
+    return {cx,cy};
+  };
+  const onDown=(e)=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    const {cx,cy}=posOf(e);
+    if(cy<lineTop-TOL||cy>lineBottom+TOL)return;
+    if(cx<lineLeft-10||cx>lineRight+10)return;
+    pressing=true;
+    cursorX=cx;
+    lastX=cx;
+  };
+  const onMove=(e)=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    const {cx,cy}=posOf(e);
+    if(!pressing)return;
+    if(cy<lineTop-TOL||cy>lineBottom+TOL){pressing=false;return}
+    if(lastX!==null&&cx>lastX){
+      const dx=cx-lastX;
+      const perPx=100/(lineRight-lineLeft);
+      progress+=dx*perPx;
+      if(progress>100)progress=100;
+      updateProg();
+    }
+    lastX=cx;
+  };
+  const onUp=()=>{pressing=false;lastX=null};
+  field.addEventListener('mousedown',onDown);
+  field.addEventListener('touchstart',onDown,{passive:true});
+  field.addEventListener('mousemove',onMove);
+  field.addEventListener('touchmove',onMove,{passive:true});
+  window.addEventListener('mouseup',onUp);
+  field.addEventListener('touchend',onUp);
+  const decay=setInterval(()=>{
+    if(!_jobTaskState||_jobTaskState.done){clearInterval(decay);return}
+    if(!pressing&&progress>0){
+      progress=Math.max(0,progress-0.6);
+      updateProg();
+    }
+  },60);
+  _jobTaskState={done:false,interval:decay,
+    handlers:[
+      {el:field,ev:'mousedown',fn:onDown},
+      {el:field,ev:'touchstart',fn:onDown,opt:{passive:true}},
+      {el:field,ev:'mousemove',fn:onMove},
+      {el:field,ev:'touchmove',fn:onMove,opt:{passive:true}},
+      {el:window,ev:'mouseup',fn:onUp,win:true},
+      {el:field,ev:'touchend',fn:onUp}
+    ]
+  };
+}
+
+/* ========== Общая концовка смены ========== */
 async function jobFinishTask(taskIdx,won,precision){
   if(_jobTaskState)_jobTaskState.done=true;
   if(_jobTaskState&&_jobTaskState.timer)clearInterval(_jobTaskState.timer);
   if(_jobTaskState&&_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);
+  if(_jobTaskState&&_jobTaskState.interval)clearInterval(_jobTaskState.interval);
+  if(_jobTaskState&&_jobTaskState.handlers){
+    _jobTaskState.handlers.forEach(h=>{
+      try{h.el.removeEventListener(h.ev,h.fn,h.opt||false)}catch(e){}
+      if(h.win)try{window.removeEventListener(h.ev,h.fn,h.opt||false)}catch(e){}
+    });
+  }
   _jobTaskState=null;
   if(!won)return;
   const st=jobLoad()||jobDefault();
@@ -1569,7 +2052,7 @@ async function jobFinishTask(taskIdx,won,precision){
     st.missedDays=0;
     st.finishedDays=(st.finishedDays||0)+1;
     let reward;
-    if(j.type==='weld'){
+    if(st.job==='welder'){
       const precs=st.weldPrecisions||[];
       const avg=precs.length?precs.reduce((a,b)=>a+(b||0),0)/precs.length:0;
       reward=Math.round(j.maxReward*avg);
@@ -1593,6 +2076,8 @@ async function jobFinishTask(taskIdx,won,precision){
   }
   openJob();
 }
+
+/* ===== Всё, что было дальше в оригинале — без изменений ===== */
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 let _lastAnnShown=null;
 function openAnn(houseId){if(!hasAdmin())return showToast('Только админам','error');_annHouseId=Number(houseId);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||'';$('annErr').textContent='';setTimeout(()=>$('annInp').focus(),100)}
