@@ -2604,9 +2604,12 @@ async function openProfile(nick){
   const fr=getFrame(target);
   if(fr&&fr!=='none')av.classList.add('frame-'+fr);
   decorateFrame(av,fr);
-  const pfEmb=$('pf').querySelector('.emb');
+   const pfEmb=$('pf').querySelector('.emb');
   if(pfEmb){
-    pfEmb.classList.remove('fr-bg-devil','fr-bg-angelic','fr-bg-cosmic','fr-bg-fire','fr-bg-ice','fr-bg-rainbow','fr-bg-diamond','fr-bg-legendary','fr-bg-neon','fr-bg-vhs','fr-bg-gold','fr-bg-silver','fr-bg-bronze','fr-bg-emerald','fr-bg-sapphire','fr-bg-ruby','fr-bg-rainbow-anim');
+    /* автогенерация списка — покрывает все рамки, включая новые */
+    const allBgCls=FRAMES.map(f=>'fr-bg-'+f.id);
+    allBgCls.push('fr-bg-rainbow-anim');
+    pfEmb.classList.remove(...allBgCls);
     if(fr&&fr!=='none'){
       pfEmb.classList.add('fr-bg-'+fr);
     }
