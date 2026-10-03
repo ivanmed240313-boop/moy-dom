@@ -2604,7 +2604,7 @@ async function openProfile(nick){
   const isMine=(!nick||nick===me);
   const av=$('pfAv');
   av.classList.remove('has-img');
-  av.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon','frame-fire','frame-ice','frame-cosmic','frame-diamond','frame-legendary','frame-rainbow','frame-angelic','frame-devil','frame-vhs');
+  FRAMES.forEach(f=>av.classList.remove('frame-'+f.id));
   av.style.backgroundImage='';av.style.background='';
   try{
     const{data:um}=await sb.from('user_media').select('photo_url').eq('nick',en(target)).maybeSingle();
@@ -2804,8 +2804,8 @@ function renderFlats(){
   const off=(Number(curHouse)-1)*30;
   document.querySelectorAll('.flat').forEach(el=>{
     const n=el.dataset.number,f=flats[n];
-    el.classList.remove('mine','taken','has-photo','blk');
-    el.classList.remove('frame-bronze','frame-silver','frame-gold','frame-emerald','frame-sapphire','frame-ruby','frame-neon','frame-fire','frame-ice','frame-cosmic','frame-diamond','frame-legendary','frame-rainbow','frame-angelic','frame-devil','frame-vhs');
+        el.classList.remove('mine','taken','has-photo','blk');
+    FRAMES.forEach(f=>el.classList.remove('frame-'+f.id));
     el.style.backgroundImage='';
     el.querySelectorAll(':scope > .halo, :scope > .horn').forEach(x=>x.remove());
     if(isFlatBlk(Number(n)))el.classList.add('blk');
