@@ -823,7 +823,7 @@ function openAdmin(){if(!hasAdmin())return alert('Только админам');
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
 
-const APP_VERSION='1.2';
+const APP_VERSION='1.3';
 (function(){
   function fmt(d){
     const p=n=>String(n).padStart(2,'0');
