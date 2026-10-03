@@ -946,7 +946,6 @@ function pfFxSpawn(frameId){
   else if(frameId==='angelic'){for(let k=0;k<20;k++)add('spark','left:'+R(5,95)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(4.5,7.5)+'s;animation-delay:-'+R(0,6)+'s;width:'+R(3,6)+'px;height:'+R(3,6)+'px')}
   else if(frameId==='devil'){for(let k=0;k<16;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(2.4,4.8)+'s;animation-delay:-'+R(0,4)+'s')}
 }
-
 let _toastEl=null,_toastTimer=null;
 function showToast(msg,type){
   if(!_toastEl){_toastEl=document.createElement('div');_toastEl.className='dom-toast';document.body.appendChild(_toastEl)}
@@ -957,7 +956,6 @@ function showToast(msg,type){
   _toastTimer=setTimeout(()=>{if(_toastEl)_toastEl.classList.remove('on')},2800);
 }
 window.alert=function(m){showToast(String(m||''))};
-
 let _cfmResolve=null;
 function askConfirm(title,text,okText,danger){
   return new Promise(resolve=>{
@@ -979,7 +977,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   const sm=$('sendCoinsM');if(sm)sm.addEventListener('click',e=>{if(e.target.id==='sendCoinsM')closeSendCoins()});
   const inp=$('scAmt');if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doSendCoins()}});
 });
-
 async function openSendCoins(nick){
   if(!nick||nick===me)return;
   if(pfCurrent)closePf();
@@ -1008,7 +1005,6 @@ async function doSendCoins(){
   $('sendCoinsM').classList.remove('open');
   showToast('✅ Отправлено '+val+' 💰 игроку '+nick,'success');await loadCoins();
 }
-
 function toggleSound(){soundEnabled=!soundEnabled;localStorage.setItem('domSound',soundEnabled?'1':'0');const b=$('soundBtn');if(b){const s=b.querySelector('span');if(s)s.textContent='Звук: '+(soundEnabled?'вкл':'выкл')}if(soundEnabled)playNotifSound()}
 function updateSoundBtn(){const b=$('soundBtn');if(!b)return;const s=b.querySelector('span');if(s)s.textContent='Звук: '+(soundEnabled?'вкл':'выкл')}
 function playNotifSound(){
@@ -1063,7 +1059,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-const APP_VERSION='1.7';
+const APP_VERSION='1.8';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -1185,8 +1181,7 @@ async function afEvict(houseId,n){if(!hasAdmin())return showToast('Только 
 async function afMax(houseId,n){if(!hasAdmin())return showToast('Только админам','error');const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const owners=flatOwners(f);const cur=f.max_people??2;const val=prompt('Сколько мест? (1-9999)',String(cur));if(val===null)return;let nx=parseInt(val);if(isNaN(nx))nx=2;nx=Math.max(1,Math.min(9999,nx));if(nx<owners.length){const ok=await askConfirm('Уменьшить места?','Лишние '+(owners.length-nx)+' жильц. будут выселены.','Продолжить',true);if(!ok)return;const newOwners=owners.slice(0,nx);await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',houseId).eq('number',n)}else{await sb.from('flats').update({max_people:nx}).eq('house_id',houseId).eq('number',n)}await reloadHouse();await afRend()}
 async function afTogEnt(g,b){if(!hasAdmin())return showToast('Только админам','error');const c=houseData?.blocked_entrances||[];const nx=b?[...new Set([...c,g])]:c.filter(x=>x!==g);await sb.from('houses').update({blocked_entrances:nx}).eq('id',curHouse);await reloadHouse();afRend()}
 async function afTogHouse(houseId,blocked){if(!hasAdmin())return showToast('Только админам','error');if(blocked){const ok=await askConfirm('Заблокировать дом?','Дом '+houseId+' будет закрыт. В него нельзя заселиться.','Заблокировать',true);if(!ok)return}await sb.from('houses').update({blocked:blocked}).eq('id',houseId);await loadHouses();renderHouses();await afRend()}
-
-/* ===== v1.7 JOB SYSTEM ===== */
+/* ===== v1.7 JOB SYSTEM + v1.8 WEEKEND ===== */
 const JOBS={
   teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,type:'check',tasks:['Проверить контрольные','Проверить домашку','Проверить тесты']},
   police:{id:'police',name:'Полицейский',icon:'👮',reward:750,type:'fines',tasks:['Патруль центра','Проверить документы','Оформить штрафы']},
@@ -1195,13 +1190,13 @@ const JOBS={
 const JOB_TASKS_PER_DAY=3;
 const JOB_BAN_DAYS=30;
 const JOB_MAX_MISSED=3;
-
 function jobKey(){return 'job_'+meEnc}
 function jobToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function isWorkday(d){const w=d.getDay();return w>=1&&w<=5}
+function isWeekendOptional(d){const w=d.getDay();return w===0||w===6}
 function jobLoad(){try{const s=localStorage.getItem(jobKey());return s?JSON.parse(s):null}catch(e){return null}}
 function jobSave(st){try{localStorage.setItem(jobKey(),JSON.stringify(st))}catch(e){}}
-function jobDefault(){return {job:null,day:null,tasksDone:0,completedToday:false,lastComplete:null,missedDays:0,firedUntil:null,finishedDays:0,weldPrecisions:[]}}
+function jobDefault(){return {job:null,day:null,tasksDone:0,completedToday:false,lastComplete:null,missedDays:0,firedUntil:null,finishedDays:0,weldPrecisions:[],weekendShifts:0}}
 function countMissedWorkdays(lastComplete,todayD){
   if(!lastComplete)return 0;
   const last=new Date(lastComplete+'T00:00:00');
@@ -1250,25 +1245,32 @@ function openJob(){
     $('jobM').classList.add('open');return;
   }
   if(!st.job){
-    body.innerHTML='<div class="duty-info">📋 Работа — по будням (Пн–Пт). Каждый день <b>3 задания</b>. 3 пропуска подряд — увольнение на <b>'+JOB_BAN_DAYS+' дней</b>.</div><div class="job-pick">'+Object.values(JOBS).map(j=>'<div class="job-card" onclick="jobPick(\''+j.id+'\')"><div class="ji">'+j.icon+'</div><div class="jn">'+j.name+'</div><div class="jr">до +'+(j.maxReward||j.reward)+' 💰/день</div></div>').join('')+'</div>';
+    body.innerHTML='<div class="duty-info">📋 Работа — по будням (Пн–Пт). В выходные — <b style="color:#8bc34a">по желанию</b> за <b style="color:#8bc34a">+50%</b>. Каждый день <b>3 задания</b>. 3 пропуска в будни подряд — увольнение на <b>'+JOB_BAN_DAYS+' дней</b>.</div><div class="job-pick">'+Object.values(JOBS).map(j=>'<div class="job-card" onclick="jobPick(\''+j.id+'\')"><div class="ji">'+j.icon+'</div><div class="jn">'+j.name+'</div><div class="jr">до +'+(j.maxReward||j.reward)+' 💰/день</div></div>').join('')+'</div>';
     $('jobM').classList.add('open');return;
   }
   const j=JOBS[st.job];
   const today=new Date();
   const isWD=isWorkday(today);
+  const isWE=isWeekendOptional(today);
+  const mult=isWE?1.5:1;
   const missedTxt=st.missedDays>0?'<div class="row"><span>⚠️ Пропусков подряд:</span><b style="color:#ff8888">'+st.missedDays+' / '+JOB_MAX_MISSED+'</b></div>':'';
-  const rewardTxt=j.type==='weld'?'до '+j.maxReward+' 💰 (зависит от точности)':'+'+j.reward;
-  const status='<div class="job-status'+(st.missedDays>0?' warn':'')+'"><div class="row"><span>'+j.icon+' Работа:</span><b>'+j.name+'</b></div><div class="row"><span>💰 Оплата за смену:</span><b>'+rewardTxt+'</b></div><div class="row"><span>✅ Смен отработано:</span><b>'+(st.finishedDays||0)+'</b></div>'+missedTxt+'</div>';
+  const weTag=isWE?' <span style="color:#8bc34a;font-weight:700">+50% выходные</span>':'';
+  const weDone=(st.weekendShifts&&st.weekendShifts>0)?'<div class="row"><span>🌟 Смен в выходные:</span><b>'+st.weekendShifts+'</b></div>':'';
+  let rewardTxt;
+  if(j.type==='weld'){rewardTxt='до '+Math.round(j.maxReward*mult)+' 💰'+weTag}
+  else{rewardTxt='+'+Math.round(j.reward*mult)+weTag}
+  const status='<div class="job-status'+(st.missedDays>0?' warn':'')+'"><div class="row"><span>'+j.icon+' Работа:</span><b>'+j.name+'</b></div><div class="row"><span>💰 Оплата за смену:</span><b>'+rewardTxt+'</b></div><div class="row"><span>✅ Смен отработано:</span><b>'+(st.finishedDays||0)+'</b></div>'+weDone+missedTxt+'</div>';
   const quitBtn='<button class="duty-start" style="background:linear-gradient(135deg,#5a1a1a,#3a0a0a);color:#ff8888;margin-top:14px" onclick="jobQuit()">🚪 Уволиться</button>';
-  if(!isWD){
-    body.innerHTML=status+'<div class="duty-msg" style="color:#8888a0;font-size:14px;padding:20px 0">🌙 Сегодня выходной. Работа — Пн–Пт. Возвращайся в будни!</div>'+quitBtn;
+  const weBanner=isWE?'<div class="duty-info" style="background:rgba(76,175,80,.1);border-color:rgba(76,175,80,.35)">🌟 <b style="color:#8bc34a">Выходной!</b> Работа по желанию — оплата <b style="color:#8bc34a">+50%</b>. Пропуски в выходные <b>не считаются</b>.</div>':'';
+  if(!isWD&&!isWE){
+    body.innerHTML=weBanner+status+'<div class="duty-msg" style="color:#8888a0;font-size:14px;padding:20px 0">🌙 Сегодня отдых. Возвращайся в будни!</div>'+quitBtn;
     $('jobM').classList.add('open');return;
   }
   if(st.completedToday){
-    body.innerHTML=status+'<div class="duty-msg" style="color:#8bc34a;font-size:15px;padding:24px 0">✅ Смена выполнена! Возвращайся завтра.</div>'+quitBtn;
+    body.innerHTML=weBanner+status+'<div class="duty-msg" style="color:#8bc34a;font-size:15px;padding:24px 0">✅ Смена выполнена!'+(isWE?' <b style="color:#8bc34a">(+50% за выходной учтено)</b>':'')+' Возвращайся завтра.</div>'+quitBtn;
     $('jobM').classList.add('open');return;
   }
-  body.innerHTML=status+'<div class="job-tasks">'+j.tasks.map((t,i)=>'<div class="job-task'+(i<st.tasksDone?' done':'')+'" '+(i<st.tasksDone?'':'onclick="jobStartTask('+i+')"')+'><div class="jt-ic">'+['📋','🎯','✅'][i]+'</div><div class="jt-name">'+t+'<div style="font-size:11px;color:#8888a0;font-weight:400;margin-top:2px">Задание '+(i+1)+' из 3</div></div><div class="jt-go">'+(i<st.tasksDone?'✓ Готово':'Начать')+'</div></div>').join('')+'</div><div class="duty-msg" id="jobTaskMsg"></div>'+quitBtn;
+  body.innerHTML=weBanner+status+'<div class="job-tasks">'+j.tasks.map((t,i)=>'<div class="job-task'+(i<st.tasksDone?' done':'')+'" '+(i<st.tasksDone?'':'onclick="jobStartTask('+i+')"')+'><div class="jt-ic">'+['📋','🎯','✅'][i]+'</div><div class="jt-name">'+t+'<div style="font-size:11px;color:#8888a0;font-weight:400;margin-top:2px">Задание '+(i+1)+' из 3</div></div><div class="jt-go">'+(i<st.tasksDone?'✓ Готово':'Начать')+'</div></div>').join('')+'</div><div class="duty-msg" id="jobTaskMsg"></div>'+quitBtn;
   $('jobM').classList.add('open');
 }
 function closeJob(){$('jobM').classList.remove('open');jobStopTask()}
@@ -1299,7 +1301,6 @@ function jobStartTask(taskIdx){
   else if(j.type==='fines')jobPoliceTask(taskIdx);
   else if(j.type==='weld')jobWelderTask(taskIdx);
 }
-/* 👨‍🏫 Учитель — найти листочки с ошибками */
 function jobTeacherTask(taskIdx){
   const body=$('jobBody');
   const totalErr=5,totalSheets=9;
@@ -1340,7 +1341,7 @@ function jobTeacherTask(taskIdx){
     };
     field.appendChild(el);
   }
-  const start=Date.now();let duration=25000;
+  const start=Date.now();
   _jobTaskState={timer:setInterval(()=>{
     if(!_jobTaskState||_jobTaskState.done)return;
     const elapsed=(Date.now()-start)/1000-_jobTaskState.penalty;
@@ -1349,7 +1350,6 @@ function jobTeacherTask(taskIdx){
     if(left<=0)jobFinishTask(taskIdx,false,0);
   },80),done:false,penalty:0};
 }
-/* 👮 Полицейский — выписать штрафы нарушителям */
 function jobPoliceTask(taskIdx){
   const body=$('jobBody');
   const totalCr=5,totalPeople=9;
@@ -1399,7 +1399,6 @@ function jobPoliceTask(taskIdx){
     if(left<=0)jobFinishTask(taskIdx,false,0);
   },80),done:false,penalty:0};
 }
-/* 👨‍🏭 Сварщик — РОВНО остановить бегунок в зелёной зоне */
 function jobWelderTask(taskIdx){
   const body=$('jobBody');
   body.innerHTML='<div class="job-timer">🔧 Попытка <b>'+(taskIdx+1)+'</b> из 3 · Точно попади в зелёную зону</div><div class="job-weld-bar" id="jobWeldBar"><div class="job-weld-zone" id="jobWeldZone"></div><div class="job-weld-marker" id="jobWeldMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Стоп» когда бегунок в зелёной зоне. Чем ближе к центру — тем больше монет!</div><button class="duty-start" style="margin-top:14px" onclick="jobWeldStop()">⏹ СТОП</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
@@ -1473,10 +1472,14 @@ async function jobFinishTask(taskIdx,won,precision){
     if(j.type==='weld'){
       const precs=st.weldPrecisions||[];
       const avg=precs.length?precs.reduce((a,b)=>a+(b||0),0)/precs.length:0;
-      reward=Math.round(800*avg);
+      reward=Math.round(j.maxReward*avg);
     } else {
       reward=j.reward;
     }
+    /* v1.8: +50% за смену в выходные */
+    const isWE=isWeekendOptional(new Date());
+    if(isWE)reward=Math.round(reward*1.5);
+    if(isWE)st.weekendShifts=(st.weekendShifts||0)+1;
     const bonus=frameBonusPct(myFrame);
     const applied=bonus>0?Math.round(reward*(1+bonus/100)):reward;
     st.weldPrecisions=[];
@@ -1484,7 +1487,7 @@ async function jobFinishTask(taskIdx,won,precision){
     myCoins=Math.max(0,myCoins+applied);
     try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}
     updateCoinsUI();
-    showToast('💰 Смена окончена! +'+applied+' монет','success');
+    showToast('💰 Смена окончена! +'+applied+' монет'+(isWE?' 🌟 +50% за выходной':''),'success');
     try{showNotif('💼 Работа','+'+applied+' монет!')}catch(e){}
   } else {
     jobSave(st);
