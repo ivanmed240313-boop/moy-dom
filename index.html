@@ -1391,11 +1391,9 @@ function jobPick(id){
   if(!JOBS[id])return;
   const st=jobLoad()||jobDefault();
   st.job=id;
-  st.day=null;
-  st.tasksDone=0;
-  st.completedToday=false;
+  /* не трогаем day/tasksDone/completedToday/lastComplete/weldPrecisions —
+     это дневной прогресс, он сохраняется даже после смены работы */
   st.missedDays=0;
-  st.weldPrecisions=[];
   jobSave(st);
   showToast('✅ Ты устроился: '+JOBS[id].name,'success');
   openJob();
@@ -1404,7 +1402,9 @@ async function jobQuit(){
   const ok=await askConfirm('Уволиться?','Ты потеряешь работу. Сможешь устроиться заново в любой момент.','Уволиться',true);
   if(!ok)return;
   const st=jobLoad()||jobDefault();
-  st.job=null;st.day=null;st.tasksDone=0;st.completedToday=false;st.missedDays=0;st.weldPrecisions=[];
+  st.job=null;
+  /* сохраняем day/tasksDone/completedToday — чтобы переустройство в тот же день
+     не давало «вторую смену» */
   jobSave(st);
   openJob();
 }
