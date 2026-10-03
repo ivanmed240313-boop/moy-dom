@@ -577,6 +577,31 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .cr .sb{padding:12px 26px;font-size:15px}
 #annBanner{padding:10px 46px 10px 14px;font-size:13px}
 #annBanner button{width:26px;height:26px;right:10px}
+/* ── FPS-оптимизации на мобилке ── */
+body::before{display:none !important}
+.umBtn{backdrop-filter:none !important}
+#verBadge{backdrop-filter:none !important}
+#modal{backdrop-filter:none !important}
+.em{backdrop-filter:none !important}
+.cr{backdrop-filter:none !important}
+.msg{animation:none !important}
+.ntf{animation:none !important}
+.avw .ondot{animation:none !important}
+.flat{transition:border-color .15s !important;transform-style:flat !important}
+.flat.frame-angelic,.flat.frame-devil,.flat.frame-legendary,.flat.frame-rainbow,.flat.frame-cosmic,.flat.frame-diamond,.flat.frame-fire,.flat.frame-ice,.flat.frame-neon-blue,.flat.frame-neon-pink,.flat.frame-neon-green{animation:none !important}
+.flat.frame-angelic{box-shadow:0 0 20px #ffffff,inset 0 0 15px #c8e8ff88 !important}
+.flat.frame-devil{box-shadow:0 0 20px #ff0000cc,inset 0 0 15px #8b000088 !important}
+.flat.frame-legendary{box-shadow:0 0 0 3px #ff9d2e,0 0 25px #f5c54288 !important}
+.flat.frame-rainbow{box-shadow:0 0 0 3px #ff0055,0 0 20px #ff0055cc !important}
+.flat.frame-cosmic{box-shadow:0 0 20px #6b4affcc !important}
+.flat.frame-diamond{box-shadow:0 0 25px #ffffffcc !important}
+.flat.frame-fire{box-shadow:0 0 20px #ff5500cc,inset 0 0 12px #ff550055 !important}
+.flat.frame-ice{box-shadow:0 0 20px #7fdbffcc !important}
+.flat.frame-neon-blue{box-shadow:0 0 18px #00e5ffcc !important}
+.flat.frame-neon-pink{box-shadow:0 0 18px #ff2fd1cc !important}
+.flat.frame-neon-green{box-shadow:0 0 18px #00ff88cc !important}
+.horn,.halo{animation:none !important}
+.pf-av.frame-angelic,.pf-av.frame-devil,.pf-av.frame-legendary,.pf-av.frame-rainbow,.pf-av.frame-cosmic,.pf-av.frame-diamond,.pf-av.frame-fire,.pf-av.frame-ice{animation:none !important}
 }
 @media(max-width:400px){
 #myCoinsBadge{padding:0 9px;font-size:12px;height:40px}
@@ -696,6 +721,7 @@ const WORK_REWARD=5,WORK_COOLDOWN=30000,WORK_DURATION=15000,WORK_TARGETS=8;
 
 const $=(id)=>document.getElementById(id);
 function isOwner(){return curUser&&curUser.id===OWNER_ID}
+function hasAdmin(){return isOwner()||iAmAdmin}
 function en(n){return Array.from(new TextEncoder().encode(n)).map(b=>b.toString(16).padStart(2,'0')).join('')}
 function de(s){if(!s)return '';if(/^[0-9a-f]+$/.test(s)&&s.length%2===0){try{const b=s.match(/.{2}/g).map(x=>parseInt(x,16));return new TextDecoder().decode(new Uint8Array(b))}catch(e){}}try{return decodeURIComponent(s)}catch(e){return s}}
 function eh(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -776,7 +802,7 @@ $('codI').oninput=()=>{const i=$('codI');i.value=i.value.replace(/\D/g,'').slice
 
 async function sendC(){$('aerr1').textContent='';$('aerr2').textContent='';const e=$('emI').value.trim().toLowerCase();if(!e)return $('aerr1').textContent='Введи email';if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return $('aerr1').textContent='Некорректный email';curEmail=e;const b=$('sendC');b.disabled=true;b.textContent='Отправка...';const{error}=await sb.auth.signInWithOtp({email:e,options:{shouldCreateUser:true}});b.disabled=false;b.textContent='Получить код';if(error){if(error.message.toLowerCase().includes('rate'))return $('aerr1').textContent='Слишком много писем';return $('aerr1').textContent=error.message}$('emSh').textContent=e;$('emS').style.display='none';$('codS').style.display='flex';$('codI').value='';setTimeout(()=>$('codI').focus(),100)}
 async function vCode(){$('aerr2').textContent='';const t=$('codI').value.trim();if(t.length!==6)return $('aerr2').textContent='Введи 6 цифр';const b=$('vCode');b.disabled=true;b.textContent='Проверка...';const{data,error}=await sb.auth.verifyOtp({email:curEmail,token:t,type:'email'});b.disabled=false;b.textContent='Войти';if(error){$('aerr2').textContent=error.message.toLowerCase().includes('expired')?'Код истёк':'Неверный код';$('codI').value='';$('codI').focus();return}curUser=data.user;$('codS').style.display='none';await afterAuth()}
-async function afterAuth(){const{data:p}=await sb.from('profiles').select('nick,is_admin,banned,ban_reason').eq('id',curUser.id).maybeSingle();if(!p){pendingUser=curUser;$('auth').style.display='none';$('nickScr').style.display='flex';$('nickIn').focus();return}me=p.nick;iAmAdmin=(curUser.id===OWNER_ID);isBanned=!!p.banned;banR=p.ban_reason||'';touchSeen();if(isBanned)return showBan();start()}
+async function afterAuth(){const{data:p}=await sb.from('profiles').select('nick,is_admin,banned,ban_reason').eq('id',curUser.id).maybeSingle();if(!p){pendingUser=curUser;$('auth').style.display='none';$('nickScr').style.display='flex';$('nickIn').focus();return}me=p.nick;iAmAdmin=!!p.is_admin||curUser.id===OWNER_ID;isBanned=!!p.banned;banR=p.ban_reason||'';touchSeen();if(isBanned)return showBan();start()}
 $('nickB').onclick=sNick;$('nickIn').onkeydown=e=>{if(e.key==='Enter')sNick()};
 async function sNick(){const er=$('nickE');er.textContent='';const n=$('nickIn').value.trim();if(!n)return er.textContent='Введи ник';if(n.length<2)return er.textContent='Короткий';if(n.length>20)return er.textContent='До 20';if(!/^[а-яА-Яa-zA-Z0-9_\- ]+$/.test(n))return er.textContent='Только буквы, цифры, _ и -';$('nickB').disabled=true;try{const{error}=await sb.from('profiles').insert({id:pendingUser.id,nick:n,last_seen:new Date().toISOString()});if(error){er.textContent=error.message.toLowerCase().includes('duplicate')?'Ник занят':error.message;return}me=n;iAmAdmin=(pendingUser.id===OWNER_ID);isBanned=false;curUser=pendingUser;pendingUser=null;$('nickScr').style.display='none';start()}finally{$('nickB').disabled=false}}
 async function switchAcc(){await sb.auth.signOut();location.reload()}
@@ -786,14 +812,14 @@ function showBan(){$('auth').style.display='none';$('nickScr').style.display='no
 window.addEventListener('DOMContentLoaded',async()=>{if('Notification'in window){notifPerm=Notification.permission;if(notifPerm==='granted'){const b=$('notifB');if(b)b.style.color='#4caf50'}}updateSoundBtn();const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}else $('auth').style.display='flex'});
 sb.auth.onAuthStateChange(async(e,s)=>{if(e==='SIGNED_IN'&&s&&!curUser){curUser=s.user;await afterAuth()}});
 
-function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+curUser.id},p=>{if(!p.new)return;if(p.new.banned&&!isBanned){isBanned=true;banR=p.new.ban_reason||'';showBan();try{closeM()}catch(e){}try{closeFm()}catch(e){}try{closeAdmin()}catch(e){}}iAmAdmin=(curUser.id===OWNER_ID);upAdminTog();if(!iAmAdmin&&adminMode)exitAdmin();if(typeof p.new.coins!=='undefined'){myCoins=p.new.coins||0;updateCoinsUI()}if(typeof p.new.active_frame!=='undefined'){myFrame=p.new.active_frame||'none';frameCache[meEnc]=myFrame;renderFlats()}if(Array.isArray(p.new.owned_frames)){myOwnedFrames=p.new.owned_frames}}).subscribe()}
+function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+curUser.id},p=>{if(!p.new)return;if(p.new.banned&&!isBanned){isBanned=true;banR=p.new.ban_reason||'';showBan();try{closeM()}catch(e){}try{closeFm()}catch(e){}try{closeAdmin()}catch(e){}}iAmAdmin=!!p.new.is_admin||curUser.id===OWNER_ID;upAdminTog();if(!hasAdmin()&&adminMode)exitAdmin();if(typeof p.new.coins!=='undefined'){myCoins=p.new.coins||0;updateCoinsUI()}if(typeof p.new.active_frame!=='undefined'){myFrame=p.new.active_frame||'none';frameCache[meEnc]=myFrame;renderFlats()}if(Array.isArray(p.new.owned_frames)){myOwnedFrames=p.new.owned_frames}}).subscribe()}
 function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{key:meEnc}}});gpres.on('presence',{event:'sync'},()=>{const s=gpres.presenceState();online=new Set();for(const k in s)if(k&&k!==meEnc)online.add(k);renderDMs();upChSt()}).subscribe(async st=>{if(st==='SUBSCRIBED')await gpres.track({nick:meEnc,since:Date.now()})})}
 function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();await loadDMs();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
-function upAdminTog(){const o=isOwner();const b=$('adminTog');if(b){b.style.display=o?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка'}const m=$('adminMItem');if(m)m.style.display=o?'flex':'none'}
-function toggleAdmin(){if(!isOwner())return alert('Только владелец сайта');if(adminMode)exitAdmin();else enterAdmin()}
-function enterAdmin(){if(!isOwner())return alert('Только владелец сайта');adminMode=true;document.body.classList.add('admin-mode');$('adminB').classList.add('on');$('ap').classList.add('on');upAdminTog();renderFlats()}
+function upAdminTog(){const o=hasAdmin();const b=$('adminTog');if(b){b.style.display=o?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка'}const m=$('adminMItem');if(m)m.style.display=o?'flex':'none'}
+function toggleAdmin(){if(!hasAdmin())return alert('Только админам');if(adminMode)exitAdmin();else enterAdmin()}
+function enterAdmin(){if(!hasAdmin())return alert('Только админам');adminMode=true;document.body.classList.add('admin-mode');$('adminB').classList.add('on');$('ap').classList.add('on');upAdminTog();renderFlats()}
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');$('adminB').classList.remove('on');$('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
-function openAdmin(){if(!isOwner())return alert('Только владелец сайта');if(!adminMode)return alert('Включи админ-режим');$('afm').classList.add('open');afSw('flats')}
+function openAdmin(){if(!hasAdmin())return alert('Только админам');if(!adminMode)return alert('Включи админ-режим');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
 
@@ -936,7 +962,8 @@ async function afUsers(b){
   usersAll=data||[];
   const bannedCount=usersAll.filter(u=>u.banned).length;
   const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);
-  const o=isOwner();
+  const o=hasAdmin();
+  const isOwn=isOwner();
   let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'">'
     +'<div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div>'
     +'<div class="su">'+(showBanned?'Сейчас показаны ВСЕ, включая забаненных':'Забаненные скрыты из списка')+'</div></div>'
@@ -947,13 +974,13 @@ async function afUsers(b){
   b.innerHTML=top+visible.map(u=>{
     const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;
     const nickEnc=eh(u.nick);
-    const coinBtns=o?( '<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 100)">💰 +100</button>'
+    const coinBtns=isOwn?( '<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 100)">💰 +100</button>'
       +'<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 1000)">💰 +1000</button>'
       +'<button class="afbtn r" onclick="admCoins(\''+nickEnc+'\', -100)">💸 −100</button>'
       +'<button class="afbtn gr" onclick="admCoinsCustom(\''+nickEnc+'\')">✏️ Своя</button>'
       +'<button class="afbtn gr" onclick="admSetCoins(\''+nickEnc+'\')">🎯 Ровно</button>'):'';
-    const banBtns=o?(bn?'<button class="afbtn g" onclick="unBan(\''+nickEnc+'\')">Разбанить</button>':'<button class="afbtn r" onclick="banU(\''+nickEnc+'\')">Забанить</button>')
-      +(ad?'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>'):'';
+    const banBtns=o?(bn?'<button class="afbtn g" onclick="unBan(\''+nickEnc+'\')">Разбанить</button>':'<button class="afbtn r" onclick="banU(\''+nickEnc+'\')">Забанить</button>'):'';
+    const admBtns=isOwn?(ad?'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>'):'';
     return '<div class="ur '+(bn?'banned':'')+'">'
       +avH(u.nick,'sm')
       +'<div style="flex:1;min-width:140px;margin-left:4px">'
@@ -962,7 +989,7 @@ async function afUsers(b){
         +(u.ban_reason?'<div class="rs">'+eh(u.ban_reason)+'</div>':'')
       +'</div>'
       +'<div style="display:flex;gap:6px;flex-wrap:wrap">'
-        +coinBtns+banBtns
+        +coinBtns+banBtns+admBtns
       +'</div></div>';
   }).join('');
 }
@@ -970,20 +997,20 @@ function toggleBannedView(){showBanned=!showBanned;afRend()}
 async function admCoins(nick,delta){if(!isOwner())return alert('Только владелец сайта');const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:nick,p_delta:delta});if(error)return alert('Ошибка: '+error.message);if(data&&data.ok===false)return alert(data.error||'Ошибка');if(nick===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}afRend()}
 async function admCoinsCustom(nick){if(!isOwner())return alert('Только владелец сайта');const val=prompt('На сколько изменить? (можно с минусом, например: 500 или -300)','100');if(val===null)return;const delta=parseInt(val);if(isNaN(delta)||delta===0)return alert('Некорректное число');await admCoins(nick,delta)}
 async function admSetCoins(nick){if(!isOwner())return alert('Только владелец сайта');const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();if(!p){alert('Юзер не найден');return}const cur=p.coins||0;const val=prompt('Установить РОВНО сколько монет? (текущее: '+cur+')',String(cur));if(val===null)return;const target=parseInt(val);if(isNaN(target)||target<0)return alert('Некорректное число');const{data,error}=await sb.rpc('owner_set_coins',{p_target_nick:nick,p_value:target});if(error)return alert('Ошибка: '+error.message);if(data&&data.ok===false)return alert(data.error||'Ошибка');if(nick===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}afRend()}
-async function banU(n){if(!isOwner())return alert('Только владелец сайта');if(n===me)return alert('Себя нельзя');const r=prompt('Причина','нарушение');if(r===null)return;await sb.from('profiles').update({banned:true,ban_reason:r||''}).eq('nick',n);afRend()}
-async function unBan(n){if(!isOwner())return alert('Только владелец сайта');if(!confirm('Разбанить '+n+'?'))return;await sb.from('profiles').update({banned:false,ban_reason:null}).eq('nick',n);afRend()}
+async function banU(n){if(!hasAdmin())return alert('Только админам');if(n===me)return alert('Себя нельзя');const r=prompt('Причина','нарушение');if(r===null)return;await sb.from('profiles').update({banned:true,ban_reason:r||''}).eq('nick',n);afRend()}
+async function unBan(n){if(!hasAdmin())return alert('Только админам');if(!confirm('Разбанить '+n+'?'))return;await sb.from('profiles').update({banned:false,ban_reason:null}).eq('nick',n);afRend()}
 async function togAdm(n,m){if(!isOwner())return alert('Только владелец сайта');if(n===me&&!m)return alert('Себя нельзя');if(!confirm((m?'Сделать':'Снять')+' админа?'))return;await sb.from('profiles').update({is_admin:m}).eq('nick',n);afRend()}
-async function afEvict(houseId,n){if(!isOwner())return alert('Только владелец сайта');if(!confirm('Выселить всех из дома '+houseId+', кв. '+((houseId-1)*30+Number(n))+'?'))return;await sb.from('flats').update({owner_nicks:[],owner_nick:null,owner_nick2:null}).eq('house_id',houseId).eq('number',n);await reloadHouse();await afRend()}
-async function afMax(houseId,n){if(!isOwner())return alert('Только владелец сайта');const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const owners=flatOwners(f);const cur=f.max_people??2;const val=prompt('Сколько мест? (1-9999)',String(cur));if(val===null)return;let nx=parseInt(val);if(isNaN(nx))nx=2;nx=Math.max(1,Math.min(9999,nx));if(nx<owners.length){if(!confirm('Лишние будут выселены?'))return;const newOwners=owners.slice(0,nx);await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',houseId).eq('number',n)}else{await sb.from('flats').update({max_people:nx}).eq('house_id',houseId).eq('number',n)}await reloadHouse();await afRend()}
-async function afTogEnt(g,b){if(!isOwner())return alert('Только владелец сайта');const c=houseData?.blocked_entrances||[];const nx=b?[...new Set([...c,g])]:c.filter(x=>x!==g);await sb.from('houses').update({blocked_entrances:nx}).eq('id',curHouse);await reloadHouse();afRend()}
-async function afTogHouse(houseId,blocked){if(!isOwner())return alert('Только владелец сайта');if(blocked&&!confirm('Заблокировать дом '+houseId+'?'))return;await sb.from('houses').update({blocked:blocked}).eq('id',houseId);await loadHouses();renderHouses();await afRend()}
+async function afEvict(houseId,n){if(!hasAdmin())return alert('Только админам');if(!confirm('Выселить всех из дома '+houseId+', кв. '+((houseId-1)*30+Number(n))+'?'))return;await sb.from('flats').update({owner_nicks:[],owner_nick:null,owner_nick2:null}).eq('house_id',houseId).eq('number',n);await reloadHouse();await afRend()}
+async function afMax(houseId,n){if(!hasAdmin())return alert('Только админам');const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const owners=flatOwners(f);const cur=f.max_people??2;const val=prompt('Сколько мест? (1-9999)',String(cur));if(val===null)return;let nx=parseInt(val);if(isNaN(nx))nx=2;nx=Math.max(1,Math.min(9999,nx));if(nx<owners.length){if(!confirm('Лишние будут выселены?'))return;const newOwners=owners.slice(0,nx);await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',houseId).eq('number',n)}else{await sb.from('flats').update({max_people:nx}).eq('house_id',houseId).eq('number',n)}await reloadHouse();await afRend()}
+async function afTogEnt(g,b){if(!hasAdmin())return alert('Только админам');const c=houseData?.blocked_entrances||[];const nx=b?[...new Set([...c,g])]:c.filter(x=>x!==g);await sb.from('houses').update({blocked_entrances:nx}).eq('id',curHouse);await reloadHouse();afRend()}
+async function afTogHouse(houseId,blocked){if(!hasAdmin())return alert('Только админам');if(blocked&&!confirm('Заблокировать дом '+houseId+'?'))return;await sb.from('houses').update({blocked:blocked}).eq('id',houseId);await loadHouses();renderHouses();await afRend()}
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 
 let _lastAnnShown=null;
-function openAnn(houseId){if(!isOwner())return alert('Только владелец сайта');_annHouseId=Number(houseId);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||'';$('annErr').textContent='';setTimeout(()=>$('annInp').focus(),100)}
+function openAnn(houseId){if(!hasAdmin())return alert('Только админам');_annHouseId=Number(houseId);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||'';$('annErr').textContent='';setTimeout(()=>$('annInp').focus(),100)}
 function closeAnn(){$('annM').classList.remove('open')}
-async function postAnn(){if(!isOwner())return;const er=$('annErr');er.textContent='';const t=$('annInp').value.trim();if(!t){er.textContent='Введи текст';return}const btn=$('annPostBtn');btn.disabled=true;btn.textContent='Публикация...';const hid=_annHouseId||Number(curHouse);const{error}=await sb.from('houses').update({announcement:t}).eq('id',hid);btn.disabled=false;btn.textContent='📢 Опубликовать';if(error){er.textContent='Ошибка: '+error.message;return}closeAnn();await loadHouses();if(hid===Number(curHouse))showAnn(t);if(afT==='house')await afRend()}
-async function delAnn(houseId){if(!isOwner())return;if(!confirm('Удалить объявление?'))return;const hid=houseId?Number(houseId):Number(curHouse);await sb.from('houses').update({announcement:null}).eq('id',hid);if(hid===Number(curHouse))$('annBanner').classList.remove('on');await loadHouses();if(afT==='house')await afRend()}
+async function postAnn(){if(!hasAdmin())return;const er=$('annErr');er.textContent='';const t=$('annInp').value.trim();if(!t){er.textContent='Введи текст';return}const btn=$('annPostBtn');btn.disabled=true;btn.textContent='Публикация...';const hid=_annHouseId||Number(curHouse);const{error}=await sb.from('houses').update({announcement:t}).eq('id',hid);btn.disabled=false;btn.textContent='📢 Опубликовать';if(error){er.textContent='Ошибка: '+error.message;return}closeAnn();await loadHouses();if(hid===Number(curHouse))showAnn(t);if(afT==='house')await afRend()}
+async function delAnn(houseId){if(!hasAdmin())return;if(!confirm('Удалить объявление?'))return;const hid=houseId?Number(houseId):Number(curHouse);await sb.from('houses').update({announcement:null}).eq('id',hid);if(hid===Number(curHouse))$('annBanner').classList.remove('on');await loadHouses();if(afT==='house')await afRend()}
 function showAnn(t){const b=$('annBanner');if(!t){b.classList.remove('on');return}const key='annDis_'+curHouse;const dis=localStorage.getItem(key);if(dis===t){b.classList.remove('on');return}$('annText').textContent=t;b.classList.add('on');if(t&&t!==_lastAnnShown){_lastAnnShown=t;showNotif('📢 Объявление',t.slice(0,80))}}
 $('annCloseBtn').onclick=()=>{const t=$('annText').textContent;localStorage.setItem('annDis_'+curHouse,t);$('annBanner').classList.remove('on')};
 async function pollAnn(){if(!curHouse)return;try{const{data}=await sb.from('houses').select('announcement').eq('id',curHouse).maybeSingle();if(data){if(houseData)houseData.announcement=data.announcement;showAnn(data.announcement||null)}}catch(e){}}
@@ -1429,7 +1456,7 @@ function attachNickSuggest(inpId,sugId){
   inp.addEventListener('blur',()=>setTimeout(hide,180));
   inp.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
 }
-async function start(){meEnc=en(me);$('auth').style.display='none';$('nickScr').style.display='none';$('banO').classList.remove('on');$('app').style.display='block';$('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();updateSoundBtn();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();pollAnn();setInterval(pollAnn,30000);setInterval(loadPhotoCache,60000);setInterval(loadCoins,60000);setTimeout(autoCheckNewHouse,4000);setInterval(autoCheckNewHouse,30000)}
+async function start(){meEnc=en(me);$('auth').style.display='none';$('nickScr').style.display='none';$('banO').classList.remove('on');$('app').style.display='block';$('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();updateSoundBtn();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();pollAnn();setInterval(pollAnn,30000);const isMob=(window.matchMedia&&window.matchMedia('(max-width:768px)').matches);setTimeout(autoCheckNewHouse,4000);setInterval(autoCheckNewHouse,isMob?60000:30000);setInterval(loadPhotoCache,isMob?120000:60000);setInterval(loadCoins,isMob?120000:60000)}
 function initCtxEmojis(){const c=$('ctxEmojis');c.innerHTML=QR.map(e=>'<button type="button" onclick="ctxReact(\''+e+'\')">'+e+'</button>').join('')}
 function magnetize(btn){
   if(window.matchMedia&&window.matchMedia('(hover:none)').matches)return;
@@ -1626,7 +1653,7 @@ async function delBoth(id,e){if(e)e.stopPropagation();if(!confirm('Удалит�
 function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
 function closePV(){$('pv').classList.remove('open')}
 function subM(){if(ch)sb.removeChannel(ch);if(!curRoom)return;ch=sb.channel('rm-'+curRoom).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+curRoom},()=>loadM()).subscribe()}
-function startPt(){if(pt)clearInterval(pt);pt=setInterval(loadM,3000)}
+function startPt(){if(pt)clearInterval(pt);const ms=(window.matchMedia&&window.matchMedia('(max-width:768px)').matches)?8000:3000;pt=setInterval(loadM,ms)}
 async function sendM(){if(isBanned)return showBan();const i=$('mI'),t=(i.value||'').trim();if(!t||!curRoom)return;if(curRoomType==='entrance'&&myEnt()!==curEntG)return alert('Только в свой подъезд');i.value='';i.focus();const{error}=await sb.from('messages').insert({room_id:curRoom,nick:meEnc,text:t,user_id:curUser.id});if(error){alert(error.message);return}await loadM();if(curRoomType==='dm'||curRoomType==='group'){await loadDMs();renderDMs()}}
 async function sendPhoto(f,rid,tgt){if(!f||!rid)return;if(isBanned)return showBan();if(!f.type.startsWith('image/'))return alert('Только фото');if(f.size>5*1024*1024)return alert('>5MB');const ex=(f.name.split('.').pop()||'jpg').toLowerCase();const p='chat/'+meEnc+'_'+Date.now()+'.'+ex;const{error:ue}=await sb.storage.from('media').upload(p,f,{contentType:f.type});if(ue)return alert('Ошибка: '+ue.message);const u=sb.storage.from('media').getPublicUrl(p).data.publicUrl;await sb.from('messages').insert({room_id:rid,nick:meEnc,text:'📷 Фото',photo_url:u,user_id:curUser.id});if(rid===curRoom)await loadM();if(rid===rcId)await loadRM();if(rid.startsWith('dm_')||rid.startsWith('group_')){await loadDMs();renderDMs()}if(tgt==='msg')$('mPI').value='';else $('rPI').value=''}
 async function togVoice(tgt){if(isBanned)return showBan();if(mr&&mr.state==='recording'){mr.stop();return}if(!navigator.mediaDevices||!window.MediaRecorder)return alert('Не поддерживается');const rid=tgt==='room'?rcId:curRoom;if(!rid)return;try{const s=await navigator.mediaDevices.getUserMedia({audio:true});let m='audio/webm';if(!MediaRecorder.isTypeSupported(m)){if(MediaRecorder.isTypeSupported('audio/mp4'))m='audio/mp4';else m=''}mr=new MediaRecorder(s,m?{mimeType:m}:{});aCh=[];rT=tgt;rS=Date.now();const b=$(tgt==='room'?'rVB':'vBtn');mr.ondataavailable=e=>{if(e.data&&e.data.size)aCh.push(e.data)};mr.onstop=async()=>{s.getTracks().forEach(t=>t.stop());const um=m||'audio/webm',bl=new Blob(aCh,{type:um});b.classList.remove('rec');b.textContent='🎤';const d=(Date.now()-rS)/1000;mr=null;rT=null;if(d<.7||bl.size<800)return;await uploadV(bl,um,rid)};mr.start();b.classList.add('rec');b.textContent='⏺'}catch(e){alert('Нет микрофона: '+e.message)}}
