@@ -1017,7 +1017,7 @@ function openAdmin(){if(!hasAdmin())return showToast('Только админа�
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
 
-const APP_VERSION='1.4';
+const APP_VERSION='1.5';
 (function(){
   function fmt(d){
     const p=n=>String(n).padStart(2,'0');
