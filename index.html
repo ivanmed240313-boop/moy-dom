@@ -31,14 +31,14 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes vhsFlick{0%,100%{opacity:1}10%{opacity:.6}11%{opacity:1}45%{opacity:.85}46%{opacity:1}78%{opacity:.7}79%{opacity:1}}
 @keyframes vhsBar{0%,100%{transform:translateY(-120%)}50%{transform:translateY(120%)}}
 @keyframes neonFlick{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,22%,24%,55%{opacity:.35}40%{opacity:1}41%{opacity:.4}42%{opacity:1}}
-/* v2.1 NEW FRAMES */
+/* v2.2 NEW FRAMES */
 @keyframes sakuraPulse{0%,100%{box-shadow:0 0 22px #ff8eb6cc,0 0 45px #ffb3d1aa,inset 0 0 12px #ff8eb655;filter:brightness(1)}50%{box-shadow:0 0 32px #ff8eb6ff,0 0 65px #ffb3d1dd,inset 0 0 18px #ff8eb688;filter:brightness(1.1)}}
 @keyframes aquaPulse{0%,100%{box-shadow:0 0 22px #00d4ffcc,0 0 45px #0099ff88,inset 0 0 12px #00d4ff55;filter:brightness(1) hue-rotate(0)}50%{box-shadow:0 0 38px #00d4ffff,0 0 70px #0099ffdd,inset 0 0 20px #00d4ff88;filter:brightness(1.15) hue-rotate(8deg)}}
 @keyframes stormFlick{0%,88%,92%,96%,100%{box-shadow:0 0 22px #ffd700cc,0 0 45px #1a3a6eaa,inset 0 0 12px #ffd70055}90%{box-shadow:0 0 55px #ffffff,0 0 110px #ffd700,0 0 180px #fff,inset 0 0 35px #ffffff}94%{box-shadow:0 0 40px #ffd700,0 0 80px #1a3a6e,inset 0 0 20px #ffd70099}}
-@keyframes galaxySpin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 @keyframes galaxyGlow{0%,100%{box-shadow:0 0 0 3px #6b00aa,0 0 35px #a06bffcc,0 0 70px #ff69b488,inset 0 0 18px #6b00aa88}50%{box-shadow:0 0 0 3px #a06bff,0 0 60px #d0a0ffdd,0 0 120px #ff69b4aa,inset 0 0 28px #6b00aacc}}
-@keyframes dragonGlow{0%,100%{box-shadow:0 0 0 3px #8b0000,0 0 30px #ff4400cc,0 0 60px #ffaa0088,inset 0 0 20px #ff440066}50%{box-shadow:0 0 0 3px #ff4400,0 0 55px #ff6600ff,0 0 100px #ffaa00cc,inset 0 0 30px #ff440088}}
-@keyframes dragonBreath{0%,90%,100%{filter:brightness(1) saturate(1)}92%{filter:brightness(1.6) saturate(1.5) hue-rotate(-10deg)}95%{filter:brightness(1.3) saturate(1.3)}}
+/* DRAGON: зелёные чешуйки */
+@keyframes dragonGlow{0%,100%{box-shadow:0 0 0 3px #15803d,0 0 30px #22c55ecc,0 0 60px #4ade8088,inset 0 0 20px #22c55e66}50%{box-shadow:0 0 0 3px #22c55e,0 0 55px #4ade80ff,0 0 100px #86efaccc,inset 0 0 30px #22c55e88}}
+@keyframes dragonBreath{0%,90%,100%{filter:brightness(1) saturate(1)}92%{filter:brightness(1.5) saturate(1.5) hue-rotate(-15deg)}95%{filter:brightness(1.25) saturate(1.25)}}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(245,197,66,.15);border-radius:3px}
 #seasons{position:fixed;inset:0;z-index:-1;pointer-events:none;display:block;background:transparent}
 #auth{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;z-index:1}
@@ -154,7 +154,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .flat.frame-sakura{border-color:#ff8eb6!important;animation:sakuraPulse 3s ease-in-out infinite}
 .flat.frame-aqua{border-color:#00d4ff!important;animation:aquaPulse 3.5s ease-in-out infinite}
 .flat.frame-storm{border-color:#4a6da8!important;animation:stormFlick 3s ease-in-out infinite}
-.flat.frame-galaxy{border-color:transparent!important;background:linear-gradient(135deg,#2a0055,#6b00aa,#2a0055)!important;animation:galaxyGlow 4s ease-in-out infinite}
+.flat.frame-galaxy{border-color:transparent!important;animation:galaxyGlow 4s ease-in-out infinite}
 .flat.frame-dragon{border-color:transparent!important;animation:dragonGlow 2.5s ease-in-out infinite,dragonBreath 4s ease-in-out infinite}
 .flat.frame-angelic:hover,.flat.frame-devil:hover,.flat.frame-vhs:hover,.flat.frame-dragon:hover{z-index:20!important}
 .halo{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:55%;height:9px;border:3px solid #fff7c0;border-radius:50%;background:radial-gradient(ellipse at 50% 50%, rgba(255,247,192,0.75), rgba(255,224,102,0.35) 60%, transparent 80%);pointer-events:none;z-index:999;animation:haloPulse 2s ease-in-out infinite}
@@ -477,9 +477,16 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 @keyframes galaxyNeb{0%,100%{filter:hue-rotate(0) saturate(1)}50%{filter:hue-rotate(30deg) saturate(1.2)}}
 #pf .emb.fr-bg-galaxy .pf-cover::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 15% 25%,#fff,transparent),radial-gradient(1.5px 1.5px at 45% 55%,#ffe9b0,transparent),radial-gradient(1px 1px at 80% 30%,#fff,transparent),radial-gradient(1.5px 1.5px at 25% 75%,#f5c542,transparent),radial-gradient(1px 1px at 65% 15%,#a06bff,transparent),radial-gradient(1px 1px at 90% 70%,#fff,transparent),radial-gradient(2px 2px at 55% 40%,#ff69b4,transparent),radial-gradient(1.5px 1.5px at 10% 60%,#fff,transparent);background-size:180px 140px,220px 160px,200px 120px,240px 180px,210px 130px,230px 150px,280px 200px,200px 150px;background-repeat:repeat;opacity:.95;animation:galaxyStars 70s linear infinite}
 @keyframes galaxyStars{0%{background-position:0 0,40px 30px,70px 20px,20px 60px,60px 40px,90px 80px,50px 10px,120px 90px}100%{background-position:400px 160px,440px 190px,470px 180px,420px 220px,460px 200px,490px 240px,450px 170px,520px 250px}}
-#pf .emb.fr-bg-dragon{background:linear-gradient(180deg,#2a0500 0%,#150300 60%,#0a0200 100%);border-color:rgba(255,68,0,.6);box-shadow:0 0 50px rgba(255,68,0,.3),0 0 100px rgba(255,170,0,.15),0 20px 60px rgba(0,0,0,.75)}
-#pf .emb.fr-bg-dragon .pf-cover{background:radial-gradient(ellipse 40% 55% at 20% 100%,rgba(255,120,20,.9),transparent 70%),radial-gradient(ellipse 45% 60% at 50% 95%,rgba(255,60,0,.85),transparent 70%),radial-gradient(ellipse 40% 55% at 80% 100%,rgba(255,140,20,.9),transparent 70%),linear-gradient(180deg,#4a1000 0%,#1a0400 60%,#0a0200 100%);opacity:.95;animation:dragonCoverBreath 5s ease-in-out infinite}
-@keyframes dragonCoverBreath{0%,90%,100%{filter:brightness(1) saturate(1)}92%{filter:brightness(2) saturate(1.6) hue-rotate(-10deg)}95%{filter:brightness(1.5) saturate(1.4)}}
+/* DRAGON: тёмный фон + зелёные чешуйки */
+#pf .emb.fr-bg-dragon{background:linear-gradient(180deg,#04180d 0%,#020c07 60%,#010603 100%);border-color:rgba(34,197,94,.6);box-shadow:0 0 50px rgba(34,197,94,.35),0 0 100px rgba(74,222,128,.15),0 20px 60px rgba(0,0,0,.8)}
+#pf .emb.fr-bg-dragon .pf-cover{
+  background-color:#052e16;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><defs><radialGradient id='s' cx='50%' cy='20%' r='85%'><stop offset='0' stop-color='%23a7f3d0'/><stop offset='0.3' stop-color='%2322c55e'/><stop offset='0.7' stop-color='%2315803d'/><stop offset='1' stop-color='%23052e16'/></radialGradient></defs><rect width='40' height='40' fill='%23052e16'/><g fill='url(%23s)' stroke='%23052e16' stroke-width='0.7'><path d='M0 20 Q20 0 40 20 L20 40 Z'/><path d='M-40 20 Q-20 0 0 20 L-20 40 Z'/><path d='M40 20 Q60 0 80 20 L60 40 Z'/><path d='M-20 -20 Q0 -40 20 -20 L0 0 Z'/><path d='M20 -20 Q40 -40 60 -20 L40 0 Z'/><path d='M-20 40 Q0 20 20 40 L0 60 Z'/><path d='M20 40 Q40 20 60 40 L40 60 Z'/></g></svg>");
+  background-size:36px 36px;
+  opacity:1;
+  animation:dragonBreath 5s ease-in-out infinite;
+}
+#pf .emb.fr-bg-dragon .pf-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(134,239,172,.2),transparent 60%);pointer-events:none;mix-blend-mode:screen}
 #pf .emb .pf-fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;display:none;z-index:2}
 #pf .emb[class*="fr-bg-"] .pf-fx{display:block}
 #pf .emb .pf-fx i{position:absolute;display:block;pointer-events:none}
@@ -554,8 +561,9 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 @keyframes pfGalaxySwirl{0%{transform:translate(-50%,-50%) rotate(0) translateX(0);opacity:0}20%{opacity:1}80%{opacity:1}100%{transform:translate(-50%,-50%) rotate(720deg) translateX(180px);opacity:0}}
 #pf .emb.fr-bg-galaxy .pf-fx i.shooting2{width:100px;height:2px;background:linear-gradient(90deg,transparent,rgba(255,200,255,.95) 60%,#fff);border-radius:2px;filter:drop-shadow(0 0 6px #fff) drop-shadow(0 0 14px #ff69b4);top:-10%;left:-15%;transform-origin:0 50%;animation:pfShoot2 linear infinite}
 @keyframes pfShoot2{0%{transform:translate(0,0) rotate(30deg) scaleX(.2);opacity:0}12%{opacity:1}55%{opacity:1}100%{transform:translate(140vw,80vh) rotate(30deg) scaleX(1.4);opacity:0}}
-#pf .emb.fr-bg-dragon .pf-fx i.dember{width:5px;height:5px;border-radius:50%;background:radial-gradient(circle,#fff8a0,#ff6600 50%,#8b0000);box-shadow:0 0 10px #ff6600,0 0 20px #8b0000aa;bottom:-10px;animation:pfDragonEmber linear infinite}
-#pf .emb.fr-bg-dragon .pf-fx i.scale{width:8px;height:8px;background:linear-gradient(135deg,#ffaa00,#ff4400,#8b0000);border-radius:50% 0 50% 0;box-shadow:0 0 8px #ff4400aa;top:-10%;animation:pfScaleFall linear infinite;transform:rotate(45deg)}
+/* DRAGON: зелёные угольки + чешуйки */
+#pf .emb.fr-bg-dragon .pf-fx i.dember{width:5px;height:5px;border-radius:50%;background:radial-gradient(circle,#d1fae5,#22c55e 50%,#15803d);box-shadow:0 0 10px #22c55e,0 0 20px #15803daa;bottom:-10px;animation:pfDragonEmber linear infinite}
+#pf .emb.fr-bg-dragon .pf-fx i.scale{width:10px;height:10px;background:linear-gradient(135deg,#86efac,#22c55e 40%,#15803d);border-radius:50% 0 50% 0;box-shadow:0 0 8px #22c55eaa;top:-10%;animation:pfScaleFall linear infinite;transform:rotate(45deg)}
 @keyframes pfDragonEmber{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,25px),-160px) scale(1.2);opacity:0}}
 @keyframes pfScaleFall{0%{transform:translate(0,0) rotate(0);opacity:0}15%{opacity:.9}100%{transform:translate(var(--dx,20px),120vh) rotate(540deg);opacity:0}}
 @media(max-width:600px){#pf .emb .pf-fx{display:none !important}}
@@ -706,7 +714,15 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fr-preview.frame-aqua{border-color:#00d4ff;box-shadow:0 0 0 3px #00d4ff,0 0 28px #00d4ffcc,0 0 55px #0099ffaa;animation:aquaPulse 3.5s ease-in-out infinite}
 .fr-preview.frame-storm{border-color:#4a6da8;box-shadow:0 0 0 3px #4a6da8,0 0 28px #ffd70088,0 0 55px #1a3a6eaa;animation:stormFlick 3s ease-in-out infinite}
 .fr-preview.frame-galaxy{border-color:transparent;background:linear-gradient(135deg,#2a0055,#6b00aa,#2a0055);box-shadow:0 0 0 3px #a06bff,0 0 30px #a06bffdd,0 0 60px #ff69b4aa;animation:galaxyGlow 4s ease-in-out infinite}
-.fr-preview.frame-dragon{border-color:transparent;box-shadow:0 0 0 3px #ff4400,0 0 32px #ff4400dd,0 0 65px #ffaa00aa;animation:dragonGlow 2.5s ease-in-out infinite}
+.fr-preview.frame-dragon{
+  border-color:#22c55e;
+  box-shadow:0 0 0 3px #15803d,0 0 30px #22c55edd,0 0 60px #4ade80aa;
+  background-color:#052e16;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><defs><radialGradient id='s' cx='50%' cy='20%' r='85%'><stop offset='0' stop-color='%23a7f3d0'/><stop offset='0.3' stop-color='%2322c55e'/><stop offset='0.7' stop-color='%2315803d'/><stop offset='1' stop-color='%23052e16'/></radialGradient></defs><rect width='24' height='24' fill='%23052e16'/><g fill='url(%23s)' stroke='%23052e16' stroke-width='0.5'><path d='M0 12 Q12 0 24 12 L12 24 Z'/><path d='M-24 12 Q-12 0 0 12 L-12 24 Z'/><path d='M24 12 Q36 0 48 12 L36 24 Z'/><path d='M-12 -12 Q0 -24 12 -12 L0 0 Z'/><path d='M12 -12 Q24 -24 36 -12 L24 0 Z'/><path d='M-12 24 Q0 12 12 24 L0 36 Z'/><path d='M12 24 Q24 12 36 24 L24 36 Z'/></g></svg>");
+  background-size:22px 22px;
+  animation:dragonGlow 2.5s ease-in-out infinite;
+  overflow:visible!important;
+}
 .fr-name{font-size:12px;font-weight:700;color:#c8c8d0}
 .fr-btn{width:100%;padding:7px 8px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:11px;font-family:inherit}
 .fr-btn.fr-buy{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
@@ -890,7 +906,7 @@ body::before{display:none !important}
 .flat.frame-aqua{box-shadow:0 0 0 3px #00d4ff,0 0 24px #00d4ffcc !important}
 .flat.frame-storm{box-shadow:0 0 0 3px #4a6da8,0 0 24px #ffd70088 !important}
 .flat.frame-galaxy{box-shadow:0 0 0 3px #a06bff,0 0 26px #a06bffcc !important}
-.flat.frame-dragon{box-shadow:0 0 0 3px #ff4400,0 0 28px #ff4400dd !important}
+.flat.frame-dragon{box-shadow:0 0 0 3px #15803d,0 0 28px #22c55edd !important}
 .horn,.halo{animation:none !important}
 .pf-av.frame-angelic,.pf-av.frame-devil,.pf-av.frame-legendary,.pf-av.frame-rainbow,.pf-av.frame-cosmic,.pf-av.frame-diamond,.pf-av.frame-fire,.pf-av.frame-ice,.pf-av.frame-vhs,.pf-av.frame-sakura,.pf-av.frame-aqua,.pf-av.frame-storm,.pf-av.frame-galaxy,.pf-av.frame-dragon{animation:none !important}
 }
@@ -985,6 +1001,7 @@ const FRAMES=[
   {id:'dragon',     name:'🐉 Драконья', price:75000},
   {id:'vhs',        name:'📼 VHS (глитч)', price:100000}
 ];
+/* бонусы только у дорогих: сакура/аква/гроза — без бонуса */
 const FRAME_BONUS={angelic:5,devil:5,legendary:2,diamond:1.5,vhs:10,dragon:5,galaxy:4};
 let adminMode=false,pendingUser=null,curEmail='',emId=null,emRoom=null,notifPerm='default',epOpen=false;
 let curUser=null,me=null,meEnc=null,iAmAdmin=false,isBanned=false,banR='';
@@ -1034,7 +1051,6 @@ function fT(s){if(!s||!isFinite(s)||s<0)return '0:00';const m=Math.floor(s/60),s
 function sT(t){const d=new Date(t),n=new Date();if(d.toDateString()===n.toDateString())return d.toLocaleTimeString().slice(0,5);const y=new Date(n);y.setDate(n.getDate()-1);if(d.toDateString()===y.toDateString())return 'вчера';return d.toLocaleDateString().slice(0,5)}
 function lastSeenText(iso){if(!iso)return 'был(а) недавно';const d=new Date(iso),n=new Date(),diff=(n-d)/1000;if(diff<60)return 'был(а) только что';if(diff<3600)return 'был(а) '+Math.floor(diff/60)+' мин назад';if(diff<86400)return 'был(а) '+Math.floor(diff/3600)+' ч назад';if(diff<172800)return 'был(а) вчера';return 'был(а) '+d.toLocaleDateString()}
 function globalFlatNum(localNum){return (Number(curHouse)-1)*30+Number(localNum)}
-/* v1.9: neon color system */
 function neonKey(){return 'neon_'+meEnc}
 function neonSavedKey(){return 'neonSaved_'+meEnc}
 function getNeonRGB(){
@@ -1116,11 +1132,8 @@ function pfFxSpawn(frameId){
   else if(frameId==='sakura'){for(let k=0;k<22;k++)add('petal','left:'+R(2,98)+'%;--dx:'+R(-40,40)+'px;animation-duration:'+R(6,10)+'s;animation-delay:-'+R(0,10)+'s;width:'+R(8,13)+'px;height:'+R(8,13)+'px')}
   else if(frameId==='aqua'){for(let k=0;k<24;k++){const big=Math.random()<0.25;add('bubble'+(big?' big':''),'left:'+R(2,98)+'%;--dx:'+R(-20,20)+'px;animation-duration:'+R(3.5,7)+'s;animation-delay:-'+R(0,7)+'s;width:'+R(5,big?18:11)+'px;height:'+R(5,big?18:11)+'px')}}
   else if(frameId==='storm'){for(let k=0;k<30;k++){add('rain','left:'+R(0,100)+'%;--dx:'+R(-40,-15)+'px;animation-duration:'+R(0.6,1.2)+'s;animation-delay:-'+R(0,1.5)+'s;height:'+R(12,22)+'px')}for(let k=0;k<3;k++)add('flash','left:'+R(10,90)+'%;top:'+R(-5,15)+'%;animation-duration:'+R(2.5,5)+'s;animation-delay:-'+R(0,5)+'s;transform:rotate('+R(-25,25)+'deg)')}
-  else if(frameId==='galaxy'){for(let k=0;k<20;k++)add('swirl','left:50%;top:50%;animation-duration:'+R(5,10)+'s;animation-delay:-'+R(0,10)+'s')}
-  else if(frameId==='dragon'){for(let k=0;k<22;k++)add('dember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.5)+'s;animation-delay:-'+R(0,4)+'s')}
-  else if(frameId==='dragon'||frameId==='galaxy'){} /* уже обработано */
-  if(frameId==='dragon'){for(let k=0;k<10;k++)add('scale','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(7,12)+'s;animation-delay:-'+R(0,12)+'s;width:'+R(6,10)+'px;height:'+R(6,10)+'px')}
-  if(frameId==='galaxy'){for(let k=0;k<3;k++)add('shooting2','top:'+R(-15,5)+'%;left:'+R(-15,20)+'%;animation-duration:'+R(4,7)+'s;animation-delay:-'+R(0,8)+'s')}
+  else if(frameId==='galaxy'){for(let k=0;k<20;k++)add('swirl','left:50%;top:50%;animation-duration:'+R(5,10)+'s;animation-delay:-'+R(0,10)+'s');for(let k=0;k<3;k++)add('shooting2','top:'+R(-15,5)+'%;left:'+R(-15,20)+'%;animation-duration:'+R(4,7)+'s;animation-delay:-'+R(0,8)+'s')}
+  else if(frameId==='dragon'){for(let k=0;k<22;k++)add('dember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.5)+'s;animation-delay:-'+R(0,4)+'s');for(let k=0;k<10;k++)add('scale','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(7,12)+'s;animation-delay:-'+R(0,12)+'s;width:'+R(6,10)+'px;height:'+R(6,10)+'px')}
 }
 let _toastEl=null,_toastTimer=null;
 function showToast(msg,type){
@@ -1238,7 +1251,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-const APP_VERSION='2.1';
+const APP_VERSION='2.2';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -2223,7 +2236,7 @@ function renderFramesList(){
     else if(f.id==='none'){btn='<button class="fr-btn fr-set" onclick="setFrame(\'none\')">Снять</button>'}
     else{btn='<button class="fr-btn fr-buy'+(canBuy?'':' disabled')+'" '+(canBuy?'onclick="buyFrame(\''+f.id+'\','+f.price+')"':'')+'>Купить '+f.price+' 💰</button>'}
     const bonusHtml=bonus?'<div class="fr-bonus">+'+bonus+'% к доходу</div>':'';
-    var icons={devil:'😈',angelic:'😇',rainbow:'🌈',legendary:'⭐',cosmic:'🌌',diamond:'💎',fire:'🔥',ice:'❄️',neon:'🎨',gold:'👑',silver:'🥈',bronze:'🥉',emerald:'💚',sapphire:'💙',ruby:'❤️',vhs:'📼'};
+    var icons={devil:'😈',angelic:'😇',rainbow:'🌈',legendary:'⭐',cosmic:'🌌',diamond:'💎',fire:'🔥',ice:'❄️',neon:'🎨',gold:'👑',silver:'🥈',bronze:'🥉',emerald:'💚',sapphire:'💙',ruby:'❤️',vhs:'📼',sakura:'🌸',aqua:'🌊',storm:'⚡',galaxy:'🌌',dragon:'🐉'};
     var ic=icons[f.id]||'';
     return '<div class="fr-item'+(isActive?' active':'')+'"><div class="fr-preview'+(f.id!=='none'?' frame-'+f.id:'')+'">'+(ic?'<span style="font-size:24px;pointer-events:none">'+ic+'</span>':'')+'</div><div class="fr-name">'+f.name+'</div>'+bonusHtml+btn+'</div>';
   }).join('');
@@ -2604,9 +2617,8 @@ async function openProfile(nick){
   const fr=getFrame(target);
   if(fr&&fr!=='none')av.classList.add('frame-'+fr);
   decorateFrame(av,fr);
-   const pfEmb=$('pf').querySelector('.emb');
+    const pfEmb=$('pf').querySelector('.emb');
   if(pfEmb){
-    /* автогенерация списка — покрывает все рамки, включая новые */
     const allBgCls=FRAMES.map(f=>'fr-bg-'+f.id);
     allBgCls.push('fr-bg-rainbow-anim');
     pfEmb.classList.remove(...allBgCls);
