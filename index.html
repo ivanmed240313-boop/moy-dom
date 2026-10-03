@@ -24,6 +24,7 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 #pf .emb.fr-bg-rainbow-anim .pf-cover{animation:frCoverRainbow 12s linear infinite;opacity:.7}
 @keyframes haloPulse{0%,100%{box-shadow:0 0 10px #fff7c0,0 0 22px #ffe066,inset 0 0 6px #ffffffcc;transform:translateX(-50%) scale(1)}50%{box-shadow:0 0 16px #fff7c0,0 0 34px #ffe066,inset 0 0 10px #ffffff;transform:translateX(-50%) scale(1.08)}}
 @keyframes hornTwitch{0%,100%{transform:rotate(var(--hr,0deg)) scale(1)}50%{transform:rotate(calc(var(--hr,0deg) + 4deg)) scale(1.06)}}
+@keyframes rainbowShift{0%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}16%{border-color:#ff5500;box-shadow:0 0 20px #ff5500cc,0 0 40px #ff5500aa,inset 0 0 10px #ff550066}33%{border-color:#ffcc00;box-shadow:0 0 20px #ffcc00cc,0 0 40px #ffcc00aa,inset 0 0 10px #ffcc0066}50%{border-color:#22dd66;box-shadow:0 0 20px #22dd66cc,0 0 40px #22dd66aa,inset 0 0 10px #22dd6666}66%{border-color:#00ccff;box-shadow:0 0 20px #00ccffcc,0 0 40px #00ccffaa,inset 0 0 10px #00ccff66}83%{border-color:#a020ff;box-shadow:0 0 20px #a020ffcc,0 0 40px #a020ffaa,inset 0 0 10px #a020ff66}100%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(245,197,66,.15);border-radius:3px}
 #seasons{position:fixed;inset:0;z-index:-1;pointer-events:none;display:block;background:transparent}
 #auth{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;z-index:1}
@@ -134,7 +135,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .flat.frame-cosmic{border-color:#6b4aff!important;animation:cosmicPulse 4s ease-in-out infinite}
 .flat.frame-diamond{border-color:#ffffff!important;animation:diamondShine 3s ease-in-out infinite}
 .flat.frame-legendary{border-color:transparent!important;animation:legendaryGlow 2s ease-in-out infinite}
-.flat.frame-rainbow{border-color:transparent!important;animation:rainbowShift 3s linear infinite}
+.flat.frame-rainbow{border-color:transparent!important;animation:rainbowShift 3s linear infinite;overflow:visible!important}
 .flat.frame-angelic{border-color:#ffffff!important;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important;z-index:15!important}
 .flat.frame-devil{border-color:#8b0000!important;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important;z-index:15!important}
 .flat.frame-angelic:hover,.flat.frame-devil:hover{z-index:20!important}
@@ -456,15 +457,9 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 @keyframes pfShoot{0%{transform:translate(0,0) rotate(35deg) scaleX(.2);opacity:0}12%{opacity:1}55%{opacity:1}100%{transform:translate(140vw,90vh) rotate(35deg) scaleX(1.4);opacity:0}}
 #pf .emb.fr-bg-rainbow .pf-cover{background:linear-gradient(120deg,#ff0055,#ff5500,#ffcc00,#22dd66,#00ccff,#5566ff,#a020ff,#ff0055);background-size:400% 400%;opacity:.7;animation:pfRainbowShift 8s linear infinite,pfRainbowHue 12s linear infinite}
 #pf .emb.fr-bg-rainbow .pf-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 30% 30%,rgba(255,255,255,.35),transparent 70%),radial-gradient(ellipse 50% 40% at 75% 70%,rgba(255,255,255,.25),transparent 70%);mix-blend-mode:soft-light;animation:pfRainbowGlow 6s ease-in-out infinite}
-@keyframes rainbowShift{
-  0%  {border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}
-  16% {border-color:#ff5500;box-shadow:0 0 20px #ff5500cc,0 0 40px #ff5500aa,inset 0 0 10px #ff550066}
-  33% {border-color:#ffcc00;box-shadow:0 0 20px #ffcc00cc,0 0 40px #ffcc00aa,inset 0 0 10px #ffcc0066}
-  50% {border-color:#22dd66;box-shadow:0 0 20px #22dd66cc,0 0 40px #22dd66aa,inset 0 0 10px #22dd6666}
-  66% {border-color:#00ccff;box-shadow:0 0 20px #00ccffcc,0 0 40px #00ccffaa,inset 0 0 10px #00ccff66}
-  83% {border-color:#a020ff;box-shadow:0 0 20px #a020ffcc,0 0 40px #a020ffaa,inset 0 0 10px #a020ff66}
-  100%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}
-}
+@keyframes pfRainbowShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes pfRainbowHue{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
+@keyframes pfRainbowGlow{0%,100%{opacity:.6}50%{opacity:1}}
 #pf .emb.fr-bg-neon-blue .pf-cover,#pf .emb.fr-bg-neon-pink .pf-cover,#pf .emb.fr-bg-neon-green .pf-cover{position:relative}
 #pf .emb.fr-bg-neon-blue .pf-cover::after,#pf .emb.fr-bg-neon-pink .pf-cover::after,#pf .emb.fr-bg-neon-green .pf-cover::after{content:'';position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;animation:pfNeonFlick 4s steps(1,end) infinite}
 #pf .emb.fr-bg-neon-blue .pf-cover::after{background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 45%,rgba(0,229,255,.35) 100%)}
@@ -494,6 +489,45 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 @keyframes pfDevilBase{0%,100%{filter:brightness(1) saturate(1)}50%{filter:brightness(1.2) saturate(1.3)}}
 #pf .emb.fr-bg-devil .pf-fx i.ember{width:4px;height:4px;border-radius:50%;background:radial-gradient(circle,#ffcc80,#ff4400 45%,#8b0000);box-shadow:0 0 8px #ff2200,0 0 18px #8b000088;bottom:-10px;animation:pfEmber linear infinite}
 @media(max-width:600px){#pf .emb .pf-fx{display:none !important}}
+/* v1.7 JOB SYSTEM */
+.job-pick{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
+.job-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 12px;cursor:pointer;text-align:center;transition:.2s;font-family:inherit}
+.job-card:hover{border-color:rgba(245,197,66,.5);transform:translateY(-2px)}
+.job-card .ji{font-size:44px;line-height:1;margin-bottom:10px}
+.job-card .jn{font-size:15px;font-weight:800;color:#fff;margin-bottom:6px}
+.job-card .jr{font-size:12px;color:#f5c542;font-weight:700}
+.job-status{padding:16px;border-radius:14px;background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.2);margin-bottom:14px}
+.job-status .row{display:flex;justify-content:space-between;padding:5px 0;font-size:13.5px;color:#c8c8d0}
+.job-status .row b{color:#f5c542}
+.job-status.warn{background:rgba(211,47,47,.1);border-color:rgba(211,47,47,.35)}
+.job-tasks{display:grid;gap:10px;margin-top:14px}
+.job-task{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.15s}
+.job-task:hover{transform:translateY(-2px);border-color:rgba(245,197,66,.4)}
+.job-task.done{opacity:.55;pointer-events:none;border-color:rgba(76,175,80,.4)}
+.job-task .jt-ic{font-size:28px;width:38px;text-align:center}
+.job-task .jt-name{flex:1;font-size:14px;font-weight:700}
+.job-task .jt-go{font-size:11px;padding:5px 10px;border-radius:10px;background:rgba(76,175,80,.15);color:#8bc34a;font-weight:700}
+.job-task.done .jt-go{background:rgba(76,175,80,.25)}
+.job-field{position:relative;height:240px;border-radius:16px;border:1px solid rgba(255,255,255,.08);overflow:hidden;background:radial-gradient(circle at 50% 40%,#1a1a24,#0a0a10);cursor:crosshair;touch-action:none}
+.job-timer{font-size:15px;font-weight:700;color:#f5c542;text-align:center;margin-bottom:8px}
+.job-timer b{color:#fff}
+.job-fired{padding:24px 18px;border-radius:16px;background:linear-gradient(135deg,rgba(139,0,0,.4),rgba(60,0,0,.4));border:1px solid rgba(255,60,60,.4);text-align:center}
+.job-fired h4{margin:0 0 8px;color:#ff8888;font-size:17px;font-weight:800}
+.job-fired p{margin:0;color:#aa8888;font-size:13.5px;line-height:1.5}
+.job-check-sheet{position:absolute;width:58px;height:74px;background:linear-gradient(180deg,#fff,#eee);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;user-select:none;transition:transform .15s,opacity .3s;box-shadow:0 3px 10px rgba(0,0,0,.5);border:2px solid rgba(0,0,0,.15);color:#333}
+.job-check-sheet:hover{transform:scale(1.08)}
+.job-check-sheet.err{border-color:#ff4444;box-shadow:0 0 14px #ff4444aa,0 3px 10px rgba(0,0,0,.5)}
+.job-check-sheet.err::after{content:'❌';position:absolute;top:-9px;right:-9px;font-size:13px;background:#ff4444;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:#fff;border:2px solid #1a1a22}
+.job-check-sheet.checked{opacity:0;transform:scale(1.5) rotate(20deg);pointer-events:none}
+.job-fine-man{position:absolute;width:54px;height:68px;border-radius:50% 50% 40% 40%/60% 60% 40% 40%;background:linear-gradient(180deg,#c8c8d0,#8888a0);display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;user-select:none;transition:transform .15s,opacity .3s;box-shadow:0 3px 10px rgba(0,0,0,.5)}
+.job-fine-man.criminal{background:linear-gradient(180deg,#ff8888,#cc2222);box-shadow:0 0 18px #ff4444aa}
+.job-fine-man.fined{opacity:0;transform:scale(1.5) rotate(-20deg);pointer-events:none}
+.job-fine-man:hover{transform:scale(1.08)}
+.job-weld-bar{position:relative;height:38px;border-radius:12px;background:linear-gradient(90deg,#2a2a3a,#1a1a24);border:1px solid rgba(255,255,255,.1);overflow:hidden;margin:26px 0 12px}
+.job-weld-zone{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,rgba(76,175,80,.2),rgba(76,175,80,.55),rgba(76,175,80,.2));border-left:2px solid #4caf50;border-right:2px solid #4caf50}
+.job-weld-marker{position:absolute;top:-6px;bottom:-6px;width:6px;background:linear-gradient(180deg,#ffd700,#ff9d2e);box-shadow:0 0 12px #ffd700;border-radius:3px;transform:translateX(-50%)}
+.job-weld-result{font-size:26px;font-weight:900;text-align:center;margin:14px 0;color:#f5c542}
+@media(max-width:500px){.job-pick{grid-template-columns:1fr}.job-card{display:flex;align-items:center;gap:14px;text-align:left;padding:12px 14px}.job-card .ji{font-size:32px;margin:0}.job-card .jn{margin:0}.job-card .jr{margin-left:auto}.job-field{height:200px}}
 .duty-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);position:relative}
 .duty-title{font-size:18px;font-weight:800;background:linear-gradient(135deg,#f5c542,#ff9d2e);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .duty-body{padding:22px}
@@ -570,7 +604,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fr-preview.frame-cosmic{border-color:#6b4aff;box-shadow:0 0 22px #6b4affdd,0 0 42px #a06bff88,inset 0 0 12px #6b4aff55}
 .fr-preview.frame-diamond{border-color:#ffffff;box-shadow:0 0 22px #ffffffdd,0 0 42px #b0e0ffaa,inset 0 0 12px #ffffff55}
 .fr-preview.frame-legendary{border-color:#ff9d2e;box-shadow:0 0 0 3px #ff9d2e,0 0 30px #ff9d2ecc,0 0 55px #f5c54288;animation:legendaryGlow 2s ease-in-out infinite}
-.fr-preview.frame-rainbow{border-color:transparent;box-shadow:0 0 0 3px #ff0055,0 0 22px #ff0055cc;animation:rainbowShift 3s linear infinite}
+.fr-preview.frame-rainbow{border-color:transparent;box-shadow:0 0 0 3px #ff0055,0 0 22px #ff0055cc;animation:rainbowShift 3s linear infinite;overflow:visible!important}
 .fr-preview.frame-angelic{border-color:#ffffff;box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffffdd,0 0 55px #c8e8ffaa;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important}
 .fr-preview.frame-devil{border-color:#8b0000;box-shadow:0 0 0 3px #8b0000,0 0 28px #ff0000cc,0 0 50px #ff440088;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important}
 .fr-name{font-size:12px;font-weight:700;color:#c8c8d0}
@@ -786,6 +820,7 @@ body::before{display:none !important}
 <div id="annM" class="em"><div class="emb" style="width:460px"><h3>📢 Объявление для дома</h3><textarea id="annInp" placeholder="Напиши объявление..." maxlength="500"></textarea><div class="ema"><button class="cn" onclick="closeAnn()">Отмена</button><button class="sv" onclick="postAnn()" id="annPostBtn">📢 Опубликовать</button></div><div class="fms" id="annErr" style="color:#ff6b6b"></div></div></div>
 <div id="dutyM" class="em" style="z-index:670"><div class="emb" style="width:520px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🧹 Дежурство</div><button class="pf-close" onclick="closeDuty()">✕</button></div><div class="duty-body"><div class="duty-info" id="dutyInfo"></div><div class="duty-coins">💰 Монет: <b id="dutyCoins">0</b></div><button class="duty-start" id="dutyStartBtn" onclick="startMiniGame()">▶ Начать уборку</button><div class="duty-game" id="dutyGame" style="display:none"><div class="duty-timer">⏱ <span id="dutyTime">15.0</span>с</div><div class="duty-field" id="dutyField"></div><div class="duty-score">🧽 Протёрто: <b id="dutyScore">0</b> / 8</div></div><div class="duty-msg" id="dutyMsg"></div></div></div></div>
 <div id="framesM" class="em" style="z-index:670"><div class="emb" style="width:640px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">◻ Магазин рамок</div><button class="pf-close" onclick="closeFrames()">✕</button></div><div class="duty-body"><div class="duty-coins">💰 Твои монеты: <b id="framesCoins">0</b></div><div class="frames-list" id="framesList"></div><div class="duty-msg" id="framesMsg"></div></div></div></div>
+<div id="jobM" class="em" style="z-index:670"><div class="emb" style="width:560px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">💼 Работа</div><button class="pf-close" onclick="closeJob()">✕</button></div><div class="duty-body" id="jobBody"></div></div></div>
 <div id="pf" class="em" style="z-index:660"><div class="emb"><div class="pf-head"><div class="pf-cover"><div class="pf-fx" id="pfFx"></div></div><div class="pf-av" id="pfAv"></div><button class="pf-close" onclick="closePf()">✕</button></div><div class="pf-body"><div class="pf-name"><span id="pfNick"></span><span class="pf-online" id="pfOnline" style="display:none">● в сети</span></div><div class="pf-status" id="pfStatus"></div><div class="pf-bio" id="pfBio"></div><div class="pf-row"><span class="pf-ic">🏠</span><span id="pfFlat">—</span></div><div class="pf-row"><span class="pf-ic">📅</span><span id="pfReg">—</span></div><div class="pf-row"><span class="pf-ic">💬</span><span id="pfMsgs">—</span></div><div class="pf-row" id="pfCoinsRow" style="display:none"><span class="pf-ic">💰</span><span id="pfCoinsInfo">—</span></div><div class="pf-row" id="pfSeenRow"><span class="pf-ic">🕐</span><span id="pfSeen">—</span></div></div><div class="pf-actions" id="pfActions"></div><div class="pf-edit" id="pfEdit"><label class="gm-lbl">Статус</label><div class="pf-status-edit"><input id="pfEmojiInp" maxlength="2" placeholder="😎" class="pf-emoji-inp"><input id="pfStatusInp" maxlength="40" placeholder="Чем занят?" class="gm-inp" style="margin-bottom:0"></div><label class="gm-lbl" style="margin-top:14px">О себе</label><textarea id="pfBioInp" maxlength="200" placeholder="Пара слов..." class="gm-inp" style="min-height:80px;resize:vertical;margin-bottom:0"></textarea><div class="gm-err" id="pfErr"></div><div class="pf-edit-actions"><button class="cn" onclick="cancelPfEdit()">Отмена</button><button class="cr-btn" onclick="savePf(event)">Сохранить</button></div></div></div></div>
 <div id="gm"><div class="gmb"><div class="gmh"><h3>👥 Новая группа</h3><button onclick="closeGm()">×</button></div><div class="gmbd"><div class="gm-ava-wrap"><label class="gm-ava" id="gmAva" for="gmAvaIn"><input type="file" id="gmAvaIn" accept="image/*"><span id="gmAvaEmoji">👥</span></label></div><label class="gm-lbl">Название</label><input id="gmName" class="gm-inp" maxlength="40" placeholder="Название..." autocomplete="off"><label class="gm-lbl">Участники</label><div class="inp-rel"><input id="gmMem" class="gm-inp" placeholder="nick1, nick2..." autocomplete="off"><div class="sug-box" id="gmSug"></div></div><div class="gm-mem-list" id="gmMemList"></div><div class="gm-err" id="gmErr"></div></div><div class="gm-ma"><button class="cn" onclick="closeGm()">Отмена</button><button class="cr-btn" id="gmCreate" onclick="createGroup()">Создать</button></div></div></div>
 <div id="gsm"><div class="gmb"><div class="gmh"><h3>⚙️ Настройки группы</h3><button onclick="closeGsm()">×</button></div><div class="gmbd"><div class="gm-ava-wrap"><label class="gm-ava" id="gsmAva" for="gsmAvaIn"><input type="file" id="gsmAvaIn" accept="image/*"><span id="gsmAvaEmoji">👥</span></label></div><label class="gm-lbl">Название</label><input id="gsmName" class="gm-inp" maxlength="40"><label class="gm-lbl">Участники</label><div class="inp-rel"><input id="gsmAddMem" class="gm-inp" placeholder="nick1, nick2..."><div class="sug-box" id="gsmSug"></div></div><div class="gm-mem-list" id="gsmMemList"></div><div class="gm-err" id="gsmErr"></div></div><div class="gm-ma"><button class="cn" onclick="closeGsm()">Закрыть</button><button class="cr-btn" onclick="saveGroupSettings()">Сохранить</button></div></div></div>
@@ -797,8 +832,8 @@ body::before{display:none !important}
 <div id="annBanner"><span>📢</span><span id="annText"></span><button id="annCloseBtn">✕</button></div>
 <div id="topRight"><button id="adminTog" onclick="toggleAdmin()">⚙️ Админка</button><div id="myCoinsBadge" onclick="openDuty()">💰 0</div>
 <div id="userMenu"><button class="umBtn" onclick="toggleUserMenu()"><span id="myAv"></span><span id="myNick"></span><span class="umArrow">▾</span></button>
-<div class="umDropdown" id="umDropdown"><button onclick="openPfMine();closeUserMenu()">👤 <span>Мой профиль</span></button><button onclick="openFrames();closeUserMenu()">◻ <span>Магазин рамок</span></button><button onclick="openDuty();closeUserMenu()">🎮 <span>Дежурство</span></button><button onclick="openGm();closeUserMenu()">👥 <span>Создать группу</span></button><button onclick="enableNotif();closeUserMenu()" id="notifB">🔔 <span>Уведомления</span></button><button id="soundBtn" onclick="toggleSound();closeUserMenu()">🔊 <span>Звук: вкл</span></button><button id="adminMItem" onclick="toggleAdmin();closeUserMenu()">⚙️ <span>Админка</span></button><div class="umDiv"></div><button onclick="cycleSeason()" id="seasonBtn">🍂 <span>Сезон: осень</span></button><div class="umDiv"></div><button class="umExit" onclick="logout()">🚪 <span>Выйти</span></button></div></div></div>
-<div class="layout"><aside class="sb" id="sb"><div class="sb-h"><span>💬 Мои чаты</span><button class="add-btn" onclick="openDuty()" title="Дежурство" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);font-size:16px">🎮</button><button class="add-btn" onclick="openFrames()" title="Рамки" style="background:linear-gradient(135deg,#a06bff,#6b4aff);font-size:20px">◻</button><button class="add-btn" onclick="openGm()">＋</button><button class="cs" id="cs">×</button></div><div id="dml"></div></aside>
+<div class="umDropdown" id="umDropdown"><button onclick="openPfMine();closeUserMenu()">👤 <span>Мой профиль</span></button><button onclick="openFrames();closeUserMenu()">◻ <span>Магазин рамок</span></button><button onclick="openDuty();closeUserMenu()">🎮 <span>Дежурство</span></button><button onclick="openJob();closeUserMenu()">💼 <span>Работа</span></button><button onclick="openGm();closeUserMenu()">👥 <span>Создать группу</span></button><button onclick="enableNotif();closeUserMenu()" id="notifB">🔔 <span>Уведомления</span></button><button id="soundBtn" onclick="toggleSound();closeUserMenu()">🔊 <span>Звук: вкл</span></button><button id="adminMItem" onclick="toggleAdmin();closeUserMenu()">⚙️ <span>Админка</span></button><div class="umDiv"></div><button onclick="cycleSeason()" id="seasonBtn">🍂 <span>Сезон: осень</span></button><div class="umDiv"></div><button class="umExit" onclick="logout()">🚪 <span>Выйти</span></button></div></div></div>
+<div class="layout"><aside class="sb" id="sb"><div class="sb-h"><span>💬 Мои чаты</span><button class="add-btn" onclick="openDuty()" title="Дежурство" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);font-size:16px">🎮</button><button class="add-btn" onclick="openJob()" title="Работа" style="background:linear-gradient(135deg,#4caf50,#2e7d32);font-size:16px">💼</button><button class="add-btn" onclick="openFrames()" title="Рамки" style="background:linear-gradient(135deg,#a06bff,#6b4aff);font-size:20px">◻</button><button class="add-btn" onclick="openGm()">＋</button><button class="cs" id="cs">×</button></div><div id="dml"></div></aside>
 <main class="mn"><button class="mbtn" id="mbtn">☰</button><div id="adminB" onclick="openAdmin()">🔴 ADMIN</div><div id="hb"></div><div id="house"></div></main></div>
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
@@ -895,7 +930,6 @@ function fT(s){if(!s||!isFinite(s)||s<0)return '0:00';const m=Math.floor(s/60),s
 function sT(t){const d=new Date(t),n=new Date();if(d.toDateString()===n.toDateString())return d.toLocaleTimeString().slice(0,5);const y=new Date(n);y.setDate(n.getDate()-1);if(d.toDateString()===y.toDateString())return 'вчера';return d.toLocaleDateString().slice(0,5)}
 function lastSeenText(iso){if(!iso)return 'был(а) недавно';const d=new Date(iso),n=new Date(),diff=(n-d)/1000;if(diff<60)return 'был(а) только что';if(diff<3600)return 'был(а) '+Math.floor(diff/60)+' мин назад';if(diff<86400)return 'был(а) '+Math.floor(diff/3600)+' ч назад';if(diff<172800)return 'был(а) вчера';return 'был(а) '+d.toLocaleDateString()}
 function globalFlatNum(localNum){return (Number(curHouse)-1)*30+Number(localNum)}
-
 function pfFxClear(){const f=$('pfFx');if(f)f.innerHTML=''}
 function pfFxSpawn(frameId){
   const fx=$('pfFx');
@@ -991,21 +1025,17 @@ function playNotifSound(){
     o2.connect(g2);g2.connect(ctx.destination);o2.start(now+0.1);o2.stop(now+0.4);
   }catch(e){}
 }
-
 async function touchSeen(){if(!curUser)return;try{await sb.from('profiles').update({last_seen:new Date().toISOString()}).eq('id',curUser.id)}catch(e){}}
 setInterval(touchSeen,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser)touchSeen()});
-
 async function enableNotif(){if(!('Notification'in window))return showToast('Нет');const p=await Notification.requestPermission();notifPerm=p;const b=$('notifB');if(p==='granted'){if(b)b.style.color='#4caf50';new Notification('Дом',{body:'Включено ✅'})}}
 function showNotif(t,b){try{playNotifSound()}catch(e){}if(notifPerm!=='granted')return;if(!document.hidden)return;try{new Notification(t,{body:b,tag:'dom'})}catch(e){}}
-
 function initEP(){const g=$('eg');if(g)g.innerHTML=EL.map(e=>'<button type="button" onclick="insE(\''+e+'\')">'+e+'</button>').join('')}
 function togEP(){const p=$('ep');epOpen=!epOpen;if(p)p.classList.toggle('open',epOpen)}
 function insE(e){const i=$('mI');if(i){i.value+=e;i.focus()}}
 function toggleUserMenu(){const d=$('umDropdown'),b=document.querySelector('.umBtn');if(d)d.classList.toggle('open');if(b)b.classList.toggle('open')}
 function closeUserMenu(){const d=$('umDropdown'),b=document.querySelector('.umBtn');if(d)d.classList.remove('open');if(b)b.classList.remove('open')}
 document.addEventListener('click',e=>{const um=$('userMenu');if(um&&!um.contains(e.target))closeUserMenu()});
-
 $('gBtn').onclick=async()=>{const{error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+window.location.pathname}});if(error)showToast('Ошибка: '+error.message,'error')};
 $('sendC').onclick=sendC;$('resend').onclick=sendC;
 $('backEm').onclick=()=>{$('codS').style.display='none';$('emS').style.display='flex';$('aerr2').textContent='';$('codI').value='';$('emI').focus()};
@@ -1013,7 +1043,6 @@ $('vCode').onclick=vCode;
 $('codI').onkeydown=e=>{if(e.key==='Enter')vCode()};
 $('emI').onkeydown=e=>{if(e.key==='Enter')sendC()};
 $('codI').oninput=()=>{const i=$('codI');i.value=i.value.replace(/\D/g,'').slice(0,6);if(i.value.length===6)vCode()};
-
 async function sendC(){$('aerr1').textContent='';$('aerr2').textContent='';const e=$('emI').value.trim().toLowerCase();if(!e)return $('aerr1').textContent='Введи email';if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return $('aerr1').textContent='Некорректный email';curEmail=e;const b=$('sendC');b.disabled=true;b.textContent='Отправка...';const{error}=await sb.auth.signInWithOtp({email:e,options:{shouldCreateUser:true}});b.disabled=false;b.textContent='Получить код';if(error){if(error.message.toLowerCase().includes('rate'))return $('aerr1').textContent='Слишком много писем';return $('aerr1').textContent=error.message}$('emSh').textContent=e;$('emS').style.display='none';$('codS').style.display='flex';$('codI').value='';setTimeout(()=>$('codI').focus(),100)}
 async function vCode(){$('aerr2').textContent='';const t=$('codI').value.trim();if(t.length!==6)return $('aerr2').textContent='Введи 6 цифр';const b=$('vCode');b.disabled=true;b.textContent='Проверка...';const{data,error}=await sb.auth.verifyOtp({email:curEmail,token:t,type:'email'});b.disabled=false;b.textContent='Войти';if(error){$('aerr2').textContent=error.message.toLowerCase().includes('expired')?'Код истёк':'Неверный код';$('codI').value='';$('codI').focus();return}curUser=data.user;$('codS').style.display='none';await afterAuth()}
 async function afterAuth(){const{data:p}=await sb.from('profiles').select('nick,is_admin,banned,ban_reason').eq('id',curUser.id).maybeSingle();if(!p){pendingUser=curUser;$('auth').style.display='none';$('nickScr').style.display='flex';$('nickIn').focus();return}me=p.nick;iAmAdmin=!!p.is_admin||curUser.id===OWNER_ID;isBanned=!!p.banned;banR=p.ban_reason||'';touchSeen();if(isBanned)return showBan();start()}
@@ -1022,10 +1051,8 @@ async function sNick(){const er=$('nickE');er.textContent='';const n=$('nickIn')
 async function switchAcc(){await sb.auth.signOut();location.reload()}
 async function logout(){const ok=await askConfirm('Выйти?','Ты выйдешь из аккаунта','Выйти',true);if(!ok)return;stopMus();if(vA){try{vA.pause()}catch(e){}}try{await touchSeen()}catch(e){}await sb.auth.signOut();location.reload()}
 function showBan(){$('auth').style.display='none';$('nickScr').style.display='none';$('app').style.display='none';$('banR').textContent=banR||'Доступ закрыт';$('banO').classList.add('on')}
-
 window.addEventListener('DOMContentLoaded',async()=>{if('Notification'in window){notifPerm=Notification.permission;if(notifPerm==='granted'){const b=$('notifB');if(b)b.style.color='#4caf50'}}updateSoundBtn();const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}else $('auth').style.display='flex'});
 sb.auth.onAuthStateChange(async(e,s)=>{if(e==='SIGNED_IN'&&s&&!curUser){curUser=s.user;await afterAuth()}});
-
 function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+curUser.id},p=>{if(!p.new)return;if(p.new.banned&&!isBanned){isBanned=true;banR=p.new.ban_reason||'';showBan();try{closeM()}catch(e){}try{closeFm()}catch(e){}try{closeAdmin()}catch(e){}}iAmAdmin=!!p.new.is_admin||curUser.id===OWNER_ID;upAdminTog();if(!hasAdmin()&&adminMode)exitAdmin();if(typeof p.new.coins!=='undefined'){myCoins=p.new.coins||0;updateCoinsUI()}if(typeof p.new.active_frame!=='undefined'){myFrame=p.new.active_frame||'none';frameCache[meEnc]=myFrame;renderFlats()}if(Array.isArray(p.new.owned_frames)){myOwnedFrames=p.new.owned_frames}}).subscribe()}
 function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{key:meEnc}}});gpres.on('presence',{event:'sync'},()=>{const s=gpres.presenceState();online=new Set();for(const k in s)if(k&&k!==meEnc)online.add(k);renderDMs();upChSt()}).subscribe(async st=>{if(st==='SUBSCRIBED')await gpres.track({nick:meEnc,since:Date.now()})})}
 function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();await loadDMs();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
@@ -1036,8 +1063,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-
-const APP_VERSION='1.6';
+const APP_VERSION='1.7';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -1159,8 +1185,313 @@ async function afEvict(houseId,n){if(!hasAdmin())return showToast('Только 
 async function afMax(houseId,n){if(!hasAdmin())return showToast('Только админам','error');const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const owners=flatOwners(f);const cur=f.max_people??2;const val=prompt('Сколько мест? (1-9999)',String(cur));if(val===null)return;let nx=parseInt(val);if(isNaN(nx))nx=2;nx=Math.max(1,Math.min(9999,nx));if(nx<owners.length){const ok=await askConfirm('Уменьшить места?','Лишние '+(owners.length-nx)+' жильц. будут выселены.','Продолжить',true);if(!ok)return;const newOwners=owners.slice(0,nx);await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',houseId).eq('number',n)}else{await sb.from('flats').update({max_people:nx}).eq('house_id',houseId).eq('number',n)}await reloadHouse();await afRend()}
 async function afTogEnt(g,b){if(!hasAdmin())return showToast('Только админам','error');const c=houseData?.blocked_entrances||[];const nx=b?[...new Set([...c,g])]:c.filter(x=>x!==g);await sb.from('houses').update({blocked_entrances:nx}).eq('id',curHouse);await reloadHouse();afRend()}
 async function afTogHouse(houseId,blocked){if(!hasAdmin())return showToast('Только админам','error');if(blocked){const ok=await askConfirm('Заблокировать дом?','Дом '+houseId+' будет закрыт. В него нельзя заселиться.','Заблокировать',true);if(!ok)return}await sb.from('houses').update({blocked:blocked}).eq('id',houseId);await loadHouses();renderHouses();await afRend()}
-async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 
+/* ===== v1.7 JOB SYSTEM ===== */
+const JOBS={
+  teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,type:'check',tasks:['Проверить контрольные','Проверить домашку','Проверить тесты']},
+  police:{id:'police',name:'Полицейский',icon:'👮',reward:750,type:'fines',tasks:['Патруль центра','Проверить документы','Оформить штрафы']},
+  welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,type:'weld',tasks:['Сварить шов №1','Сварить шов №2','Сварить шов №3']}
+};
+const JOB_TASKS_PER_DAY=3;
+const JOB_BAN_DAYS=30;
+const JOB_MAX_MISSED=3;
+
+function jobKey(){return 'job_'+meEnc}
+function jobToday(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function isWorkday(d){const w=d.getDay();return w>=1&&w<=5}
+function jobLoad(){try{const s=localStorage.getItem(jobKey());return s?JSON.parse(s):null}catch(e){return null}}
+function jobSave(st){try{localStorage.setItem(jobKey(),JSON.stringify(st))}catch(e){}}
+function jobDefault(){return {job:null,day:null,tasksDone:0,completedToday:false,lastComplete:null,missedDays:0,firedUntil:null,finishedDays:0,weldPrecisions:[]}}
+function countMissedWorkdays(lastComplete,todayD){
+  if(!lastComplete)return 0;
+  const last=new Date(lastComplete+'T00:00:00');
+  let d=new Date(last);d.setDate(d.getDate()+1);
+  let count=0;
+  while(d<todayD){if(isWorkday(d))count++;d.setDate(d.getDate()+1)}
+  return count;
+}
+function jobCheckDay(){
+  if(!me)return;
+  const st=jobLoad()||jobDefault();
+  if(st.firedUntil){
+    const until=new Date(st.firedUntil);
+    if(until>new Date())return;
+    st.firedUntil=null;st.job=null;st.missedDays=0;st.weldPrecisions=[];
+    jobSave(st);return;
+  }
+  if(!st.job)return;
+  const today=jobToday();
+  if(st.day===today)return;
+  const todayD=new Date();
+  if(isWorkday(todayD)){
+    const missed=countMissedWorkdays(st.lastComplete,todayD);
+    st.missedDays=missed;
+    if(missed>=JOB_MAX_MISSED){
+      const oldJob=st.job;
+      st.firedUntil=new Date(Date.now()+JOB_BAN_DAYS*86400000).toISOString();
+      st.job=null;st.day=null;st.tasksDone=0;st.completedToday=false;st.missedDays=0;st.weldPrecisions=[];
+      jobSave(st);
+      if(typeof showToast==='function')showToast('🚫 Уволен с работы «'+(JOBS[oldJob]?JOBS[oldJob].name:oldJob)+'» за 3 пропуска','error');
+      return;
+    }
+  }
+  st.day=today;st.tasksDone=0;st.completedToday=false;st.weldPrecisions=[];
+  jobSave(st);
+}
+function openJob(){
+  closeUserMenu();
+  jobCheckDay();
+  const st=jobLoad()||jobDefault();
+  const body=$('jobBody');
+  if(!body)return;
+  if(st.firedUntil){
+    const until=new Date(st.firedUntil);
+    body.innerHTML='<div class="job-fired"><h4>🚫 Ты уволен</h4><p>За 3 пропуска тебя уволили.<br>Сможешь устроиться снова: <b style="color:#ff9999">'+until.toLocaleDateString('ru-RU')+'</b></p></div>';
+    $('jobM').classList.add('open');return;
+  }
+  if(!st.job){
+    body.innerHTML='<div class="duty-info">📋 Работа — по будням (Пн–Пт). Каждый день <b>3 задания</b>. 3 пропуска подряд — увольнение на <b>'+JOB_BAN_DAYS+' дней</b>.</div><div class="job-pick">'+Object.values(JOBS).map(j=>'<div class="job-card" onclick="jobPick(\''+j.id+'\')"><div class="ji">'+j.icon+'</div><div class="jn">'+j.name+'</div><div class="jr">до +'+(j.maxReward||j.reward)+' 💰/день</div></div>').join('')+'</div>';
+    $('jobM').classList.add('open');return;
+  }
+  const j=JOBS[st.job];
+  const today=new Date();
+  const isWD=isWorkday(today);
+  const missedTxt=st.missedDays>0?'<div class="row"><span>⚠️ Пропусков подряд:</span><b style="color:#ff8888">'+st.missedDays+' / '+JOB_MAX_MISSED+'</b></div>':'';
+  const rewardTxt=j.type==='weld'?'до '+j.maxReward+' 💰 (зависит от точности)':'+'+j.reward;
+  const status='<div class="job-status'+(st.missedDays>0?' warn':'')+'"><div class="row"><span>'+j.icon+' Работа:</span><b>'+j.name+'</b></div><div class="row"><span>💰 Оплата за смену:</span><b>'+rewardTxt+'</b></div><div class="row"><span>✅ Смен отработано:</span><b>'+(st.finishedDays||0)+'</b></div>'+missedTxt+'</div>';
+  const quitBtn='<button class="duty-start" style="background:linear-gradient(135deg,#5a1a1a,#3a0a0a);color:#ff8888;margin-top:14px" onclick="jobQuit()">🚪 Уволиться</button>';
+  if(!isWD){
+    body.innerHTML=status+'<div class="duty-msg" style="color:#8888a0;font-size:14px;padding:20px 0">🌙 Сегодня выходной. Работа — Пн–Пт. Возвращайся в будни!</div>'+quitBtn;
+    $('jobM').classList.add('open');return;
+  }
+  if(st.completedToday){
+    body.innerHTML=status+'<div class="duty-msg" style="color:#8bc34a;font-size:15px;padding:24px 0">✅ Смена выполнена! Возвращайся завтра.</div>'+quitBtn;
+    $('jobM').classList.add('open');return;
+  }
+  body.innerHTML=status+'<div class="job-tasks">'+j.tasks.map((t,i)=>'<div class="job-task'+(i<st.tasksDone?' done':'')+'" '+(i<st.tasksDone?'':'onclick="jobStartTask('+i+')"')+'><div class="jt-ic">'+['📋','🎯','✅'][i]+'</div><div class="jt-name">'+t+'<div style="font-size:11px;color:#8888a0;font-weight:400;margin-top:2px">Задание '+(i+1)+' из 3</div></div><div class="jt-go">'+(i<st.tasksDone?'✓ Готово':'Начать')+'</div></div>').join('')+'</div><div class="duty-msg" id="jobTaskMsg"></div>'+quitBtn;
+  $('jobM').classList.add('open');
+}
+function closeJob(){$('jobM').classList.remove('open');jobStopTask()}
+function jobPick(id){
+  if(!JOBS[id])return;
+  const st=jobLoad()||jobDefault();
+  st.job=id;st.day=null;st.tasksDone=0;st.completedToday=false;st.missedDays=0;st.weldPrecisions=[];
+  jobSave(st);
+  showToast('✅ Ты устроился: '+JOBS[id].name,'success');
+  openJob();
+}
+async function jobQuit(){
+  const ok=await askConfirm('Уволиться?','Ты потеряешь работу. Сможешь устроиться заново в любой момент.','Уволиться',true);
+  if(!ok)return;
+  const st=jobLoad()||jobDefault();
+  st.job=null;st.day=null;st.tasksDone=0;st.completedToday=false;st.missedDays=0;st.weldPrecisions=[];
+  jobSave(st);
+  openJob();
+}
+let _jobTaskState=null;
+function jobStopTask(){if(_jobTaskState){if(_jobTaskState.timer)clearInterval(_jobTaskState.timer);if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);_jobTaskState=null}}
+function jobStartTask(taskIdx){
+  jobStopTask();
+  const st=jobLoad()||jobDefault();
+  if(!st.job)return;
+  const j=JOBS[st.job];
+  if(j.type==='check')jobTeacherTask(taskIdx);
+  else if(j.type==='fines')jobPoliceTask(taskIdx);
+  else if(j.type==='weld')jobWelderTask(taskIdx);
+}
+/* 👨‍🏫 Учитель — найти листочки с ошибками */
+function jobTeacherTask(taskIdx){
+  const body=$('jobBody');
+  const totalErr=5,totalSheets=9;
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Осталось найти: <b id="jobLeft">'+totalErr+'</b></div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Найди и кликни по листочкам с ошибкой ❌ (клик по чистому — штраф 1 сек)</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  const field=$('jobField');
+  const r=field.getBoundingClientRect();
+  const errIdx=new Set();
+  while(errIdx.size<totalErr)errIdx.add(Math.floor(Math.random()*totalSheets));
+  let found=0;
+  const icons=['📝','📄','📃','📋','🗒️'];
+  for(let i=0;i<totalSheets;i++){
+    const el=document.createElement('div');
+    el.className='job-check-sheet'+(errIdx.has(i)?' err':'');
+    el.textContent=icons[i%icons.length];
+    const w=58,h=74;
+    let placed=false,tries=0,px=0,py=0;
+    while(!placed&&tries<50){
+      px=10+Math.random()*(r.width-w-20);
+      py=10+Math.random()*(r.height-h-20);
+      placed=true;
+      const others=field.querySelectorAll('.job-check-sheet');
+      for(const o of others){
+        const ox=parseFloat(o.style.left),oy=parseFloat(o.style.top);
+        if(Math.abs(ox-px)<w+6&&Math.abs(oy-py)<h+6){placed=false;break}
+      }
+      tries++;
+    }
+    el.style.left=px+'px';el.style.top=py+'px';
+    el.onclick=()=>{
+      if(!_jobTaskState||_jobTaskState.done)return;
+      if(errIdx.has(i)){
+        el.classList.add('checked');found++;
+        const lEl=$('jobLeft');if(lEl)lEl.textContent=(totalErr-found);
+        if(found>=totalErr)jobFinishTask(taskIdx,true,1);
+      } else {
+        _jobTaskState.penalty+=1;
+      }
+    };
+    field.appendChild(el);
+  }
+  const start=Date.now();let duration=25000;
+  _jobTaskState={timer:setInterval(()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    const elapsed=(Date.now()-start)/1000-_jobTaskState.penalty;
+    const left=Math.max(0,25-elapsed);
+    const tEl=$('jobTime');if(tEl)tEl.textContent=left.toFixed(1);
+    if(left<=0)jobFinishTask(taskIdx,false,0);
+  },80),done:false,penalty:0};
+}
+/* 👮 Полицейский — выписать штрафы нарушителям */
+function jobPoliceTask(taskIdx){
+  const body=$('jobBody');
+  const totalCr=5,totalPeople=9;
+  body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Осталось штрафов: <b id="jobLeft">'+totalCr+'</b></div><div class="job-field" id="jobField"></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Клик по 🔴 красному нарушителю = штраф. Клик по обычному — штраф 1 сек.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
+  const field=$('jobField');
+  const r=field.getBoundingClientRect();
+  const crIdx=new Set();
+  while(crIdx.size<totalCr)crIdx.add(Math.floor(Math.random()*totalPeople));
+  const faces=['🧑','👨','👩','🧔','👱','👴','👵','🧓','👲'];
+  let caught=0;
+  for(let i=0;i<totalPeople;i++){
+    const el=document.createElement('div');
+    el.className='job-fine-man'+(crIdx.has(i)?' criminal':'');
+    el.textContent=faces[i%faces.length];
+    const w=54,h=68;
+    let placed=false,tries=0,px=0,py=0;
+    while(!placed&&tries<50){
+      px=10+Math.random()*(r.width-w-20);
+      py=10+Math.random()*(r.height-h-20);
+      placed=true;
+      const others=field.querySelectorAll('.job-fine-man');
+      for(const o of others){
+        const ox=parseFloat(o.style.left),oy=parseFloat(o.style.top);
+        if(Math.abs(ox-px)<w+6&&Math.abs(oy-py)<h+6){placed=false;break}
+      }
+      tries++;
+    }
+    el.style.left=px+'px';el.style.top=py+'px';
+    el.onclick=()=>{
+      if(!_jobTaskState||_jobTaskState.done)return;
+      if(crIdx.has(i)){
+        el.classList.add('fined');caught++;
+        const lEl=$('jobLeft');if(lEl)lEl.textContent=(totalCr-caught);
+        if(caught>=totalCr)jobFinishTask(taskIdx,true,1);
+      } else {
+        _jobTaskState.penalty+=1;
+      }
+    };
+    field.appendChild(el);
+  }
+  const start=Date.now();
+  _jobTaskState={timer:setInterval(()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    const elapsed=(Date.now()-start)/1000-_jobTaskState.penalty;
+    const left=Math.max(0,25-elapsed);
+    const tEl=$('jobTime');if(tEl)tEl.textContent=left.toFixed(1);
+    if(left<=0)jobFinishTask(taskIdx,false,0);
+  },80),done:false,penalty:0};
+}
+/* 👨‍🏭 Сварщик — РОВНО остановить бегунок в зелёной зоне */
+function jobWelderTask(taskIdx){
+  const body=$('jobBody');
+  body.innerHTML='<div class="job-timer">🔧 Попытка <b>'+(taskIdx+1)+'</b> из 3 · Точно попади в зелёную зону</div><div class="job-weld-bar" id="jobWeldBar"><div class="job-weld-zone" id="jobWeldZone"></div><div class="job-weld-marker" id="jobWeldMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Стоп» когда бегунок в зелёной зоне. Чем ближе к центру — тем больше монет!</div><button class="duty-start" style="margin-top:14px" onclick="jobWeldStop()">⏹ СТОП</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
+  const bar=$('jobWeldBar');
+  const zone=$('jobWeldZone');
+  const marker=$('jobWeldMarker');
+  const r=bar.getBoundingClientRect();
+  const zoneW=Math.max(40,r.width*0.16);
+  const zoneLeft=(r.width-zoneW)/2;
+  zone.style.left=zoneLeft+'px';
+  zone.style.width=zoneW+'px';
+  const zoneCenter=r.width/2;
+  const zoneHalf=zoneW/2;
+  let pos=0,dir=1,speed=0.7+Math.random()*0.4;
+  const step=()=>{
+    if(!_jobTaskState||_jobTaskState.done)return;
+    pos+=dir*speed;
+    if(pos<=0){pos=0;dir=1}
+    if(pos>=r.width){pos=r.width;dir=-1}
+    marker.style.left=pos+'px';
+    _jobTaskState.raf=requestAnimationFrame(step);
+  };
+  _jobTaskState={raf:null,done:false,pos:0,zoneCenter,zoneHalf,getPos:()=>pos,start:step};
+  step();
+}
+function jobWeldStop(){
+  if(!_jobTaskState||_jobTaskState.done)return;
+  _jobTaskState.done=true;
+  if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);
+  const pos=_jobTaskState.getPos?_jobTaskState.getPos():_jobTaskState.pos;
+  const zoneCenter=_jobTaskState.zoneCenter;
+  const zoneHalf=_jobTaskState.zoneHalf;
+  const diff=Math.abs(pos-zoneCenter);
+  let precision=1-diff/zoneHalf;
+  if(precision<0)precision=0;
+  if(precision>1)precision=1;
+  const pct=Math.round(precision*100);
+  const coins=Math.round(800*precision);
+  const resEl=$('jobWeldResult');
+  if(resEl)resEl.textContent=pct+'% · +'+coins+' 💰';
+  const st=jobLoad()||jobDefault();
+  if(!st.weldPrecisions)st.weldPrecisions=[];
+  st.weldPrecisions[taskIdx]=precision;
+  st.tasksDone=Math.max(st.tasksDone,taskIdx+1);
+  jobSave(st);
+  setTimeout(()=>{
+    const st2=jobLoad()||jobDefault();
+    if(st2.tasksDone>=JOB_TASKS_PER_DAY){
+      jobFinishTask(taskIdx,true,precision);
+    } else {
+      openJob();
+    }
+  },700);
+}
+async function jobFinishTask(taskIdx,won,precision){
+  if(_jobTaskState)_jobTaskState.done=true;
+  if(_jobTaskState&&_jobTaskState.timer)clearInterval(_jobTaskState.timer);
+  if(_jobTaskState&&_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);
+  _jobTaskState=null;
+  if(!won)return;
+  const st=jobLoad()||jobDefault();
+  if(!st.job)return;
+  const j=JOBS[st.job];
+  st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,taskIdx+1));
+  if(st.tasksDone>=JOB_TASKS_PER_DAY){
+    st.completedToday=true;
+    st.lastComplete=jobToday();
+    st.missedDays=0;
+    st.finishedDays=(st.finishedDays||0)+1;
+    let reward;
+    if(j.type==='weld'){
+      const precs=st.weldPrecisions||[];
+      const avg=precs.length?precs.reduce((a,b)=>a+(b||0),0)/precs.length:0;
+      reward=Math.round(800*avg);
+    } else {
+      reward=j.reward;
+    }
+    const bonus=frameBonusPct(myFrame);
+    const applied=bonus>0?Math.round(reward*(1+bonus/100)):reward;
+    st.weldPrecisions=[];
+    jobSave(st);
+    myCoins=Math.max(0,myCoins+applied);
+    try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}
+    updateCoinsUI();
+    showToast('💰 Смена окончена! +'+applied+' монет','success');
+    try{showNotif('💼 Работа','+'+applied+' монет!')}catch(e){}
+  } else {
+    jobSave(st);
+  }
+  openJob();
+}
+async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 let _lastAnnShown=null;
 function openAnn(houseId){if(!hasAdmin())return showToast('Только админам','error');_annHouseId=Number(houseId);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||'';$('annErr').textContent='';setTimeout(()=>$('annInp').focus(),100)}
 function closeAnn(){$('annM').classList.remove('open')}
@@ -1218,7 +1549,6 @@ function decorateFrame(el,frameId){
   if(frameId==='angelic'){const h=document.createElement('div');h.className='halo';el.appendChild(h)}
   else if(frameId==='devil'){const hl=document.createElement('div');hl.className='horn hl';const hr=document.createElement('div');hr.className='horn hr';el.appendChild(hl);el.appendChild(hr)}
 }
-
 function entranceOf(n){return Math.ceil(Number(n)/10)}
 function getDutyPersonForEntrance(localEnt){
   const d=new Date();
@@ -1302,7 +1632,6 @@ function stopMiniGame(timeUp){
   if(won){const le=((myEnt()-1)%3)+1;localStorage.setItem(dutyKey(le),'1');addCoins(dutyGameReward);msg.textContent='✨ Идеальная чистота! +'+dutyGameReward+' 💰';msg.style.color='#8bc34a';showNotif('🧹 Дежурство','+'+dutyGameReward+' монет!');const btn=$('dutyStartBtn');btn.disabled=true;btn.textContent='⛔ Уже убирал сегодня';$('dutyInfo').innerHTML+='<br><span style="color:#ff8888;font-weight:700">⛔ Ты уже убирал сегодня</span>'}else{msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Протёрто '+dutyGameCaught+'/'+dutyGameTotal;msg.style.color='#ff8888'}
   setTimeout(updateCoinsUI,100);
 }
-
 function workCdKey(id){return 'workCd_'+meEnc+'_'+id}
 function workCdLeft(id){const t=Number(localStorage.getItem(workCdKey(id))||0);return Math.max(0,t+WORK_COOLDOWN-Date.now())}
 function workCdSet(id){localStorage.setItem(workCdKey(id),String(Date.now()))}
@@ -1541,7 +1870,6 @@ function stopWork(timeUp){
   }
   workTaskId=null;renderWork();
 }
-
 function openPfMine(){closeUserMenu();openProfile(null)}
 async function openProfile(nick){
   closeUserMenu();
@@ -1563,7 +1891,6 @@ async function openProfile(nick){
   const fr=getFrame(target);
   if(fr&&fr!=='none')av.classList.add('frame-'+fr);
   decorateFrame(av,fr);
-
   const pfEmb=$('pf').querySelector('.emb');
   const pfCover=pfEmb?pfEmb.querySelector('.pf-cover'):null;
   if(pfEmb){
@@ -1573,7 +1900,6 @@ async function openProfile(nick){
     }
   }
   pfFxSpawn(fr);
-
   $('pfNick').textContent=target;
   const isOnline=online.has(en(target));
   $('pfOnline').style.display=(!isMine&&isOnline)?'inline':'none';
@@ -1610,11 +1936,7 @@ async function openProfile(nick){
   $('pfErr').textContent='';
   $('pf').classList.add('open');
 }
-function closePf(){
-  $('pf').classList.remove('open');
-  pfFxClear();
-  pfCurrent=null;
-}
+function closePf(){$('pf').classList.remove('open');pfFxClear();pfCurrent=null}
 async function startPfEdit(){let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',me).maybeSingle();p=r.data}catch(e){}$('pfEmojiInp').value=(p&&p.status_emoji)||'';$('pfStatusInp').value=(p&&p.status)||'';$('pfBioInp').value=(p&&p.bio)||'';$('pfErr').textContent='';$('pfEdit').classList.add('on');setTimeout(()=>$('pfStatusInp').focus(),100)}
 function cancelPfEdit(){$('pfEdit').classList.remove('on')}
 async function savePf(ev){const er=$('pfErr');er.textContent='';const emoji=$('pfEmojiInp').value.trim();const status=$('pfStatusInp').value.trim();const bio=$('pfBioInp').value.trim();const btn=ev&&ev.target?ev.target:null;if(btn){btn.disabled=true;btn.textContent='...'}const{error}=await sb.from('profiles').update({status,status_emoji:emoji,bio}).eq('nick',me);if(btn){btn.disabled=false;btn.textContent='Сохранить'}if(error){er.textContent=error.message;return}closePf();setTimeout(()=>openProfile(null),200)}
@@ -1637,7 +1959,7 @@ function attachNickSuggest(inpId,sugId){
   inp.addEventListener('blur',()=>setTimeout(hide,180));
   inp.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
 }
-async function start(){meEnc=en(me);$('auth').style.display='none';$('nickScr').style.display='none';$('banO').classList.remove('on');$('app').style.display='block';$('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();updateSoundBtn();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();pollAnn();setInterval(pollAnn,30000);const isMob=(window.matchMedia&&window.matchMedia('(max-width:768px)').matches);setTimeout(autoCheckNewHouse,4000);setInterval(autoCheckNewHouse,isMob?60000:30000);setInterval(loadPhotoCache,isMob?120000:60000);setInterval(loadCoins,isMob?120000:60000)}
+async function start(){meEnc=en(me);$('auth').style.display='none';$('nickScr').style.display='none';$('banO').classList.remove('on');$('app').style.display='block';$('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');initVP();initEP();upAdminTog();updateSoundBtn();subProf();subGP();subGroups();initCtxEmojis();await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();jobCheckDay();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();subMed();subReact();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();pollAnn();setInterval(pollAnn,30000);const isMob=(window.matchMedia&&window.matchMedia('(max-width:768px)').matches);setTimeout(autoCheckNewHouse,4000);setInterval(autoCheckNewHouse,isMob?60000:30000);setInterval(loadPhotoCache,isMob?120000:60000);setInterval(loadCoins,isMob?120000:60000)}
 function initCtxEmojis(){const c=$('ctxEmojis');c.innerHTML=QR.map(e=>'<button type="button" onclick="ctxReact(\''+e+'\')">'+e+'</button>').join('')}
 function magnetize(btn){
   if(window.matchMedia&&window.matchMedia('(hover:none)').matches)return;
@@ -1683,6 +2005,7 @@ attachNickSuggest('gsmAddMem','gsmSug');
 $('pf').addEventListener('click',e=>{if(e.target.id==='pf')closePf()});
 $('dutyM').addEventListener('click',e=>{if(e.target.id==='dutyM')closeDuty()});
 $('framesM').addEventListener('click',e=>{if(e.target.id==='framesM')closeFrames()});
+$('jobM').addEventListener('click',e=>{if(e.target.id==='jobM')closeJob()});
 }
 function upSliderFill(id){const el=$(id);if(!el)return;const min=+el.min,max=+el.max,val=+el.value;const p=(val-min)/(max-min)*100;el.style.setProperty('--fill',p+'%')}
 function openCtx(e,msgId,roomType){e.preventDefault();e.stopPropagation();ctxMsgId=msgId;ctxMsgRoom=roomType;const menu=$('ctxMenu');const msgs=roomType==='main'?msgC:rmC;const m=msgs.find(x=>x.id===msgId);if(!m)return;const mine=m.nick===meEnc;const isText=!m.voice_url&&!m.video_url&&!m.photo_url;let html='';if(mine&&isText)html+='<button onclick="ctxEdit()">✏️ Редактировать</button>';html+='<div class="div"></div>';if(mine)html+='<button class="red" onclick="ctxDelBoth()">🗑️ Удалить у всех</button>';html+='<button class="red" onclick="ctxDelMe()">✕ Удалить у себя</button>';$('ctxActions').innerHTML=html;menu.style.left='0px';menu.style.top='0px';menu.classList.add('open');const w=menu.offsetWidth,h=menu.offsetHeight;let x=e.clientX,y=e.clientY;if(x+w>window.innerWidth)x=window.innerWidth-w-10;if(y+h>window.innerHeight)y=window.innerHeight-h-10;if(x<10)x=10;if(y<10)y=10;menu.style.left=x+'px';menu.style.top=y+'px'}
