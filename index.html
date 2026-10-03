@@ -456,9 +456,15 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 @keyframes pfShoot{0%{transform:translate(0,0) rotate(35deg) scaleX(.2);opacity:0}12%{opacity:1}55%{opacity:1}100%{transform:translate(140vw,90vh) rotate(35deg) scaleX(1.4);opacity:0}}
 #pf .emb.fr-bg-rainbow .pf-cover{background:linear-gradient(120deg,#ff0055,#ff5500,#ffcc00,#22dd66,#00ccff,#5566ff,#a020ff,#ff0055);background-size:400% 400%;opacity:.7;animation:pfRainbowShift 8s linear infinite,pfRainbowHue 12s linear infinite}
 #pf .emb.fr-bg-rainbow .pf-cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 30% 30%,rgba(255,255,255,.35),transparent 70%),radial-gradient(ellipse 50% 40% at 75% 70%,rgba(255,255,255,.25),transparent 70%);mix-blend-mode:soft-light;animation:pfRainbowGlow 6s ease-in-out infinite}
-@keyframes pfRainbowShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes pfRainbowHue{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
-@keyframes pfRainbowGlow{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes rainbowShift{
+  0%  {border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}
+  16% {border-color:#ff5500;box-shadow:0 0 20px #ff5500cc,0 0 40px #ff5500aa,inset 0 0 10px #ff550066}
+  33% {border-color:#ffcc00;box-shadow:0 0 20px #ffcc00cc,0 0 40px #ffcc00aa,inset 0 0 10px #ffcc0066}
+  50% {border-color:#22dd66;box-shadow:0 0 20px #22dd66cc,0 0 40px #22dd66aa,inset 0 0 10px #22dd6666}
+  66% {border-color:#00ccff;box-shadow:0 0 20px #00ccffcc,0 0 40px #00ccffaa,inset 0 0 10px #00ccff66}
+  83% {border-color:#a020ff;box-shadow:0 0 20px #a020ffcc,0 0 40px #a020ffaa,inset 0 0 10px #a020ff66}
+  100%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}
+}
 #pf .emb.fr-bg-neon-blue .pf-cover,#pf .emb.fr-bg-neon-pink .pf-cover,#pf .emb.fr-bg-neon-green .pf-cover{position:relative}
 #pf .emb.fr-bg-neon-blue .pf-cover::after,#pf .emb.fr-bg-neon-pink .pf-cover::after,#pf .emb.fr-bg-neon-green .pf-cover::after{content:'';position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;animation:pfNeonFlick 4s steps(1,end) infinite}
 #pf .emb.fr-bg-neon-blue .pf-cover::after{background:radial-gradient(ellipse 100% 100% at 50% 50%,transparent 45%,rgba(0,229,255,.35) 100%)}
