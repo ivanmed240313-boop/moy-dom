@@ -1171,7 +1171,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-const APP_VERSION='2.3';
+const APP_VERSION='2.5';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -3046,7 +3046,28 @@ function genFertStock(slot){
   return stock;
 }
 function gardenKey(nick){return 'garden_'+en(nick)}
-function loadGarden(nick){try{const s=localStorage.getItem(gardenKey(nick));if(s)return JSON.parse(s)}catch(e){}return {beds:[null,null,null,null,null,null],inv:{},ferts:{},updated:Date.now()}}
+function loadGarden(nick){
+  const def={beds:[null,null,null,null,null,null],inv:{},ferts:{},updated:Date.now()};
+  try{
+    const s=localStorage.getItem(gardenKey(nick));
+    if(s){
+      const p=JSON.parse(s);
+      if(p&&typeof p==='object'){
+        if(!Array.isArray(p.beds)){
+          p.beds=[null,null,null,null,null,null];
+        } else {
+          // ровно 6 ячеек
+          while(p.beds.length<6)p.beds.push(null);
+          if(p.beds.length>6)p.beds.length=6;
+        }
+        if(!p.inv||typeof p.inv!=='object'||Array.isArray(p.inv))p.inv={};
+        if(!p.ferts||typeof p.ferts!=='object'||Array.isArray(p.ferts))p.ferts={};
+        return p;
+      }
+    }
+  }catch(e){}
+  return def;
+}
 function saveGarden(nick,g){
   g.updated=Date.now();
   try{localStorage.setItem(gardenKey(nick),JSON.stringify(g))}catch(e){}
@@ -3064,6 +3085,7 @@ function backToMyGarden(){$('gardenMain').style.display='block';$('gardenVisit')
 function renderMyGarden(){
   const g=loadGarden(me);
   const bedsEl=$('gardenBeds');if(!bedsEl)return;
+  if(!Array.isArray(g.beds))g.beds=[null,null,null,null,null,null];
   const now=Date.now();
   bedsEl.innerHTML=g.beds.map((b,i)=>{
     if(!b){return '<div class="gbed empty" onclick="clickBed('+i+')"><div class="gbed-icon">➕</div><div class="gbed-label">Пусто</div><div class="gbed-time">сажай!</div></div>'}
@@ -3310,7 +3332,11 @@ async function doVisit(){
     const{data,error}=await sb.from('gardens').select('*').eq('nick',en(nick)).maybeSingle();
     if(error||!data){showToast('Грядка не найдена','error');return}
     _visitNick=nick;
-    _visitGarden={beds:data.beds||[null,null,null,null,null,null],inv:data.inventory||{},ferts:data.ferts||{}};
+    let beds=data.beds;
+    if(!Array.isArray(beds))beds=[null,null,null,null,null,null];
+    while(beds.length<6)beds.push(null);
+    if(beds.length>6)beds.length=6;
+    _visitGarden={beds,inv:data.inventory||{},ferts:data.ferts||{}};
     $('gardenMain').style.display='none';
     $('gardenVisit').style.display='block';
     $('gardenTitle').textContent='👀 Грядка: '+nick;
