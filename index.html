@@ -1807,7 +1807,6 @@ function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
 async function loadM(){const tk=++mTok,rid=curRoom;if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:true}).limit(200);if(tk!==mTok||rid!==curRoom)return;if(error)return;msgC=(data||[]).filter(m=>!m.deleted_for_all);renderMs($('chat'),msgC)}
 function renderMs(el,list){const nh=list.map(m=>{const mine=m.nick===meEnc;let body;if(m.voice_url)body='<div class="voice-msg">🎤 Голосовое</div>';else if(m.video_url)body='<div class="mc paused"><video src="'+m.video_url+'" playsinline></video></div>';else if(m.photo_url)body='<img class="mp" src="'+m.photo_url+'" onclick="openPV(\''+m.photo_url+'\')">';else body='<span class="txt">'+eh(m.text)+'</span>';const tm='<span class="time">'+new Date(m.created_at).toLocaleTimeString().slice(0,5)+'</span>';const nk=mine?'':'<span class="nick">'+eh(de(m.nick))+'</span>';return '<div class="msg '+(mine?'own':'other')+'" data-id="'+m.id+'">'+nk+body+tm+'</div>'}).join('');const fh=nh||'<div style="color:#55556a;text-align:center;padding:30px">Пусто</div>';if(el.dataset.lastHtml!==fh){const ab=el.scrollTop+el.clientHeight>=el.scrollHeight-40,fr=!el.dataset.lastHtml;el.innerHTML=fh;el.dataset.lastHtml=fh;if(fr||ab)el.scrollTop=el.scrollHeight}}
 function subM(){if(ch)sb.removeChannel(ch);if(!curRoom)return;ch=sb.channel('rm-'+curRoom).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+curRoom},()=>loadM()).subscribe()}
-let pt=null;
 function startPt(){if(pt)clearInterval(pt);pt=setInterval(loadM,5000)}
 async function sendM(){const i=$('mI'),t=(i.value||'').trim();if(!t||!curRoom)return;i.value='';await sb.from('messages').insert({room_id:curRoom,nick:meEnc,text:t,user_id:curUser.id});await loadM()}
 async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;await openFm(Number(m[2]))}
@@ -1830,7 +1829,6 @@ function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
 function closePV(){$('pv').classList.remove('open')}
 function closeEm(){$('em').classList.remove('open')}
 function togEP(){const p=$('ep');epOpen=!epOpen;if(p)p.classList.toggle('open',epOpen)}
-let epOpen=false;
 function openGm(){gmAvaFile=null;$('gmName').value='';$('gmMem').value='';$('gmErr').textContent='';$('gm').classList.add('open')}
 function closeGm(){$('gm').classList.remove('open')}
 async function createGroup(){const name=$('gmName').value.trim();if(!name)return;const nicks=$('gmMem').value.split(/[,\n]+/).map(x=>x.trim()).filter(Boolean);const memEnc=[meEnc,...nicks.map(en)];const{data}=await sb.from('groups').insert({name,owner_nick:meEnc,members:memEnc}).select().single();closeGm();await loadGroups();await loadDMs();renderDMs();if(data)openGroup(data.id)}
