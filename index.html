@@ -1471,32 +1471,31 @@ async function doGiveFrame(id){
 
 /* ✅ ИСПРАВЛЕНО: семена теперь идут через garden_gifts (как обычный подарок от игрока).
    Получатель увидит их в checkGifts() при следующем открытии/через 2 минуты. */
+/* ✅ ИСПРАВЛЕНО: убран запрет на выдачу себе + через garden_gifts */
 async function doGiveSeed(id){
   if(!giveTarget)return showToast('Введи ник','error');
-  if(giveTarget===me)return showToast('Себе через эту панель нельзя','error');
   const msg=$('giveMsgInline');
   const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();
   if(e0||!p){if(msg)msg.textContent='❌ Игрок не найден';return showToast('❌ Игрок не найден','error')}
   const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});
   if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌ '+error.message,'error')}
-  if(msg)msg.textContent='✅ Выдано семя: '+id+' (получатель получит при следующей синхронизации)';
+  if(msg)msg.textContent='✅ Выдано семя: '+id;
   showToast('🎁 Выдано семя: '+id,'success');
+  if(giveTarget===me)setTimeout(checkGifts,300);
 }
 
-/* ✅ ИСПРАВЛЕНО: удобрения тоже через garden_gifts. checkGifts() у получателя разложит
-   fert* в g.ferts, а не в g.inv. */
+/* ✅ ИСПРАВЛЕНО: убран запрет на выдачу себе + через garden_gifts */
 async function doGiveFert(id){
   if(!giveTarget)return showToast('Введи ник','error');
-  if(giveTarget===me)return showToast('Себе через эту панель нельзя','error');
   const msg=$('giveMsgInline');
   const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();
   if(e0||!p){if(msg)msg.textContent='❌ Игрок не найден';return showToast('❌ Игрок не найден','error')}
   const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});
   if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌ '+error.message,'error')}
-  if(msg)msg.textContent='✅ Выдано удобрение: '+id+' (получатель получит при следующей синхронизации)';
+  if(msg)msg.textContent='✅ Выдано удобрение: '+id;
   showToast('🎁 Выдано удобрение: '+id,'success');
+  if(giveTarget===me)setTimeout(checkGifts,300);
 }
-
 async function doGiveCoins(delta){
   if(!giveTarget)return showToast('Введи ник','error');
   if(!delta||isNaN(delta))return showToast('Некорректная сумма','error');
