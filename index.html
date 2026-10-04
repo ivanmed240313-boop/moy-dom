@@ -1061,7 +1061,8 @@ body::before{display:none !important}
 @media(prefers-reduced-motion:reduce){
 *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
 }
-</style></head><body>
+</style></head>
+<body>
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -1297,7 +1298,7 @@ let workGameHandlers=null;
 let soundEnabled=(localStorage.getItem('domSound')!=='0');
 let _audioCtx=null;
 let _afTarget='afB';
-let evOverrides={}; // {evId:{encNick:'on'|'off'}}
+let evOverrides={};
 let giveTarget=null,giveTab='frame',giveData={frame:null,seed:null,fert:null,coins:null};
 let _fireworksActive=false,_fireworksRaf=null,_fireworksTimer=null;
 const WORK_TASKS=[
@@ -1388,7 +1389,6 @@ function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{k
 function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();await loadDMs();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
 function upChSt(){if(!curPartner)return;const st=$('chs');if(!st)return;if(online.has(curPartner)){st.textContent='в сети';st.classList.add('online')}else{st.classList.remove('online')}}
 function upAdminTog(){const ow=isOwner();const o=hasAdmin();const b=$('adminTog');if(b){b.style.display=(o&&!ow)?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка'}const ob=$('ownerTog');if(ob)ob.style.display=ow?'inline-flex':'none';const m=$('adminMItem');if(m)m.style.display=(o&&!ow)?'flex':'none';const om=$('ownerMItem');if(om)om.style.display=ow?'flex':'none'}
-function upAdminTog(){const ow=isOwner();const o=hasAdmin();const b=$('adminTog');if(b){b.style.display=(o&&!ow)?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка'}const ob=$('ownerTog');if(ob)ob.style.display=ow?'inline-flex':'none';const m=$('adminMItem');if(m)m.style.display=(o&&!ow)?'flex':'none';const om=$('ownerMItem');if(om)om.style.display=ow?'flex':'none'}
 function toggleAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(adminMode)exitAdmin();else enterAdmin()}
 function enterAdmin(){if(!hasAdmin())return showToast('Только админам','error');adminMode=true;document.body.classList.add('admin-mode');$('adminB').classList.add('on');$('ap').classList.add('on');upAdminTog();renderFlats()}
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');$('adminB').classList.remove('on');$('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
@@ -1399,10 +1399,10 @@ function openOwner(){if(!isOwner())return showToast('Только владеле
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b)}
-const APP_VERSION='2.9';
+const APP_VERSION='2.9.2';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
-/* ===== ВЫДАЧА (OWNER) ===== */
+/* ===== ВЫДАЧА (OWNER) — ИСПРАВЛЕНО ===== */
 async function ofGive(b){
   if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}
   b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+
@@ -1469,42 +1469,32 @@ async function doGiveFrame(id){
   showToast('🎁 Выдано: '+id,'success');
 }
 
+/* ✅ ИСПРАВЛЕНО: семена теперь идут через garden_gifts (как обычный подарок от игрока).
+   Получатель увидит их в checkGifts() при следующем открытии/через 2 минуты. */
 async function doGiveSeed(id){
   if(!giveTarget)return showToast('Введи ник','error');
+  if(giveTarget===me)return showToast('Себе через эту панель нельзя','error');
   const msg=$('giveMsgInline');
-  const{data:row,error:e0}=await sb.from('gardens').select('*').eq('nick',en(giveTarget)).maybeSingle();
-  if(e0){if(msg)msg.textContent='❌ '+e0.message;return showToast('❌ '+e0.message,'error')}
-  let inv=(row&&row.inventory)||{};
-  if(typeof inv!=='object'||Array.isArray(inv))inv={};
-  inv[id]=(inv[id]||0)+1;
-  let beds=(row&&row.beds)||[null,null,null,null,null,null];
-  if(!Array.isArray(beds))beds=[null,null,null,null,null,null];
-  while(beds.length<6)beds.push(null);if(beds.length>6)beds.length=6;
-  let ferts=(row&&row.ferts)||{};
-  if(typeof ferts!=='object'||Array.isArray(ferts))ferts={};
-  const{error}=await sb.from('gardens').upsert({nick:en(giveTarget),beds,inventory:inv,ferts,updated_at:new Date().toISOString()},{onConflict:'nick'});
+  const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();
+  if(e0||!p){if(msg)msg.textContent='❌ Игрок не найден';return showToast('❌ Игрок не найден','error')}
+  const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});
   if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌ '+error.message,'error')}
-  if(msg)msg.textContent='✅ Выдано: '+id;
-  showToast('🎁 Выдано: '+id,'success');
+  if(msg)msg.textContent='✅ Выдано семя: '+id+' (получатель получит при следующей синхронизации)';
+  showToast('🎁 Выдано семя: '+id,'success');
 }
 
+/* ✅ ИСПРАВЛЕНО: удобрения тоже через garden_gifts. checkGifts() у получателя разложит
+   fert* в g.ferts, а не в g.inv. */
 async function doGiveFert(id){
   if(!giveTarget)return showToast('Введи ник','error');
+  if(giveTarget===me)return showToast('Себе через эту панель нельзя','error');
   const msg=$('giveMsgInline');
-  const{data:row,error:e0}=await sb.from('gardens').select('*').eq('nick',en(giveTarget)).maybeSingle();
-  if(e0){if(msg)msg.textContent='❌ '+e0.message;return showToast('❌ '+e0.message,'error')}
-  let ferts=(row&&row.ferts)||{};
-  if(typeof ferts!=='object'||Array.isArray(ferts))ferts={};
-  ferts[id]=(ferts[id]||0)+1;
-  let beds=(row&&row.beds)||[null,null,null,null,null,null];
-  if(!Array.isArray(beds))beds=[null,null,null,null,null,null];
-  while(beds.length<6)beds.push(null);if(beds.length>6)beds.length=6;
-  let inv=(row&&row.inventory)||{};
-  if(typeof inv!=='object'||Array.isArray(inv))inv={};
-  const{error}=await sb.from('gardens').upsert({nick:en(giveTarget),beds,inventory:inv,ferts,updated_at:new Date().toISOString()},{onConflict:'nick'});
+  const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();
+  if(e0||!p){if(msg)msg.textContent='❌ Игрок не найден';return showToast('❌ Игрок не найден','error')}
+  const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});
   if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌ '+error.message,'error')}
-  if(msg)msg.textContent='✅ Выдано: '+id;
-  showToast('🎁 Выдано: '+id,'success');
+  if(msg)msg.textContent='✅ Выдано удобрение: '+id+' (получатель получит при следующей синхронизации)';
+  showToast('🎁 Выдано удобрение: '+id,'success');
 }
 
 async function doGiveCoins(delta){
@@ -1658,7 +1648,7 @@ function settSetSeason(v){
 }
 function cycleSeason(){const cur=window.getSeason?window.getSeason():'autumn';const order=['autumn','winter','spring','summer'];const i=order.indexOf(cur);const next=order[(i+1)%order.length];if(window.setSeason)window.setSeason(next);updateSeasonBtn();closeUserMenu()}
 function updateSeasonBtn(){const b=$('seasonBtn');if(!b)return;const s=window.getSeason?window.getSeason():'autumn';const L={autumn:'🍂 осень',winter:'❄️ зима',spring:'🌸 весна',summer:'☀️ лето'};const span=b.querySelector('span');if(span)span.textContent='Сезон: '+L[s]}
-/* ===== ОСТАЛЬНОЕ (квартиры, юзеры, чаты, грядка, работа, дежурство) ===== */
+/* ===== КВАРТИРЫ / ЮЗЕРЫ ===== */
 async function afFlats(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('flats').select('*').order('house_id').order('number');if(error){b.innerHTML='<div class="afe">Ошибка: '+eh(error.message)+'</div>';return}const all=data||[];const taken=all.filter(f=>flatOwners(f).length);if(!taken.length){b.innerHTML='<div class="afe">Нет занятых</div>';return}const byHouse={};taken.forEach(f=>{const h=Number(f.house_id);if(!byHouse[h])byHouse[h]=[];byHouse[h].push(f)});const ids=Object.keys(byHouse).map(Number).sort((a,b)=>a-b);let html='';for(const hid of ids){const hInfo=houses.find(x=>Number(x.id)===hid);const start=(hid-1)*30+1,end=(hid-1)*30+30;html+='<div style="margin:16px 0 8px;padding:10px 14px;background:rgba(245,197,66,.08);border-left:3px solid #f5c542;border-radius:10px"><b style="color:#f5c542;font-size:14px">🏘 '+eh(hInfo?hInfo.name:'Дом №'+hid)+'</b> <span style="color:#8888a0;font-size:12px;margin-left:8px">квартиры '+start+'–'+end+' · занято '+byHouse[hid].length+'/30</span></div>';html+=byHouse[hid].sort((a,b)=>a.number-b.number).map(f=>{const owners=flatOwners(f).map(de),mp=f.max_people??2;const ent=gloEnt(f.house_id,Math.ceil(f.number/10));const hD=houses.find(x=>Number(x.id)===Number(f.house_id));const bl=(hD?.blocked_entrances||[]).includes(ent);const gNum=(f.house_id-1)*30+Number(f.number);return '<div class="afr"><div class="info"><div class="ti">🏠 Кв. '+gNum+'<span class="afbdg '+(bl?'r':'g')+'">'+(bl?'закрыт':'ок')+'</span></div><div class="su">👤 '+owners.map((o,i)=>eh(o)+(i===0?' 👑':'')).join(', ')+'</div><div class="su">👥 <b>'+owners.length+'/'+mp+'</b></div></div><div class="ac"><button class="afbtn g" onclick="afMax('+f.house_id+','+f.number+')">👥 Мест: '+mp+'</button><button class="afbtn r" onclick="afEvict('+f.house_id+','+f.number+')">выселить</button></div></div>'}).join('')}b.innerHTML=html}
 function afEnt(b){const bl=houseData?.blocked_entrances||[];let h='';for(let e=1;e<=3;e++){const g=gloEnt(curHouse,e),is=bl.includes(g),c=Object.values(flats).filter(f=>flatOwners(f).length&&Math.ceil(f.number/10)===e).length;h+='<div class="afr"><div class="info"><div class="ti">🏢 Подъезд '+g+' <span class="afbdg '+(is?'r':'g')+'">'+(is?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/10</div></div><div class="ac">'+(is?'<button class="afbtn g" onclick="afTogEnt('+g+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogEnt('+g+',true)">Закрыть</button>')+'</div></div>'}b.innerHTML=h}
 async function afHouse(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data:hs,error}=await sb.from('houses').select('*').order('id');if(error){b.innerHTML='<div class="afe">Ошибка: '+eh(error.message)+'</div>';return}const all=hs||[];const{data:fl}=await sb.from('flats').select('house_id,owner_nicks,owner_nick,owner_nick2');const cnt={};(fl||[]).forEach(f=>{const h=Number(f.house_id);if(!cnt[h])cnt[h]=0;if(flatOwners(f).length)cnt[h]++});let html='';if(isOwner()){html+='<div class="afr" style="border-left:4px solid #d32f2f"><div class="info"><div class="ti">🏗 Управление домами</div><div class="su">Всего домов: <b>'+all.length+'</b></div></div><div class="ac"><button class="afbtn r" onclick="quickCreateHouse()">➕ Создать новый дом</button></div></div>'}if(!all.length){html+='<div class="afe">Домов нет</div>';b.innerHTML=html;return}all.forEach(h=>{const hid=Number(h.id);const blocked=!!h.blocked;const c=cnt[hid]||0;const isCur=(hid===Number(curHouse));const ann=h.announcement||'';const start=(hid-1)*30+1,end=(hid-1)*30+30;html+='<div class="afr"'+(isCur?' style="border-left:4px solid #f5c542"':'')+'><div class="info"><div class="ti">🏘 '+eh(h.name||('Дом №'+hid))+' <span class="afbdg '+(blocked?'r':'g')+'">'+(blocked?'заблокирован':'открыт')+'</span>'+(isCur?' <span class="afbdg" style="background:rgba(245,197,66,.15);color:#f5c542">текущий</span>':'')+'</div><div class="su">Квартиры '+start+'–'+end+' · Занято: '+c+'/30</div></div><div class="ac">'+(blocked?'<button class="afbtn g" onclick="afTogHouse('+hid+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogHouse('+hid+',true)">Закрыть</button>')+'<button class="afbtn gr" onclick="openAnn('+hid+')">📢 Объявление</button></div></div>';if(ann){html+='<div class="afr" style="border-left:4px solid #f5c542;margin-left:16px"><div class="info"><div class="ti">📢 Объявление дома '+hid+'</div><div class="su" style="margin-top:8px;white-space:pre-wrap;color:#c8c8d0">'+eh(ann)+'</div></div><div class="ac"><button class="afbtn r" onclick="delAnn('+hid+')">Удалить</button></div></div>'}});b.innerHTML=html}
@@ -1674,7 +1664,7 @@ async function afEvict(houseId,n){if(!hasAdmin())return;const gNum=(houseId-1)*3
 async function afMax(houseId,n){if(!hasAdmin())return;const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const owners=flatOwners(f);const cur=f.max_people??2;const val=prompt('Мест (1-9999)',String(cur));if(val===null)return;let nx=Math.max(1,Math.min(9999,parseInt(val)||2));if(nx<owners.length){const newOwners=owners.slice(0,nx);await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',houseId).eq('number',n)}else{await sb.from('flats').update({max_people:nx}).eq('house_id',houseId).eq('number',n)}await reloadHouse();await afRend()}
 async function afTogEnt(g,bl){if(!hasAdmin())return;const c=houseData?.blocked_entrances||[];const nx=bl?[...new Set([...c,g])]:c.filter(x=>x!==g);await sb.from('houses').update({blocked_entrances:nx}).eq('id',curHouse);await reloadHouse();afRend()}
 async function afTogHouse(hid,bl){if(!hasAdmin())return;await sb.from('houses').update({blocked:bl}).eq('id',hid);await loadHouses();renderHouses();await afRend()}
-/* ===== JOB / DUTY / WORK / GARDEN / CHAT (сокращённо, без изменений логики) ===== */
+/* ===== РАБОТА / ДЕЖУРСТВО / ГРЯДКА ===== */
 const JOBS={teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,tasks:['Проверить контрольные','Решить примеры','Проверить диктант'],types:['check','math','dictation']},police:{id:'police',name:'Полицейский',icon:'👮',reward:750,tasks:['Патруль','Скорость','Документы'],types:['patrol','radar','docs']},welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,tasks:['Шов','Замер','Резка'],types:['seam','measure','cut']}};
 const JOB_TASKS_PER_DAY=3,JOB_BAN_DAYS=30,JOB_MAX_MISSED=3,JOB_STATE_VERSION=3;
 function jobKey(){return 'job_'+meEnc}
@@ -1725,7 +1715,7 @@ function initDishesGame(field,target){for(let i=0;i<target;i++){const d=1+Math.f
 function initVacuumGame(field,target){const dirts=[];for(let i=0;i<target;i++){const s=32+Math.random()*20;const el=document.createElement('div');el.className='vac-dirt';el.style.width=s+'px';el.style.height=s*0.7+'px';el.style.left=(Math.random()*(field.clientWidth-s-8)+4)+'px';el.style.top=(Math.random()*(field.clientHeight-s*0.7-8)+4)+'px';field.appendChild(el);dirts.push({el,x:parseFloat(el.style.left)+s/2,y:parseFloat(el.style.top)+s*0.35,hp:2,alive:true})}const cur=document.createElement('div');cur.className='vac-cursor';field.appendChild(cur);const onMove=(e)=>{if(!workActive)return;const r=field.getBoundingClientRect();const cx=e.clientX-r.left,cy=e.clientY-r.top;cur.classList.add('on');cur.style.left=cx+'px';cur.style.top=cy+'px';for(const d of dirts){if(!d.alive)continue;const dx=d.x-cx,dy=d.y-cy;const dist=Math.sqrt(dx*dx+dy*dy);if(dist<60){d.hp-=0.5;if(d.hp<=0){d.alive=false;d.el.classList.add('cleaned');workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}}}};field.addEventListener('mousemove',onMove);workGameHandlers={field,onMove,extraCleanup:()=>field.removeEventListener('mousemove',onMove)}}
 function initFlowersGame(field,target){const fls=[];for(let i=0;i<target;i++){const w=90;const el=document.createElement('div');el.className='flower';el.style.left=(r.width/2+(i-(target-1)/2)*150-w/2)+'px';el.style.top=(r.height/2-40)+'px';el.style.width=w+'px';el.innerHTML='<div class="flower-icon" style="font-size:64px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';field.appendChild(el);fls.push({el,water:0,done:false})}}
 function stopWork(t){if(!workActive)return;workActive=false;if(workTimer)clearInterval(workTimer);$('workGame').style.display='none';clearWorkHandlers();$('workField').innerHTML='';$('workField').className='work-field';const task=WORK_TASKS.find(x=>x.id===workTaskId);const target=task.target||8;if(workCaught>=target){workCdSet(workTaskId);const r=withBonus(5);addCoins(r);$('workMsg').style.color='#8bc34a';$('workMsg').textContent='✨ +'+r+'💰'}else{$('workMsg').style.color='#ff8888';$('workMsg').textContent='Сделано '+workCaught+'/'+target}workTaskId=null;renderWork()}
-/* Грядка (сокращённо) */
+/* Грядка */
 const SEEDS=[
   {id:'carrot',     name:'Морковь',           rarity:'common',    price:5,     grow:30,   sell:10,    icon:'🥕'},
   {id:'potato',     name:'Картошка',          rarity:'common',    price:8,     grow:45,   sell:16,    icon:'🥔'},
@@ -1803,7 +1793,8 @@ function renderInv(){const g=loadGarden(me);const se=$('invSeeds'),fe=$('invFert
 function openGift(sid){_giftSeedId=sid;const s=SEEDS.find(x=>x.id===sid);$('giftTitle').textContent='🎁 '+s.name;$('giftNickInp').value='';$('giftQtyInp').value='1';$('giftErr').textContent='';$('giftM').classList.add('open')}
 function closeGift(){$('giftM').classList.remove('open');_giftSeedId=null}
 async function sendGift(){const to=$('giftNickInp').value.trim();const qty=Math.max(1,parseInt($('giftQtyInp').value)||1);const sid=_giftSeedId;const er=$('giftErr');er.textContent='';if(!to||!sid){er.textContent='Заполни';return}if(to===me){er.textContent='Себе нельзя';return}const g=loadGarden(me);if(!g.inv[sid]||g.inv[sid]<qty){er.textContent='Недостаточно';return}const{data:p}=await sb.from('profiles').select('nick').eq('nick',to).maybeSingle();if(!p){er.textContent='Не найден';return}g.inv[sid]-=qty;if(g.inv[sid]<=0)delete g.inv[sid];saveGarden(me,g);await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(to),seed_id:sid,qty});showToast('🎁 Отправлено','success');closeGift()}
-async function checkGifts(){if(!me)return;try{const{data}=await sb.from('garden_gifts').select('*').eq('to_nick',en(me)).eq('claimed',false);if(!data||!data.length)return;const g=loadGarden(me);for(const gift of data){g.inv[gift.seed_id]=(g.inv[gift.seed_id]||0)+gift.qty}saveGarden(me,g);await sb.from('garden_gifts').update({claimed:true}).in('id',data.map(x=>x.id));showToast('🎁 Подарки!','success')}catch(e){}}
+/* ✅ ИСПРАВЛЕНО: checkGifts теперь корректно раскладывает fert* → g.ferts, а seed* → g.inv */
+async function checkGifts(){if(!me)return;try{const{data}=await sb.from('garden_gifts').select('*').eq('to_nick',en(me)).eq('claimed',false);if(!data||!data.length)return;const g=loadGarden(me);let gotSeed=false,gotFert=false;for(const gift of data){const id=gift.seed_id||'';if(id.startsWith('fert')){g.ferts[id]=(g.ferts[id]||0)+gift.qty;gotFert=true}else{g.inv[id]=(g.inv[id]||0)+gift.qty;gotSeed=true}}saveGarden(me,g);await sb.from('garden_gifts').update({claimed:true}).in('id',data.map(x=>x.id));showToast('🎁 Подарки!'+(gotFert?' 💧':''),'success')}catch(e){}}
 async function doVisit(){const nick=$('visitInp').value.trim();if(!nick)return;if(nick===me)return showToast('Это твоя','error');const{data}=await sb.from('gardens').select('*').eq('nick',en(nick)).maybeSingle();if(!data)return showToast('Не найдена','error');_visitNick=nick;let beds=data.beds;if(!Array.isArray(beds))beds=[null,null,null,null,null,null];while(beds.length<6)beds.push(null);if(beds.length>6)beds.length=6;_visitGarden={beds,inv:data.inventory||{},ferts:data.ferts||{}};$('gardenMain').style.display='none';$('gardenVisit').style.display='block';$('gardenTitle').textContent='👀 '+nick;$('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · только просмотр';renderVisitGarden()}
 async function openVisitGarden(nick){if(!nick)return;if(nick===me)return openGarden();closeUserMenu();const{data}=await sb.from('gardens').select('*').eq('nick',en(nick)).maybeSingle();_visitNick=nick;let beds=(data&&data.beds)||[null,null,null,null,null,null];if(!Array.isArray(beds))beds=[null,null,null,null,null,null];while(beds.length<6)beds.push(null);if(beds.length>6)beds.length=6;_visitGarden={beds,inv:(data&&data.inventory)||{},ferts:(data&&data.ferts)||{}};$('gardenMain').style.display='none';$('gardenVisit').style.display='block';$('gardenTitle').textContent='👀 '+nick;$('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · только просмотр';$('gardenM').classList.add('open');renderVisitGarden()}
 function renderVisitGarden(){if(!_visitGarden)return;const b=$('visitBeds');const now=Date.now();b.innerHTML=_visitGarden.beds.map((bed,i)=>{if(!bed)return '<div class="gbed empty guest"><div class="gbed-icon">🌾</div><div class="gbed-label">Пусто</div></div>';const s=SEEDS.find(x=>x.id===bed.seed);if(!s)return '<div class="gbed empty guest"><div class="gbed-icon">?</div></div>';const tot=bed.growMs||s.grow*1000;const pct=Math.min(100,(now-bed.plantedAt)/tot*100);const ready=pct>=100;return '<div class="gbed guest '+(ready?'ready':'grow')+'"><div class="gbed-icon">'+(ready?s.icon:'🌱')+'</div><div class="gbed-label">'+s.name+'</div><div class="gbed-bar"><div class="gbed-fill" style="width:'+pct+'%"></div></div><div class="gbed-time">'+(ready?'✅':Math.ceil((tot-(now-bed.plantedAt))/1000)+'с')+'</div></div>'}).join('')}
@@ -1814,6 +1805,7 @@ function closePf(){$('pf').classList.remove('open');pfFxClear();pfCurrent=null}
 async function startPfEdit(){let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',me).maybeSingle();p=r.data}catch(e){}$('pfEmojiInp').value=(p&&p.status_emoji)||'';$('pfStatusInp').value=(p&&p.status)||'';$('pfBioInp').value=(p&&p.bio)||'';$('pfEdit').classList.add('on')}
 function cancelPfEdit(){$('pfEdit').classList.remove('on')}
 async function savePf(ev){const e=$('pfEmojiInp').value.trim(),s=$('pfStatusInp').value.trim(),b=$('pfBioInp').value.trim();const{error}=await sb.from('profiles').update({status:s,status_emoji:e,bio:b}).eq('nick',me);if(error){$('pfErr').textContent=error.message;return}closePf();setTimeout(()=>openProfile(null),200)}
+function openPfMine(){openProfile(null)}
 /* Рамки */
 function frameBonusPct(id){return FRAME_BONUS[id]||0}
 function getFrame(n){return frameCache[en(n)]||'none'}
@@ -1853,12 +1845,7 @@ async function loadAllProfiles(){try{const{data}=await sb.from('profiles').selec
 async function loadPhotoCache(){try{const{data}=await sb.from('user_media').select('nick,photo_url');photoCache={};(data||[]).forEach(m=>{if(m.photo_url)photoCache[m.nick]=m.photo_url});const{data:fr}=await sb.from('profiles').select('nick,active_frame');frameCache={};(fr||[]).forEach(p=>{if(p.active_frame)frameCache[en(p.nick)]=p.active_frame})}catch(e){}}
 async function loadMyRooms(){const{data}=await sb.from('flats').select('house_id,number,owner_nicks');myRooms.clear();myAllFlats=[];(data||[]).forEach(f=>{const o=f.owner_nicks||[];if(o.includes(meEnc)){myAllFlats.push({house_id:f.house_id,number:f.number,owner:o[0]===meEnc});if(o.length>=2)myRooms.add('h'+f.house_id+'_flat'+f.number+'_room')}})}
 async function createHouse(n,i){const id=i||(houses.length?Math.max(...houses.map(h=>h.id))+1:1);const{data:h}=await sb.from('houses').insert({id,name:n}).select().single();const r=[];for(let k=1;k<=30;k++)r.push({house_id:id,number:k});await sb.from('flats').insert(r);houses.push(h);renderHouses();await switchHouse(id)}
-/* Рендер чатов (упрощённо) */
-function dmr(a,b){const s=[a,b].sort();return 'dm_'+s[0]+'__'+s[1]}
-function pFR(r){const m=r.match(/^dm_(.+)__(.+)$/);if(!m)return null;return m[1]===meEnc?m[2]:m[1]}
-function isDm(r){const m=r.match(/^dm_(.+)__(.+)$/);if(!m)return false;return m[1]===meEnc||m[2]===meEnc}
-function isGrp(r){return r&&r.startsWith('group_')}
-function isMyR(r){return isDm(r)||isGrp(r)||myRooms.has(r)}
+/* Рендер чатов */
 function getHC(){try{return new Set(JSON.parse(localStorage.getItem('hc_'+meEnc)||'[]'))}catch(e){return new Set()}}
 function saveHC(s){localStorage.setItem('hc_'+meEnc,JSON.stringify(Array.from(s)))}
 async function hideC(rid,e){if(e)e.stopPropagation();const h=getHC();h.add(rid);saveHC(h);renderDMs()}
@@ -1872,7 +1859,7 @@ async function openEntChat(g){curGroup=null;curRoom='entrance_'+g;curRoomType='e
 async function closeM(){if(mr&&mr.state==='recording')mr.stop();$('modal').classList.remove('open');$('gearBtn').classList.remove('on');if(ch){sb.removeChannel(ch);ch=null}if(pt){clearInterval(pt);pt=null}curRoom=null;curRoomType=null;curEntG=null;curPartner=null;curGroup=null;clrCh($('chat'))}
 function togIR(c){$('ir').style.display=c?'flex':'none';$('nw').style.display=c?'none':'block'}
 function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
-async function loadM(){   const tk=++mTok,rid=curRoom;if(!rid)return;   const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);   if(tk!==mTok||rid!==curRoom)return;   if(error)return;   msgC=(data||[]).reverse().filter(m=>!m.deleted_for_all);   renderMs($('chat'),msgC); }
+async function loadM(){const tk=++mTok,rid=curRoom;if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);if(tk!==mTok||rid!==curRoom)return;if(error)return;msgC=(data||[]).reverse().filter(m=>!m.deleted_for_all);renderMs($('chat'),msgC)}
 function renderMs(el,list){const nh=list.map(m=>{const mine=m.nick===meEnc;let body;if(m.voice_url)body='<div class="voice-msg">🎤 Голосовое</div>';else if(m.video_url)body='<div class="mc paused"><video src="'+m.video_url+'" playsinline></video></div>';else if(m.photo_url)body='<img class="mp" src="'+m.photo_url+'" onclick="openPV(\''+m.photo_url+'\')">';else body='<span class="txt">'+eh(m.text)+'</span>';const tm='<span class="time">'+new Date(m.created_at).toLocaleTimeString().slice(0,5)+'</span>';const nk=mine?'':'<span class="nick">'+eh(de(m.nick))+'</span>';return '<div class="msg '+(mine?'own':'other')+'" data-id="'+m.id+'">'+nk+body+tm+'</div>'}).join('');const fh=nh||'<div style="color:#55556a;text-align:center;padding:30px">Пусто</div>';if(el.dataset.lastHtml!==fh){const ab=el.scrollTop+el.clientHeight>=el.scrollHeight-40,fr=!el.dataset.lastHtml;el.innerHTML=fh;el.dataset.lastHtml=fh;if(fr||ab)el.scrollTop=el.scrollHeight}}
 function subM(){if(ch)sb.removeChannel(ch);if(!curRoom)return;ch=sb.channel('rm-'+curRoom).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+curRoom},()=>loadM()).subscribe()}
 let _subGlobCh=null;
@@ -1892,7 +1879,6 @@ function subGlob(){
 }
 function startPt(){if(pt)clearInterval(pt);pt=setInterval(loadM,5000)}
 function sendM(){
-  console.log('[sendM] called. curRoom=',curRoom,'text=',$('mI').value);
   if(isBanned){showBan();return}
   const inp=$('mI');if(!inp)return;
   const t=(inp.value||'').trim();
@@ -1903,25 +1889,25 @@ function sendM(){
   inp.value='';
   const rid=curRoom;
   sb.from('messages').insert({room_id:rid,nick:meEnc,text:t,user_id:curUser.id}).select().then(r=>{
-    console.log('[sendM] insert:',r);
     if(r.error){showToast('❌ '+r.error.message,'error');inp.value=t;return null}
     return loadM();
   }).then(()=>{
-    console.log('[sendM] after loadM. msgC=',msgC.length,'DOM len=',document.getElementById('chat').innerHTML.length);
     if(curRoomType==='dm'||curRoomType==='group'){loadDMs().then(()=>renderDMs())}
   }).catch(e=>{
-    console.error('[sendM] EXCEPTION:',e);
     showToast('❌ '+e.message,'error');
   });
 }
 async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;await openFm(Number(m[2]))}
-/* Fm (квартира) */
+/* Fm */
 async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
 function upFm(){const f=flats[fmN];if(!f)return closeFm();const owners=flatOwners(f);const isOwnerF=owners[0]===meEnc,mp=f.max_people??2,others=owners.filter(o=>o!==meEnc);const gnum=(Number(curHouse)-1)*30+Number(fmN);$('fmT').textContent='🏠 Кв '+gnum+(isOwnerF?' (хозяин)':' (сосед)');$('fmTR').style.display=others.length?'block':'none';$('fmTM').style.display=(isOwnerF&&mp>=2)?'block':'none';$('lvB').style.display='block';const inf=$('rmInfo');if(!others.length)inf.innerHTML='<div class="reme">Пока никого</div>';else inf.innerHTML=others.map(o=>'<div class="rmc">'+avH(de(o),'sm')+'<div style="flex:1;margin-left:10px">'+eh(de(o))+'</div>'+(isOwnerF?'<button onclick="kickR(\''+o+'\')">Выгнать</button>':'')+'</div>').join('')}
 function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');const m={media:'fmPM',room:'fmPR',manage:'fmPN',work:'fmPW'};$(m[t]).style.display='flex';$('svB').style.display=t==='media'?'block':'none';if(t==='work')renderWork()}
 function closeFm(){if(workActive)stopWork(false);$('fm').classList.remove('open');fmN=null}
 async function kickR(o){const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return;if(!o||o===meEnc)return;const nw=owners.filter(x=>x!==o);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',curHouse).eq('number',fmN);await reloadHouse();upFm()}
 async function leaveFlat(){const f=flats[fmN];if(!f)return;const owners=flatOwners(f);const nw=owners.filter(x=>x!==meEnc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',curHouse).eq('number',fmN);closeFm();await reloadHouse();await loadMyRooms()}
+function saveM(){showToast('Медиа сохранено','success')}
+function invite(){showToast('Приглашение','success')}
+function stopMus(){try{if(musUrl){URL.revokeObjectURL(musUrl);musUrl=null}}catch(e){}}
 /* Объявление */
 function openAnn(hid){_annHouseId=Number(hid);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||''}
 function closeAnn(){$('annM').classList.remove('open')}
@@ -1929,17 +1915,18 @@ async function postAnn(){const t=$('annInp').value.trim();if(!t)return;const hid
 async function delAnn(hid){await sb.from('houses').update({announcement:null}).eq('id',hid||Number(curHouse));await loadHouses();if(afT==='house')afRend()}
 function showAnn(t){const b=$('annBanner');if(!t){b.classList.remove('on');return}$('annText').textContent=t;b.classList.add('on')}
 $('annCloseBtn').onclick=()=>$('annBanner').classList.remove('on');
-/* PV / Emoji / VP / VOICE / GROUP - упрощённо */
+/* PV / Emoji */
 function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
 function closePV(){$('pv').classList.remove('open')}
 function closeEm(){$('em').classList.remove('open')}
-function togEP(){const p=$('ep');epOpen=!epOpen;if(p)p.classList.toggle('open',epOpen)}
+function saveEd(){closeEm()}
 function openGm(){gmAvaFile=null;$('gmName').value='';$('gmMem').value='';$('gmErr').textContent='';$('gm').classList.add('open')}
 function closeGm(){$('gm').classList.remove('open')}
 async function createGroup(){const name=$('gmName').value.trim();if(!name)return;const nicks=$('gmMem').value.split(/[,\n]+/).map(x=>x.trim()).filter(Boolean);const memEnc=[meEnc,...nicks.map(en)];const{data}=await sb.from('groups').insert({name,owner_nick:meEnc,members:memEnc}).select().single();closeGm();await loadGroups();await loadDMs();renderDMs();if(data)openGroup(data.id)}
 function openGsm(){if(curGroup){$('gsmName').value=curGroup.name;$('gsm').classList.add('open')}}
 function closeGsm(){$('gsm').classList.remove('open')}
 async function saveGroupSettings(){if(!curGroup)return;await sb.from('groups').update({name:$('gsmName').value.trim()}).eq('id',curGroup.id);await loadGroups();closeGsm()}
+function updateGroupHeader(){if(curGroup)$('rt').textContent=curGroup.name}
 /* UI */
 function magnetize(btn){if(window.matchMedia&&window.matchMedia('(hover:none)').matches)return;btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const dx=(e.clientX-cx)/(r.width/2),dy=(e.clientY-cy)/(r.height/2);btn.style.transform='perspective(500px) rotateX('+(-dy*14)+'deg) rotateY('+(dx*14)+'deg) scale(1.06)'});btn.addEventListener('mouseleave',()=>btn.style.transform='')}
 function setupUI(){document.getElementById('mbtn').onclick=()=>document.getElementById('sb').classList.add('open');document.getElementById('cs').onclick=()=>document.getElementById('sb').classList.remove('open');const mi=$('mI');document.getElementById('sBtn').onclick=e=>{e.preventDefault();sendM()};mi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sendM()}};$('pf').addEventListener('click',e=>{if(e.target.id==='pf')closePf()});$('dutyM').addEventListener('click',e=>{if(e.target.id==='dutyM')closeDuty()});$('framesM').addEventListener('click',e=>{if(e.target.id==='framesM')closeFrames()});$('jobM').addEventListener('click',e=>{if(e.target.id==='jobM')closeJob()});$('gardenM').addEventListener('click',e=>{if(e.target.id==='gardenM')closeGarden()});$('seedShopM').addEventListener('click',e=>{if(e.target.id==='seedShopM')closeSeedShop()});$('fertShopM').addEventListener('click',e=>{if(e.target.id==='fertShopM')closeFertShop()});$('invM').addEventListener('click',e=>{if(e.target.id==='invM')closeInv()});$('giftM').addEventListener('click',e=>{if(e.target.id==='giftM')closeGift()});$('ofm').addEventListener('click',e=>{if(e.target.id==='ofm')closeOwner()});$('settM').addEventListener('click',e=>{if(e.target.id==='settM')closeSett()});$('visitInp').addEventListener('keydown',e=>{if(e.key==='Enter')doVisit()});$('giveNickField')?.addEventListener('keydown',e=>{if(e.key==='Enter')giveLoadUser()})}
@@ -1949,55 +1936,6 @@ function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_change
 function subFlats(){if(fc)return;fc=sb.channel('flats-rt').on('postgres_changes',{event:'*',schema:'public',table:'flats'},async p=>{const r=p.new||p.old;if(!r||r.house_id!==curHouse)return;if(p.eventType==='DELETE')delete flats[r.number];else flats[r.number]=p.new;renderFlats()}).subscribe()}
 /* INIT */
 window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}});
-  /* ===== FIX 2.9.1 — все исправления одной вставкой ===== */
-window.upChSt=function(){if(!curPartner)return;const st=$('chs');if(!st)return;if(online.has(curPartner)){st.textContent='в сети';st.classList.add('online')}else{st.classList.remove('online')}};
-
-window.loadM=async function(){
-  const tk=++mTok,rid=curRoom;if(!rid)return;
-  const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);
-  if(tk!==mTok||rid!==curRoom)return;
-  if(error)return;
-  msgC=(data||[]).reverse().filter(m=>!m.deleted_for_all);
-  renderMs($('chat'),msgC);
-};
-
-window.loadRM=async function(){
-  const tk=++rmTok,rid=rcId;if(!rid)return;
-  const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);
-  if(tk!==rmTok||rid!==rcId)return;
-  if(error)return;
-  const{data:hid}=await sb.from('hidden_messages').select('message_id').eq('user_nick',meEnc);
-  const hI=new Set((hid||[]).map(h=>h.message_id));
-  rmC=(data||[]).reverse().filter(m=>!hI.has(m.id)&&!m.deleted_for_all);
-  await loadR(rmC);
-  renderMs($('rc'),rmC);
-};
-
-window.subGlob=function(){
-  if(window._subGlobCh)return;
-  window._subGlobCh=sb.channel('glob-msg').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},async p=>{
-    const m=p.new;if(!m)return;
-    if(!isMyR(m.room_id))return;
-    if(m.nick===meEnc){await loadDMs();renderDMs();return}
-    if(curRoom===m.room_id)return;
-    if(rcId===m.room_id)return;
-    unread[m.room_id]=(unread[m.room_id]||0)+1;
-    const w=de(m.nick),pr=m.voice_url?'🎤':(m.video_url?'⚪':(m.photo_url?'📷':m.text));
-    showNotif('💬 '+w,pr);
-    await loadDMs();renderDMs()
-  }).subscribe();
-};
-
-window.subRM=function(){
-  if(rcCh)sb.removeChannel(rcCh);
-  if(!rcId)return;
-  rcCh=sb.channel('rc-'+rcId).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+rcId},()=>loadRM()).subscribe();
-};
-
-window.startRcPt=function(){
-  if(rcPt)clearInterval(rcPt);
-  rcPt=setInterval(loadRM,3000);
-};
 </script>
 </body>
 </html>
