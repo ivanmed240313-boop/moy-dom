@@ -1825,7 +1825,29 @@ function subGlob(){
   }).subscribe()
 }
 function startPt(){if(pt)clearInterval(pt);pt=setInterval(loadM,5000)}
-async function sendM(){   if(isBanned)return showBan();   const inp=$('mI');if(!inp)return;   const t=(inp.value||'').trim();   if(!t)return;   if(!curRoom){showToast('Чат не открыт','error');return}   if(!curUser||!curUser.id){showToast('Нет сессии, перезайди','error');return}   if(curRoomType==='entrance'&&myEnt()!==curEntG){showToast('Только в свой подъезд','error');return}   inp.value='';inp.focus();   const{data,error}=await sb.from('messages').insert({room_id:curRoom,nick:meEnc,text:t,user_id:curUser.id}).select();   if(error){showToast('❌ '+error.message,'error');console.error('[sendM]',error);inp.value=t;return}   await loadM();   if(curRoomType==='dm'||curRoomType==='group'){await loadDMs();renderDMs()} }
+function sendM(){
+  console.log('[sendM] called. curRoom=',curRoom,'text=',$('mI').value);
+  if(isBanned){showBan();return}
+  const inp=$('mI');if(!inp)return;
+  const t=(inp.value||'').trim();
+  if(!t)return;
+  if(!curRoom){showToast('Чат не открыт','error');return}
+  if(!curUser){showToast('Нет сессии','error');return}
+  if(curRoomType==='entrance'&&myEnt()!==curEntG){showToast('Только в свой подъезд','error');return}
+  inp.value='';
+  const rid=curRoom;
+  sb.from('messages').insert({room_id:rid,nick:meEnc,text:t,user_id:curUser.id}).select().then(r=>{
+    console.log('[sendM] insert:',r);
+    if(r.error){showToast('❌ '+r.error.message,'error');inp.value=t;return null}
+    return loadM();
+  }).then(()=>{
+    console.log('[sendM] after loadM. msgC=',msgC.length,'DOM len=',document.getElementById('chat').innerHTML.length);
+    if(curRoomType==='dm'||curRoomType==='group'){loadDMs().then(()=>renderDMs())}
+  }).catch(e=>{
+    console.error('[sendM] EXCEPTION:',e);
+    showToast('❌ '+e.message,'error');
+  });
+}
 async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;await openFm(Number(m[2]))}
 /* Fm (квартира) */
 async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
