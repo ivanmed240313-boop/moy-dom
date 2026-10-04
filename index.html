@@ -1726,7 +1726,48 @@ function initVacuumGame(field,target){const dirts=[];for(let i=0;i<target;i++){c
 function initFlowersGame(field,target){const fls=[];for(let i=0;i<target;i++){const w=90;const el=document.createElement('div');el.className='flower';el.style.left=(r.width/2+(i-(target-1)/2)*150-w/2)+'px';el.style.top=(r.height/2-40)+'px';el.style.width=w+'px';el.innerHTML='<div class="flower-icon" style="font-size:64px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';field.appendChild(el);fls.push({el,water:0,done:false})}}
 function stopWork(t){if(!workActive)return;workActive=false;if(workTimer)clearInterval(workTimer);$('workGame').style.display='none';clearWorkHandlers();$('workField').innerHTML='';$('workField').className='work-field';const task=WORK_TASKS.find(x=>x.id===workTaskId);const target=task.target||8;if(workCaught>=target){workCdSet(workTaskId);const r=withBonus(5);addCoins(r);$('workMsg').style.color='#8bc34a';$('workMsg').textContent='✨ +'+r+'💰'}else{$('workMsg').style.color='#ff8888';$('workMsg').textContent='Сделано '+workCaught+'/'+target}workTaskId=null;renderWork()}
 /* Грядка (сокращённо) */
-const SEEDS=[{id:'carrot',name:'Морковь',rarity:'common',price:5,grow:30,sell:10,icon:'🥕'},{id:'potato',name:'Картошка',rarity:'common',price:8,grow:45,sell:16,icon:'🥔'},{id:'wheat',name:'Пшеница',rarity:'common',price:10,grow:60,sell:20,icon:'🌾'},{id:'tomato',name:'Помидор',rarity:'common',price:12,grow:75,sell:25,icon:'🍅'},{id:'cucumber',name:'Огурец',rarity:'common',price:15,grow:90,sell:30,icon:'🥒'},{id:'strawberry',name:'Клубника',rarity:'uncommon',price:40,grow:140,sell:90,icon:'🍓'},{id:'pumpkin',name:'Тыква',rarity:'uncommon',price:55,grow:160,sell:120,icon:'🎃'},{id:'watermelon',name:'Арбуз',rarity:'uncommon',price:70,grow:180,sell:155,icon:'🍉'},{id:'grape',name:'Виноград',rarity:'uncommon',price:85,grow:200,sell:190,icon:'🍇'},{id:'lotus',name:'Лотос',rarity:'rare',price:250,grow:320,sell:600,icon:'🪷'},{id:'orchid',name:'Орхидея',rarity:'rare',price:360,grow:400,sell:860,icon:'🌺'},{id:'sakura',name:'Сакура',rarity:'rare',price:430,grow:440,sell:1030,icon:'🌸'},{id:'rose',name:'Роза',rarity:'rare',price:500,grow:480,sell:1200,icon:'🌹'},{id:'crystal',name:'Кристалл',rarity:'mythic',price:1000,grow:680,sell:2400,icon:'💎'},{id:'starflower',name:'Звёздный',rarity:'mythic',price:1300,grow:740,sell:3120,icon:'⭐'},{id:'flame',name:'Пламя',rarity:'mythic',price:2000,grow:860,sell:4800,icon:'🔥'},{id:'dragonfruit',name:'Драконий',rarity:'legendary',price:6000,grow:1250,sell:14400,icon:'🐉'},{id:'phoenix',name:'Феникс',rarity:'legendary',price:8000,grow:1400,sell:19200,icon:'🦅'},{id:'angeltear',name:'Слеза ангела',rarity:'secret',price:35000,grow:2500,sell:96000,icon:'👼'},{id:'dragonseye',name:'Око дракона',rarity:'secret',price:60000,grow:2900,sell:168000,icon:'👁️'}];
+const SEEDS=[
+  {id:'carrot',     name:'Морковь',           rarity:'common',    price:5,     grow:30,   sell:10,    icon:'🥕'},
+  {id:'potato',     name:'Картошка',          rarity:'common',    price:8,     grow:45,   sell:16,    icon:'🥔'},
+  {id:'wheat',      name:'Пшеница',           rarity:'common',    price:10,    grow:60,   sell:20,    icon:'🌾'},
+  {id:'tomato',     name:'Помидор',           rarity:'common',    price:12,    grow:75,   sell:25,    icon:'🍅'},
+  {id:'cucumber',   name:'Огурец',            rarity:'common',    price:15,    grow:90,   sell:30,    icon:'🥒'},
+  {id:'onion',      name:'Лук',               rarity:'common',    price:18,    grow:100,  sell:36,    icon:'🧅'},
+  {id:'cabbage',    name:'Капуста',           rarity:'common',    price:22,    grow:110,  sell:44,    icon:'🥬'},
+  {id:'garlic',     name:'Чеснок',            rarity:'common',    price:26,    grow:120,  sell:52,    icon:'🧄'},
+  {id:'strawberry', name:'Клубника',          rarity:'uncommon',  price:40,    grow:140,  sell:90,    icon:'🍓'},
+  {id:'pumpkin',    name:'Тыква',             rarity:'uncommon',  price:55,    grow:160,  sell:120,   icon:'🎃'},
+  {id:'watermelon', name:'Арбуз',             rarity:'uncommon',  price:70,    grow:180,  sell:155,   icon:'🍉'},
+  {id:'grape',      name:'Виноград',          rarity:'uncommon',  price:85,    grow:200,  sell:190,   icon:'🍇'},
+  {id:'pepper',     name:'Перчик',            rarity:'uncommon',  price:100,   grow:220,  sell:225,   icon:'🌶️'},
+  {id:'blueberry',  name:'Голубика',          rarity:'uncommon',  price:120,   grow:240,  sell:270,   icon:'🫐'},
+  {id:'mango',      name:'Манго',             rarity:'uncommon',  price:140,   grow:260,  sell:320,   icon:'🥭'},
+  {id:'blackberry', name:'Ежевика',           rarity:'uncommon',  price:165,   grow:280,  sell:380,   icon:'🍇'},
+  {id:'lotus',      name:'Лотос',             rarity:'rare',      price:250,   grow:320,  sell:600,   icon:'🪷'},
+  {id:'cactus',     name:'Кактус',            rarity:'rare',      price:300,   grow:360,  sell:720,   icon:'🌵'},
+  {id:'orchid',     name:'Орхидея',           rarity:'rare',      price:360,   grow:400,  sell:860,   icon:'🌺'},
+  {id:'sakura',     name:'Сакура',            rarity:'rare',      price:430,   grow:440,  sell:1030,  icon:'🌸'},
+  {id:'rose',       name:'Роза',              rarity:'rare',      price:500,   grow:480,  sell:1200,  icon:'🌹'},
+  {id:'bamboo',     name:'Бамбук',            rarity:'rare',      price:580,   grow:520,  sell:1390,  icon:'🎋'},
+  {id:'lavender',   name:'Лаванда',           rarity:'rare',      price:670,   grow:560,  sell:1600,  icon:'💜'},
+  {id:'tulip',      name:'Тюльпан',           rarity:'rare',      price:770,   grow:600,  sell:1840,  icon:'🌷'},
+  {id:'crystal',    name:'Кристалл',          rarity:'mythic',    price:1000,  grow:680,  sell:2400,  icon:'💎'},
+  {id:'starflower', name:'Звёздный цветок',   rarity:'mythic',    price:1300,  grow:740,  sell:3120,  icon:'⭐'},
+  {id:'moongrass',  name:'Луна-трава',        rarity:'mythic',    price:1600,  grow:800,  sell:3840,  icon:'🌙'},
+  {id:'flame',      name:'Пламя-цветок',      rarity:'mythic',    price:2000,  grow:860,  sell:4800,  icon:'🔥'},
+  {id:'icelotus',   name:'Ледяной лотос',     rarity:'mythic',    price:2400,  grow:920,  sell:5760,  icon:'❄️'},
+  {id:'rainbow',    name:'Радужный',          rarity:'mythic',    price:2900,  grow:980,  sell:6960,  icon:'🌈'},
+  {id:'phantom',    name:'Призрачный',        rarity:'mythic',    price:3500,  grow:1040, sell:8400,  icon:'👻'},
+  {id:'volcano',    name:'Вулканический',     rarity:'mythic',    price:4200,  grow:1100, sell:10080, icon:'🌋'},
+  {id:'dragonfruit',name:'Драконий плод',     rarity:'legendary', price:6000,  grow:1250, sell:14400, icon:'🐉'},
+  {id:'phoenix',    name:'Феникс-цветок',     rarity:'legendary', price:8000,  grow:1400, sell:19200, icon:'🦅'},
+  {id:'cosmicfruit',name:'Космический плод',  rarity:'legendary', price:10000, grow:1550, sell:24000, icon:'🌌'},
+  {id:'unicornrose',name:'Единорог-роза',     rarity:'legendary', price:12000, grow:1700, sell:28800, icon:'🦄'},
+  {id:'solarfruit', name:'Солнечный плод',    rarity:'legendary', price:14500, grow:1850, sell:34800, icon:'☀️'},
+  {id:'shadowrose', name:'Теневая роза',      rarity:'legendary', price:17500, grow:2000, sell:42000, icon:'🌑'},
+  {id:'angeltear',  name:'Слеза ангела',      rarity:'secret',    price:35000, grow:2500, sell:96000, icon:'👼'},
+  {id:'dragonseye', name:'Око дракона',       rarity:'secret',    price:60000, grow:2900, sell:168000,icon:'👁️'}
+];
 const RARITY={common:{name:'Обычное',color:'#9aa0b0',chance:1},uncommon:{name:'Необычное',color:'#4caf50',chance:0.65},rare:{name:'Редкое',color:'#3b82f6',chance:0.32},mythic:{name:'Мифическое',color:'#a06bff',chance:0.14},legendary:{name:'Легендарное',color:'#f5c542',chance:0.05},secret:{name:'Секретное',color:'#ff4d6d',chance:0.015}};
 const FERTS=[{id:'fert1',name:'Обычное',mult:1.5,price:50,icon:'💧',color:'#4caf50'},{id:'fert2',name:'Редкое',mult:2,price:200,icon:'💧',color:'#3b82f6'},{id:'fert3',name:'Легендарное',mult:3,price:800,icon:'💧',color:'#f5c542'}];
 function mskSecOfDay(){const m=mskDate();return m.getHours()*3600+m.getMinutes()*60+m.getSeconds()}
@@ -1741,7 +1782,7 @@ function saveGarden(n,g){try{localStorage.setItem(gardenKey(n),JSON.stringify(g)
 function openGarden(){closeUserMenu();backToMyGarden();$('gardenM').classList.add('open');renderMyGarden();if(window._gardenTick)clearInterval(window._gardenTick);window._gardenTick=setInterval(()=>{if($('gardenM').classList.contains('open'))renderMyGarden();else{clearInterval(window._gardenTick);window._gardenTick=null}},800)}
 function closeGarden(){$('gardenM').classList.remove('open');_visitNick=null;_visitGarden=null}
 function backToMyGarden(){$('gardenMain').style.display='block';$('gardenVisit').style.display='none';$('gardenTitle').textContent='🌱 Моя грядка';_visitNick=null;_visitGarden=null;renderMyGarden();$('gardenM').classList.add('open')}
-function renderMyGarden(){const g=loadGarden(me);const b=$('gardenBeds');if(!b)return;const now=Date.now();b.innerHTML=g.beds.map((bed,i)=>{if(!bed)return '<div class="gbed empty" onclick="clickBed('+i+')"><div class="gbed-icon">➕</div><div class="gbed-label">Пусто</div></div>';const s=SEEDS.find(x=>x.id===bed.seed);if(!s)return '<div class="gbed empty" onclick="clickBed('+i+')"><div class="gbed-icon">?</div></div>';const tot=bed.growMs||s.grow*1000;const el=now-bed.plantedAt;const pct=Math.min(100,el/tot*100);const ready=pct>=100;return '<div class="gbed '+(ready?'ready':'grow')+'" onclick="clickBed('+i+')"><div class="gbed-icon">'+(ready?s.icon:'🌱')+'</div><div class="gbed-label">'+s.name+'</div><div class="gbed-bar"><div class="gbed-fill" style="width:'+pct+'%"></div></div><div class="gbed-time">'+(ready?'✅':Math.ceil((tot-el)/1000)+'с')+'</div></div>'}).join('')}
+function renderMyGarden(){const g=loadGarden(me);const b=$('gardenBeds');if(!b)return;const now=Date.now();b.innerHTML=g.beds.map((bed,i)=>{if(!bed)return '<div class="gbed empty" onclick="clickBed('+i+')"><div class="gbed-icon">➕</div><div class="gbed-label">Пусто</div></div>';const s=SEEDS.find(x=>x.id===bed.seed);if(!s){g.beds[i]=null;return '<div class="gbed empty" onclick="clickBed('+i+')"><div class="gbed-icon">➕</div><div class="gbed-label">Пусто</div></div>'}const tot=bed.growMs||s.grow*1000;const el=now-bed.plantedAt;const pct=Math.min(100,el/tot*100);const ready=pct>=100;return '<div class="gbed '+(ready?'ready':'grow')+'" onclick="clickBed('+i+')"><div class="gbed-icon">'+(ready?s.icon:'🌱')+'</div><div class="gbed-label">'+s.name+'</div><div class="gbed-bar"><div class="gbed-fill" style="width:'+pct+'%"></div></div><div class="gbed-time">'+(ready?'✅':Math.ceil((tot-el)/1000)+'с')+'</div></div>'}).join('')}
 function clickBed(i){const g=loadGarden(me);const b=g.beds[i];if(!b){_invMode='plant';_plantBedIdx=i;openInv();return}const s=SEEDS.find(x=>x.id===b.seed);if(!s)return;if((Date.now()-b.plantedAt)>=(b.growMs||s.grow*1000)){harvestBed(i,false);return}applyFert(i)}
 let _invMode='view',_plantBedIdx=null,_giftSeedId=null,_visitNick=null,_visitGarden=null;
 function plantSeed(bi,sid){const g=loadGarden(me);if(!g.inv[sid]||g.inv[sid]<=0)return showToast('Нет семян','error');if(g.beds[bi])return showToast('Занято','error');const s=SEEDS.find(x=>x.id===sid);if(!s)return;g.inv[sid]--;if(g.inv[sid]<=0)delete g.inv[sid];g.beds[bi]={seed:sid,plantedAt:Date.now(),growMs:s.grow*1000};saveGarden(me,g);showToast('🌱 Посажено','success');closeInv();renderMyGarden()}
