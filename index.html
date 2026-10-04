@@ -244,8 +244,9 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #fm.open{display:flex}
 .fmb{background:linear-gradient(180deg,#1a1a22,#14141c);padding:24px;border-radius:24px;width:520px;max-width:100%;max-height:95vh;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;overflow-y:auto}
 .fmb h3{margin:0 0 18px;font-size:19px;font-weight:800}
-.fmt{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:12px;overflow-x:auto}
-.fmtab{padding:9px 16px;border-radius:12px;background:rgba(255,255,255,.04);cursor:pointer;font-size:13px;color:#a0a0b8;font-weight:600;white-space:nowrap}
+.fmt{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.fmt::-webkit-scrollbar{display:none}
+.fmtab{padding:9px 16px;border-radius:12px;background:rgba(255,255,255,.04);cursor:pointer;font-size:13px;color:#a0a0b8;font-weight:600;white-space:nowrap;flex-shrink:0}
 .fmtab.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
 .fmp{display:flex;flex-direction:column}
 .ms{margin-bottom:20px}
@@ -466,7 +467,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #pf .emb.fr-bg-ruby .pf-cover{background:linear-gradient(135deg,#7f1d1d,#b91c1c,#ef4444,#b91c1c);opacity:.7}
 /* NEW FRAME BACKGROUNDS */
 #pf .emb.fr-bg-sakura{
-  /* фон самого профиля НЕ трогаем — он остаётся тёмный */
   border-color: rgba(255,142,182,.55);
   box-shadow: 0 0 40px rgba(255,142,182,.25), 0 20px 60px rgba(0,0,0,.6);
 }
@@ -579,7 +579,8 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #pf .emb.fr-bg-dragon .pf-fx i.scale{width:10px;height:10px;background:linear-gradient(135deg,#86efac,#22c55e 40%,#15803d);border-radius:50% 0 50% 0;box-shadow:0 0 8px #22c55eaa;top:-10%;animation:pfScaleFall linear infinite;transform:rotate(45deg)}
 @keyframes pfDragonEmber{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,25px),-160px) scale(1.2);opacity:0}}
 @keyframes pfScaleFall{0%{transform:translate(0,0) rotate(0);opacity:0}15%{opacity:.9}100%{transform:translate(var(--dx,20px),120vh) rotate(540deg);opacity:0}}
-@media(max-width:600px){#pf .emb .pf-fx{display:none !important}}
+/* ФИКС: разрешаем частицы на мобилке (раньше стоял display:none !important) */
+@media(max-width:600px){#pf .emb .pf-fx{display:block}}
 /* v2.0 JOB SYSTEM */
 .job-pick{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
 .job-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px 12px;cursor:pointer;text-align:center;transition:.2s;font-family:inherit}
@@ -904,7 +905,8 @@ body::before{display:none !important}
 .ntf{animation:none !important}
 .avw .ondot{animation:none !important}
 .flat{transition:border-color .15s !important;transform-style:flat !important}
-.flat.frame-angelic,.flat.frame-devil,.flat.frame-legendary,.flat.frame-rainbow,.flat.frame-cosmic,.flat.frame-diamond,.flat.frame-fire,.flat.frame-ice,.flat.frame-neon,.flat.frame-sakura,.flat.frame-aqua,.flat.frame-storm,.flat.frame-galaxy,.flat.frame-dragon{animation:none !important}
+/* ФИКС: убираем принудительный animation:none для vhs/galaxy — они должны анимироваться */
+.flat.frame-angelic,.flat.frame-devil,.flat.frame-legendary,.flat.frame-rainbow,.flat.frame-cosmic,.flat.frame-diamond,.flat.frame-fire,.flat.frame-ice,.flat.frame-neon,.flat.frame-sakura,.flat.frame-aqua,.flat.frame-storm,.flat.frame-dragon{animation:none !important}
 .flat.frame-angelic{box-shadow:0 0 20px #ffffff,inset 0 0 15px #c8e8ff88 !important}
 .flat.frame-devil{box-shadow:0 0 20px #ff0000cc,inset 0 0 15px #8b000088 !important}
 .flat.frame-legendary{box-shadow:0 0 0 3px #ff9d2e,0 0 25px #f5c54288 !important}
@@ -914,14 +916,21 @@ body::before{display:none !important}
 .flat.frame-fire{box-shadow:0 0 20px #ff5500cc,inset 0 0 12px #ff550055 !important}
 .flat.frame-ice{box-shadow:0 0 20px #7fdbffcc !important}
 .flat.frame-neon{box-shadow:0 0 18px rgba(var(--neon-rgb),.9) !important}
-.flat.frame-vhs{animation:none !important;box-shadow:0 0 0 3px #fff,0 0 25px #ff0033,0 0 45px #00ffff !important}
+/* VHS — оставляем анимацию и усиленное свечение */
+.flat.frame-vhs{box-shadow:0 0 0 3px #fff,0 0 25px #ff0033,0 0 45px #00ffff !important}
+/* GALAXY — оставляем анимацию */
+.flat.frame-galaxy{box-shadow:0 0 0 3px #a06bff,0 0 26px #a06bffcc !important;animation:galaxyGlow 4s ease-in-out infinite !important}
 .flat.frame-sakura{box-shadow:0 0 0 3px #ff8eb6,0 0 22px #ff8eb6cc !important}
 .flat.frame-aqua{box-shadow:0 0 0 3px #00d4ff,0 0 24px #00d4ffcc !important}
 .flat.frame-storm{box-shadow:0 0 0 3px #4a6da8,0 0 24px #ffd70088 !important}
-.flat.frame-galaxy{box-shadow:0 0 0 3px #a06bff,0 0 26px #a06bffcc !important}
 .flat.frame-dragon{box-shadow:0 0 0 3px #15803d,0 0 28px #22c55edd !important}
 .horn,.halo{animation:none !important}
-.pf-av.frame-angelic,.pf-av.frame-devil,.pf-av.frame-legendary,.pf-av.frame-rainbow,.pf-av.frame-cosmic,.pf-av.frame-diamond,.pf-av.frame-fire,.pf-av.frame-ice,.pf-av.frame-vhs,.pf-av.frame-sakura,.pf-av.frame-aqua,.pf-av.frame-storm,.pf-av.frame-galaxy,.pf-av.frame-dragon{animation:none !important}
+/* Профиль: НЕ отключаем анимацию для vhs и galaxy */
+.pf-av.frame-angelic,.pf-av.frame-devil,.pf-av.frame-legendary,.pf-av.frame-rainbow,.pf-av.frame-cosmic,.pf-av.frame-diamond,.pf-av.frame-fire,.pf-av.frame-ice,.pf-av.frame-sakura,.pf-av.frame-aqua,.pf-av.frame-storm,.pf-av.frame-dragon{animation:none !important}
+.pf-av.frame-vhs{animation:vhsGlitch .55s steps(3) infinite !important}
+.pf-av.frame-galaxy{animation:galaxyGlow 4s ease-in-out infinite !important}
+/* ФИКС: табы в модалке квартиры — не сжимаем, скроллим */
+.fmtab{flex-shrink:0}
 }
 @media(max-width:400px){
 #myCoinsBadge{padding:0 9px;font-size:12px;height:40px}
@@ -1014,7 +1023,6 @@ const FRAMES=[
   {id:'dragon',     name:'🐉 Драконья', price:75000},
   {id:'vhs',        name:'📼 VHS (глитч)', price:100000}
 ];
-/* бонусы только у дорогих: сакура/аква/гроза — без бонуса */
 const FRAME_BONUS={angelic:5,devil:5,legendary:2,diamond:1.5,vhs:10,dragon:5,galaxy:4};
 let adminMode=false,pendingUser=null,curEmail='',emId=null,emRoom=null,notifPerm='default',epOpen=false;
 let curUser=null,me=null,meEnc=null,iAmAdmin=false,isBanned=false,banR='';
@@ -1127,27 +1135,42 @@ function saveCurrentNeon(){
   renderFramesList();
 }
 function pfFxClear(){const f=$('pfFx');if(f)f.innerHTML=''}
+
+/* ===== ФИКС: pfFxSpawn теперь работает и на мобилке для тяжёлых рамок ===== */
 function pfFxSpawn(frameId){
   const fx=$('pfFx');
   if(!fx)return;
   pfFxClear();
   if(!frameId||frameId==='none')return;
-  if(window.matchMedia&&window.matchMedia('(max-width:600px)').matches)return;
+  const isMobile=window.matchMedia&&window.matchMedia('(max-width:600px)').matches;
+  // Рамки, для которых показываем частицы даже на мобилке (самые зрелищные)
+  const MOBILE_FX=['galaxy','vhs','dragon','cosmic','fire','angelic','devil','storm'];
+  if(isMobile&&!MOBILE_FX.includes(frameId))return;
   if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
   const add=(cls,style)=>{const i=document.createElement('i');i.className=cls;if(style)i.setAttribute('style',style);fx.appendChild(i)};
   const R=(a,b)=>a+Math.random()*(b-a);
-  if(frameId==='fire'){for(let k=0;k<18;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.2)+'s;animation-delay:-'+R(0,4)+'s')}
-  else if(frameId==='ice'){for(let k=0;k<5;k++){const rev=(k%2===1);add('fish'+(rev?' rev':''),'top:'+R(30,80)+'%;--dy:'+R(-12,12)+'px;animation-duration:'+R(11,18)+'s;animation-delay:-'+R(0,12)+'s;width:'+R(18,26)+'px;height:'+R(8,11)+'px')}}
-  else if(frameId==='cosmic'){for(let k=0;k<4;k++)add('shooting','top:'+R(-15,5)+'%;left:'+R(-15,20)+'%;animation-duration:'+R(3.5,6)+'s;animation-delay:-'+R(0,8)+'s')}
-  else if(frameId==='angelic'){for(let k=0;k<20;k++)add('spark','left:'+R(5,95)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(4.5,7.5)+'s;animation-delay:-'+R(0,6)+'s;width:'+R(3,6)+'px;height:'+R(3,6)+'px')}
-  else if(frameId==='devil'){for(let k=0;k<16;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(2.4,4.8)+'s;animation-delay:-'+R(0,4)+'s')}
-  else if(frameId==='vhs'){for(let k=0;k<24;k++){const rnd=Math.random();const cls=rnd<0.33?'static r':(rnd<0.66?'static c':'static');add(cls,'left:'+R(5,95)+'%;top:'+R(5,95)+'%;--dx:'+R(-40,40)+'px;--dy:'+R(-40,40)+'px;animation-duration:'+R(0.5,1.4)+'s;animation-delay:-'+R(0,1.2)+'s')}}
-  else if(frameId==='sakura'){for(let k=0;k<22;k++)add('petal','left:'+R(2,98)+'%;--dx:'+R(-40,40)+'px;animation-duration:'+R(6,10)+'s;animation-delay:-'+R(0,10)+'s;width:'+R(8,13)+'px;height:'+R(8,13)+'px')}
-  else if(frameId==='aqua'){for(let k=0;k<24;k++){const big=Math.random()<0.25;add('bubble'+(big?' big':''),'left:'+R(2,98)+'%;--dx:'+R(-20,20)+'px;animation-duration:'+R(3.5,7)+'s;animation-delay:-'+R(0,7)+'s;width:'+R(5,big?18:11)+'px;height:'+R(5,big?18:11)+'px')}}
-  else if(frameId==='storm'){for(let k=0;k<30;k++){add('rain','left:'+R(0,100)+'%;--dx:'+R(-40,-15)+'px;animation-duration:'+R(0.6,1.2)+'s;animation-delay:-'+R(0,1.5)+'s;height:'+R(12,22)+'px')}for(let k=0;k<3;k++)add('flash','left:'+R(10,90)+'%;top:'+R(-5,15)+'%;animation-duration:'+R(2.5,5)+'s;animation-delay:-'+R(0,5)+'s;transform:rotate('+R(-25,25)+'deg)')}
-  else if(frameId==='galaxy'){for(let k=0;k<20;k++)add('swirl','left:50%;top:50%;animation-duration:'+R(5,10)+'s;animation-delay:-'+R(0,10)+'s');for(let k=0;k<3;k++)add('shooting2','top:'+R(-15,5)+'%;left:'+R(-15,20)+'%;animation-duration:'+R(4,7)+'s;animation-delay:-'+R(0,8)+'s')}
-  else if(frameId==='dragon'){for(let k=0;k<22;k++)add('dember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.5)+'s;animation-delay:-'+R(0,4)+'s');for(let k=0;k<10;k++)add('scale','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(7,12)+'s;animation-delay:-'+R(0,12)+'s;width:'+R(6,10)+'px;height:'+R(6,10)+'px')}
+  // На мобилке уменьшаем количество частиц для производительности
+  const N=(base)=>isMobile?Math.max(4,Math.floor(base*0.4)):base;
+  if(frameId==='fire'){const n=N(18);for(let k=0;k<n;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.2)+'s;animation-delay:-'+R(0,4)+'s')}
+  else if(frameId==='ice'){const n=N(5);for(let k=0;k<n;k++){const rev=(k%2===1);add('fish'+(rev?' rev':''),'top:'+R(30,80)+'%;--dy:'+R(-12,12)+'px;animation-duration:'+R(11,18)+'s;animation-delay:-'+R(0,12)+'s;width:'+R(18,26)+'px;height:'+R(8,11)+'px')}}
+  else if(frameId==='cosmic'){const n=N(4);for(let k=0;k<n;k++)add('shooting','top:'+R(-15,5)+'%;left:'+R(-15,20)+'%;animation-duration:'+R(3.5,6)+'s;animation-delay:-'+R(0,8)+'s')}
+  else if(frameId==='angelic'){const n=N(20);for(let k=0;k<n;k++)add('spark','left:'+R(5,95)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(4.5,7.5)+'s;animation-delay:-'+R(0,6)+'s;width:'+R(3,6)+'px;height:'+R(3,6)+'px')}
+  else if(frameId==='devil'){const n=N(16);for(let k=0;k<n;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(2.4,4.8)+'s;animation-delay:-'+R(0,4)+'s')}
+  else if(frameId==='vhs'){const n=N(24);for(let k=0;k<n;k++){const rnd=Math.random();const cls=rnd<0.33?'static r':(rnd<0.66?'static c':'static');add(cls,'left:'+R(5,95)+'%;top:'+R(5,95)+'%;--dx:'+R(-40,40)+'px;--dy:'+R(-40,40)+'px;animation-duration:'+R(0.5,1.4)+'s;animation-delay:-'+R(0,1.2)+'s')}}
+  else if(frameId==='sakura'){const n=N(22);for(let k=0;k<n;k++)add('petal','left:'+R(2,98)+'%;--dx:'+R(-40,40)+'px;animation-duration:'+R(6,10)+'s;animation-delay:-'+R(0,10)+'s;width:'+R(8,13)+'px;height:'+R(8,13)+'px')}
+  else if(frameId==='aqua'){const n=N(24);for(let k=0;k<n;k++){const big=Math.random()<0.25;add('bubble'+(big?' big':''),'left:'+R(2,98)+'%;--dx:'+R(-20,20)+'px;animation-duration:'+R(3.5,7)+'s;animation-delay:-'+R(0,7)+'s;width:'+R(5,big?18:11)+'px;height:'+R(5,big?18:11)+'px')}}
+  else if(frameId==='storm'){const n=N(30);for(let k=0;k<n;k++){add('rain','left:'+R(0,100)+'%;--dx:'+R(-40,-15)+'px;animation-duration:'+R(0.6,1.2)+'s;animation-delay:-'+R(0,1.5)+'s;height:'+R(12,22)+'px')}const m=N(3);for(let k=0;k<m;k++)add('flash','left:'+R(10,90)+'%;top:'+R(-5,15)+'%;animation-duration:'+R(2.5,5)+'s;animation-delay:-'+R(0,5)+'s;transform:rotate('+R(-25,25)+'deg)')}
+  else if(frameId==='galaxy'){
+    // Галактика — главный фикс: на мобилке тоже крутим swirl + shooting2
+    const n=N(20);
+    for(let k=0;k<n;k++)add('swirl','left:50%;top:50%;animation-duration:'+R(5,10)+'s;animation-delay:-'+R(0,10)+'s');
+    const m=N(3);
+    for(let k=0;k<m;k++)add('shooting2','top:'+R(-15,5)+'%;left:'+R(-15,20)+'%;animation-duration:'+R(4,7)+'s;animation-delay:-'+R(0,8)+'s');
+  }
+  else if(frameId==='dragon'){const n=N(22);for(let k=0;k<n;k++)add('dember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.5)+'s;animation-delay:-'+R(0,4)+'s');const m=N(10);for(let k=0;k<m;k++)add('scale','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(7,12)+'s;animation-delay:-'+R(0,12)+'s;width:'+R(6,10)+'px;height:'+R(6,10)+'px')}
 }
+/* ===== /ФИКС ===== */
+
 let _toastEl=null,_toastTimer=null;
 function showToast(msg,type){
   if(!_toastEl){_toastEl=document.createElement('div');_toastEl.className='dom-toast';document.body.appendChild(_toastEl)}
@@ -1537,7 +1560,7 @@ function jobStartTask(taskIdx){
   else if(type==='cut')jobWelderCut(taskIdx);
 }
 
-/* ========== TEACHER 1/3 — Проверить контрольные (поиск ошибок) ========== */
+/* ========== TEACHER 1/3 — Проверить контрольные ========== */
 function jobTeacherCheck(taskIdx){
   const body=$('jobBody');
   const totalErr=5,totalSheets=9;
@@ -1759,7 +1782,7 @@ function jobTeacherDictation(taskIdx){
   },80),done:false,timeBonus:0};
 }
 
-/* ========== POLICE 1/3 — Патруль центра (ловля) ========== */
+/* ========== POLICE 1/3 — Патруль центра ========== */
 function jobPolicePatrol(taskIdx){
   const body=$('jobBody');
   const totalCr=5,totalPeople=9;
@@ -1810,7 +1833,7 @@ function jobPolicePatrol(taskIdx){
   },80),done:false,penalty:0};
 }
 
-/* ========== POLICE 2/3 — Замерить скорость (радар) ========== */
+/* ========== POLICE 2/3 — Замерить скорость ========== */
 function jobPoliceRadar(taskIdx){
   const body=$('jobBody');
   const totalShots=3;
@@ -1932,7 +1955,7 @@ function jobPoliceDocs(taskIdx){
   },80),done:false,penalty:0};
 }
 
-/* ========== WELDER 1/3 — Сварить шов (классический timing) ========== */
+/* ========== WELDER 1/3 — Сварить шов ========== */
 function jobWelderSeam(taskIdx){
   const body=$('jobBody');
   body.innerHTML='<div class="job-timer">🔧 Сварить шов · Точно попади в зелёную зону</div><div class="job-weld-bar" id="jobWeldBar"><div class="job-weld-zone" id="jobWeldZone"></div><div class="job-weld-marker" id="jobWeldMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Стоп», когда бегунок в зелёной зоне. Чем ближе к центру — тем больше монет!</div><button class="duty-start" style="margin-top:14px" onclick="jobWeldStop()">⏹ СТОП</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
@@ -1989,7 +2012,7 @@ function jobWeldStop(){
   },700);
 }
 
-/* ========== WELDER 2/3 — Замерить детали (штангенциркуль) ========== */
+/* ========== WELDER 2/3 — Замерить детали ========== */
 function jobWelderMeasure(taskIdx){
   const body=$('jobBody');
   const totalShots=3;
@@ -2048,7 +2071,7 @@ function jobMeasureStop(){
   if(_jobTaskState.onHit)_jobTaskState.onHit(prec);
 }
 
-/* ========== WELDER 3/3 — Нарезать металл (обвод мышкой) ========== */
+/* ========== WELDER 3/3 — Нарезать металл ========== */
 function jobWelderCut(taskIdx){
   const body=$('jobBody');
   body.innerHTML='<div class="job-timer">✂️ Прогресс: <b id="jobLeft">0</b>% · Держи ЛКМ и веди вдоль линии</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Зажми и веди курсор слева направо. Отпустишь — прогресс медленно падает.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
