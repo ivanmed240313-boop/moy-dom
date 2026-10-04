@@ -1014,6 +1014,89 @@ body::before{display:none !important}
 
 <div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Дом</title><link rel="icon" type="image/png" href="favicon.png"><style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
+:root{--neon-rgb:0,229,255}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a10 !important;color:#e8e8f0;-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
+body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(circle at 20% 20%,rgba(245,197,66,.06),transparent 35%),radial-gradient(circle at 80% 70%,rgba(76,175,80,.05),transparent 40%);animation:bgF 20s ease-in-out infinite;z-index:-2;pointer-events:none}
+@keyframes bgF{0%,100%{transform:rotate(0) scale(1)}50%{transform:rotate(5deg) scale(1.08)}}
+@keyframes shim{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+@keyframes dirtIn{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}
+@keyframes cleanFade{0%{opacity:.9;transform:scale(.9)}100%{opacity:0;transform:scale(1.3)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+@keyframes giftPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes fireFlicker{0%,100%{box-shadow:0 0 22px #ff5500cc,0 0 45px #ffcc00aa,inset 0 0 15px #ff550055}50%{box-shadow:0 0 32px #ff5500ff,0 0 65px #ffcc00dd,inset 0 0 20px #ff550088}}
+@keyframes cosmicPulse{0%,100%{box-shadow:0 0 25px #6b4affcc,0 0 50px #a06bff88}50%{box-shadow:0 0 40px #a06bffdd,0 0 75px #6b4affaa}}
+@keyframes diamondShine{0%,100%{box-shadow:0 0 25px #ffffffcc,0 0 50px #b0e0ffaa}50%{box-shadow:0 0 45px #ffffff,0 0 85px #b0e0ff}}
+@keyframes legendaryGlow{0%,100%{box-shadow:0 0 0 3px #ff9d2e,0 0 30px #ff9d2ecc,0 0 60px #f5c54288}50%{box-shadow:0 0 0 3px #f5c542,0 0 50px #ff9d2eff,0 0 95px #f5c542cc}}
+@keyframes angelGlow{0%,100%{box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffffdd,0 0 65px #c8e8ffaa,inset 0 0 20px #ffffff55}50%{box-shadow:0 0 0 3px #ffffff,0 0 55px #ffffff,0 0 100px #c8e8ffdd,inset 0 0 28px #ffffff88}}
+@keyframes devilGlow{0%,100%{box-shadow:0 0 0 3px #8b0000,0 0 28px #ff0000cc,0 0 60px #ff440088,inset 0 0 18px #8b000088}50%{box-shadow:0 0 0 3px #ff0000,0 0 50px #ff0000ff,0 0 95px #ff4400dd,inset 0 0 26px #8b0000cc}}
+@keyframes frBgRainbow{0%{background:linear-gradient(180deg,#3a0010,#1a0008)}16%{background:linear-gradient(180deg,#3a1a00,#1a0c00)}33%{background:linear-gradient(180deg,#3a3a00,#1a1a00)}50%{background:linear-gradient(180deg,#003a1a,#001a0c)}66%{background:linear-gradient(180deg,#001a3a,#000c1a)}83%{background:linear-gradient(180deg,#1a003a,#0c001a)}100%{background:linear-gradient(180deg,#3a0010,#1a0008)}}
+@keyframes frCoverRainbow{0%{background:linear-gradient(90deg,#ff0055,#ff5500)}16%{background:linear-gradient(90deg,#ff5500,#ffaa00)}33%{background:linear-gradient(90deg,#ffaa00,#ffee00)}50%{background:linear-gradient(90deg,#00ff88,#00ff44)}66%{background:linear-gradient(90deg,#00aaff,#0055ff)}83%{background:linear-gradient(90deg,#a06bff,#6b4aff)}100%{background:linear-gradient(90deg,#ff0055,#ff5500)}}
+#pf .emb.fr-bg-rainbow-anim{animation:frBgRainbow 12s linear infinite}
+#pf .emb.fr-bg-rainbow-anim .pf-cover{animation:frCoverRainbow 12s linear infinite;opacity:.7}
+@keyframes haloPulse{0%,100%{box-shadow:0 0 10px #fff7c0,0 0 22px #ffe066,inset 0 0 6px #ffffffcc;transform:translateX(-50%) scale(1)}50%{box-shadow:0 0 16px #fff7c0,0 0 34px #ffe066,inset 0 0 10px #ffffff;transform:translateX(-50%) scale(1.08)}}
+@keyframes hornTwitch{0%,100%{transform:rotate(var(--hr,0deg)) scale(1)}50%{transform:rotate(calc(var(--hr,0deg) + 4deg)) scale(1.06)}}
+@keyframes rainbowShift{0%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}16%{border-color:#ff5500;box-shadow:0 0 20px #ff5500cc,0 0 40px #ff5500aa,inset 0 0 10px #ff550066}33%{border-color:#ffcc00;box-shadow:0 0 20px #ffcc00cc,0 0 40px #ffcc00aa,inset 0 0 10px #ffcc0066}50%{border-color:#22dd66;box-shadow:0 0 20px #22dd66cc,0 0 40px #22dd66aa,inset 0 0 10px #22dd6666}66%{border-color:#00ccff;box-shadow:0 0 20px #00ccffcc,0 0 40px #00ccffaa,inset 0 0 10px #00ccff66}83%{border-color:#a020ff;box-shadow:0 0 20px #a020ffcc,0 0 40px #a020ffaa,inset 0 0 10px #a020ff66}100%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}}
+@keyframes vhsGlitch{0%{box-shadow:0 0 0 3px #ff0033,0 0 25px #ff0033,0 0 50px #00ffff,inset 0 0 15px #ffffff88;transform:translate(0,0)}10%{box-shadow:0 0 0 3px #00ffff,0 0 25px #00ffff,0 0 50px #ff0033,inset 0 0 15px #ffffff88;transform:translate(-2px,0)}20%{box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffff,0 0 55px #ff0033,inset 0 0 20px #ffffffaa;transform:translate(2px,0)}30%{box-shadow:0 0 0 3px #ff0033,0 0 30px #ff0033,0 0 55px #00ffff,inset 0 0 20px #ffffffaa;transform:translate(0,-2px)}40%{box-shadow:0 0 0 3px #00ffff,0 0 35px #00ffff,0 0 60px #ff0033,inset 0 0 25px #ffffffcc;transform:translate(0,2px)}50%{box-shadow:0 0 0 3px #ffffff,0 0 40px #ffffff,0 0 65px #ff0033,inset 0 0 25px #ffffffcc;transform:translate(-1px,-1px)}60%{box-shadow:0 0 0 3px #ff0033,0 0 35px #ff0033,0 0 60px #00ffff,inset 0 0 25px #ffffffcc;transform:translate(1px,1px)}70%{box-shadow:0 0 0 3px #00ffff,0 0 30px #00ffff,0 0 55px #ff0033,inset 0 0 20px #ffffffaa;transform:translate(-2px,0)}80%{box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffff,0 0 55px #ff0033,inset 0 0 20px #ffffffaa;transform:translate(2px,0)}90%{box-shadow:0 0 0 3px #ff0033,0 0 25px #ff0033,0 0 50px #00ffff,inset 0 0 15px #ffffff88;transform:translate(0,0)}100%{box-shadow:0 0 0 3px #00ffff,0 0 25px #00ffff,0 0 50px #ff0033,inset 0 0 15px #ffffff88;transform:translate(0,0)}}
+@keyframes vhsScan{0%{background-position:0 0}100%{background-position:0 4px}}
+@keyframes vhsFlick{0%,100%{opacity:1}10%{opacity:.6}11%{opacity:1}45%{opacity:.85}46%{opacity:1}78%{opacity:.7}79%{opacity:1}}
+@keyframes vhsBar{0%,100%{transform:translateY(-120%)}50%{transform:translateY(120%)}}
+@keyframes neonFlick{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,22%,24%,55%{opacity:.35}40%{opacity:1}41%{opacity:.4}42%{opacity:1}}
+/* v2.2 NEW FRAMES */
+@keyframes sakuraPulse{0%,100%{box-shadow:0 0 22px #ff8eb6cc,0 0 45px #ffb3d1aa,inset 0 0 12px #ff8eb655;filter:brightness(1)}50%{box-shadow:0 0 32px #ff8eb6ff,0 0 65px #ffb3d1dd,inset 0 0 18px #ff8eb688;filter:brightness(1.1)}}
+@keyframes aquaPulse{0%,100%{box-shadow:0 0 22px #00d4ffcc,0 0 45px #0099ff88,inset 0 0 12px #00d4ff55;filter:brightness(1) hue-rotate(0)}50%{box-shadow:0 0 38px #00d4ffff,0 0 70px #0099ffdd,inset 0 0 20px #00d4ff88;filter:brightness(1.15) hue-rotate(8deg)}}
+@keyframes stormFlick{0%,88%,92%,96%,100%{box-shadow:0 0 22px #ffd700cc,0 0 45px #1a3a6eaa,inset 0 0 12px #ffd70055}90%{box-shadow:0 0 55px #ffffff,0 0 110px #ffd700,0 0 180px #fff,inset 0 0 35px #ffffff}94%{box-shadow:0 0 40px #ffd700,0 0 80px #1a3a6e,inset 0 0 20px #ffd70099}}
+@keyframes galaxyGlow{0%,100%{box-shadow:0 0 0 3px #6b00aa,0 0 35px #a06bffcc,0 0 70px #ff69b488,inset 0 0 18px #6b00aa88}50%{box-shadow:0 0 0 3px #a06bff,0 0 60px #d0a0ffdd,0 0 120px #ff69b4aa,inset 0 0 28px #6b00aacc}}
+/* DRAGON: зелёные чешуйки */
+@keyframes dragonGlow{0%,100%{box-shadow:0 0 0 3px #15803d,0 0 30px #22c55ecc,0 0 60px #4ade8088,inset 0 0 20px #22c55e66}50%{box-shadow:0 0 0 3px #22c55e,0 0 55px #4ade80ff,0 0 100px #86efaccc,inset 0 0 30px #22c55e88}}
+@keyframes dragonBreath{0%,90%,100%{filter:brightness(1) saturate(1)}92%{filter:brightness(1.5) saturate(1.5) hue-rotate(-15deg)}95%{filter:brightness(1.25) saturate(1.25)}}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(245,197,66,.15);border-radius:3px}
+#seasons{position:fixed;inset:0;z-index:-1;pointer-events:none;display:block;background:transparent}
+#auth{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;z-index:1}
+#auth h1{margin:0 0 32px;font-size:44px;font-weight:900;background:linear-gradient(135deg,#f5c542,#ff9d2e,#f5c542);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shim 4s infinite}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:340px;max-width:100%;padding:15px;border-radius:14px;background:#fff;color:#1a1a1a;font-size:15px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.divd{display:flex;align-items:center;gap:12px;margin:20px 0;color:#55556a;font-size:13px;width:340px;max-width:100%}
+.divd::before,.divd::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+.afrm{display:flex;flex-direction:column;gap:12px;width:340px;max-width:100%}
+.afrm input,#nickScr input{padding:15px 18px;font-size:15px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#e8e8f0;font-family:inherit}
+.afrm input:focus,#nickScr input:focus{outline:none;border-color:rgba(245,197,66,.5)}
+.afrm button,#nickScr button{padding:15px;font-size:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;cursor:pointer;font-weight:700;font-family:inherit}
+.afrm button:disabled{opacity:.5;cursor:not-allowed}
+.aerr,.nerr{color:#ff6b6b;font-size:13px;min-height:18px;text-align:center}
+.cinput{text-align:center;font-size:30px!important;letter-spacing:12px;font-weight:800;font-family:'Courier New',monospace!important;padding:20px!important}
+.hint{color:#8888a0;font-size:14px;text-align:center;line-height:1.6;margin:0}.hint b{color:#f5c542}
+.lbtn{background:transparent!important;border:none!important;color:#8888a0!important;font-size:13px!important;padding:8px!important;cursor:pointer;text-decoration:underline}
+#nickScr{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;z-index:1}
+#nickScr h2{margin:0 0 12px;font-size:28px;font-weight:800}
+#nickScr p{color:#8888a0;margin:0 0 28px;font-size:14px;text-align:center;max-width:340px}
+#nickScr .nfrm{display:flex;flex-direction:column;gap:12px;width:340px;max-width:100%}
+#nickScr input{text-align:center}
+.switch-acc{margin-top:20px;background:transparent;border:none;color:#8888a0;cursor:pointer;font-size:13px;text-decoration:underline}
+.av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff;flex-shrink:0;position:relative;border:2px solid rgba(255,255,255,.06);background-size:cover;background-position:center}
+.av-sm{width:32px;height:32px;font-size:13px}.av-xs{width:24px;height:24px;font-size:10px;border-width:1.5px}.av-lg{width:48px;height:48px;font-size:20px}
+.avw{position:relative;flex-shrink:0}.avw .ondot{position:absolute;bottom:-1px;right:-1px;width:13px;height:13px;border-radius:50%;background:#4caf50;border:2px solid #14141c;z-index:2;animation:pulse 2s infinite}
+#topRight{position:absolute;top:14px;right:16px;display:flex;gap:10px;align-items:center;z-index:5}
+#userMenu{position:relative}
+.umBtn{display:flex;align-items:center;gap:10px;background:rgba(20,20,28,.7);padding:6px 14px 6px 6px;border-radius:14px;border:1px solid rgba(255,255,255,.08);cursor:pointer;color:#e8e8f0;font-family:inherit;font-size:13px;font-weight:600;backdrop-filter:blur(20px)}
+.umBtn .av{width:32px;height:32px;font-size:13px}
+.umArrow{color:#8888a0;font-size:11px}
+.umDropdown{position:absolute;top:calc(100% + 8px);right:0;background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:6px;min-width:210px;display:none;flex-direction:column;gap:2px;z-index:100}
+.umDropdown.open{display:flex}
+.umDropdown button{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;background:transparent;border:none;color:#e8e8f0;cursor:pointer;font-family:inherit;font-size:14px;text-align:left}
+.umDropdown button:hover{background:rgba(255,255,255,.06)}
+.umDropdown .umDiv{height:1px;background:rgba(255,255,255,.06);margin:4px 8px}
+.umDropdown .umExit{color:#ff6b6b}
+#adminMItem{display:none}
+#adminTog{display:none;background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;border:none;padding:9px 16px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
+#adminTog.on{background:linear-gradient(135deg,#444,#222)}
+#myCoinsBadge{background:rgba(245,197,66,.15);border:1px solid rgba(245,197,66,.35);padding:6px 12px;border-radius:12px;font-size:13px;font-weight:700;color:#f5c542;cursor:pointer}
+#app{display:none;height:100vh;overflow:hidden;position:relative;z-index:1}
+#annBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:9990;padding:12px 54px 12px 18px;background:linear-gradient(135deg,rgba(211,47,47,.98),rgba(
 <script>
   const SU='https://uuhgpnjpulrazluiqreb.supabase.co',SK='sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
 const OWNER_ID='81fe9ad5-a02b-4e57-8c59-1cf2d60e842c';
@@ -1159,7 +1242,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-const APP_VERSION='2.71';
+const APP_VERSION='2.7';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -1432,7 +1515,7 @@ function jobStartTask(taskIdx){
   else if(type==='cut')jobWelderCut(taskIdx);
 }
 
-/* ========== TEACHER 1/3 — Проверить контрольные (поиск ошибок) ========== */
+/* ========== TEACHER 1/3 — Проверить контрольные ========== */
 function jobTeacherCheck(taskIdx){
   const body=$('jobBody');
   const totalErr=5,totalSheets=9;
@@ -1654,7 +1737,7 @@ function jobTeacherDictation(taskIdx){
   },80),done:false,timeBonus:0};
 }
 
-/* ========== POLICE 1/3 — Патруль центра (ловля) ========== */
+/* ========== POLICE 1/3 — Патруль центра ========== */
 function jobPolicePatrol(taskIdx){
   const body=$('jobBody');
   const totalCr=5,totalPeople=9;
@@ -1827,7 +1910,7 @@ function jobPoliceDocs(taskIdx){
   },80),done:false,penalty:0};
 }
 
-/* ========== WELDER 1/3 — Сварить шов (классический timing) ========== */
+/* ========== WELDER 1/3 — Сварить шов ========== */
 function jobWelderSeam(taskIdx){
   const body=$('jobBody');
   body.innerHTML='<div class="job-timer">🔧 Сварить шов · Точно попади в зелёную зону</div><div class="job-weld-bar" id="jobWeldBar"><div class="job-weld-zone" id="jobWeldZone"></div><div class="job-weld-marker" id="jobWeldMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Кликни «Стоп», когда бегунок в зелёной зоне. Чем ближе к центру — тем больше монет!</div><button class="duty-start" style="margin-top:14px" onclick="jobWeldStop()">⏹ СТОП</button><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:8px" onclick="openJob()">← Назад</button>';
@@ -1884,7 +1967,7 @@ function jobWeldStop(){
   },700);
 }
 
-/* ========== WELDER 2/3 — Замерить детали (штангенциркуль) ========== */
+/* ========== WELDER 2/3 — Замерить детали ========== */
 function jobWelderMeasure(taskIdx){
   const body=$('jobBody');
   const totalShots=3;
@@ -1943,7 +2026,7 @@ function jobMeasureStop(){
   if(_jobTaskState.onHit)_jobTaskState.onHit(prec);
 }
 
-/* ========== WELDER 3/3 — Нарезать металл (обвод мышкой) ========== */
+/* ========== WELDER 3/3 — Нарезать металл ========== */
 function jobWelderCut(taskIdx){
   const body=$('jobBody');
   body.innerHTML='<div class="job-timer">✂️ Прогресс: <b id="jobLeft">0</b>% · Держи ЛКМ и веди вдоль линии</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><div class="duty-msg" id="jobTaskMsg" style="color:#c8c8d0">Зажми и веди курсор слева направо. Отпустишь — прогресс медленно падает.</div><button class="duty-start" style="background:rgba(255,255,255,.06);color:#c8c8d0;margin-top:14px" onclick="openJob()">← Назад</button>';
@@ -2965,7 +3048,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser&&
 
 /* ============ РАСТЕНИЯ (40 ШТ.) ============ */
 const SEEDS=[
-  /* ---- ОБЫЧНЫЕ (8) ---- */
   {id:'carrot',     name:'Морковь',           rarity:'common',    price:5,     grow:30,   sell:10,    icon:'🥕'},
   {id:'potato',     name:'Картошка',          rarity:'common',    price:8,     grow:45,   sell:16,    icon:'🥔'},
   {id:'wheat',      name:'Пшеница',           rarity:'common',    price:10,    grow:60,   sell:20,    icon:'🌾'},
@@ -2974,7 +3056,6 @@ const SEEDS=[
   {id:'onion',      name:'Лук',               rarity:'common',    price:18,    grow:100,  sell:36,    icon:'🧅'},
   {id:'cabbage',    name:'Капуста',           rarity:'common',    price:22,    grow:110,  sell:44,    icon:'🥬'},
   {id:'garlic',     name:'Чеснок',            rarity:'common',    price:26,    grow:120,  sell:52,    icon:'🧄'},
-  /* ---- НЕОБЫЧНЫЕ (8) ---- */
   {id:'strawberry', name:'Клубника',          rarity:'uncommon',  price:40,    grow:140,  sell:90,    icon:'🍓'},
   {id:'pumpkin',    name:'Тыква',             rarity:'uncommon',  price:55,    grow:160,  sell:120,   icon:'🎃'},
   {id:'watermelon', name:'Арбуз',             rarity:'uncommon',  price:70,    grow:180,  sell:155,   icon:'🍉'},
@@ -2983,7 +3064,6 @@ const SEEDS=[
   {id:'blueberry',  name:'Голубика',          rarity:'uncommon',  price:120,   grow:240,  sell:270,   icon:'🫐'},
   {id:'mango',      name:'Манго',             rarity:'uncommon',  price:140,   grow:260,  sell:320,   icon:'🥭'},
   {id:'blackberry', name:'Ежевика',           rarity:'uncommon',  price:165,   grow:280,  sell:380,   icon:'🍇'},
-  /* ---- РЕДКИЕ (8) ---- */
   {id:'lotus',      name:'Лотос',             rarity:'rare',      price:250,   grow:320,  sell:600,   icon:'🪷'},
   {id:'cactus',     name:'Кактус',            rarity:'rare',      price:300,   grow:360,  sell:720,   icon:'🌵'},
   {id:'orchid',     name:'Орхидея',           rarity:'rare',      price:360,   grow:400,  sell:860,   icon:'🌺'},
@@ -2992,7 +3072,6 @@ const SEEDS=[
   {id:'bamboo',     name:'Бамбук',            rarity:'rare',      price:580,   grow:520,  sell:1390,  icon:'🎋'},
   {id:'lavender',   name:'Лаванда',           rarity:'rare',      price:670,   grow:560,  sell:1600,  icon:'💜'},
   {id:'tulip',      name:'Тюльпан',           rarity:'rare',      price:770,   grow:600,  sell:1840,  icon:'🌷'},
-  /* ---- МИФИЧЕСКИЕ (8) ---- */
   {id:'crystal',    name:'Кристалл',          rarity:'mythic',    price:1000,  grow:680,  sell:2400,  icon:'💎'},
   {id:'starflower', name:'Звёздный цветок',   rarity:'mythic',    price:1300,  grow:740,  sell:3120,  icon:'⭐'},
   {id:'moongrass',  name:'Луна-трава',        rarity:'mythic',    price:1600,  grow:800,  sell:3840,  icon:'🌙'},
@@ -3001,14 +3080,12 @@ const SEEDS=[
   {id:'rainbow',    name:'Радужный',          rarity:'mythic',    price:2900,  grow:980,  sell:6960,  icon:'🌈'},
   {id:'phantom',    name:'Призрачный',        rarity:'mythic',    price:3500,  grow:1040, sell:8400,  icon:'👻'},
   {id:'volcano',    name:'Вулканический',     rarity:'mythic',    price:4200,  grow:1100, sell:10080, icon:'🌋'},
-  /* ---- ЛЕГЕНДАРНЫЕ (6) ---- */
   {id:'dragonfruit',name:'Драконий плод',     rarity:'legendary', price:6000,  grow:1250, sell:14400, icon:'🐉'},
   {id:'phoenix',    name:'Феникс-цветок',     rarity:'legendary', price:8000,  grow:1400, sell:19200, icon:'🦅'},
   {id:'cosmicfruit',name:'Космический плод',  rarity:'legendary', price:10000, grow:1550, sell:24000, icon:'🌌'},
   {id:'unicornrose',name:'Единорог-роза',     rarity:'legendary', price:12000, grow:1700, sell:28800, icon:'🦄'},
   {id:'solarfruit', name:'Солнечный плод',    rarity:'legendary', price:14500, grow:1850, sell:34800, icon:'☀️'},
   {id:'shadowrose', name:'Теневая роза',      rarity:'legendary', price:17500, grow:2000, sell:42000, icon:'🌑'},
-  /* ---- СЕКРЕТНЫЕ (2) ---- */
   {id:'angeltear',  name:'Слеза ангела',      rarity:'secret',    price:35000, grow:2500, sell:96000, icon:'👼'},
   {id:'dragonseye', name:'Око дракона',       rarity:'secret',    price:60000, grow:2900, sell:168000,icon:'👁️'}
 ];
@@ -3025,7 +3102,6 @@ const FERTS=[
   {id:'fert2',name:'Редкое удобрение',      mult:2,   price:200, icon:'💧', color:'#3b82f6'},
   {id:'fert3',name:'Легендарное удобрение', mult:3,   price:800, icon:'💧', color:'#f5c542'}
 ];
-/* МСК = UTC+3 */
 function mskDate(){const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+3*3600000)}
 function mskSecOfDay(){const m=mskDate();return m.getHours()*3600+m.getMinutes()*60+m.getSeconds()}
 function mskSlot(){return Math.floor(mskSecOfDay()/180)}
@@ -3165,8 +3241,6 @@ function harvestBed(idx,guest){
   saveGarden(me,g);
   renderMyGarden();
   showToast('✅ Собрано: +'+reward+' 💰 ('+seed.name+')','success');
-}
-  showToast((guest?'👀 Гость: ':'✅ Собрано: ')+' +'+reward+' 💰 ('+seed.name+')','success');
 }
 function openSeedShop(){$('seedShopM').classList.add('open');$('seedShopMsg').textContent='';renderSeedShop();if(_seedShopTick)clearInterval(_seedShopTick);_seedShopTick=setInterval(()=>{if($('seedShopM').classList.contains('open'))renderSeedShop();else{clearInterval(_seedShopTick);_seedShopTick=null}},1000)}
 function closeSeedShop(){$('seedShopM').classList.remove('open')}
@@ -3339,7 +3413,7 @@ async function doVisit(){
     $('gardenMain').style.display='none';
     $('gardenVisit').style.display='block';
     $('gardenTitle').textContent='👀 Грядка: '+nick;
-   $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · <b style="color:#ff8888">только просмотр</b>. Садить, удобрять и собирать чужое — нельзя.';
+    $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · <b style="color:#ff8888">только просмотр</b>. Садить, удобрять и собирать чужое — нельзя.';
     $('visitMsg').textContent='';
     renderVisitGarden();
   }catch(e){showToast('Ошибка: '+e.message,'error')}
