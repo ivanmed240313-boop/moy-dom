@@ -1405,7 +1405,7 @@ async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFla
 /* ===== ВЫДАЧА (OWNER) ===== */
 async function ofGive(b){
   if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}
-  b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет. Монеты — через кнопки ниже.</div>'+
+  b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+
     '<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+
     '<div id="giveBodyInline"></div>';
   await loadAllProfiles();
@@ -1439,59 +1439,84 @@ function renderGiveList(){
   }else if(giveTab==='fert'){
     list.innerHTML='<div class="give-list">'+FERTS.map(f=>'<div class="give-item" onclick="doGiveFert(\''+f.id+'\')"><div class="gi">💧</div><div class="gn">'+eh(f.name)+'</div><div class="gp">×'+f.mult+'</div></div>').join('')+'</div>';
   }else if(giveTab==='coins'){
-    list.innerHTML='<div class="give-list"><div class="give-item" onclick="doGiveCoins(100)"><div class="gi">💰</div><div class="gn">+100 монет</div></div><div class="give-item" onclick="doGiveCoins(1000)"><div class="gi">💰</div><div class="gn">+1000 монет</div></div><div class="give-item" onclick="doGiveCoins(10000)"><div class="gi">💎</div><div class="gn">+10000 монет</div></div><div class="give-item" onclick="doGiveCoins(-100)"><div class="gi">💸</div><div class="gn">−100 монет</div></div></div>';
+    list.innerHTML='<div class="give-list">'+
+      '<div class="give-item" onclick="doGiveCoins(100)"><div class="gi">💰</div><div class="gn">+100 монет</div></div>'+
+      '<div class="give-item" onclick="doGiveCoins(1000)"><div class="gi">💰</div><div class="gn">+1000 монет</div></div>'+
+      '<div class="give-item" onclick="doGiveCoins(10000)"><div class="gi">💎</div><div class="gn">+10000 монет</div></div>'+
+      '<div class="give-item" onclick="doGiveCoins(-100)"><div class="gi">💸</div><div class="gn">−100 монет</div></div>'+
+      '<div class="give-item" onclick="doGiveCoins(-1000)"><div class="gi">💸</div><div class="gn">−1000 монет</div></div>'+
+      '</div>'+
+      '<div class="give-confirm" style="margin-top:12px">'+
+        '<span style="font-size:13px;color:#c8c8d0">Своя сумма:</span>'+
+        '<input id="giveCoinAmt" type="number" placeholder="500" style="width:110px;text-align:center;font-family:inherit" inputmode="numeric">'+
+        '<button onclick="doGiveCoins(parseInt(document.getElementById(\'giveCoinAmt\').value)||0)">💰 Начислить</button>'+
+        '<button style="background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff" onclick="doGiveCoins(-(parseInt(document.getElementById(\'giveCoinAmt\').value)||0))">💸 Списать</button>'+
+      '</div>';
   }
 }
 function iconsFor(id){var icons={devil:'😈',angelic:'😇',rainbow:'🌈',legendary:'⭐',cosmic:'🌌',diamond:'💎',fire:'🔥',ice:'❄️',neon:'🎨',gold:'👑',silver:'🥈',bronze:'🥉',emerald:'💚',sapphire:'💙',ruby:'❤️',vhs:'📼',sakura:'🌸',aqua:'🌊',storm:'⚡',galaxy:'🌌',dragon:'🐉',gardener:'🌾'};return icons[id]||'🖼️'}
 async function doGiveFrame(id){
-  if(!giveTarget)return;
-  const{data:p}=await sb.from('profiles').select('owned_frames').eq('nick',giveTarget).maybeSingle();
-  const owned=Array.isArray(p?.owned_frames)?p.owned_frames:['none'];
-  if(owned.includes(id))return showToast('Уже есть эта рамка','error');
+  if(!giveTarget)return showToast('Введи ник','error');
+  const msg=$('giveMsgInline');
+  const{data:p,error:e0}=await sb.from('profiles').select('owned_frames,nick').eq('nick',giveTarget).maybeSingle();
+  if(e0||!p){if(msg)msg.textContent='❌ Игрок не найден';return showToast('❌ '+((e0&&e0.message)||'не найден'),'error')}
+  const owned=Array.isArray(p.owned_frames)?p.owned_frames:['none'];
+  if(owned.includes(id)){if(msg)msg.textContent='⚠️ Уже есть';return showToast('Уже есть','error')}
   const newOwned=[...owned,id];
   const{error}=await sb.from('profiles').update({owned_frames:newOwned}).eq('nick',giveTarget);
-  const msg=$('giveMsgInline');
-  if(error){if(msg)msg.textContent='❌ '+error.message;return}
-  if(msg)msg.textContent='✅ Выдана рамка: '+id;
-  showToast('🎁 Выдано','success')
+  if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌ '+error.message,'error')}
+  if(msg)msg.textContent='✅ Выдана: '+id;
+  showToast('🎁 Выдано: '+id,'success');
 }
+
 async function doGiveSeed(id){
-  if(!giveTarget)return;
-  const gkey='garden_'+en(giveTarget);
-  const{data:row}=await sb.from('gardens').select('*').eq('nick',en(giveTarget)).maybeSingle();
+  if(!giveTarget)return showToast('Введи ник','error');
+  const msg=$('giveMsgInline');
+  const{data:row,error:e0}=await sb.from('gardens').select('*').eq('nick',en(giveTarget)).maybeSingle();
+  if(e0){if(msg)msg.textContent='❌ '+e0.message;return showToast('❌ '+e0.message,'error')}
   let inv=(row&&row.inventory)||{};
   if(typeof inv!=='object'||Array.isArray(inv))inv={};
   inv[id]=(inv[id]||0)+1;
   let beds=(row&&row.beds)||[null,null,null,null,null,null];
   if(!Array.isArray(beds))beds=[null,null,null,null,null,null];
+  while(beds.length<6)beds.push(null);if(beds.length>6)beds.length=6;
   let ferts=(row&&row.ferts)||{};
   if(typeof ferts!=='object'||Array.isArray(ferts))ferts={};
   const{error}=await sb.from('gardens').upsert({nick:en(giveTarget),beds,inventory:inv,ferts,updated_at:new Date().toISOString()},{onConflict:'nick'});
-  const msg=$('giveMsgInline');
-  if(error){if(msg)msg.textContent='❌ '+error.message;return}
-  if(msg)msg.textContent='✅ Выдано семя: '+id;
-  showToast('🎁 Выдано','success')
+  if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌ '+error.message,'error')}
+  if(msg)msg.textContent='✅ Выдано: '+id;
+  showToast('🎁 Выдано: '+id,'success');
 }
+
 async function doGiveFert(id){
-  if(!giveTarget)return;
-  const{data:row}=await sb.from('gardens').select('*').eq('nick',en(giveTarget)).maybeSingle();
+  if(!giveTarget)return showToast('Введи ник','error');
+  const msg=$('giveMsgInline');
+  const{data:row,error:e0}=await sb.from('gardens').select('*').eq('nick',en(giveTarget)).maybeSingle();
+  if(e0){if(msg)msg.textContent='❌ '+e0.message;return showToast('❌ '+e0.message,'error')}
   let ferts=(row&&row.ferts)||{};
   if(typeof ferts!=='object'||Array.isArray(ferts))ferts={};
   ferts[id]=(ferts[id]||0)+1;
   let beds=(row&&row.beds)||[null,null,null,null,null,null];
   if(!Array.isArray(beds))beds=[null,null,null,null,null,null];
+  while(beds.length<6)beds.push(null);if(beds.length>6)beds.length=6;
   let inv=(row&&row.inventory)||{};
   if(typeof inv!=='object'||Array.isArray(inv))inv={};
   const{error}=await sb.from('gardens').upsert({nick:en(giveTarget),beds,inventory:inv,ferts,updated_at:new Date().toISOString()},{onConflict:'nick'});
-  const msg=$('giveMsgInline');
-  if(error){if(msg)msg.textContent='❌ '+error.message;return}
-  if(msg)msg.textContent='✅ Выдано удобрение: '+id;
-  showToast('🎁 Выдано','success')
+  if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌ '+error.message,'error')}
+  if(msg)msg.textContent='✅ Выдано: '+id;
+  showToast('🎁 Выдано: '+id,'success');
 }
+
 async function doGiveCoins(delta){
-  if(!giveTarget)return;
-  await admCoins(giveTarget,delta);
-  const msg=$('giveMsgInline');if(msg)msg.textContent='✅ Монеты: '+(delta>0?'+':'')+delta;
+  if(!giveTarget)return showToast('Введи ник','error');
+  if(!delta||isNaN(delta))return showToast('Некорректная сумма','error');
+  const msg=$('giveMsgInline');
+  const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:giveTarget,p_delta:delta});
+  if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌ '+error.message,'error')}
+  if(data&&data.ok===false){if(msg)msg.textContent='❌ '+(data.error||'Ошибка');return showToast('❌ '+(data.error||'Ошибка'),'error')}
+  if(giveTarget===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}
+  if(msg)msg.textContent='✅ Монеты '+(delta>0?'+':'')+delta+' → баланс: '+(data.coins!=null?data.coins:'—');
+  showToast('💰 '+(delta>0?'+':'')+delta,'success');
 }
 /* ===== ИВЕНТЫ (OWNER) ===== */
 let curEvTab='xmas';
