@@ -404,6 +404,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .pf-actions .msg{background:linear-gradient(135deg,#5aabff,#4a90d9);color:#fff}
 .pf-actions .edit{background:rgba(255,255,255,.08);color:#e8e8f0}
 .pf-actions .frames{background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff}
+.pf-actions .garden{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff}
 .pf-actions .send-coins{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
 .pf-edit{padding:8px 24px 22px;border-top:1px solid rgba(255,255,255,.06);margin-top:8px;display:none}
 .pf-edit.on{display:block}
@@ -1171,7 +1172,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-const APP_VERSION='2.5';
+const APP_VERSION='2.6';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -2571,17 +2572,13 @@ async function openProfile(nick){
   else seenRow.style.display='none';
   $('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';
   $('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
-  const acts=$('pfActions');
-  if(isMine){
-    const b=frameBonusPct(myFrame);
-    const bonusTxt=b?' <span style="color:#8bc34a">(+'+b+'%)</span>':'';
-    acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button><button class="frames" onclick="closePf();openFrames()">⬜ Рамки'+bonusTxt+'</button>';
-  }else{
-    acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="send-coins" onclick="openSendCoins(\''+eh(target)+'\')">💰 Монеты</button>';
-  }
-  $('pfEdit').classList.remove('on');
-  $('pfErr').textContent='';
-  $('pf').classList.add('open');
+ const acts=$('pfActions');
+if(isMine){
+  const b=frameBonusPct(myFrame);
+  const bonusTxt=b?' <span style="color:#8bc34a">(+'+b+'%)</span>':'';
+  acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Ред.</button><button class="garden" onclick="closePf();openGarden()">🌱 Грядка</button><button class="frames" onclick="closePf();openFrames()">⬜ Рамки'+bonusTxt+'</button>';
+}else{
+  acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="garden" onclick="closePf();openVisitGarden(\''+eh(target)+'\')">🌱 Грядка</button><button class="send-coins" onclick="openSendCoins(\''+eh(target)+'\')">💰 Монеты</button>';
 }
 function closePf(){$('pf').classList.remove('open');pfFxClear();pfCurrent=null}
 async function startPfEdit(){let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',me).maybeSingle();p=r.data}catch(e){}$('pfEmojiInp').value=(p&&p.status_emoji)||'';$('pfStatusInp').value=(p&&p.status)||'';$('pfBioInp').value=(p&&p.bio)||'';$('pfErr').textContent='';$('pfEdit').classList.add('on');setTimeout(()=>$('pfStatusInp').focus(),100)}
@@ -3081,7 +3078,7 @@ let _gardenTick=null,_seedShopTick=null,_fertShopTick=null;
 let _invMode='view',_plantBedIdx=null,_giftSeedId=null,_visitNick=null,_visitGarden=null;
 function openGarden(){closeUserMenu();backToMyGarden();$('gardenM').classList.add('open');renderMyGarden();if(_gardenTick)clearInterval(_gardenTick);_gardenTick=setInterval(()=>{if($('gardenM').classList.contains('open')){if($('gardenVisit').style.display==='none'||!$('gardenVisit').style.display)renderMyGarden()}else{clearInterval(_gardenTick);_gardenTick=null}},500)}
 function closeGarden(){$('gardenM').classList.remove('open');_visitNick=null;_visitGarden=null}
-function backToMyGarden(){$('gardenMain').style.display='block';$('gardenVisit').style.display='none';$('gardenTitle').textContent='🌱 Моя грядка';_visitNick=null;_visitGarden=null;renderMyGarden()}
+function backToMyGarden(){$('gardenMain').style.display='block';$('gardenVisit').style.display='none';$('gardenTitle').textContent='🌱 Моя грядка';_visitNick=null;_visitGarden=null;renderMyGarden();$('gardenM').classList.add('open')}
 function renderMyGarden(){
   const g=loadGarden(me);
   const bedsEl=$('gardenBeds');if(!bedsEl)return;
@@ -3323,6 +3320,27 @@ async function checkGifts(){
     await sb.from('garden_gifts').update({claimed:true}).in('id',data.map(x=>x.id));
     if(total>0)showToast('🎁 Подарки: '+names.join(', '),'success');
   }catch(e){}
+}
+async function openVisitGarden(nick){
+  if(!nick)return;
+  if(nick===me)return openGarden();
+  closeUserMenu();
+  try{
+    const{data}=await sb.from('gardens').select('*').eq('nick',en(nick)).maybeSingle();
+    _visitNick=nick;
+    let beds=(data&&data.beds)||[null,null,null,null,null,null];
+    if(!Array.isArray(beds))beds=[null,null,null,null,null,null];
+    while(beds.length<6)beds.push(null);
+    if(beds.length>6)beds.length=6;
+    _visitGarden={beds,inv:(data&&data.inventory)||{},ferts:(data&&data.ferts)||{}};
+    $('gardenMain').style.display='none';
+    $('gardenVisit').style.display='block';
+    $('gardenTitle').textContent='👀 Грядка: '+nick;
+    $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · гостевой режим — садить и удобрять нельзя, но можно собирать за <b style="color:#f5c542">50% цены</b>.';
+    $('visitMsg').textContent='';
+    $('gardenM').classList.add('open');
+    renderVisitGarden();
+  }catch(e){showToast('Ошибка: '+e.message,'error')}
 }
 async function doVisit(){
   const nick=$('visitInp').value.trim();
