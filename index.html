@@ -634,8 +634,9 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .dom-toast.ok{border-color:rgba(139,195,74,.55);background:linear-gradient(180deg,#152a15,#081808);color:#a5d66a}
 
 /* ===== v2.4 HOME GARDEN ===== */
+/* ===== v2.4 HOME GARDEN + RARITY + MSK + FERT + VISITS + GIFTS ===== */
 .garden-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.garden-plot{position:relative;background:linear-gradient(180deg,#a06b48,#7a4f30);border:2.5px solid #2a1a10;border-radius:14px;padding:16px 16px 14px;min-height:82px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:.15s;color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.garden-plot{position:relative;background:linear-gradient(180deg,#a06b48,#7a4f30);border:2.5px solid #2a1a10;border-radius:14px;padding:16px;min-height:82px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:.15s;color:#fff;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .garden-plot:hover{transform:translateY(-2px);border-color:#f5c542}
 .garden-plot.empty{background:linear-gradient(180deg,#5a3a22,#3a2414);border-style:dashed;border-color:#5a3a22;color:#c0a080;justify-content:center;text-align:center}
 .garden-plot.empty::after{content:'+';position:absolute;top:6px;right:14px;font-size:28px;opacity:.55;font-weight:400}
@@ -643,46 +644,58 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .garden-plot.ready{background:linear-gradient(180deg,#4a8a3a,#2a5a1a);border-color:#4caf50;box-shadow:0 0 18px #4caf5077;animation:readyPulse 1.5s ease-in-out infinite}
 .garden-plot.ready .gp-plant{position:absolute;top:-32px;left:50%;transform:translateX(-50%);font-size:52px;line-height:1;filter:drop-shadow(0 4px 10px rgba(76,175,80,.7));animation:plantBounce 1s ease-in-out infinite}
 .garden-plot .gp-left{display:flex;flex-direction:column;gap:3px;min-width:0}
-.garden-plot .gp-name{font-size:13.5px;font-weight:800;line-height:1.15}
-.garden-plot .gp-sub{font-size:10.5px;color:rgba(255,255,255,.7);font-weight:500}
+.garden-plot .gp-name{font-size:13.5px;font-weight:800;line-height:1.15;display:flex;flex-wrap:wrap;align-items:center;gap:2px}
 .garden-plot .gp-right{text-align:right;flex-shrink:0;margin-left:8px}
-.garden-plot .gp-timer{font-family:'Courier New',monospace;font-weight:900;font-size:15px;color:#ffe9a8;letter-spacing:.5px}
+.garden-plot .gp-timer{font-family:'Courier New',monospace;font-weight:900;font-size:15px;color:#ffe9a8}
 .garden-plot.ready .gp-timer{color:#fff}
 .garden-plot .gp-gain{font-size:11px;color:#cfe8b6;font-weight:700;margin-top:2px}
+.garden-plot .gp-fert{position:absolute;top:4px;left:6px;font-size:14px;z-index:5;pointer-events:none}
+.garden-plot.ownerless{cursor:not-allowed}
+.garden-plot.ownerless:not(.ready):hover{transform:none;border-color:#2a1a10}
 @keyframes plantSway{0%,100%{transform:translateX(-50%) rotate(-4deg)}50%{transform:translateX(-50%) rotate(4deg)}}
 @keyframes plantBounce{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-50%) translateY(-3px) scale(1.06)}}
 @keyframes readyPulse{0%,100%{box-shadow:0 0 18px #4caf5077}50%{box-shadow:0 0 30px #4caf50cc}}
-@keyframes waterPop{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-@keyframes waterFloat{0%{opacity:0;transform:translate(-50%,0) scale(.6)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-26px) scale(1.15)}}
 .garden-shop-btn{background:linear-gradient(135deg,#ff9d2e,#f5c542);border:2px solid #2a1a10;color:#1a0a00;padding:10px 18px;border-radius:12px;font-weight:900;font-size:13px;cursor:pointer;font-family:inherit;box-shadow:0 3px 0 #7a4f30}
 .garden-shop-btn:active{transform:translateY(2px);box-shadow:0 1px 0 #7a4f30}
 .garden-harvest-all{width:100%;padding:15px;border-radius:14px;border:2px solid #1a4a10;background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;font-weight:900;font-size:15px;cursor:pointer;font-family:inherit;margin-top:6px;box-shadow:0 3px 0 #1a4a10}
-.garden-harvest-all:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #1a4a10}
 .garden-harvest-all:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
 .seed-list{display:grid;gap:9px;max-height:62vh;overflow-y:auto;padding:2px}
 .seed-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.seed-item.oos{opacity:.45;filter:grayscale(.6)}
 .seed-item .si-icon{font-size:38px;line-height:1;width:48px;text-align:center;flex-shrink:0}
 .seed-item .si-info{flex:1;min-width:0}
-.seed-item .si-name{font-size:14.5px;font-weight:800;color:#fff}
-.seed-item .si-meta{font-size:11.5px;color:#a0a0b8;margin-top:3px;line-height:1.5}
+.seed-item .si-name{font-size:14.5px;font-weight:800;color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:3px}
+.seed-item .si-meta{font-size:11.5px;color:#a0a0b8;margin-top:3px}
 .seed-item .si-profit{color:#8bc34a;font-weight:800}
 .seed-item .si-buy{padding:10px 16px;border-radius:11px;border:none;background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;font-weight:800;font-size:12.5px;cursor:pointer;flex-shrink:0;font-family:inherit;white-space:nowrap}
 .seed-item .si-buy:disabled{opacity:.4;cursor:not-allowed}
-@media(max-width:600px){
-.garden-grid{gap:9px}
-.garden-plot{padding:12px 12px 10px;min-height:72px;border-radius:12px}
-.garden-plot.growing .gp-plant{font-size:40px;top:-24px}
-.garden-plot.ready .gp-plant{font-size:42px;top:-26px}
-.garden-plot .gp-name{font-size:12px}
-.garden-plot .gp-timer{font-size:13px}
-.garden-plot .gp-gain{font-size:10px}
-.seed-item{padding:10px 12px;gap:10px}
-.seed-item .si-icon{font-size:30px;width:38px}
-.seed-item .si-name{font-size:13.5px}
-.seed-item .si-meta{font-size:11px}
-.seed-item .si-buy{padding:9px 12px;font-size:11.5px}
-}
-
+.fert-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:9px}
+.fert-item.oos{opacity:.45;filter:grayscale(.6)}
+.fert-item .fi-icon{font-size:38px;line-height:1;width:48px;text-align:center;flex-shrink:0}
+.fert-item .fi-info{flex:1;min-width:0}
+.fert-item .fi-name{font-size:14.5px;font-weight:800;color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:3px}
+.fert-item .fi-meta{font-size:11.5px;color:#a0a0b8;margin-top:3px}
+.fert-item .fi-mult{color:#8bc34a;font-weight:800}
+.fert-item .fi-buy{padding:10px 14px;border-radius:11px;border:none;background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;font-weight:800;font-size:12.5px;cursor:pointer;flex-shrink:0;font-family:inherit;white-space:nowrap}
+.fert-item .fi-buy:disabled{opacity:.4;cursor:not-allowed}
+.garden-slot-info{font-size:11.5px;color:#8888a0;text-align:center;margin-bottom:10px;font-weight:600}
+.garden-slot-info b{color:#f5c542;font-family:'Courier New',monospace}
+.rarity-badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:800;vertical-align:middle}
+.inv-badge{display:inline-block;background:rgba(139,195,74,.15);color:#8bc34a;font-size:11px;font-weight:800;padding:2px 8px;border-radius:8px;margin-left:6px}
+.garden-visit-bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.garden-visit-bar input{flex:1;min-width:140px;padding:10px 14px;border-radius:11px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.4);color:#e8e8f0;font-size:13px;font-family:inherit}
+.garden-visit-bar button{padding:10px 16px;border-radius:11px;border:none;background:linear-gradient(135deg,#5aabff,#4a90d9);color:#fff;font-weight:800;font-size:12.5px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.garden-owner-title{text-align:center;font-size:14px;font-weight:800;color:#f5c542;margin-bottom:12px;padding:10px;background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.2);border-radius:12px}
+.inv-seed-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;margin-bottom:8px}
+.inv-seed-row .isr-icon{font-size:28px;width:36px;text-align:center;flex-shrink:0}
+.inv-seed-row .isr-info{flex:1;min-width:0}
+.inv-seed-row .isr-name{font-size:13.5px;font-weight:800;color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:3px}
+.inv-seed-row .isr-count{font-size:11px;color:#8bc34a;font-weight:700;margin-top:2px}
+.inv-seed-row .isr-actions{display:flex;gap:6px;flex-shrink:0}
+.inv-seed-row .isr-btn{padding:8px 12px;border-radius:10px;border:none;background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;font-weight:800;font-size:11.5px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.inv-seed-row .isr-btn.gift{background:linear-gradient(135deg,#a06bff,#6b4aff)}
+.inv-empty{text-align:center;padding:30px 20px;color:#55556a;font-size:13px}
+@media(max-width:600px){.garden-grid{gap:9px}.garden-plot{padding:12px;min-height:72px}.garden-plot.growing .gp-plant{font-size:40px;top:-24px}.garden-plot.ready .gp-plant{font-size:42px;top:-26px}.garden-plot .gp-name{font-size:12px}.garden-plot .gp-timer{font-size:13px}.seed-item{padding:10px 12px}.seed-item .si-icon{font-size:30px;width:38px}}
 @media(max-width:768px){
 .dom-toast{bottom:20px;font-size:13.5px;padding:11px 18px;max-width:calc(100vw - 32px)}
 .sb{position:fixed;left:-100%;top:0;height:100vh;width:86%;max-width:340px;z-index:200;transition:left .3s;box-shadow:4px 0 24px rgba(0,0,0,.6)}
@@ -850,8 +863,11 @@ body::before{display:none !important}
 <div id="em" class="em"><div class="emb"><h3>✏️ Редактировать</h3><textarea id="emTxt" maxlength="500"></textarea><div class="ema"><button class="cn" onclick="closeEm()">Отмена</button><button class="sv" onclick="saveEd()">Сохранить</button></div></div></div>
 <div id="annM" class="em"><div class="emb" style="width:460px"><h3>📢 Объявление для дома</h3><textarea id="annInp" placeholder="Напиши объявление..." maxlength="500"></textarea><div class="ema"><button class="cn" onclick="closeAnn()">Отмена</button><button class="sv" onclick="postAnn()" id="annPostBtn">📢 Опубликовать</button></div><div class="fms" id="annErr" style="color:#ff6b6b"></div></div></div>
 <div id="dutyM" class="em" style="z-index:670"><div class="emb" style="width:520px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🧹 Дежурство</div><button class="pf-close" onclick="closeDuty()">✕</button></div><div class="duty-body"><div class="duty-info" id="dutyInfo"></div><div class="duty-coins">💰 Монет: <b id="dutyCoins">0</b></div><button class="duty-start" id="dutyStartBtn" onclick="startMiniGame()">▶ Начать уборку</button><div class="duty-game" id="dutyGame" style="display:none"><div class="duty-timer">⏱ <span id="dutyTime">15.0</span>с</div><div class="duty-field" id="dutyField"></div><div class="duty-score">🧽 Протёрто: <b id="dutyScore">0</b> / 8</div></div><div class="duty-msg" id="dutyMsg"></div></div></div></div>
-<div id="gardenM" class="em" style="z-index:670"><div class="emb" style="width:600px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🌱 Грядка</div><button class="pf-close" onclick="closeGarden()">✕</button></div><div class="duty-body"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px;flex-wrap:wrap"><div class="duty-coins" style="margin:0">💰 Монет: <b id="gardenCoins">0</b></div><button class="garden-shop-btn" onclick="openSeedShop()">🛒 Магазин семян</button></div><div class="garden-grid" id="gardenGrid"></div><button class="garden-harvest-all" id="harvestAllBtn" onclick="harvestAll()">🧺 Собрать всё</button><div class="duty-msg" id="gardenMsg"></div></div></div></div>
-<div id="seedShopM" class="em" style="z-index:680"><div class="emb" style="width:600px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🛒 Магазин семян</div><button class="pf-close" onclick="closeSeedShop()">✕</button></div><div class="duty-body"><div class="seed-list" id="seedList"></div></div></div></div>
+<div id="gardenM" class="em" style="z-index:670"><div class="emb" style="width:640px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🌱 Грядка</div><button class="pf-close" onclick="closeGarden()">✕</button></div><div class="duty-body"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap"><div class="duty-coins" style="margin:0">💰 Монет: <b id="gardenCoins">0</b></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="garden-shop-btn" onclick="openSeedShop()">🛒 Семена</button><button class="garden-shop-btn" onclick="openFertShop()">💩 Удобрения</button><button class="garden-shop-btn" style="background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff" onclick="openSeedInv()">🎒 Инвентарь</button></div></div><div class="garden-visit-bar"><input id="gardenVisitNick" placeholder="Ник — зайти на чужую грядку" maxlength="20"><button onclick="visitGarden()">👀 Зайти</button><button onclick="resetGardenView()" id="gardenResetBtn" style="display:none;background:linear-gradient(135deg,#d32f2f,#b71c1c)">← Назад</button></div><div class="garden-owner-title" id="gardenOwnerTitle" style="display:none"></div><div class="garden-grid" id="gardenGrid"></div><button class="garden-harvest-all" id="harvestAllBtn" onclick="harvestAll()">🧺 Собрать всё</button><div class="duty-msg" id="gardenMsg"></div></div></div></div>
+<div id="seedShopM" class="em" style="z-index:680"><div class="emb" style="width:600px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🛒 Магазин семян</div><button class="pf-close" onclick="closeSeedShop()">✕</button></div><div class="duty-body"><div class="duty-coins">💰 Твои монеты: <b id="seedCoins">0</b></div><div class="garden-slot-info" id="seedSlotInfo"></div><div class="seed-list" id="seedList"></div></div></div></div>
+<div id="fertShopM" class="em" style="z-index:680"><div class="emb" style="width:560px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">💩 Магазин удобрений</div><button class="pf-close" onclick="closeFertShop()">✕</button></div><div class="duty-body"><div class="duty-coins">💰 Твои монеты: <b id="fertCoins">0</b></div><div class="garden-slot-info" id="fertSlotInfo"></div><div id="fertList"></div></div></div></div>
+<div id="seedInvM" class="em" style="z-index:680"><div class="emb" style="width:560px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🎒 Инвентарь семян</div><button class="pf-close" onclick="closeSeedInv()">✕</button></div><div class="duty-body"><div class="inv-empty" id="seedInvEmpty">Пусто. Купи семена или прими подарок.</div><div id="seedInvList"></div></div></div></div>
+<div id="giftSeedM" class="em" style="z-index:690"><div class="emb" style="width:420px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title" id="giftTitle">🎁 Подарить</div><button class="pf-close" onclick="closeGiftSeed()">✕</button></div><div class="duty-body"><label class="gm-lbl">Кому (ник)</label><input id="giftNick" class="gm-inp" placeholder="Ник" maxlength="20"><label class="gm-lbl" style="margin-top:10px">Сколько</label><input id="giftCount" class="gm-inp" type="number" min="1" value="1"><div class="gm-err" id="giftErr"></div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px"><button onclick="closeGiftSeed()" style="padding:11px 22px;border-radius:12px;border:none;cursor:pointer;font-weight:700;font-size:14px;background:rgba(255,255,255,.06);color:#c8c8d0;font-family:inherit">Отмена</button><button onclick="doGiftSeed()" style="padding:11px 22px;border-radius:12px;border:none;cursor:pointer;font-weight:700;font-size:14px;background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff;font-family:inherit">🎁 Подарить</button></div></div></div></div>
 <div id="framesM" class="em" style="z-index:670"><div class="emb" style="width:640px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">◻ Магазин рамок</div><button class="pf-close" onclick="closeFrames()">✕</button></div><div class="duty-body"><div class="duty-coins">💰 Твои монеты: <b id="framesCoins">0</b></div><div class="frames-list" id="framesList"></div><div class="neon-picker" id="neonPicker" style="display:none"><div class="np-title">🎨 Свой цвет неона</div><div class="np-row"><input type="color" id="npColor" class="np-color" value="#00e5ff"><input type="text" id="npRgb" class="np-rgb" placeholder="0, 229, 255" maxlength="15"><button class="np-apply" onclick="applyNeonFromUI()">Применить</button></div><div class="np-saved-title">💾 Сохранённые цвета:</div><div class="np-saved" id="npSaved"></div><button class="np-save-btn" onclick="saveCurrentNeon()">💾 Сохранить этот цвет</button></div><div class="duty-msg" id="framesMsg"></div></div></div></div>
 <div id="jobM" class="em" style="z-index:670"><div class="emb" style="width:560px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">💼 Работа</div><button class="pf-close" onclick="closeJob()">✕</button></div><div class="duty-body" id="jobBody"></div></div></div>
 <div id="pf" class="em" style="z-index:660"><div class="emb"><div class="pf-head"><div class="pf-cover"><div class="pf-fx" id="pfFx"></div></div><div class="pf-av" id="pfAv"></div><button class="pf-close" onclick="closePf()">✕</button></div><div class="pf-body"><div class="pf-name"><span id="pfNick"></span><span class="pf-online" id="pfOnline" style="display:none">● в сети</span></div><div class="pf-status" id="pfStatus"></div><div class="pf-bio" id="pfBio"></div><div class="pf-row"><span class="pf-ic">🏠</span><span id="pfFlat">—</span></div><div class="pf-row"><span class="pf-ic">📅</span><span id="pfReg">—</span></div><div class="pf-row"><span class="pf-ic">💬</span><span id="pfMsgs">—</span></div><div class="pf-row" id="pfCoinsRow" style="display:none"><span class="pf-ic">💰</span><span id="pfCoinsInfo">—</span></div><div class="pf-row" id="pfSeenRow"><span class="pf-ic">🕐</span><span id="pfSeen">—</span></div></div><div class="pf-actions" id="pfActions"></div><div class="pf-edit" id="pfEdit"><label class="gm-lbl">Статус</label><div class="pf-status-edit"><input id="pfEmojiInp" maxlength="2" placeholder="😎" class="pf-emoji-inp"><input id="pfStatusInp" maxlength="40" placeholder="Чем занят?" class="gm-inp" style="margin-bottom:0"></div><label class="gm-lbl" style="margin-top:14px">О себе</label><textarea id="pfBioInp" maxlength="200" placeholder="Пара слов..." class="gm-inp" style="min-height:80px;resize:vertical;margin-bottom:0"></textarea><div class="gm-err" id="pfErr"></div><div class="pf-edit-actions"><button class="cn" onclick="cancelPfEdit()">Отмена</button><button class="cr-btn" onclick="savePf(event)">Сохранить</button></div></div></div></div>
@@ -958,16 +974,39 @@ const WORK_TASKS=[
 ];
 const WORK_REWARD=5,WORK_COOLDOWN=30000,WORK_DURATION=15000,WORK_TARGETS=8;
 const GARDEN_PLOTS=6;
+const RARITY={common:{name:'Обычное',color:'#9e9e9e'},uncommon:{name:'Необычное',color:'#4caf50'},rare:{name:'Редкое',color:'#2196f3'},mythic:{name:'Мифическое',color:'#9c27b0'},legendary:{name:'Легендарное',color:'#ff9d2e'},secret:{name:'Секретное',color:'#ff0055'}};
 const SEEDS=[
-  {id:'carrot',     name:'Морковь',        icon:'🥕', price:10,   growSec:30,    sell:25},
-  {id:'potato',     name:'Картошка',       icon:'🥔', price:25,   growSec:60,    sell:65},
-  {id:'tomato',     name:'Помидор',        icon:'🍅', price:60,   growSec:120,   sell:170},
-  {id:'cucumber',   name:'Огурец',         icon:'🥒', price:120,  growSec:180,   sell:360},
-  {id:'corn',       name:'Кукуруза',       icon:'🌽', price:250,  growSec:300,   sell:800},
-  {id:'strawberry', name:'Клубника',       icon:'🍓', price:500,  growSec:600,   sell:1800},
-  {id:'watermelon', name:'Арбуз',          icon:'🍉', price:1000, growSec:1200,  sell:4000},
-  {id:'golden',     name:'Золотое яблоко', icon:'🍎', price:5000, growSec:3600,  sell:25000}
-];
+{id:'carrot',name:'Морковь',icon:'🥕',rarity:'common',price:10,growSec:30,sell:25,stockMode:'always'},
+{id:'potato',name:'Картошка',icon:'🥔',rarity:'common',price:25,growSec:60,sell:65,stockMode:'always'},
+{id:'tomato',name:'Помидор',icon:'🍅',rarity:'common',price:60,growSec:120,sell:170,stockMode:'always'},
+{id:'cucumber',name:'Огурец',icon:'🥒',rarity:'common',price:120,growSec:180,sell:360,stockMode:'always'},
+{id:'onion',name:'Лук',icon:'🧅',rarity:'uncommon',price:180,growSec:200,sell:520,stockMode:'chance',chance:.85},
+{id:'pumpkin',name:'Тыква',icon:'🎃',rarity:'uncommon',price:250,growSec:300,sell:800,stockMode:'chance',chance:.80},
+{id:'cabbage',name:'Капуста',icon:'🥬',rarity:'uncommon',price:300,growSec:360,sell:1000,stockMode:'chance',chance:.80},
+{id:'eggplant',name:'Баклажан',icon:'🍆',rarity:'uncommon',price:400,growSec:420,sell:1400,stockMode:'chance',chance:.75},
+{id:'strawberry',name:'Клубника',icon:'🍓',rarity:'rare',price:600,growSec:600,sell:2200,stockMode:'chance',chance:.50},
+{id:'watermelon',name:'Арбуз',icon:'🍉',rarity:'rare',price:1000,growSec:900,sell:4000,stockMode:'chance',chance:.50},
+{id:'melon',name:'Дыня',icon:'🍈',rarity:'rare',price:1400,growSec:1080,sell:5800,stockMode:'chance',chance:.45},
+{id:'grapes',name:'Виноград',icon:'🍇',rarity:'rare',price:2000,growSec:1200,sell:8500,stockMode:'chance',chance:.40},
+{id:'pineapple',name:'Ананас',icon:'🍍',rarity:'mythic',price:3500,growSec:1800,sell:16000,stockMode:'chance',chance:.25},
+{id:'mango',name:'Манго',icon:'🥭',rarity:'mythic',price:5000,growSec:2400,sell:24000,stockMode:'chance',chance:.22},
+{id:'kiwi',name:'Киви',icon:'🥝',rarity:'mythic',price:7000,growSec:3000,sell:36000,stockMode:'chance',chance:.20},
+{id:'coconut',name:'Кокос',icon:'🥥',rarity:'mythic',price:10000,growSec:3600,sell:55000,stockMode:'chance',chance:.15},
+{id:'avocado',name:'Авокадо',icon:'🥑',rarity:'mythic',price:14000,growSec:4200,sell:80000,stockMode:'chance',chance:.12},
+{id:'golden_apple',name:'Золотое яблоко',icon:'🍎',rarity:'legendary',price:25000,growSec:5400,sell:160000,stockMode:'chance',chance:.08},
+{id:'crystal_berry',name:'Кристальная ягода',icon:'💎',rarity:'legendary',price:40000,growSec:6000,sell:280000,stockMode:'chance',chance:.06},
+{id:'fire_pepper',name:'Огненный перец',icon:'🌶️',rarity:'legendary',price:60000,growSec:7200,sell:450000,stockMode:'chance',chance:.05},
+{id:'moon_flower',name:'Лунный цветок',icon:'🌙',rarity:'legendary',price:80000,growSec:9000,sell:650000,stockMode:'chance',chance:.04},
+{id:'star_fruit',name:'Звёздный плод',icon:'⭐',rarity:'legendary',price:120000,growSec:10800,sell:1000000,stockMode:'chance',chance:.03},
+{id:'dragon_fruit2',name:'Драконий плод',icon:'🐉',rarity:'secret',price:300000,growSec:14400,sell:2800000,stockMode:'chance',chance:.015},
+{id:'cosmic_lotus',name:'Космический лотос',icon:'🌌',rarity:'secret',price:500000,growSec:18000,sell:5000000,stockMode:'chance',chance:.010},
+{id:'phoenix_blood',name:'Кровь феникса',icon:'🔥',rarity:'secret',price:750000,growSec:21600,sell:8000000,stockMode:'chance',chance:.008},
+{id:'angel_tear',name:'Слеза ангела',icon:'💧',rarity:'secret',price:1000000,growSec:25200,sell:12000000,stockMode:'chance',chance:.005}];
+const FERTILIZERS=[
+{id:'fert_common',name:'Обычное удобрение',icon:'💩',mult:1.5,price:1500,rarity:'common',stockMode:'chance',chance:.70},
+{id:'fert_rare',name:'Редкое удобрение',icon:'💧',mult:2,price:4000,rarity:'rare',stockMode:'chance',chance:.35},
+{id:'fert_legendary',name:'Легендарное удобрение',icon:'✨',mult:3,price:8000,rarity:'legendary',stockMode:'chance',chance:.10}];
+const MSK_OFFSET_MS=3*60*60*1000,SLOT_DURATION_MS=3*60*1000;
 const $=(id)=>document.getElementById(id);
 function isOwner(){return curUser&&curUser.id===OWNER_ID}
 function hasAdmin(){return isOwner()||iAmAdmin}
@@ -1087,8 +1126,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   const inp=$('scAmt');if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doSendCoins()}});
   const np=$('npRgb');if(np)np.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();applyNeonFromUI()}});
   const nc=$('npColor');if(nc)nc.addEventListener('input',()=>{const h=hexToRgb(nc.value);if(h)setNeonRGB(h[0],h[1],h[2])});
-  const gm_=$('gardenM');if(gm_)gm_.addEventListener('click',e=>{if(e.target.id==='gardenM')closeGarden()});
-  const ssm=$('seedShopM');if(ssm)ssm.addEventListener('click',e=>{if(e.target.id==='seedShopM')closeSeedShop()});
+ const gm_=$('gardenM');if(gm_)gm_.addEventListener('click',e=>{if(e.target.id==='gardenM')closeGarden()});
+const ssm=$('seedShopM');if(ssm)ssm.addEventListener('click',e=>{if(e.target.id==='seedShopM')closeSeedShop()});
+const fsm=$('fertShopM');if(fsm)fsm.addEventListener('click',e=>{if(e.target.id==='fertShopM')closeFertShop()});
+const sim=$('seedInvM');if(sim)sim.addEventListener('click',e=>{if(e.target.id==='seedInvM')closeSeedInv()});
+const gsm=$('giftSeedM');if(gsm)gsm.addEventListener('click',e=>{if(e.target.id==='giftSeedM')closeGiftSeed()});
+setInterval(()=>{if($('seedShopM').classList.contains('open'))seedShopRender();if($('fertShopM').classList.contains('open'))fertShopRender()},1000);
   applyNeonCSS();
 });
 async function openSendCoins(nick){
@@ -1483,204 +1526,59 @@ function initVacuumGame(field,msg,target){msg.textContent='🧹 Води мыш�
 function initFlowersGame(field,msg,target){msg.textContent='🌱 Зажми каждый из '+target+' цветков';const r=field.getBoundingClientRect();const N=target;const flowerTypes=['🌱','🌿','🍀','☘️','🌾'];const bloomTypes=['🌸','🌺','🌻','🌷','💐'];let holdIdx=-1;const flowers=[];for(let i=0;i<N;i++){const w=90;const cx=r.width/2+(i-(N-1)/2)*Math.min(140,r.width/(N+1));const cy=r.height/2-40;const x=Math.max(8,Math.min(r.width-w-8,cx-w/2));const y=Math.max(8,Math.min(r.height-100,cy));const el=document.createElement('div');el.className='flower';el.style.left=x+'px';el.style.top=y+'px';el.style.width=w+'px';const icon=flowerTypes[i%flowerTypes.length];const bloom=bloomTypes[i%bloomTypes.length];el.innerHTML='<div class="flower-icon" style="font-size:64px">'+icon+'</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';field.appendChild(el);flowers.push({el,water:0,icon,bloom,index:i,done:false})}const tick=()=>{if(!workActive)return;for(const fl of flowers){if(fl.done)continue;if(fl.index===holdIdx){fl.water=Math.min(100,fl.water+5)}else{fl.water=Math.max(0,fl.water-0.8)}const fill=fl.el.querySelector('.flower-fill');if(fill)fill.style.width=fl.water+'%';if(fl.water>=100){fl.done=true;fl.el.classList.add('full');const ic=fl.el.querySelector('.flower-icon');if(ic)ic.textContent=fl.bloom;workCaught++;$('workScore').textContent=workCaught;if(workCaught>=N){stopWork(true);return}}}};const onDown=(e)=>{if(!workActive)return;const rect=field.getBoundingClientRect();const px=(e.clientX!==undefined?e.clientX:(e.touches&&e.touches[0]?e.touches[0].clientX:0))-rect.left;const py=(e.clientY!==undefined?e.clientY:(e.touches&&e.touches[0]?e.touches[0].clientY:0))-rect.top;for(const fl of flowers){if(fl.done)continue;const r2=fl.el.getBoundingClientRect();const ex=r2.left-rect.left,ey=r2.top-rect.top;if(px>=ex-10&&px<=ex+r2.width+10&&py>=ey-10&&py<=ey+r2.height+10){holdIdx=fl.index;return}}};const onUp=()=>{holdIdx=-1};field.addEventListener('mousedown',onDown);field.addEventListener('touchstart',onDown,{passive:true});window.addEventListener('mouseup',onUp);field.addEventListener('touchend',onUp);const interval=setInterval(()=>{if(!workActive){clearInterval(interval);return}tick()},50);workGameHandlers={field:field,onMove:null,onUp:onUp,onLeave:onUp,extraCleanup:()=>{window.removeEventListener('mouseup',onUp);clearInterval(interval)}}}
 function stopWork(timeUp){if(!workActive)return;workActive=false;if(workTimer){clearInterval(workTimer);workTimer=null}const f=$('workField');const msg=$('workMsg');$('workGame').style.display='none';clearWorkHandlers();f.innerHTML='';f.className='work-field';const tid=workTaskId;const task=WORK_TASKS.find(t=>t.id===tid);const target=(task&&task.target)||WORK_TARGETS;if(workCaught>=target){workCdSet(tid);const r=withBonus(WORK_REWARD);addCoins(r);msg.style.color='#8bc34a';msg.textContent='✨ Готово! +'+r+' 💰';showNotif('💼 Работа','+'+r+' монет!')}else{msg.style.color='#ff8888';msg.textContent=(timeUp?'⏰ Время вышло! ':'Отменено. ')+'Сделано '+workCaught+'/'+target}workTaskId=null;renderWork()}
 
-/* ===== v2.4 HOME GARDEN ===== */
-function gardenKey(){return 'garden_'+meEnc}
-function gardenLoad(){
-  try{
-    const s=localStorage.getItem(gardenKey());
-    if(!s)return {plots:Array(GARDEN_PLOTS).fill(null)};
-    const d=JSON.parse(s);
-    if(!d||!Array.isArray(d.plots))return {plots:Array(GARDEN_PLOTS).fill(null)};
-    while(d.plots.length<GARDEN_PLOTS)d.plots.push(null);
-    d.plots=d.plots.slice(0,GARDEN_PLOTS);
-    return d;
-  }catch(e){return {plots:Array(GARDEN_PLOTS).fill(null)}}
-}
-function gardenSave(d){try{localStorage.setItem(gardenKey(),JSON.stringify(d))}catch(e){}}
-function seedById(id){return SEEDS.find(s=>s.id===id)}
-function plotReadyAt(p){if(!p)return 0;const s=seedById(p.seedId);return s?p.plantedAt+s.growSec*1000:0}
-function plotIsReady(p){return p&&Date.now()>=plotReadyAt(p)}
-function fmtGardenTime(ms){
-  if(ms<0)ms=0;
-  const t=Math.ceil(ms/1000);
-  if(t<60)return t+'с';
-  const m=Math.floor(t/60),s=t%60;
-  if(m<60)return m+':'+String(s).padStart(2,'0');
-  const h=Math.floor(m/60),mm=m%60;
-  return h+'ч '+String(mm).padStart(2,'0')+'м';
-}
-function gardenGain(sell){const b=frameBonusPct(myFrame);return b>0?Math.round(sell*(1+b/100)):sell}
-function openGarden(){
-  if(!me)return;
-  gardenRender();
-  loadCoins().then(()=>{const g=$('gardenCoins');if(g)g.textContent=myCoins});
-  $('gardenM').classList.add('open');
-  if(gardenTimer)clearInterval(gardenTimer);
-  gardenTimer=setInterval(gardenTick,1000);
-}
-function closeGarden(){
-  $('gardenM').classList.remove('open');
-  if(gardenTimer){clearInterval(gardenTimer);gardenTimer=null}
-}
-function gardenTick(){
-  const grid=$('gardenGrid');
-  if(!grid||!$('gardenM').classList.contains('open'))return;
-  const d=gardenLoad();
-  let needFullRender=false;
-  d.plots.forEach((p,i)=>{
-    if(!p)return;
-    const el=grid.querySelector('[data-plot="'+i+'"]');
-    if(!el)return;
-    const ready=plotIsReady(p);
-    const shownReady=el.classList.contains('ready');
-    if(ready!==shownReady){needFullRender=true;return}
-    if(!ready){
-      const t=el.querySelector('.gp-timer');
-      if(t)t.textContent=fmtGardenTime(plotReadyAt(p)-Date.now());
-    }
-  });
-  if(needFullRender)gardenRender();
-}
-function gardenRender(){
-  const grid=$('gardenGrid');
-  if(!grid)return;
-  const d=gardenLoad();
-  const gc=$('gardenCoins');if(gc)gc.textContent=myCoins;
-  grid.innerHTML=d.plots.map((p,i)=>{
-    if(!p){
-      return '<div class="garden-plot empty" data-plot="'+i+'" onclick="gardenPlant('+i+')">'+
-        '<div class="gp-left" style="text-align:center"><div class="gp-name">Пусто</div><div class="gp-sub">Посадить</div></div>'+
-      '</div>';
-    }
-    const s=seedById(p.seedId);
-    if(!s)return '<div class="garden-plot empty" data-plot="'+i+'" onclick="gardenPlant('+i+')"><div class="gp-left" style="text-align:center"><div class="gp-name">Пусто</div></div></div>';
-    const ready=plotIsReady(p);
-    const timerTxt=ready?'Созрело!':fmtGardenTime(plotReadyAt(p)-Date.now());
-    const cls='garden-plot '+(ready?'ready':'growing');
-    const onclick=ready?'harvestPlot('+i+')':'waterPlot('+i+')';
-    const gainTxt=ready?'<div class="gp-gain">+'+gardenGain(s.sell)+' 💰</div>':'<div class="gp-gain" style="color:rgba(255,255,255,.5)">💧 полив</div>';
-    return '<div class="'+cls+'" data-plot="'+i+'" onclick="'+onclick+'">'+
-      '<div class="gp-plant">'+s.icon+'</div>'+
-      '<div class="gp-left"><div class="gp-name">'+s.name+'</div></div>'+
-      '<div class="gp-right"><div class="gp-timer">'+timerTxt+'</div>'+gainTxt+'</div>'+
-    '</div>';
-  }).join('');
-  const anyReady=d.plots.some(plotIsReady);
-  const btn=$('harvestAllBtn');
-  if(btn)btn.disabled=!anyReady;
-}
-function gardenPlant(idx){
-  const d=gardenLoad();
-  if(d.plots[idx])return;
-  openSeedShop(idx);
-}
-function waterPlot(idx){
-  const d=gardenLoad();
-  const p=d.plots[idx];
-  if(!p||plotIsReady(p))return;
-  const s=seedById(p.seedId);if(!s)return;
-  const now=Date.now();
-  if(now-(p.lastWater||0)<30000){
-    const wait=Math.ceil((30000-(now-(p.lastWater||0)))/1000);
-    showToast('💧 Полив через '+wait+'с','error');
-    return;
-  }
-  const boost=Math.max(2000,s.growSec*1000*0.05);
-  p.plantedAt-=boost;
-  p.lastWater=now;
-  gardenSave(d);
-  const el=$('gardenGrid').querySelector('[data-plot="'+idx+'"]');
-  if(el){
-    el.style.animation='waterPop .35s ease-out';
-    const fl=document.createElement('div');
-    fl.textContent='💧';
-    fl.style.cssText='position:absolute;top:-4px;left:50%;transform:translateX(-50%);font-size:22px;pointer-events:none;animation:waterFloat .8s ease-out forwards;z-index:5';
-    el.appendChild(fl);
-    setTimeout(()=>{fl.remove();el.style.animation=''},800);
-  }
-  setTimeout(gardenRender,120);
-}
-async function harvestPlot(idx){
-  const d=gardenLoad();
-  const p=d.plots[idx];
-  if(!p||!plotIsReady(p))return;
-  const s=seedById(p.seedId);if(!s)return;
-  const gain=gardenGain(s.sell);
-  d.plots[idx]=null;
-  gardenSave(d);
-  myCoins=Math.max(0,myCoins+gain);
-  try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}
-  updateCoinsUI();
-  const g=$('gardenCoins');if(g)g.textContent=myCoins;
-  showToast('🧺 '+s.name+'! +'+gain+' 💰','success');
-  try{showNotif('🌱 Урожай',s.icon+' '+s.name+' · +'+gain+' 💰')}catch(e){}
-  gardenRender();
-}
-async function harvestAll(){
-  const d=gardenLoad();
-  let total=0,count=0;
-  d.plots.forEach((p,i)=>{
-    if(p&&plotIsReady(p)){
-      const s=seedById(p.seedId);
-      if(s){total+=gardenGain(s.sell);count++;d.plots[i]=null}
-    }
-  });
-  if(!count)return;
-  gardenSave(d);
-  myCoins=Math.max(0,myCoins+total);
-  try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}
-  updateCoinsUI();
-  const g=$('gardenCoins');if(g)g.textContent=myCoins;
-  showToast('🧺 Собрано '+count+' грядок! +'+total+' 💰','success');
-  gardenRender();
-}
-function openSeedShop(forPlotIdx){
-  _seedShopPlot=(typeof forPlotIdx==='number')?forPlotIdx:null;
-  seedShopRender();
-  loadCoins().then(seedShopRender);
-  $('seedShopM').classList.add('open');
-}
+/* ===== v2.4 GARDEN v2 ===== */
+let _gardenViewing=null,_giftSeedId=null,_plantForPlot=null;
+function getMSKSlot(){return Math.floor((Date.now()+MSK_OFFSET_MS)/SLOT_DURATION_MS)}
+function getMSKSlotRemainingMs(){const m=Date.now()+MSK_OFFSET_MS;const n=(Math.floor(m/SLOT_DURATION_MS)+1)*SLOT_DURATION_MS;return Math.max(0,n-m)}
+function seededRand(seed){let s=Math.abs(Math.floor(seed))%233280;return function(){s=(s*9301+49297)%233280;return s/233280}}
+function hashStr(str){let h=0;for(let i=0;i<str.length;i++)h=((h<<5)-h)+str.charCodeAt(i);return Math.abs(h)}
+function isInStock(item,slot){if(item.stockMode==='always')return true;return seededRand(slot*7919+hashStr(item.id))()<(item.chance||0)}
+function fertById(id){return FERTILIZERS.find(f=>f.id===id)}
+function gardenKey(nick){return 'garden_'+(nick?en(nick):meEnc)}
+function gardenLoad(nick){try{const s=localStorage.getItem(gardenKey(nick));if(!s)return{plots:Array(GARDEN_PLOTS).fill(null)};const d=JSON.parse(s);if(!d||!Array.isArray(d.plots))return{plots:Array(GARDEN_PLOTS).fill(null)};while(d.plots.length<GARDEN_PLOTS)d.plots.push(null);return{plots:d.plots.slice(0,GARDEN_PLOTS)}}catch(e){return{plots:Array(GARDEN_PLOTS).fill(null)}}}
+function gardenSave(d,nick){try{localStorage.setItem(gardenKey(nick),JSON.stringify(d))}catch(e){}}
+function seedInvKey(){return 'seedInv_'+meEnc}
+function seedInvLoad(){try{const s=localStorage.getItem(seedInvKey());return s?JSON.parse(s)||{}:{}}catch(e){return{}}}
+function seedInvSave(o){try{localStorage.setItem(seedInvKey(),JSON.stringify(o))}catch(e){}}
+function seedInvAdd(id,n){const inv=seedInvLoad();inv[id]=(inv[id]||0)+(n||1);seedInvSave(inv)}
+function seedInvUse(id){const inv=seedInvLoad();if(!inv[id]||inv[id]<=0)return false;inv[id]--;if(inv[id]<=0)delete inv[id];seedInvSave(inv);return true}
+function seedInvCount(id){return seedInvLoad()[id]||0}
+function fertInvKey(){return 'fertInv_'+meEnc}
+function fertInvLoad(){try{const s=localStorage.getItem(fertInvKey());return s?JSON.parse(s)||{}:{}}catch(e){return{}}}
+function fertInvSave(o){try{localStorage.setItem(fertInvKey(),JSON.stringify(o))}catch(e){}}
+function fertInvAdd(id,n){const inv=fertInvLoad();inv[id]=(inv[id]||0)+(n||1);fertInvSave(inv)}
+function fertInvUse(id){const inv=fertInvLoad();if(!inv[id]||inv[id]<=0)return false;inv[id]--;if(inv[id]<=0)delete inv[id];fertInvSave(inv);return true}
+function openGarden(){if(!me)return;_gardenViewing=null;gardenRender();loadCoins().then(()=>{const g=$('gardenCoins');if(g)g.textContent=myCoins});$('gardenM').classList.add('open');$('gardenResetBtn').style.display='none';$('gardenOwnerTitle').style.display='none';$('gardenVisitNick').value='';if(gardenTimer)clearInterval(gardenTimer);gardenTimer=setInterval(gardenTick,1000)}
+function closeGarden(){$('gardenM').classList.remove('open');if(gardenTimer){clearInterval(gardenTimer);gardenTimer=null}}
+function gardenTick(){const grid=$('gardenGrid');if(!grid||!$('gardenM').classList.contains('open'))return;const d=gardenLoad(_gardenViewing);let need=false;d.plots.forEach((p,i)=>{if(!p)return;const el=grid.querySelector('[data-plot="'+i+'"]');if(!el)return;const r=plotIsReady(p);const s=el.classList.contains('ready');if(r!==s){need=true;return}if(!r){const t=el.querySelector('.gp-timer');if(t)t.textContent=fmtGardenTime(plotReadyAt(p)-Date.now())}});if(need)gardenRender()}
+function gardenRender(){const grid=$('gardenGrid');if(!grid)return;const nick=_gardenViewing;const d=gardenLoad(nick);const isMine=!nick||nick===me;const gc=$('gardenCoins');if(gc)gc.textContent=myCoins;const rb=$('gardenResetBtn');if(rb)rb.style.display=isMine?'none':'inline-block';const ot=$('gardenOwnerTitle');if(!isMine){ot.style.display='block';ot.innerHTML='👀 Грядка игрока <b style="color:#fff">'+eh(nick)+'</b>'}else ot.style.display='none';
+grid.innerHTML=d.plots.map((p,i)=>{if(!p){if(!isMine)return '<div class="garden-plot empty ownerless" data-plot="'+i+'"><div class="gp-left" style="text-align:center"><div class="gp-name">Пусто</div></div></div>';return '<div class="garden-plot empty" data-plot="'+i+'" onclick="gardenPlant('+i+')"><div class="gp-left" style="text-align:center"><div class="gp-name">Пусто</div></div></div>'}
+const s=seedById(p.seedId);if(!s)return '<div class="garden-plot empty" data-plot="'+i+'"></div>';const ready=plotIsReady(p);const tt=ready?'Созрело!':fmtGardenTime(plotReadyAt(p)-Date.now());const cls='garden-plot '+(ready?'ready':'growing')+(isMine?'':' ownerless');let oc='';if(ready)oc='harvestPlot('+i+')';else if(isMine)oc='useFertOnPlot('+i+')';const rar=RARITY[s.rarity]||RARITY.common;const gt=ready?'<div class="gp-gain">+'+gardenGain(s.sell)+' 💰</div>':'<div class="gp-gain" style="color:rgba(255,255,255,.55)">'+rar.name+'</div>';const fb=p.fertMult?'<span class="gp-fert">'+p.fertIcon+' x'+p.fertMult+'</span>':'';return '<div class="'+cls+'" data-plot="'+i+'" style="border-color:'+rar.color+'55" '+(oc?'onclick="'+oc+'"':'')+'>'+fb+'<div class="gp-plant">'+s.icon+'</div><div class="gp-left"><div class="gp-name">'+s.name+'<span class="rarity-badge" style="background:'+rar.color+'22;color:'+rar.color+'">'+rar.name+'</span></div></div><div class="gp-right"><div class="gp-timer">'+tt+'</div>'+gt+'</div></div>'}).join('');
+const any=d.plots.some(plotIsReady);const btn=$('harvestAllBtn');if(btn)btn.disabled=!any}
+function gardenPlant(idx){if(_gardenViewing)return showToast('Нельзя на чужую','error');const d=gardenLoad();if(d.plots[idx])return;_plantForPlot=idx;openSeedInv()}
+async function harvestPlot(idx){const nick=_gardenViewing;const d=gardenLoad(nick);const p=d.plots[idx];if(!p||!plotIsReady(p))return;const s=seedById(p.seedId);if(!s)return;const gain=gardenGain(s.sell);d.plots[idx]=null;gardenSave(d,nick);const isMine=!nick||nick===me;const amt=isMine?gain:Math.floor(gain*0.5);myCoins=Math.max(0,myCoins+amt);try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI();const g=$('gardenCoins');if(g)g.textContent=myCoins;showToast('🧺 '+s.name+'! +'+amt+' 💰'+(isMine?'':' (гость 50%)'),'success');gardenRender()}
+async function harvestAll(){const nick=_gardenViewing;const d=gardenLoad(nick);let total=0,count=0;d.plots.forEach((p,i)=>{if(p&&plotIsReady(p)){const s=seedById(p.seedId);if(s){total+=gardenGain(s.sell);count++;d.plots[i]=null}}});if(!count)return;gardenSave(d,nick);const isMine=!nick||nick===me;const amt=isMine?total:Math.floor(total*0.5);myCoins=Math.max(0,myCoins+amt);try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI();const g=$('gardenCoins');if(g)g.textContent=myCoins;showToast('🧺 Собрано '+count+': +'+amt+' 💰'+(isMine?'':' (гость)'),'success');gardenRender()}
+function visitGarden(){const nick=$('gardenVisitNick').value.trim();if(!nick)return showToast('Введи ник','error');if(nick===me)return showToast('Это твоя','error');_gardenViewing=nick;gardenRender();showToast('👀 Ты у грядки '+nick,'success')}
+function resetGardenView(){_gardenViewing=null;gardenRender();$('gardenVisitNick').value=''}
+function openVisitGarden(nick){openGarden();_gardenViewing=nick;$('gardenVisitNick').value=nick;gardenRender()}
+function openSeedShop(){_seedShopPlot=null;seedShopRender();loadCoins().then(seedShopRender);$('seedShopM').classList.add('open')}
 function closeSeedShop(){$('seedShopM').classList.remove('open')}
-function seedShopRender(){
-  const list=$('seedList');
-  if(!list)return;
-  list.innerHTML=SEEDS.map(s=>{
-    const canBuy=myCoins>=s.price;
-    const gain=gardenGain(s.sell);
-    const profit=gain-s.price;
-    const mins=Math.round(s.growSec/60*10)/10;
-    return '<div class="seed-item">'+
-      '<div class="si-icon">'+s.icon+'</div>'+
-      '<div class="si-info">'+
-        '<div class="si-name">'+s.name+'</div>'+
-        '<div class="si-meta">⏱ '+mins+' мин · 💰 '+s.price+' → <span class="si-profit">'+gain+'</span></div>'+
-        '<div class="si-meta">Прибыль: <span class="si-profit">+'+profit+' 💰</span></div>'+
-      '</div>'+
-      '<button class="si-buy" '+(canBuy?'':'disabled')+' onclick="buySeed(\''+s.id+'\')">Посадить '+s.price+'💰</button>'+
-    '</div>';
-  }).join('');
-}
-async function buySeed(seedId){
-  const s=seedById(seedId);
-  if(!s)return;
-  if(myCoins<s.price){showToast('Не хватает монет','error');return}
-  let idx=_seedShopPlot;
-  const d=gardenLoad();
-  if(idx===null||idx===undefined){
-    idx=d.plots.findIndex(p=>!p);
-    if(idx<0){showToast('Нет свободных грядок','error');return}
-  }
-  if(d.plots[idx]){showToast('Грядка занята','error');return}
-  d.plots[idx]={seedId:s.id,plantedAt:Date.now(),lastWater:0};
-  gardenSave(d);
-  myCoins=Math.max(0,myCoins-s.price);
-  try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}
-  updateCoinsUI();
-  const g=$('gardenCoins');if(g)g.textContent=myCoins;
-  showToast('🌱 Посажено: '+s.name,'success');
-  closeSeedShop();
-  if($('gardenM').classList.contains('open'))gardenRender();
-}
+function seedShopRender(){const list=$('seedList');if(!list)return;const slot=getMSKSlot();const r=getMSKSlotRemainingMs();const mm=Math.floor(r/60000),ss=Math.floor((r%60000)/1000);const si=$('seedSlotInfo');if(si)si.innerHTML='🌍 Сток обновится через <b>'+mm+':'+String(ss).padStart(2,'0')+'</b> (МСК)';const sc=$('seedCoins');if(sc)sc.textContent=myCoins;
+list.innerHTML=SEEDS.map(s=>{const inS=isInStock(s,slot);const cb=inS&&myCoins>=s.price;const g=gardenGain(s.sell);const pr=g-s.price;const m=Math.round(s.growSec/60*10)/10;const rar=RARITY[s.rarity]||RARITY.common;return '<div class="seed-item'+(inS?'':' oos')+'"><div class="si-icon">'+s.icon+'</div><div class="si-info"><div class="si-name">'+s.name+'<span class="rarity-badge" style="background:'+rar.color+'22;color:'+rar.color+'">'+rar.name+'</span></div><div class="si-meta">⏱ '+m+' мин · 💰 '+s.price+' → <span class="si-profit">'+g+'</span></div><div class="si-meta">Прибыль: <span class="si-profit">+'+pr+' 💰</span>'+(inS?'':' · <b style="color:#ff8888">нет в наличии</b>')+'</div></div><button class="si-buy'+(cb?'':' oos')+'" '+(cb?'':'disabled')+' onclick="buySeed(\''+s.id+'\')">'+(inS?('Купить '+s.price+'💰'):'Нет')+'</button></div>'}).join('')}
+async function buySeed(id){const s=seedById(id);if(!s)return;if(!isInStock(s,getMSKSlot()))return showToast('Нет в наличии','error');if(myCoins<s.price)return showToast('Не хватает','error');myCoins=Math.max(0,myCoins-s.price);try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI();seedInvAdd(s.id,1);showToast(s.icon+' Куплено: '+s.name,'success');seedShopRender();const sc=$('seedCoins');if(sc)sc.textContent=myCoins}
+function openSeedInv(){seedInvRender();$('seedInvM').classList.add('open')}
+function closeSeedInv(){$('seedInvM').classList.remove('open');_plantForPlot=null}
+function seedInvRender(){const list=$('seedInvList');const em=$('seedInvEmpty');if(!list)return;const inv=seedInvLoad();const ids=Object.keys(inv).filter(id=>inv[id]>0);if(!ids.length){em.style.display='block';list.innerHTML='';return}em.style.display='none';list.innerHTML=ids.map(id=>{const s=seedById(id);if(!s)return '';const rar=RARITY[s.rarity]||RARITY.common;const cp=!_gardenViewing;return '<div class="inv-seed-row"><div class="isr-icon">'+s.icon+'</div><div class="isr-info"><div class="isr-name">'+s.name+'<span class="rarity-badge" style="background:'+rar.color+'22;color:'+rar.color+'">'+rar.name+'</span></div><div class="isr-count">В сумке: '+inv[id]+' шт</div></div><div class="isr-actions">'+(cp?'<button class="isr-btn" onclick="plantFromInv(\''+id+'\')">🌱 Посадить</button>':'')+'<button class="isr-btn gift" onclick="openGiftSeed(\''+id+'\')">🎁</button></div></div>'}).join('')}
+function plantFromInv(id){if(_gardenViewing)return showToast('Нельзя на чужую','error');const s=seedById(id);if(!s)return;const d=gardenLoad();let idx=(typeof _plantForPlot==='number')?_plantForPlot:d.plots.findIndex(p=>!p);if(idx<0)return showToast('Нет мест','error');if(d.plots[idx])return showToast('Занято','error');if(!seedInvUse(id))return showToast('Нет семени','error');d.plots[idx]={seedId:s.id,plantedAt:Date.now()};gardenSave(d);showToast('🌱 Посажено: '+s.name,'success');closeSeedInv();if($('gardenM').classList.contains('open'))gardenRender();seedInvRender()}
+function openGiftSeed(id){const s=seedById(id);if(!s)return;if(seedInvCount(id)<=0)return showToast('Нет','error');_giftSeedId=id;$('giftTitle').textContent='🎁 Подарить: '+s.name;$('giftNick').value='';$('giftCount').value='1';$('giftCount').max=seedInvCount(id);$('giftErr').textContent='';$('giftSeedM').classList.add('open');setTimeout(()=>$('giftNick').focus(),100)}
+function closeGiftSeed(){$('giftSeedM').classList.remove('open');_giftSeedId=null}
+async function doGiftSeed(){const nick=$('giftNick').value.trim();const cnt=parseInt($('giftCount').value)||1;const er=$('giftErr');er.textContent='';if(!nick)return er.textContent='Введи ник';if(nick===me)return er.textContent='Себе нельзя';if(cnt<1)return er.textContent='Минимум 1';if(seedInvCount(_giftSeedId)<cnt)return er.textContent='У тебя только '+seedInvCount(_giftSeedId);const{data:p}=await sb.from('profiles').select('nick').eq('nick',nick).maybeSingle();if(!p)return er.textContent='Не найден';for(let i=0;i<cnt;i++){if(!seedInvUse(_giftSeedId))break}try{const key='giftQueue_'+en(nick);const q=JSON.parse(localStorage.getItem(key)||'[]');const s=seedById(_giftSeedId);q.push({from:me,seedId:_giftSeedId,icon:s.icon,name:s.name,count:cnt,ts:Date.now()});localStorage.setItem(key,JSON.stringify(q))}catch(e){}showToast('🎁 Подарено '+cnt+'× '+seedById(_giftSeedId).name+' → '+nick,'success');closeGiftSeed();seedInvRender()}
+function openFertShop(){fertShopRender();loadCoins().then(fertShopRender);$('fertShopM').classList.add('open')}
+function closeFertShop(){$('fertShopM').classList.remove('open')}
+function fertShopRender(){const list=$('fertList');if(!list)return;const slot=getMSKSlot();const r=getMSKSlotRemainingMs();const mm=Math.floor(r/60000),ss=Math.floor((r%60000)/1000);const si=$('fertSlotInfo');if(si)si.innerHTML='🌍 Сток обновится через <b>'+mm+':'+String(ss).padStart(2,'0')+'</b> (МСК)';const fc=$('fertCoins');if(fc)fc.textContent=myCoins;const inv=fertInvLoad();list.innerHTML=FERTILIZERS.map(f=>{const inS=isInStock(f,slot);const cb=inS&&myCoins>=f.price;const rar=RARITY[f.rarity]||RARITY.common;const ow=inv[f.id]||0;return '<div class="fert-item'+(inS?'':' oos')+'"><div class="fi-icon">'+f.icon+'</div><div class="fi-info"><div class="fi-name">'+f.name+'<span class="rarity-badge" style="background:'+rar.color+'22;color:'+rar.color+'">'+rar.name+'</span>'+(ow?'<span class="inv-badge">в сумке: '+ow+'</span>':'')+'</div><div class="fi-meta">🌱 Ускоряет рост в <span class="fi-mult">'+f.mult+'x</span> · 💰 '+f.price+'</div></div><button class="fi-buy" '+(cb?'':'disabled')+' onclick="buyFertilizer(\''+f.id+'\')">'+(inS?('Купить '+f.price+'💰'):'Нет')+'</button></div>'}).join('')}
+async function buyFertilizer(fid){const f=fertById(fid);if(!f)return;if(!isInStock(f,getMSKSlot()))return showToast('Нет в наличии','error');if(myCoins<f.price)return showToast('Не хватает','error');myCoins=Math.max(0,myCoins-f.price);try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI();fertInvAdd(f.id,1);showToast(f.icon+' Куплено: '+f.name,'success');fertShopRender()}
+function useFertOnPlot(idx){if(_gardenViewing)return showToast('Чужая','error');const d=gardenLoad();const p=d.plots[idx];if(!p||plotIsReady(p))return;if(p.fertMult)return showToast('Уже удобрено','error');const inv=fertInvLoad();const owned=FERTILIZERS.filter(f=>(inv[f.id]||0)>0).sort((a,b)=>b.mult-a.mult);if(!owned.length)return showToast('💩 Нет удобрений','error');const best=owned[0];if(!fertInvUse(best.id))return;const s=seedById(p.seedId);const readyAt=plotReadyAt(p);const rem=readyAt-Date.now();const newRem=rem/best.mult;p.plantedAt=Date.now()+newRem-(s.growSec*1000);p.fertMult=best.mult;p.fertIcon=best.icon;gardenSave(d);showToast(best.icon+' x'+best.mult+' применено','success');gardenRender()}
+/* ===== /GARDEN v2 ===== */
 /* ===== /HOME GARDEN ===== */
 
 function openPfMine(){closeUserMenu();openProfile(null)}
@@ -1726,7 +1624,7 @@ async function openProfile(nick){
   $('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
   const acts=$('pfActions');
   if(isMine){const b=frameBonusPct(myFrame);const bonusTxt=b?' <span style="color:#8bc34a">(+'+b+'%)</span>':'';acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Редактировать</button><button class="frames" onclick="closePf();openFrames()">⬜ Рамки'+bonusTxt+'</button>'}
-  else{acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="send-coins" onclick="openSendCoins(\''+eh(target)+'\')">💰 Монеты</button>'}
+  else{acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="send-coins" onclick="openSendCoins(\''+eh(target)+'\')">💰 Монеты</button><button onclick="closePf();openVisitGarden(\''+eh(target)+'\')" style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff">🌱 Грядка</button>'}
   $('pfEdit').classList.remove('on');
   $('pfErr').textContent='';
   $('pf').classList.add('open');
@@ -1780,6 +1678,9 @@ $('framesM').addEventListener('click',e=>{if(e.target.id==='framesM')closeFrames
 $('jobM').addEventListener('click',e=>{if(e.target.id==='jobM')closeJob()});
 $('gardenM').addEventListener('click',e=>{if(e.target.id==='gardenM')closeGarden()});
 $('seedShopM').addEventListener('click',e=>{if(e.target.id==='seedShopM')closeSeedShop()});
+$('fertShopM').addEventListener('click',e=>{if(e.target.id==='fertShopM')closeFertShop()});
+$('seedInvM').addEventListener('click',e=>{if(e.target.id==='seedInvM')closeSeedInv()});
+$('giftSeedM').addEventListener('click',e=>{if(e.target.id==='giftSeedM')closeGiftSeed()});
 }
 function upSliderFill(id){const el=$(id);if(!el)return;const min=+el.min,max=+el.max,val=+el.value;const p=(val-min)/(max-min)*100;el.style.setProperty('--fill',p+'%')}
 function openCtx(e,msgId,roomType){e.preventDefault();e.stopPropagation();ctxMsgId=msgId;ctxMsgRoom=roomType;const menu=$('ctxMenu');const msgs=roomType==='main'?msgC:rmC;const m=msgs.find(x=>x.id===msgId);if(!m)return;const mine=m.nick===meEnc;const isText=!m.voice_url&&!m.video_url&&!m.photo_url;let html='';if(mine&&isText)html+='<button onclick="ctxEdit()">✏️ Редактировать</button>';html+='<div class="div"></div>';if(mine)html+='<button class="red" onclick="ctxDelBoth()">🗑️ Удалить у всех</button>';html+='<button class="red" onclick="ctxDelMe()">✕ Удалить у себя</button>';$('ctxActions').innerHTML=html;menu.style.left='0px';menu.style.top='0px';menu.classList.add('open');const w=menu.offsetWidth,h=menu.offsetHeight;let x=e.clientX,y=e.clientY;if(x+w>window.innerWidth)x=window.innerWidth-w-10;if(y+h>window.innerHeight)y=window.innerHeight-h-10;if(x<10)x=10;if(y<10)y=10;menu.style.left=x+'px';menu.style.top=y+'px'}
