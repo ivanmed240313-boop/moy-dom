@@ -916,8 +916,8 @@ body::before{display:none !important}
 .flat.frame-fire{box-shadow:0 0 20px #ff5500cc,inset 0 0 12px #ff550055 !important}
 .flat.frame-ice{box-shadow:0 0 20px #7fdbffcc !important}
 .flat.frame-neon{box-shadow:0 0 18px rgba(var(--neon-rgb),.9) !important}
-/* VHS — оставляем анимацию и усиленное свечение */
-.flat.frame-vhs{box-shadow:0 0 0 3px #fff,0 0 25px #ff0033,0 0 45px #00ffff !important}
+/* VHS — анимацию НЕ трогаем, пусть vhsGlitch сам крутит цвета */
+.flat.frame-vhs{overflow:visible!important;z-index:16!important}
 /* GALAXY — оставляем анимацию */
 .flat.frame-galaxy{box-shadow:0 0 0 3px #a06bff,0 0 26px #a06bffcc !important;animation:galaxyGlow 4s ease-in-out infinite !important}
 .flat.frame-sakura{box-shadow:0 0 0 3px #ff8eb6,0 0 22px #ff8eb6cc !important}
