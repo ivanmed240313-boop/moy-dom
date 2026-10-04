@@ -1806,7 +1806,7 @@ async function openEntChat(g){curGroup=null;curRoom='entrance_'+g;curRoomType='e
 async function closeM(){if(mr&&mr.state==='recording')mr.stop();$('modal').classList.remove('open');$('gearBtn').classList.remove('on');if(ch){sb.removeChannel(ch);ch=null}if(pt){clearInterval(pt);pt=null}curRoom=null;curRoomType=null;curEntG=null;curPartner=null;curGroup=null;clrCh($('chat'))}
 function togIR(c){$('ir').style.display=c?'flex':'none';$('nw').style.display=c?'none':'block'}
 function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
-async function loadM(){const tk=++mTok,rid=curRoom;if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:true}).limit(200);if(tk!==mTok||rid!==curRoom)return;if(error)return;msgC=(data||[]).filter(m=>!m.deleted_for_all);renderMs($('chat'),msgC)}
+async function loadM(){   const tk=++mTok,rid=curRoom;if(!rid)return;   const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);   if(tk!==mTok||rid!==curRoom)return;   if(error)return;   msgC=(data||[]).reverse().filter(m=>!m.deleted_for_all);   renderMs($('chat'),msgC); }
 function renderMs(el,list){const nh=list.map(m=>{const mine=m.nick===meEnc;let body;if(m.voice_url)body='<div class="voice-msg">🎤 Голосовое</div>';else if(m.video_url)body='<div class="mc paused"><video src="'+m.video_url+'" playsinline></video></div>';else if(m.photo_url)body='<img class="mp" src="'+m.photo_url+'" onclick="openPV(\''+m.photo_url+'\')">';else body='<span class="txt">'+eh(m.text)+'</span>';const tm='<span class="time">'+new Date(m.created_at).toLocaleTimeString().slice(0,5)+'</span>';const nk=mine?'':'<span class="nick">'+eh(de(m.nick))+'</span>';return '<div class="msg '+(mine?'own':'other')+'" data-id="'+m.id+'">'+nk+body+tm+'</div>'}).join('');const fh=nh||'<div style="color:#55556a;text-align:center;padding:30px">Пусто</div>';if(el.dataset.lastHtml!==fh){const ab=el.scrollTop+el.clientHeight>=el.scrollHeight-40,fr=!el.dataset.lastHtml;el.innerHTML=fh;el.dataset.lastHtml=fh;if(fr||ab)el.scrollTop=el.scrollHeight}}
 function subM(){if(ch)sb.removeChannel(ch);if(!curRoom)return;ch=sb.channel('rm-'+curRoom).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+curRoom},()=>loadM()).subscribe()}
 let _subGlobCh=null;
@@ -1883,6 +1883,55 @@ function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_change
 function subFlats(){if(fc)return;fc=sb.channel('flats-rt').on('postgres_changes',{event:'*',schema:'public',table:'flats'},async p=>{const r=p.new||p.old;if(!r||r.house_id!==curHouse)return;if(p.eventType==='DELETE')delete flats[r.number];else flats[r.number]=p.new;renderFlats()}).subscribe()}
 /* INIT */
 window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}});
+  /* ===== FIX 2.9.1 — все исправления одной вставкой ===== */
+window.upChSt=function(){if(!curPartner)return;const st=$('chs');if(!st)return;if(online.has(curPartner)){st.textContent='в сети';st.classList.add('online')}else{st.classList.remove('online')}};
+
+window.loadM=async function(){
+  const tk=++mTok,rid=curRoom;if(!rid)return;
+  const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);
+  if(tk!==mTok||rid!==curRoom)return;
+  if(error)return;
+  msgC=(data||[]).reverse().filter(m=>!m.deleted_for_all);
+  renderMs($('chat'),msgC);
+};
+
+window.loadRM=async function(){
+  const tk=++rmTok,rid=rcId;if(!rid)return;
+  const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);
+  if(tk!==rmTok||rid!==rcId)return;
+  if(error)return;
+  const{data:hid}=await sb.from('hidden_messages').select('message_id').eq('user_nick',meEnc);
+  const hI=new Set((hid||[]).map(h=>h.message_id));
+  rmC=(data||[]).reverse().filter(m=>!hI.has(m.id)&&!m.deleted_for_all);
+  await loadR(rmC);
+  renderMs($('rc'),rmC);
+};
+
+window.subGlob=function(){
+  if(window._subGlobCh)return;
+  window._subGlobCh=sb.channel('glob-msg').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},async p=>{
+    const m=p.new;if(!m)return;
+    if(!isMyR(m.room_id))return;
+    if(m.nick===meEnc){await loadDMs();renderDMs();return}
+    if(curRoom===m.room_id)return;
+    if(rcId===m.room_id)return;
+    unread[m.room_id]=(unread[m.room_id]||0)+1;
+    const w=de(m.nick),pr=m.voice_url?'🎤':(m.video_url?'⚪':(m.photo_url?'📷':m.text));
+    showNotif('💬 '+w,pr);
+    await loadDMs();renderDMs()
+  }).subscribe();
+};
+
+window.subRM=function(){
+  if(rcCh)sb.removeChannel(rcCh);
+  if(!rcId)return;
+  rcCh=sb.channel('rc-'+rcId).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+rcId},()=>loadRM()).subscribe();
+};
+
+window.startRcPt=function(){
+  if(rcPt)clearInterval(rcPt);
+  rcPt=setInterval(loadRM,3000);
+};
 </script>
 </body>
 </html>
