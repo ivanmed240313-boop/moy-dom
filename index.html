@@ -404,8 +404,8 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .pf-actions .msg{background:linear-gradient(135deg,#5aabff,#4a90d9);color:#fff}
 .pf-actions .edit{background:rgba(255,255,255,.08);color:#e8e8f0}
 .pf-actions .frames{background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff}
-.pf-actions .garden{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff}
 .pf-actions .send-coins{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
+.pf-actions .garden{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff}
 .pf-edit{padding:8px 24px 22px;border-top:1px solid rgba(255,255,255,.06);margin-top:8px;display:none}
 .pf-edit.on{display:block}
 .pf-status-edit{display:flex;gap:8px;align-items:center;margin-bottom:4px}
@@ -448,20 +448,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #pf .emb.fr-bg-sapphire .pf-cover{background:linear-gradient(135deg,#1e3a8a,#1d4ed8,#3b82f6,#1d4ed8);opacity:.7}
 #pf .emb.fr-bg-ruby{background:linear-gradient(180deg,#1a0005 0%,#0f0003 60%,#080002 100%);border-color:rgba(239,68,68,.5);box-shadow:0 0 40px rgba(239,68,68,.2),0 20px 60px rgba(0,0,0,.6)}
 #pf .emb.fr-bg-ruby .pf-cover{background:linear-gradient(135deg,#7f1d1d,#b91c1c,#ef4444,#b91c1c);opacity:.7}
-/* NEW FRAME BACKGROUNDS */
-#pf .emb.fr-bg-sakura{
-  border-color: rgba(255,142,182,.55);
-  box-shadow: 0 0 40px rgba(255,142,182,.25), 0 20px 60px rgba(0,0,0,.6);
-}
-#pf .emb.fr-bg-sakura .pf-cover{
-  background: linear-gradient(180deg, #5eb8e0 0%, #87ceeb 40%, #b8e0f2 70%, #fbcfe8 100%);
-  opacity: 1;
-  animation: sakuraSkyShift 10s ease-in-out infinite;
-}
-@keyframes sakuraSkyShift{
-  0%,100%{filter:brightness(1) saturate(1)}
-  50%{filter:brightness(1.08) saturate(1.1)}
-}
+#pf .emb.fr-bg-sakura{border-color: rgba(255,142,182,.55);box-shadow: 0 0 40px rgba(255,142,182,.25), 0 20px 60px rgba(0,0,0,.6);}
 #pf .emb.fr-bg-sakura .pf-cover{background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(255,182,210,.7),rgba(255,142,182,.4) 50%,transparent 80%),linear-gradient(180deg,#ffc8dd 0%,#ffb3d1 50%,#ff8eb6 100%);opacity:.55}
 #pf .emb.fr-bg-aqua{background:linear-gradient(180deg,#001a2a 0%,#00101a 60%,#000810 100%);border-color:rgba(0,212,255,.5);box-shadow:0 0 40px rgba(0,212,255,.25),0 20px 60px rgba(0,0,0,.6)}
 #pf .emb.fr-bg-aqua .pf-cover{background:radial-gradient(ellipse 100% 60% at 50% 100%,rgba(0,180,255,.6),transparent 70%),radial-gradient(ellipse 80% 40% at 30% 30%,rgba(0,255,255,.4),transparent 70%),linear-gradient(180deg,#003a5a 0%,#001a2a 60%,#000a18 100%);opacity:.9}
@@ -1172,7 +1159,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-const APP_VERSION='2.6';
+const APP_VERSION='2.3';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -2572,13 +2559,17 @@ async function openProfile(nick){
   else seenRow.style.display='none';
   $('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';
   $('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);
- const acts=$('pfActions');
-if(isMine){
-  const b=frameBonusPct(myFrame);
-  const bonusTxt=b?' <span style="color:#8bc34a">(+'+b+'%)</span>':'';
-  acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Ред.</button><button class="garden" onclick="closePf();openGarden()">🌱 Грядка</button><button class="frames" onclick="closePf();openFrames()">⬜ Рамки'+bonusTxt+'</button>';
-}else{
-  acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="garden" onclick="closePf();openVisitGarden(\''+eh(target)+'\')">🌱 Грядка</button><button class="send-coins" onclick="openSendCoins(\''+eh(target)+'\')">💰 Монеты</button>';
+  const acts=$('pfActions');
+  if(isMine){
+    const b=frameBonusPct(myFrame);
+    const bonusTxt=b?' <span style="color:#8bc34a">(+'+b+'%)</span>':'';
+    acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Ред.</button><button class="garden" onclick="closePf();openGarden()">🌱 Грядка</button><button class="frames" onclick="closePf();openFrames()">⬜ Рамки'+bonusTxt+'</button>';
+  }else{
+    acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+en(target)+'\')">💬 Написать</button><button class="garden" onclick="closePf();openVisitGarden(\''+eh(target)+'\')">🌱 Грядка</button><button class="send-coins" onclick="openSendCoins(\''+eh(target)+'\')">💰 Монеты</button>';
+  }
+  $('pfEdit').classList.remove('on');
+  $('pfErr').textContent='';
+  $('pf').classList.add('open');
 }
 function closePf(){$('pf').classList.remove('open');pfFxClear();pfCurrent=null}
 async function startPfEdit(){let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',me).maybeSingle();p=r.data}catch(e){}$('pfEmojiInp').value=(p&&p.status_emoji)||'';$('pfStatusInp').value=(p&&p.status)||'';$('pfBioInp').value=(p&&p.bio)||'';$('pfErr').textContent='';$('pfEdit').classList.add('on');setTimeout(()=>$('pfStatusInp').focus(),100)}
@@ -2972,32 +2963,54 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser&&
    );
    --------------------------------------------------------------- */
 
+/* ============ РАСТЕНИЯ (40 ШТ.) ============ */
 const SEEDS=[
-  {id:'carrot',    name:'Морковь',            rarity:'common',    price:5,     grow:30,   sell:10,    icon:'🥕'},
-  {id:'potato',    name:'Картошка',           rarity:'common',    price:8,     grow:45,   sell:16,    icon:'🥔'},
-  {id:'wheat',     name:'Пшеница',            rarity:'common',    price:10,    grow:60,   sell:20,    icon:'🌾'},
-  {id:'tomato',    name:'Помидор',            rarity:'common',    price:12,    grow:75,   sell:25,    icon:'🍅'},
-  {id:'cucumber',  name:'Огурец',             rarity:'common',    price:15,    grow:90,   sell:30,    icon:'🥒'},
-  {id:'strawberry',name:'Клубника',           rarity:'uncommon',  price:25,    grow:120,  sell:55,    icon:'🍓'},
-  {id:'pumpkin',   name:'Тыква',              rarity:'uncommon',  price:35,    grow:150,  sell:75,    icon:'🎃'},
-  {id:'watermelon',name:'Арбуз',              rarity:'uncommon',  price:45,    grow:180,  sell:100,   icon:'🍉'},
-  {id:'grape',     name:'Виноград',           rarity:'uncommon',  price:55,    grow:200,  sell:120,   icon:'🍇'},
-  {id:'pepper',    name:'Перчик',             rarity:'uncommon',  price:65,    grow:220,  sell:140,   icon:'🌶️'},
-  {id:'lotus',     name:'Лотос',              rarity:'rare',      price:120,   grow:300,  sell:280,   icon:'🪷'},
-  {id:'cactus',    name:'Кактус',             rarity:'rare',      price:150,   grow:340,  sell:340,   icon:'🌵'},
-  {id:'orchid',    name:'Орхидея',            rarity:'rare',      price:180,   grow:380,  sell:400,   icon:'🌺'},
-  {id:'sakura',    name:'Сакура',             rarity:'rare',      price:220,   grow:420,  sell:500,   icon:'🌸'},
-  {id:'rose',      name:'Роза',               rarity:'rare',      price:260,   grow:460,  sell:600,   icon:'🌹'},
-  {id:'crystal',   name:'Кристалл',           rarity:'mythic',    price:500,   grow:600,  sell:1200,  icon:'💎'},
-  {id:'starflower',name:'Звёздный цветок',    rarity:'mythic',    price:650,   grow:660,  sell:1500,  icon:'⭐'},
-  {id:'moongrass', name:'Луна-трава',         rarity:'mythic',    price:800,   grow:720,  sell:1900,  icon:'🌙'},
-  {id:'flame',     name:'Пламя-цветок',       rarity:'mythic',    price:1000,  grow:800,  sell:2400,  icon:'🔥'},
-  {id:'icelotus',  name:'Ледяной лотос',      rarity:'mythic',    price:1200,  grow:880,  sell:2900,  icon:'❄️'},
-  {id:'dragonfruit',name:'Драконий плод',     rarity:'legendary', price:2500,  grow:1100, sell:6000,  icon:'🐉'},
-  {id:'phoenix',   name:'Феникс-цветок',      rarity:'legendary', price:3500,  grow:1300, sell:8500,  icon:'🔥'},
-  {id:'cosmicfruit',name:'Космический плод',  rarity:'legendary', price:5000,  grow:1500, sell:12000, icon:'🌌'},
-  {id:'unicornrose',name:'Единорог-роза',     rarity:'legendary', price:7000,  grow:1700, sell:17000, icon:'🦄'},
-  {id:'angeltear', name:'Слеза ангела',       rarity:'secret',    price:15000, grow:2400, sell:40000, icon:'👼'}
+  /* ---- ОБЫЧНЫЕ (8) ---- */
+  {id:'carrot',     name:'Морковь',           rarity:'common',    price:5,     grow:30,   sell:10,    icon:'🥕'},
+  {id:'potato',     name:'Картошка',          rarity:'common',    price:8,     grow:45,   sell:16,    icon:'🥔'},
+  {id:'wheat',      name:'Пшеница',           rarity:'common',    price:10,    grow:60,   sell:20,    icon:'🌾'},
+  {id:'tomato',     name:'Помидор',           rarity:'common',    price:12,    grow:75,   sell:25,    icon:'🍅'},
+  {id:'cucumber',   name:'Огурец',            rarity:'common',    price:15,    grow:90,   sell:30,    icon:'🥒'},
+  {id:'onion',      name:'Лук',               rarity:'common',    price:18,    grow:100,  sell:36,    icon:'🧅'},
+  {id:'cabbage',    name:'Капуста',           rarity:'common',    price:22,    grow:110,  sell:44,    icon:'🥬'},
+  {id:'garlic',     name:'Чеснок',            rarity:'common',    price:26,    grow:120,  sell:52,    icon:'🧄'},
+  /* ---- НЕОБЫЧНЫЕ (8) ---- */
+  {id:'strawberry', name:'Клубника',          rarity:'uncommon',  price:40,    grow:140,  sell:90,    icon:'🍓'},
+  {id:'pumpkin',    name:'Тыква',             rarity:'uncommon',  price:55,    grow:160,  sell:120,   icon:'🎃'},
+  {id:'watermelon', name:'Арбуз',             rarity:'uncommon',  price:70,    grow:180,  sell:155,   icon:'🍉'},
+  {id:'grape',      name:'Виноград',          rarity:'uncommon',  price:85,    grow:200,  sell:190,   icon:'🍇'},
+  {id:'pepper',     name:'Перчик',            rarity:'uncommon',  price:100,   grow:220,  sell:225,   icon:'🌶️'},
+  {id:'blueberry',  name:'Голубика',          rarity:'uncommon',  price:120,   grow:240,  sell:270,   icon:'🫐'},
+  {id:'mango',      name:'Манго',             rarity:'uncommon',  price:140,   grow:260,  sell:320,   icon:'🥭'},
+  {id:'blackberry', name:'Ежевика',           rarity:'uncommon',  price:165,   grow:280,  sell:380,   icon:'🍇'},
+  /* ---- РЕДКИЕ (8) ---- */
+  {id:'lotus',      name:'Лотос',             rarity:'rare',      price:250,   grow:320,  sell:600,   icon:'🪷'},
+  {id:'cactus',     name:'Кактус',            rarity:'rare',      price:300,   grow:360,  sell:720,   icon:'🌵'},
+  {id:'orchid',     name:'Орхидея',           rarity:'rare',      price:360,   grow:400,  sell:860,   icon:'🌺'},
+  {id:'sakura',     name:'Сакура',            rarity:'rare',      price:430,   grow:440,  sell:1030,  icon:'🌸'},
+  {id:'rose',       name:'Роза',              rarity:'rare',      price:500,   grow:480,  sell:1200,  icon:'🌹'},
+  {id:'bamboo',     name:'Бамбук',            rarity:'rare',      price:580,   grow:520,  sell:1390,  icon:'🎋'},
+  {id:'lavender',   name:'Лаванда',           rarity:'rare',      price:670,   grow:560,  sell:1600,  icon:'💜'},
+  {id:'tulip',      name:'Тюльпан',           rarity:'rare',      price:770,   grow:600,  sell:1840,  icon:'🌷'},
+  /* ---- МИФИЧЕСКИЕ (8) ---- */
+  {id:'crystal',    name:'Кристалл',          rarity:'mythic',    price:1000,  grow:680,  sell:2400,  icon:'💎'},
+  {id:'starflower', name:'Звёздный цветок',   rarity:'mythic',    price:1300,  grow:740,  sell:3120,  icon:'⭐'},
+  {id:'moongrass',  name:'Луна-трава',        rarity:'mythic',    price:1600,  grow:800,  sell:3840,  icon:'🌙'},
+  {id:'flame',      name:'Пламя-цветок',      rarity:'mythic',    price:2000,  grow:860,  sell:4800,  icon:'🔥'},
+  {id:'icelotus',   name:'Ледяной лотос',     rarity:'mythic',    price:2400,  grow:920,  sell:5760,  icon:'❄️'},
+  {id:'rainbow',    name:'Радужный',          rarity:'mythic',    price:2900,  grow:980,  sell:6960,  icon:'🌈'},
+  {id:'phantom',    name:'Призрачный',        rarity:'mythic',    price:3500,  grow:1040, sell:8400,  icon:'👻'},
+  {id:'volcano',    name:'Вулканический',     rarity:'mythic',    price:4200,  grow:1100, sell:10080, icon:'🌋'},
+  /* ---- ЛЕГЕНДАРНЫЕ (6) ---- */
+  {id:'dragonfruit',name:'Драконий плод',     rarity:'legendary', price:6000,  grow:1250, sell:14400, icon:'🐉'},
+  {id:'phoenix',    name:'Феникс-цветок',     rarity:'legendary', price:8000,  grow:1400, sell:19200, icon:'🦅'},
+  {id:'cosmicfruit',name:'Космический плод',  rarity:'legendary', price:10000, grow:1550, sell:24000, icon:'🌌'},
+  {id:'unicornrose',name:'Единорог-роза',     rarity:'legendary', price:12000, grow:1700, sell:28800, icon:'🦄'},
+  {id:'solarfruit', name:'Солнечный плод',    rarity:'legendary', price:14500, grow:1850, sell:34800, icon:'☀️'},
+  {id:'shadowrose', name:'Теневая роза',      rarity:'legendary', price:17500, grow:2000, sell:42000, icon:'🌑'},
+  /* ---- СЕКРЕТНЫЕ (2) ---- */
+  {id:'angeltear',  name:'Слеза ангела',      rarity:'secret',    price:35000, grow:2500, sell:96000, icon:'👼'},
+  {id:'dragonseye', name:'Око дракона',       rarity:'secret',    price:60000, grow:2900, sell:168000,icon:'👁️'}
 ];
 const RARITY={
   common:    {name:'Обычное',     color:'#9aa0b0', chance:1.00},
@@ -3012,12 +3025,11 @@ const FERTS=[
   {id:'fert2',name:'Редкое удобрение',      mult:2,   price:200, icon:'💧', color:'#3b82f6'},
   {id:'fert3',name:'Легендарное удобрение', mult:3,   price:800, icon:'💧', color:'#f5c542'}
 ];
-/* МСК = UTC+3. Возвращаем объект Date, сдвинутый так, чтобы getHours() и т.д. давали МСК. */
+/* МСК = UTC+3 */
 function mskDate(){const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+3*3600000)}
 function mskSecOfDay(){const m=mskDate();return m.getHours()*3600+m.getMinutes()*60+m.getSeconds()}
-function mskSlot(){return Math.floor(mskSecOfDay()/180)} /* 180 сек = 3 минуты */
+function mskSlot(){return Math.floor(mskSecOfDay()/180)}
 function mskSlotLeft(){return 180-(mskSecOfDay()%180)}
-/* Детерминированный рандом (mulberry32) — чтобы у всех игроков в один слот был одинаковый сток */
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function genSeedStock(slot){
   const rng=mulberry32(slot*7919+424242);const stock=[];
@@ -3050,13 +3062,8 @@ function loadGarden(nick){
     if(s){
       const p=JSON.parse(s);
       if(p&&typeof p==='object'){
-        if(!Array.isArray(p.beds)){
-          p.beds=[null,null,null,null,null,null];
-        } else {
-          // ровно 6 ячеек
-          while(p.beds.length<6)p.beds.push(null);
-          if(p.beds.length>6)p.beds.length=6;
-        }
+        if(!Array.isArray(p.beds)){p.beds=[null,null,null,null,null,null]}
+        else{while(p.beds.length<6)p.beds.push(null);if(p.beds.length>6)p.beds.length=6}
         if(!p.inv||typeof p.inv!=='object'||Array.isArray(p.inv))p.inv={};
         if(!p.ferts||typeof p.ferts!=='object'||Array.isArray(p.ferts))p.ferts={};
         return p;
@@ -3126,7 +3133,6 @@ function plantFirstFree(sid){
 function applyFert(bedIdx){
   const g=loadGarden(me);
   const b=g.beds[bedIdx];if(!b)return;
-  /* приоритет — самое сильное удобрение */
   const order=['fert3','fert2','fert1'];
   let used=null;
   for(const fid of order){if(g.ferts[fid]&&g.ferts[fid]>0){used=fid;break}}
@@ -3321,27 +3327,6 @@ async function checkGifts(){
     if(total>0)showToast('🎁 Подарки: '+names.join(', '),'success');
   }catch(e){}
 }
-async function openVisitGarden(nick){
-  if(!nick)return;
-  if(nick===me)return openGarden();
-  closeUserMenu();
-  try{
-    const{data}=await sb.from('gardens').select('*').eq('nick',en(nick)).maybeSingle();
-    _visitNick=nick;
-    let beds=(data&&data.beds)||[null,null,null,null,null,null];
-    if(!Array.isArray(beds))beds=[null,null,null,null,null,null];
-    while(beds.length<6)beds.push(null);
-    if(beds.length>6)beds.length=6;
-    _visitGarden={beds,inv:(data&&data.inventory)||{},ferts:(data&&data.ferts)||{}};
-    $('gardenMain').style.display='none';
-    $('gardenVisit').style.display='block';
-    $('gardenTitle').textContent='👀 Грядка: '+nick;
-    $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · гостевой режим — садить и удобрять нельзя, но можно собирать за <b style="color:#f5c542">50% цены</b>.';
-    $('visitMsg').textContent='';
-    $('gardenM').classList.add('open');
-    renderVisitGarden();
-  }catch(e){showToast('Ошибка: '+e.message,'error')}
-}
 async function doVisit(){
   const nick=$('visitInp').value.trim();
   if(!nick){$('visitMsg').textContent='Введи ник';return}
@@ -3360,6 +3345,27 @@ async function doVisit(){
     $('gardenTitle').textContent='👀 Грядка: '+nick;
     $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · гостевой режим — садить и удобрять нельзя, но можно собирать за <b style="color:#f5c542">50% цены</b>.';
     $('visitMsg').textContent='';
+    renderVisitGarden();
+  }catch(e){showToast('Ошибка: '+e.message,'error')}
+}
+async function openVisitGarden(nick){
+  if(!nick)return;
+  if(nick===me)return openGarden();
+  closeUserMenu();
+  try{
+    const{data}=await sb.from('gardens').select('*').eq('nick',en(nick)).maybeSingle();
+    _visitNick=nick;
+    let beds=(data&&data.beds)||[null,null,null,null,null,null];
+    if(!Array.isArray(beds))beds=[null,null,null,null,null,null];
+    while(beds.length<6)beds.push(null);
+    if(beds.length>6)beds.length=6;
+    _visitGarden={beds,inv:(data&&data.inventory)||{},ferts:(data&&data.ferts)||{}};
+    $('gardenMain').style.display='none';
+    $('gardenVisit').style.display='block';
+    $('gardenTitle').textContent='👀 Грядка: '+nick;
+    $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · гостевой режим — садить и удобрять нельзя, но можно собирать за <b style="color:#f5c542">50% цены</b>.';
+    $('visitMsg').textContent='';
+    $('gardenM').classList.add('open');
     renderVisitGarden();
   }catch(e){showToast('Ошибка: '+e.message,'error')}
 }
