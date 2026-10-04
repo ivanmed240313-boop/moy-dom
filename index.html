@@ -1159,7 +1159,7 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;document.querySelectorAll('.aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-const APP_VERSION='2.3';
+const APP_VERSION='2.71';
 (function(){
   function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}
   function render(){
@@ -3152,24 +3152,20 @@ function applyFert(bedIdx){
   renderMyGarden();
 }
 function harvestBed(idx,guest){
-  const g=guest?null:loadGarden(me);
-  const bed=guest?_visitGarden.beds[idx]:g.beds[idx];
+  if(guest){showToast('🚫 Чужие грядки только для просмотра','error');return}
+  const g=loadGarden(me);
+  const bed=g.beds[idx];
   if(!bed)return;
   const seed=SEEDS.find(s=>s.id===bed.seed);if(!seed)return;
   const ready=(Date.now()-bed.plantedAt)>=(bed.growMs||seed.grow*1000);
   if(!ready){showToast('Ещё не выросло','error');return}
-  const base=seed.sell;
-  const reward=guest?Math.floor(base*0.5):base;
+  const reward=seed.sell;
   addCoins(reward);
-  if(!guest){
-    g.beds[idx]=null;
-    saveGarden(me,g);
-    renderMyGarden();
-  }else{
-    _visitGarden.beds[idx]=null;
-    sb.from('gardens').update({beds:_visitGarden.beds,updated_at:new Date().toISOString()}).eq('nick',en(_visitNick)).then(()=>{}).catch(()=>{});
-    renderVisitGarden();
-  }
+  g.beds[idx]=null;
+  saveGarden(me,g);
+  renderMyGarden();
+  showToast('✅ Собрано: +'+reward+' 💰 ('+seed.name+')','success');
+}
   showToast((guest?'👀 Гость: ':'✅ Собрано: ')+' +'+reward+' 💰 ('+seed.name+')','success');
 }
 function openSeedShop(){$('seedShopM').classList.add('open');$('seedShopMsg').textContent='';renderSeedShop();if(_seedShopTick)clearInterval(_seedShopTick);_seedShopTick=setInterval(()=>{if($('seedShopM').classList.contains('open'))renderSeedShop();else{clearInterval(_seedShopTick);_seedShopTick=null}},1000)}
@@ -3343,7 +3339,7 @@ async function doVisit(){
     $('gardenMain').style.display='none';
     $('gardenVisit').style.display='block';
     $('gardenTitle').textContent='👀 Грядка: '+nick;
-    $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · гостевой режим — садить и удобрять нельзя, но можно собирать за <b style="color:#f5c542">50% цены</b>.';
+   $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · <b style="color:#ff8888">только просмотр</b>. Садить, удобрять и собирать чужое — нельзя.';
     $('visitMsg').textContent='';
     renderVisitGarden();
   }catch(e){showToast('Ошибка: '+e.message,'error')}
@@ -3363,7 +3359,7 @@ async function openVisitGarden(nick){
     $('gardenMain').style.display='none';
     $('gardenVisit').style.display='block';
     $('gardenTitle').textContent='👀 Грядка: '+nick;
-    $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · гостевой режим — садить и удобрять нельзя, но можно собирать за <b style="color:#f5c542">50% цены</b>.';
+    $('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · <b style="color:#ff8888">только просмотр</b>. Садить, удобрять и собирать чужое — нельзя.';
     $('visitMsg').textContent='';
     $('gardenM').classList.add('open');
     renderVisitGarden();
@@ -3382,8 +3378,7 @@ function renderVisitGarden(){
     const pct=Math.min(100,elapsed/total*100);
     const ready=pct>=100;
     const left=Math.max(0,Math.ceil((total-elapsed)/1000));
-    const guestReward=Math.floor(seed.sell*0.5);
-    return '<div class="gbed guest '+(ready?'ready':'grow')+'" '+(ready?'onclick="harvestBed('+i+',true)"':'')+'><div class="gbed-icon">'+(ready?seed.icon:'🌱')+'</div><div class="gbed-label">'+seed.name+'</div><div class="gbed-bar"><div class="gbed-fill" style="width:'+pct+'%"></div></div><div class="gbed-time">'+(ready?'✅ +'+guestReward+' 💰':left+'с')+'</div></div>';
+    return '<div class="gbed guest '+(ready?'ready':'grow')+'"><div class="gbed-icon">'+(ready?seed.icon:'🌱')+'</div><div class="gbed-label">'+seed.name+'</div><div class="gbed-bar"><div class="gbed-fill" style="width:'+pct+'%"></div></div><div class="gbed-time">'+(ready?'✅ Созрело':left+'с')+'</div></div>';
   }).join('');
 }
 if(!window._gardenVisitTick){window._gardenVisitTick=setInterval(()=>{if($('gardenM').classList.contains('open')&&$('gardenVisit').style.display==='block'&&_visitGarden)renderVisitGarden()},500)}
