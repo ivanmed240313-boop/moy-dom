@@ -1661,6 +1661,264 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
   window.resetSeason=function(){localStorage.removeItem('dom_season');cur=getSeason();rebuild();try{updateSeasonBtn()}catch(e){}};
   rebuild();requestAnimationFrame(loop);
 })();
+/* ============================================================
+   ДОПОЛНЕНИЕ — всё что было срезано
+   ============================================================ */
+
+/* ===== ГОЛОСОВЫЕ ===== */
+async function startRec(){
+  if(vRec)return;
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({audio:true});
+    vCh=[];
+    vRec=new MediaRecorder(s);
+    vRec.ondataavailable=e=>{if(e.data.size>0)vCh.push(e.data)};
+    vRec.onstop=async()=>{
+      s.getTracks().forEach(t=>t.stop());
+      if(!vCh.length){vRec=null;return}
+      const blob=new Blob(vCh,{type:vCh[0].type||'audio/webm'});
+      const fname='voice_'+Date.now()+'.webm';
+      const{error:eU}=await sb.storage.from('media').upload(fname,blob,{contentType:blob.type});
+      if(eU){showToast('Ошибка загрузки: '+eU.message,'error');vRec=null;return}
+      const{data:pub}=sb.storage.from('media').getPublicUrl(fname);
+      const url=pub.publicUrl;
+      const dur=Math.max(1,Math.round(vS/10));
+      await sb.from('messages').insert({room_id:curRoom,nick:meEnc,voice_url:url,voice_dur:dur,user_id:curUser.id});
+      vRec=null;vS=0;
+      if(vTimer){clearInterval(vTimer);vTimer=null}
+      const btn=$('vBtn');if(btn)btn.classList.remove('rec');
+      loadM();
+      if(curRoomType==='dm'||curRoomType==='group')loadDMs().then(()=>renderDMs());
+    };
+    vRec.start();
+    const btn=$('vBtn');if(btn)btn.classList.add('rec');
+    vS=0;
+    vTimer=setInterval(()=>{vS++;if(vS>600)stopRec()},100);
+  }catch(e){showToast('Нет доступа к микрофону','error')}
+}
+function stopRec(){
+  if(!vRec)return;
+  try{vRec.stop()}catch(e){}
+  if(vTimer){clearInterval(vTimer);vTimer=null}
+}
+
+/* ===== КРУЖКИ (видео) ===== */
+async function startCircle(){
+  try{
+    const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+    const cv=$('crV');
+    cv.srcObject=s;
+    const chunks=[];
+    mr=new MediaRecorder(s);
+    mr.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};
+    mr.onstop=async()=>{
+      s.getTracks().forEach(t=>t.stop());
+      $('cr').classList.remove('open');
+      if(!chunks.length){mr=null;return}
+      const blob=new Blob(chunks,{type:chunks[0].type||'video/webm'});
+      const fname='circle_'+Date.now()+'.webm';
+      const{error:eU}=await sb.storage.from('media').upload(fname,blob,{contentType:blob.type});
+      if(eU){showToast('Ошибка: '+eU.message,'error');mr=null;return}
+      const{data:pub}=sb.storage.from('media').getPublicUrl(fname);
+      await sb.from('messages').insert({room_id:curRoom,nick:meEnc,video_url:pub.publicUrl,user_id:curUser.id});
+      mr=null;
+      const btn=$('cBtn');if(btn)btn.classList.remove('rec');
+      loadM();
+      if(curRoomType==='dm'||curRoomType==='group')loadDMs().then(()=>renderDMs());
+    };
+    mr.start();
+    $('cr').classList.add('open');
+    const btn=$('cBtn');if(btn)btn.classList.add('rec');
+    rS=0;
+    const t0=Date.now();
+    rT=setInterval(()=>{
+      rS=Math.floor((Date.now()-t0)/1000);
+      const el=$('crT');if(el)el.textContent=fT(rS);
+      if(rS>=60)stopCircle();
+    },250);
+  }catch(e){showToast('Нет доступа к камере','error')}
+}
+function stopCircle(){
+  if(!mr)return;
+  try{mr.stop()}catch(e){}
+  if(rT){clearInterval(rT);rT=null}
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const crS=$('crS');if(crS)crS.onclick=stopCircle;
+});
+
+/* ===== ОТПРАВКА ФОТО ===== */
+async function sendPhoto(inp,isRoom){
+  if(!inp.files||!inp.files[0])return;
+  const file=inp.files[0];
+  const rid=isRoom?rcId:curRoom;
+  if(!rid)return;
+  const fname='photo_'+Date.now()+'_'+file.name.replace(/[^\w.-]/g,'');
+  const{error:eU}=await sb.storage.from('media').upload(fname,file,{contentType:file.type});
+  inp.value='';
+  if(eU)return showToast('Ошибка: '+eU.message,'error');
+  const{data:pub}=sb.storage.from('media').getPublicUrl(fname);
+  if(isRoom){
+    await sb.from('messages').insert({room_id:rid,nick:meEnc,photo_url:pub.publicUrl,user_id:curUser.id});
+    if(typeof loadRM==='function')loadRM();
+  }else{
+    await sb.from('messages').insert({room_id:rid,nick:meEnc,photo_url:pub.publicUrl,user_id:curUser.id});
+    loadM();
+    if(curRoomType==='dm'||curRoomType==='group')loadDMs().then(()=>renderDMs());
+  }
+}
+
+/* ===== КОНТЕКСТНОЕ МЕНЮ ===== */
+function closeCtx(){
+  const m=$('ctxMenu');if(m)m.classList.remove('open');
+  ctxMsgId=null;ctxMsgRoom=null;
+}
+function showCtxMenu(x,y,msgId){
+  ctxMsgId=msgId;ctxMsgRoom=curRoom;
+  const m=$('ctxMenu');if(!m)return;
+  const em=$('ctxEmojis');
+  if(em)em.innerHTML=QR.map(e=>'<button onclick="addReaction(\''+msgId+'\',\''+e+'\');closeCtx()">'+e+'</button>').join('');
+  const ac=$('ctxActions');
+  if(ac)ac.innerHTML=
+    '<button onclick="editMsg(\''+msgId+'\');closeCtx()">✏️ Изменить</button>'+
+    '<button onclick="replyMsg(\''+msgId+'\');closeCtx()">↩️ Ответить</button>'+
+    '<div class="div"></div>'+
+    '<button onclick="hideForMe(\''+msgId+'\');closeCtx()">👁 Скрыть у себя</button>'+
+    '<button class="red" onclick="delForAll(\''+msgId+'\');closeCtx()">🗑 Удалить у всех</button>';
+  m.style.left=Math.min(x,window.innerWidth-200)+'px';
+  m.style.top=Math.min(y,window.innerHeight-260)+'px';
+  m.classList.add('open');
+}
+document.addEventListener('click',e=>{
+  const m=$('ctxMenu');
+  if(m&&!m.contains(e.target))closeCtx();
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  const chat=$('chat');
+  if(chat)chat.addEventListener('contextmenu',e=>{
+    const msg=e.target.closest('.msg');
+    if(msg){e.preventDefault();showCtxMenu(e.pageX,e.pageY,msg.dataset.id)}
+  });
+});
+async function addReaction(msgId,emo){
+  try{await sb.from('reactions').insert({message_id:msgId,user_nick:meEnc,emoji:emo})}catch(e){}
+  loadM();
+}
+async function editMsg(msgId){
+  const m=msgC.find(x=>x.id===msgId);if(!m)return;
+  const nv=prompt('Изменить сообщение:',m.text||'');
+  if(nv===null||nv===m.text)return;
+  await sb.from('messages').update({text:nv,edited:true}).eq('id',msgId);
+  loadM();
+}
+function replyMsg(msgId){
+  const m=msgC.find(x=>x.id===msgId);if(!m)return;
+  const inp=$('mI');if(!inp)return;
+  inp.value='↩️ '+(m.text||'').slice(0,40)+' | ';
+  inp.focus();
+}
+async function hideForMe(msgId){
+  try{await sb.from('hidden_messages').insert({message_id:msgId,user_nick:meEnc})}catch(e){}
+  loadM();
+}
+async function delForAll(msgId){
+  const ok=await askConfirm('Удалить?','Сообщение удалится у всех','Удалить',true);
+  if(!ok)return;
+  await sb.from('messages').update({deleted_for_all:true,text:null,photo_url:null,voice_url:null,video_url:null}).eq('id',msgId);
+  loadM();
+}
+
+/* ===== ЗАГРУЗКА АВАТАРОК ГРУПП ===== */
+document.addEventListener('DOMContentLoaded',()=>{
+  const gAva=$('gmAvaIn');
+  if(gAva)gAva.onchange=async e=>{
+    if(!e.target.files[0])return;
+    const f=e.target.files[0];gmAvaFile=f;
+    const r=new FileReader();
+    r.onload=()=>{
+      const av=$('gmAva');if(av)av.style.backgroundImage='url('+r.result+')';
+      const em=$('gmAvaEmoji');if(em)em.style.display='none';
+    };
+    r.readAsDataURL(f);
+  };
+  const gsAva=$('gsmAvaIn');
+  if(gsAva)gsAva.onchange=async e=>{
+    if(!e.target.files[0]||!curGroup)return;
+    const f=e.target.files[0];
+    const fname='gava_'+curGroup.id+'_'+Date.now();
+    const{error}=await sb.storage.from('media').upload(fname,f,{contentType:f.type});
+    if(error)return showToast(error.message,'error');
+    const{data:pub}=sb.storage.from('media').getPublicUrl(fname);
+    await sb.from('groups').update({avatar_url:pub.publicUrl}).eq('id',curGroup.id);
+    curGroup.avatar_url=pub.publicUrl;
+    const chAv=$('chAv');if(chAv)chAv.innerHTML=grpAvHTML(curGroup,'lg');
+    const av=$('gsmAva');if(av)av.style.backgroundImage='url('+pub.publicUrl+')';
+    const em=$('gsmAvaEmoji');if(em)em.style.display='none';
+  };
+});
+
+/* ===== SUGGESTIONS (подсказки ников) ===== */
+async function suggestNicks(val,cb){
+  if(!val||val.length<1)return cb([]);
+  const q=val.toLowerCase();
+  const res=(allProfiles||[]).filter(p=>p.nick.toLowerCase().includes(q)&&p.nick!==me).slice(0,8);
+  cb(res);
+}
+function attachSug(inp,sugBoxId,onPick){
+  const box=$(sugBoxId);if(!box)return;
+  inp.oninput=()=>{
+    const parts=inp.value.split(/[,\n]+/);
+    const cur=(parts[parts.length-1]||'').trim();
+    suggestNicks(cur,list=>{
+      if(!list.length){box.classList.remove('on');return}
+      box.innerHTML=list.map(p=>'<div class="sug-item" data-nick="'+eh(p.nick)+'"><div class="sn">'+eh(p.nick)+'</div>'+(p.flat?'<div class="sf">№'+p.flat+'</div>':'<div class="sf no">—</div>')+'</div>').join('');
+      box.classList.add('on');
+      box.querySelectorAll('.sug-item').forEach(it=>{
+        it.onclick=()=>{
+          const p2=inp.value.split(/[,\n]+/);
+          p2[p2.length-1]=it.dataset.nick;
+          inp.value=p2.join(', ')+', ';
+          box.classList.remove('on');
+          inp.focus();
+          if(onPick)onPick();
+        };
+      });
+    });
+  };
+  document.addEventListener('click',e=>{
+    if(!box.contains(e.target)&&e.target!==inp)box.classList.remove('on');
+  });
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const gmMem=$('gmMem');if(gmMem)attachSug(gmMem,'gmSug');
+  const gsMem=$('gsmAddMem');if(gsMem)attachSug(gsMem,'gsmSug');
+});
+
+/* ===== ОБРАБОТЧИКИ КНОПОК ЧАТА ===== */
+document.addEventListener('DOMContentLoaded',()=>{
+  const eB=$('eBtn');if(eB)eB.onclick=e=>{e.preventDefault();togEP()};
+  const pB=$('pBtn');
+  if(pB)pB.onclick=e=>{e.preventDefault();const pi=$('mPI');if(pi)pi.click()};
+  const mPI=$('mPI');
+  if(mPI)mPI.onchange=e=>sendPhoto(e.target,false);
+  const vB=$('vBtn');
+  if(vB)vB.onclick=async e=>{e.preventDefault();if(vRec)stopRec();else await startRec()};
+  const cB=$('cBtn');
+  if(cB)cB.onclick=async e=>{e.preventDefault();if(mr&&mr.state==='recording')stopCircle();else await startCircle()};
+  const chat=$('chat');
+  if(chat)chat.addEventListener('click',e=>{
+    const play=e.target.closest('.voice-play-btn');
+    if(play){
+      const wrap=play.parentElement;
+      const url=wrap.dataset.voice;
+      if(vA){try{vA.pause()}catch(_){}}
+      vA=new Audio(url);
+      wrap.classList.add('playing');
+      vA.onended=()=>wrap.classList.remove('playing');
+      vA.play();
+    }
+  });
+});
 </script>
 </body>
 </html>
