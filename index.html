@@ -1064,7 +1064,7 @@ body::before{display:none !important}
 *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
 }
 </style></head>
-</style></head><body>
+<body>
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -1233,7 +1233,6 @@ body::before{display:none !important}
   </div>
 </div></div>
 
-
 <div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1294,7 +1293,7 @@ let _afTarget='afB';
 let evOverrides={};
 let giveTarget=null,giveTab='frame',giveData={frame:null,seed:null,fert:null,coins:null};
 let _fireworksActive=false,_fireworksRaf=null,_fireworksTimer=null;
-let cRec=null,cStr=null,cTimer=null,cStart=0,mPIbusy=false,rPIbusy=false;
+let cRec=null,cStr=null,cCh=[],cTimer=null,cStart=0,mPIbusy=false,rPIbusy=false;
 const WORK_TASKS=[
   {id:'dishes',  name:'Намыть посуду',     icon:'🍽️', clean:'✨', target:8, desc:'Кликай по тарелкам — с каждой смывается грязь (1–3 клика)'},
   {id:'vacuum',  name:'Пропылесосить пол', icon:'🧹', clean:'✨', target:8, desc:'Води мышкой по полу — 8 пятен пыли нужно всосать'},
@@ -1347,13 +1346,13 @@ async function openSendCoins(nick){if(!nick||nick===me)return;if(pfCurrent)close
 function closeSendCoins(){$('sendCoinsM').classList.remove('open')}
 function scQuick(frac){const amt=Math.floor(myCoins*frac);$('scAmt').value=amt>0?String(amt):''}
 async function doSendCoins(){const nick=$('scNick').textContent;const er=$('scErr');er.textContent='';const val=parseInt($('scAmt').value,10);if(!val||val<=0){er.textContent='Введи сумму больше 0';return}if(val>myCoins){er.textContent='У тебя только '+myCoins+' 💰';return}if(val>1000000){er.textContent='Максимум 1 000 000 за раз';return}const ok=await askConfirm('Отправить монеты?','Ты отправишь '+val+' 💰 игроку '+nick,'Отправить');if(!ok)return;const btn=$('scSendBtn');btn.disabled=true;btn.textContent='Отправка...';const{data,error}=await sb.rpc('send_coins',{p_to_nick:nick,p_amount:val});btn.disabled=false;btn.textContent='Отправить';if(error){er.textContent=error.message;return}if(data&&data.ok===false){er.textContent=data.error||'Ошибка';return}myCoins=Math.max(0,myCoins-val);updateCoinsUI();$('sendCoinsM').classList.remove('open');showToast('✅ Отправлено '+val+' 💰 игроку '+nick,'success');await loadCoins()}
-function toggleSound(){soundEnabled=!soundEnabled;localStorage.setItem('domSound',soundEnabled?'1':'0');const b=$('soundBtn');if(b){const s=b.querySelector('span');if(s)s.textContent='Звук: '+(soundEnabled?'вкл':'выкл')}const t=$('settSound');if(t)t.classList.toggle('on',soundEnabled);if(soundEnabled)playNotifSound()}
-function updateSoundBtn(){const b=$('soundBtn');if(!b)return;const s=b.querySelector('span');if(s)s.textContent='Звук: '+(soundEnabled?'вкл':'выкл');const t=$('settSound');if(t)t.classList.toggle('on',soundEnabled)}
+function toggleSound(){soundEnabled=!soundEnabled;localStorage.setItem('domSound',soundEnabled?'1':'0');const b=$('soundBtn');if(b){const s=b.querySelector('span');if(s)s.textContent='Звук: '+(soundEnabled?'вкл':'выкл')}if(soundEnabled)playNotifSound()}
+function updateSoundBtn(){const b=$('soundBtn');if(!b)return;const s=b.querySelector('span');if(s)s.textContent='Звук: '+(soundEnabled?'вкл':'выкл')}
 function playNotifSound(){if(!soundEnabled)return;try{if(!_audioCtx)_audioCtx=new (window.AudioContext||window.webkitAudioContext)();const ctx=_audioCtx;if(ctx.state==='suspended')ctx.resume();const now=ctx.currentTime;const o1=ctx.createOscillator();const g1=ctx.createGain();o1.type='sine';o1.frequency.value=880;g1.gain.setValueAtTime(0.0001,now);g1.gain.exponentialRampToValueAtTime(0.14,now+0.02);g1.gain.exponentialRampToValueAtTime(0.0001,now+0.25);o1.connect(g1);g1.connect(ctx.destination);o1.start(now);o1.stop(now+0.3);const o2=ctx.createOscillator();const g2=ctx.createGain();o2.type='sine';o2.frequency.value=1320;g2.gain.setValueAtTime(0.0001,now+0.1);g2.gain.exponentialRampToValueAtTime(0.12,now+0.13);g2.gain.exponentialRampToValueAtTime(0.0001,now+0.35);o2.connect(g2);g2.connect(ctx.destination);o2.start(now+0.1);o2.stop(now+0.4)}catch(e){}}
 async function touchSeen(){if(!curUser)return;try{await sb.from('profiles').update({last_seen:new Date().toISOString()}).eq('id',curUser.id)}catch(e){}}
 setInterval(touchSeen,60000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser)touchSeen()});
-async function enableNotif(){if(!('Notification'in window))return showToast('Нет');const p=await Notification.requestPermission();notifPerm=p;const b=$('notifB');if(p==='granted'){if(b)b.style.color='#4caf50';localStorage.setItem('domNotif','1');const t=$('settNotif');if(t)t.classList.add('on');new Notification('Дом',{body:'Включено ✅'})}}
+async function enableNotif(){if(!('Notification'in window))return showToast('Нет');const p=await Notification.requestPermission();notifPerm=p;const b=$('notifB');if(p==='granted'){if(b)b.style.color='#4caf50';localStorage.setItem('domNotif','1');new Notification('Дом',{body:'Включено ✅'})}}
 function showNotif(t,b){try{playNotifSound()}catch(e){}if(notifPerm!=='granted')return;if(!document.hidden)return;try{new Notification(t,{body:b,tag:'dom'})}catch(e){}}
 function initEP(){const g=$('eg');if(g)g.innerHTML=EL.map(e=>'<button type="button" onclick="insE(\''+e+'\')">'+e+'</button>').join('')}
 function togEP(){const p=$('ep');epOpen=!epOpen;if(p)p.classList.toggle('open',epOpen)}
@@ -1376,196 +1375,8 @@ async function sNick(){const er=$('nickE');er.textContent='';const n=$('nickIn')
 async function switchAcc(){await sb.auth.signOut();location.reload()}
 async function logout(){const ok=await askConfirm('Выйти?','Ты выйдешь из аккаунта','Выйти',true);if(!ok)return;stopMus();if(vA){try{vA.pause()}catch(e){}}try{await touchSeen()}catch(e){}await sb.auth.signOut();location.reload()}
 function showBan(){$('auth').style.display='none';$('nickScr').style.display='none';$('app').style.display='none';$('banR').textContent=banR||'Доступ закрыт';$('banO').classList.add('on')}
-window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}});
-/* ===== СЕЗОННЫЕ ФОНЫ (canvas #seasons) ===== */
-(function(){
-  const cv=document.getElementById('seasons');
-  if(!cv)return;
-  const ctx=cv.getContext('2d');
-  let W=0,H=0,DPR=1,curSeason='autumn',particles=[],raf=null,sunAngle=0;
-  function detectAuto(){
-    const m=new Date().getMonth();
-    if(m>=2&&m<=4)return 'spring';
-    if(m>=5&&m<=7)return 'summer';
-    if(m>=8&&m<=10)return 'autumn';
-    return 'winter';
-  }
-  function getSeasonNow(){
-    const s=localStorage.getItem('dom_season');
-    if(s&&['spring','summer','autumn','winter'].includes(s))return s;
-    return detectAuto();
-  }
-  function resize(){
-    DPR=Math.min(window.devicePixelRatio||1,2);
-    W=window.innerWidth;H=window.innerHeight;
-    cv.width=Math.floor(W*DPR);cv.height=Math.floor(H*DPR);
-    cv.style.width=W+'px';cv.style.height=H+'px';
-    ctx.setTransform(DPR,0,0,DPR,0,0);
-  }
-  function mkParticle(type){
-    if(type==='autumn'){
-      const colors=['#f5c542','#ff9d2e','#e67e22','#d35400','#f1c40f','#cd7f32','#ffaa33'];
-      return {x:Math.random()*W,y:-20-Math.random()*H*0.4,vx:(Math.random()-0.5)*0.7,vy:0.5+Math.random()*1.1,size:6+Math.random()*8,rot:Math.random()*Math.PI*2,vrot:(Math.random()-0.5)*0.06,color:colors[Math.floor(Math.random()*colors.length)],sway:Math.random()*Math.PI*2,swaySpeed:0.01+Math.random()*0.02,swayAmp:0.5+Math.random()*1.2};
-    }
-    if(type==='winter'){
-      return {x:Math.random()*W,y:-10-Math.random()*H*0.4,vx:(Math.random()-0.5)*0.3,vy:0.4+Math.random()*0.9,size:2+Math.random()*3.5,rot:0,vrot:0,sway:Math.random()*Math.PI*2,swaySpeed:0.01+Math.random()*0.02,swayAmp:0.3+Math.random()*0.8};
-    }
-    if(type==='spring'){
-      const colors=['#ffc8dd','#ffb3d1','#ff8eb6','#ffd6e6','#ff69a0'];
-      return {x:Math.random()*W,y:-10-Math.random()*H*0.4,vx:(Math.random()-0.5)*0.4,vy:0.4+Math.random()*0.85,size:4+Math.random()*6,rot:Math.random()*Math.PI*2,vrot:(Math.random()-0.5)*0.08,color:colors[Math.floor(Math.random()*colors.length)],sway:Math.random()*Math.PI*2,swaySpeed:0.01+Math.random()*0.02,swayAmp:0.6+Math.random()*1.3};
-    }
-    return null;
-  }
-  function countForSeason(s){
-    const area=W*H;
-    if(s==='winter')return Math.min(140,Math.floor(area/12000));
-    if(s==='autumn')return Math.min(60,Math.floor(area/22000));
-    if(s==='spring')return Math.min(80,Math.floor(area/16000));
-    return 0;
-  }
-  function drawLeaf(p){
-    ctx.save();
-    ctx.translate(p.x,p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle=p.color;
-    const s=p.size;
-    ctx.beginPath();
-    ctx.moveTo(0,-s);
-    ctx.bezierCurveTo(s*0.7,-s*0.5,s*0.7,s*0.5,0,s);
-    ctx.bezierCurveTo(-s*0.7,s*0.5,-s*0.7,-s*0.5,0,-s);
-    ctx.fill();
-    ctx.strokeStyle='rgba(0,0,0,0.18)';
-    ctx.lineWidth=1;
-    ctx.beginPath();
-    ctx.moveTo(0,-s*0.8);
-    ctx.lineTo(0,s*0.8);
-    ctx.stroke();
-    ctx.restore();
-  }
-  function drawSnow(p){
-    ctx.save();
-    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size*2);
-    g.addColorStop(0,'rgba(255,255,255,0.95)');
-    g.addColorStop(0.6,'rgba(220,240,255,0.55)');
-    g.addColorStop(1,'rgba(200,230,255,0)');
-    ctx.fillStyle=g;
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size*2,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,0.95)';
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-    ctx.fill();
-    ctx.restore();
-  }
-  function drawPetal(p){
-    ctx.save();
-    ctx.translate(p.x,p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle=p.color;
-    const s=p.size;
-    ctx.beginPath();
-    ctx.moveTo(0,-s);
-    ctx.bezierCurveTo(s*0.9,-s*0.3,s*0.9,s*0.4,0,s);
-    ctx.bezierCurveTo(-s*0.4,s*0.5,-s*0.7,-s*0.2,0,-s);
-    ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.25)';
-    ctx.lineWidth=0.6;
-    ctx.stroke();
-    ctx.restore();
-  }
-  function drawSun(){
-    const cx=W-110,cy=110,R=52;
-    sunAngle+=0.002;
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(sunAngle);
-    for(let i=0;i<12;i++){
-      const a=(i/12)*Math.PI*2;
-      const r2=R+22+Math.sin(sunAngle*3+i)*4;
-      ctx.save();
-      ctx.rotate(a);
-      const grd=ctx.createLinearGradient(R,0,r2,0);
-      grd.addColorStop(0,'rgba(255,215,80,0.75)');
-      grd.addColorStop(1,'rgba(255,215,80,0)');
-      ctx.fillStyle=grd;
-      ctx.beginPath();
-      ctx.moveTo(R,0);
-      ctx.lineTo(r2,-6);
-      ctx.lineTo(r2,6);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-    }
-    ctx.restore();
-    const g=ctx.createRadialGradient(cx,cy,4,cx,cy,R);
-    g.addColorStop(0,'rgba(255,255,220,1)');
-    g.addColorStop(0.4,'rgba(255,220,90,0.95)');
-    g.addColorStop(0.8,'rgba(255,180,50,0.55)');
-    g.addColorStop(1,'rgba(255,160,40,0)');
-    ctx.fillStyle=g;
-    ctx.beginPath();
-    ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle='rgba(255,255,200,0.95)';
-    ctx.beginPath();
-    ctx.arc(cx,cy,R*0.45,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle='rgba(255,240,150,0.85)';
-    ctx.beginPath();
-    ctx.arc(cx,cy,R*0.28,0,Math.PI*2);
-    ctx.fill();
-  }
-  function loop(){
-    ctx.clearRect(0,0,W,H);
-    if(curSeason==='summer'){
-      drawSun();
-      raf=requestAnimationFrame(loop);
-      return;
-    }
-    for(let i=particles.length-1;i>=0;i--){
-      const p=particles[i];
-      p.sway+=p.swaySpeed;
-      p.x+=p.vx+Math.sin(p.sway)*p.swayAmp;
-      p.y+=p.vy;
-      p.rot+=p.vrot;
-      if(p.y>H+30||p.x<-40||p.x>W+40){
-        particles[i]=mkParticle(curSeason);
-        continue;
-      }
-      if(curSeason==='autumn')drawLeaf(p);
-      else if(curSeason==='winter')drawSnow(p);
-      else if(curSeason==='spring')drawPetal(p);
-    }
-    raf=requestAnimationFrame(loop);
-  }
-  function initParticles(){
-    particles=[];
-    const n=countForSeason(curSeason);
-    for(let i=0;i<n;i++){
-      const p=mkParticle(curSeason);
-      if(!p)continue;
-      p.y=Math.random()*H;
-      particles.push(p);
-    }
-  }
-  function applySeason(s){curSeason=s;initParticles()}
-  window.getSeason=function(){return curSeason};
-  window.setSeason=function(s){
-    if(!['spring','summer','autumn','winter'].includes(s))return;
-    localStorage.setItem('dom_season',s);
-    applySeason(s);
-  };
-  window.resetSeason=function(){
-    localStorage.removeItem('dom_season');
-    applySeason(getSeasonNow());
-  };
-  resize();
-  window.addEventListener('resize',()=>{resize();initParticles()});
-  applySeason(getSeasonNow());
-  loop();
-})();
-</script>
+window.addEventListener('DOMContentLoaded',async()=>{if('Notification'in window){notifPerm=Notification.permission;if(notifPerm==='granted'){const b=$('notifB');if(b)b.style.color='#4caf50'}}updateSoundBtn();const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}else $('auth').style.display='flex'});
+sb.auth.onAuthStateChange(async(e,s)=>{if(e==='SIGNED_IN'&&s&&!curUser){curUser=s.user;await afterAuth()}});
 function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+curUser.id},p=>{if(!p.new)return;if(p.new.banned&&!isBanned){isBanned=true;banR=p.new.ban_reason||'';showBan();try{closeM()}catch(e){}try{closeFm()}catch(e){}try{closeAdmin()}catch(e){}}iAmAdmin=!!p.new.is_admin||curUser.id===OWNER_ID;upAdminTog();if(!hasAdmin()&&adminMode)exitAdmin();if(typeof p.new.coins!=='undefined'){myCoins=p.new.coins||0;updateCoinsUI()}if(typeof p.new.active_frame!=='undefined'){myFrame=p.new.active_frame||'none';frameCache[meEnc]=myFrame;renderFlats()}if(Array.isArray(p.new.owned_frames)){myOwnedFrames=p.new.owned_frames}}).subscribe()}
 function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{key:meEnc}}});gpres.on('presence',{event:'sync'},()=>{const s=gpres.presenceState();online=new Set();for(const k in s)if(k&&k!==meEnc)online.add(k);renderDMs();upChSt()}).subscribe(async st=>{if(st==='SUBSCRIBED')await gpres.track({nick:meEnc,since:Date.now()})})}
 function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();await loadDMs();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
@@ -1581,7 +1392,7 @@ function openOwner(){if(!isOwner())return showToast('Только владеле
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b)}
-const APP_VERSION='2.9.1';
+const APP_VERSION='2.9.2';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 /* ===== ВЫДАЧА (OWNER) ===== */
@@ -1804,26 +1615,10 @@ function stopFireworks(){
   if(_fireworksRaf){cancelAnimationFrame(_fireworksRaf);_fireworksRaf=null}
   if(_fireworksTimer){clearInterval(_fireworksTimer);_fireworksTimer=null}
 }
-/* ===== НАСТРОЙКИ ===== */
-function openSett(){
-  if(!$('settM'))return;
-  const tN=$('settNotif');if(tN)tN.classList.toggle('on',notifPerm==='granted'||localStorage.getItem('domNotif')==='1');
-  const tS=$('settSound');if(tS)tS.classList.toggle('on',soundEnabled);
-  const sel=$('settSeason');if(sel)sel.value=localStorage.getItem('dom_season')||'auto';
-  $('settM').classList.add('open');
-}
-function closeSett(){$('settM')?.classList.remove('open')}
-function settToggle(k){
-  if(k==='notif'){if(notifPerm==='granted'||localStorage.getItem('domNotif')==='1'){localStorage.setItem('domNotif','0');const t=$('settNotif');if(t)t.classList.remove('on');showToast('🔕 Уведомления выключены')}else{enableNotif()}}
-  else if(k==='sound'){toggleSound()}
-}
-function settSetSeason(v){
-  if(v==='auto'){if(window.resetSeason)window.resetSeason();localStorage.removeItem('dom_season');showToast('🍂 Сезон: авто')}
-  else{if(window.setSeason)window.setSeason(v);showToast('🍂 Сезон: '+v)}
-}
+/* ===== НАСТРОЙКИ СЕЗОНОВ ===== */
 function cycleSeason(){const cur=window.getSeason?window.getSeason():'autumn';const order=['autumn','winter','spring','summer'];const i=order.indexOf(cur);const next=order[(i+1)%order.length];if(window.setSeason)window.setSeason(next);updateSeasonBtn();closeUserMenu()}
 function updateSeasonBtn(){const b=$('seasonBtn');if(!b)return;const s=window.getSeason?window.getSeason():'autumn';const L={autumn:'🍂 осень',winter:'❄️ зима',spring:'🌸 весна',summer:'☀️ лето'};const span=b.querySelector('span');if(span)span.textContent='Сезон: '+L[s]}
-/* ===== ОСТАЛЬНОЕ (квартиры, юзеры, чаты, грядка, работа, дежурство) ===== */
+/* ===== КВАРТИРЫ / ЮЗЕРЫ (AF/OF) ===== */
 async function afFlats(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('flats').select('*').order('house_id').order('number');if(error){b.innerHTML='<div class="afe">Ошибка: '+eh(error.message)+'</div>';return}const all=data||[];const taken=all.filter(f=>flatOwners(f).length);if(!taken.length){b.innerHTML='<div class="afe">Нет занятых</div>';return}const byHouse={};taken.forEach(f=>{const h=Number(f.house_id);if(!byHouse[h])byHouse[h]=[];byHouse[h].push(f)});const ids=Object.keys(byHouse).map(Number).sort((a,b)=>a-b);let html='';for(const hid of ids){const hInfo=houses.find(x=>Number(x.id)===hid);const start=(hid-1)*30+1,end=(hid-1)*30+30;html+='<div style="margin:16px 0 8px;padding:10px 14px;background:rgba(245,197,66,.08);border-left:3px solid #f5c542;border-radius:10px"><b style="color:#f5c542;font-size:14px">🏘 '+eh(hInfo?hInfo.name:'Дом №'+hid)+'</b> <span style="color:#8888a0;font-size:12px;margin-left:8px">квартиры '+start+'–'+end+' · занято '+byHouse[hid].length+'/30</span></div>';html+=byHouse[hid].sort((a,b)=>a.number-b.number).map(f=>{const owners=flatOwners(f).map(de),mp=f.max_people??2;const ent=gloEnt(f.house_id,Math.ceil(f.number/10));const hD=houses.find(x=>Number(x.id)===Number(f.house_id));const bl=(hD?.blocked_entrances||[]).includes(ent);const gNum=(f.house_id-1)*30+Number(f.number);return '<div class="afr"><div class="info"><div class="ti">🏠 Кв. '+gNum+'<span class="afbdg '+(bl?'r':'g')+'">'+(bl?'закрыт':'ок')+'</span></div><div class="su">👤 '+owners.map((o,i)=>eh(o)+(i===0?' 👑':'')).join(', ')+'</div><div class="su">👥 <b>'+owners.length+'/'+mp+'</b></div></div><div class="ac"><button class="afbtn g" onclick="afMax('+f.house_id+','+f.number+')">👥 Мест: '+mp+'</button><button class="afbtn r" onclick="afEvict('+f.house_id+','+f.number+')">выселить</button></div></div>'}).join('')}b.innerHTML=html}
 function afEnt(b){const bl=houseData?.blocked_entrances||[];let h='';for(let e=1;e<=3;e++){const g=gloEnt(curHouse,e),is=bl.includes(g),c=Object.values(flats).filter(f=>flatOwners(f).length&&Math.ceil(f.number/10)===e).length;h+='<div class="afr"><div class="info"><div class="ti">🏢 Подъезд '+g+' <span class="afbdg '+(is?'r':'g')+'">'+(is?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/10</div></div><div class="ac">'+(is?'<button class="afbtn g" onclick="afTogEnt('+g+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogEnt('+g+',true)">Закрыть</button>')+'</div></div>'}b.innerHTML=h}
 async function afHouse(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data:hs,error}=await sb.from('houses').select('*').order('id');if(error){b.innerHTML='<div class="afe">Ошибка: '+eh(error.message)+'</div>';return}const all=hs||[];const{data:fl}=await sb.from('flats').select('house_id,owner_nicks,owner_nick,owner_nick2');const cnt={};(fl||[]).forEach(f=>{const h=Number(f.house_id);if(!cnt[h])cnt[h]=0;if(flatOwners(f).length)cnt[h]++});let html='';if(isOwner()){html+='<div class="afr" style="border-left:4px solid #d32f2f"><div class="info"><div class="ti">🏗 Управление домами</div><div class="su">Всего домов: <b>'+all.length+'</b></div></div><div class="ac"><button class="afbtn r" onclick="quickCreateHouse()">➕ Создать новый дом</button></div></div>'}if(!all.length){html+='<div class="afe">Домов нет</div>';b.innerHTML=html;return}all.forEach(h=>{const hid=Number(h.id);const blocked=!!h.blocked;const c=cnt[hid]||0;const isCur=(hid===Number(curHouse));const ann=h.announcement||'';const start=(hid-1)*30+1,end=(hid-1)*30+30;html+='<div class="afr"'+(isCur?' style="border-left:4px solid #f5c542"':'')+'><div class="info"><div class="ti">🏘 '+eh(h.name||('Дом №'+hid))+' <span class="afbdg '+(blocked?'r':'g')+'">'+(blocked?'заблокирован':'открыт')+'</span>'+(isCur?' <span class="afbdg" style="background:rgba(245,197,66,.15);color:#f5c542">текущий</span>':'')+'</div><div class="su">Квартиры '+start+'–'+end+' · Занято: '+c+'/30</div></div><div class="ac">'+(blocked?'<button class="afbtn g" onclick="afTogHouse('+hid+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogHouse('+hid+',true)">Закрыть</button>')+'<button class="afbtn gr" onclick="openAnn('+hid+')">📢 Объявление</button></div></div>';if(ann){html+='<div class="afr" style="border-left:4px solid #f5c542;margin-left:16px"><div class="info"><div class="ti">📢 Объявление дома '+hid+'</div><div class="su" style="margin-top:8px;white-space:pre-wrap;color:#c8c8d0">'+eh(ann)+'</div></div><div class="ac"><button class="afbtn r" onclick="delAnn('+hid+')">Удалить</button></div></div>'}});b.innerHTML=html}
@@ -1839,7 +1634,7 @@ async function afEvict(houseId,n){if(!hasAdmin())return;const gNum=(houseId-1)*3
 async function afMax(houseId,n){if(!hasAdmin())return;const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const owners=flatOwners(f);const cur=f.max_people??2;const val=prompt('Мест (1-9999)',String(cur));if(val===null)return;let nx=Math.max(1,Math.min(9999,parseInt(val)||2));if(nx<owners.length){const newOwners=owners.slice(0,nx);await sb.from('flats').update({max_people:nx,owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',houseId).eq('number',n)}else{await sb.from('flats').update({max_people:nx}).eq('house_id',houseId).eq('number',n)}await reloadHouse();await afRend()}
 async function afTogEnt(g,bl){if(!hasAdmin())return;const c=houseData?.blocked_entrances||[];const nx=bl?[...new Set([...c,g])]:c.filter(x=>x!==g);await sb.from('houses').update({blocked_entrances:nx}).eq('id',curHouse);await reloadHouse();afRend()}
 async function afTogHouse(hid,bl){if(!hasAdmin())return;await sb.from('houses').update({blocked:bl}).eq('id',hid);await loadHouses();renderHouses();await afRend()}
-/* ===== JOB / DUTY / WORK / GARDEN / CHAT ===== */
+/* ===== JOB ===== */
 const JOBS={teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,tasks:['Проверить контрольные','Решить примеры','Проверить диктант'],types:['check','math','dictation']},police:{id:'police',name:'Полицейский',icon:'👮',reward:750,tasks:['Патруль','Скорость','Документы'],types:['patrol','radar','docs']},welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,tasks:['Шов','Замер','Резка'],types:['seam','measure','cut']}};
 const JOB_TASKS_PER_DAY=3,JOB_BAN_DAYS=30,JOB_MAX_MISSED=3,JOB_STATE_VERSION=3;
 function jobKey(){return 'job_'+meEnc}
@@ -1851,7 +1646,7 @@ function jobSave(st){try{if(st)st.v=JOB_STATE_VERSION;localStorage.setItem(jobKe
 function jobDefault(){return {v:JOB_STATE_VERSION,job:null,day:null,tasksDone:0,completedToday:false,lastComplete:null,missedDays:0,firedUntil:null,finishedDays:0,weldPrecisions:[],weekendShifts:0}}
 function countMissedWorkdays(lc,t){if(!lc)return 0;const last=new Date(lc+'T00:00:00');let d=new Date(last);d.setDate(d.getDate()+1);let c=0;while(d<t){if(isWorkday(d))c++;d.setDate(d.getDate()+1)}return c}
 function jobCheckDay(){if(!me)return;const st=jobLoad()||jobDefault();if(st.firedUntil){if(new Date(st.firedUntil)>new Date())return;st.firedUntil=null;st.job=null;jobSave(st);return}if(!st.job)return;const today=jobToday();if(st.day===today)return;const td=new Date();if(isWorkday(td)){const m=countMissedWorkdays(st.lastComplete,td);st.missedDays=m;if(m>=JOB_MAX_MISSED){st.firedUntil=new Date(Date.now()+JOB_BAN_DAYS*86400000).toISOString();st.job=null;st.missedDays=0;jobSave(st);return}}st.day=today;st.tasksDone=0;st.completedToday=false;st.weldPrecisions=[];jobSave(st)}
-function openJob(){closeUserMenu();jobCheckDay();const st=jobLoad()||jobDefault();const body=$('jobBody');if(!body)return;if(st.firedUntil){body.innerHTML='<div class="job-fired"><h4>🚫 Уволен</h4><p>Устроишься: '+new Date(st.firedUntil).toLocaleDateString('ru-RU')+'</p></div>';$('jobM').classList.add('open');return}if(!st.job){body.innerHTML='<div class="duty-info">Работа по будням. <b>3 задания</b>. 3 пропуска — увольнение.</div><div class="job-pick">'+Object.values(JOBS).map(j=>'<div class="job-card" onclick="jobPick(\''+j.id+'\')"><div class="ji">'+j.icon+'</div><div class="jn">'+j.name+'</div><div class="jr">+'+j.reward+'💰</div></div>').join('')+'</div>';$('jobM').classList.add('open');return}const j=JOBS[st.job];const isWD=isWorkday(new Date());const isWE=isWeekendOptional(new Date());const mult=isWE?1.5:1;const status='<div class="job-status"><div class="row"><span>'+j.icon+' Работа:</span><b>'+j.name+'</b></div><div class="row"><span>Смен:</span><b>'+(st.finishedDays||0)+'</b></div></div>';const quitBtn='<button class="duty-start" style="background:rgba(255,255,255,.06);color:#ff8888;margin-top:14px" onclick="jobQuit()">🚪 Уволиться</button>';if(!isWD&&!isWE){body.innerHTML=status+'<div class="duty-msg">🌙 Сегодня отдых</div>'+quitBtn;$('jobM').classList.add('open');return}if(st.completedToday){body.innerHTML=status+'<div class="duty-msg" style="color:#8bc34a">✅ Смена выполнена</div>'+quitBtn;$('jobM').classList.add('open');return}const icons=['📋','🎯','✅'];body.innerHTML=status+'<div class="job-tasks">'+j.tasks.map((t,i)=>'<div class="job-task'+(i<st.tasksDone?' done':'')+'" '+(i<st.tasksDone?'':'onclick="jobStartTask('+i+')"')+'><div class="jt-ic">'+icons[i]+'</div><div class="jt-name">'+t+'</div><div class="jt-go">'+(i<st.tasksDone?'✓':'Начать')+'</div></div>').join('')+'</div>'+quitBtn;$('jobM').classList.add('open')}
+function openJob(){closeUserMenu();jobCheckDay();const st=jobLoad()||jobDefault();const body=$('jobBody');if(!body)return;if(st.firedUntil){body.innerHTML='<div class="job-fired"><h4>🚫 Уволен</h4><p>Устроишься: '+new Date(st.firedUntil).toLocaleDateString('ru-RU')+'</p></div>';$('jobM').classList.add('open');return}if(!st.job){body.innerHTML='<div class="duty-info">Работа по будням. <b>3 задания</b>. 3 пропуска — увольнение.</div><div class="job-pick">'+Object.values(JOBS).map(j=>'<div class="job-card" onclick="jobPick(\''+j.id+'\')"><div class="ji">'+j.icon+'</div><div class="jn">'+j.name+'</div><div class="jr">+'+j.reward+'💰</div></div>').join('')+'</div>';$('jobM').classList.add('open');return}const j=JOBS[st.job];const isWD=isWorkday(new Date());const isWE=isWeekendOptional(new Date());const status='<div class="job-status"><div class="row"><span>'+j.icon+' Работа:</span><b>'+j.name+'</b></div><div class="row"><span>Смен:</span><b>'+(st.finishedDays||0)+'</b></div></div>';const quitBtn='<button class="duty-start" style="background:rgba(255,255,255,.06);color:#ff8888;margin-top:14px" onclick="jobQuit()">🚪 Уволиться</button>';if(!isWD&&!isWE){body.innerHTML=status+'<div class="duty-msg">🌙 Сегодня отдых</div>'+quitBtn;$('jobM').classList.add('open');return}if(st.completedToday){body.innerHTML=status+'<div class="duty-msg" style="color:#8bc34a">✅ Смена выполнена</div>'+quitBtn;$('jobM').classList.add('open');return}const icons=['📋','🎯','✅'];body.innerHTML=status+'<div class="job-tasks">'+j.tasks.map((t,i)=>'<div class="job-task'+(i<st.tasksDone?' done':'')+'" '+(i<st.tasksDone?'':'onclick="jobStartTask('+i+')"')+'><div class="jt-ic">'+icons[i]+'</div><div class="jt-name">'+t+'</div><div class="jt-go">'+(i<st.tasksDone?'✓':'Начать')+'</div></div>').join('')+'</div>'+quitBtn;$('jobM').classList.add('open')}
 function closeJob(){$('jobM').classList.remove('open');jobStopTask()}
 function jobPick(id){if(!JOBS[id])return;const st=jobLoad()||jobDefault();st.job=id;st.missedDays=0;jobSave(st);openJob()}
 async function jobQuit(){const st=jobLoad()||jobDefault();st.job=null;jobSave(st);openJob()}
@@ -1862,14 +1657,14 @@ function jobTeacherCheck(i){const body=$('jobBody');const total=5,sheets=9;body.
 function jobTeacherMath(i){const body=$('jobBody');const total=4;body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">30.0</span>с · Решено: <b id="jobLeft">0</b>/'+total+'</div><div class="job-field" id="jobField"></div><button class="duty-start" style="margin-top:14px" onclick="openJob()">← Назад</button>';const field=$('jobField'),r=field.getBoundingClientRect();let solved=0;for(let k=0;k<total;k++){const a=Math.floor(Math.random()*9)+2,b=Math.floor(Math.random()*9)+2;const ans=a+b;const el=document.createElement('div');el.className='job-math-q';el.style.left=(10+Math.random()*(r.width-180))+'px';el.style.top=(10+Math.random()*(r.height-70))+'px';el.textContent=a+' + '+b+' = ?';el.onclick=()=>{if(!_jobTaskState||_jobTaskState.done)return;const v=prompt('Ответ:','');if(parseInt(v)===ans){el.classList.add('solved');solved++;$('jobLeft').textContent=solved;if(solved>=total)jobFinishTask(i,true,1)}};field.appendChild(el)}const start=Date.now();_jobTaskState={timer:setInterval(()=>{if(!_jobTaskState||_jobTaskState.done)return;const left=Math.max(0,30-(Date.now()-start)/1000);$('jobTime').textContent=left.toFixed(1);if(left<=0)jobFinishTask(i,false,0)},80),done:false}}
 function jobTeacherDictation(i){const body=$('jobBody');const txt='Селёный лес шумел. Мальчик бежал по трапинке. На лугу паслись каровы. Возле дома лаяла сабака.'.split(' ');const errs=['Селёный','трапинке','каровы','сабака'];const total=errs.length;body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">40.0</span>с · Найдено: <b id="jobLeft">0</b>/'+total+'</div><div class="job-field" style="cursor:default;padding:0"><div class="job-dict-wrap" id="jobDict"></div></div><button class="duty-start" style="margin-top:14px" onclick="openJob()">← Назад</button>';const w=$('jobDict');let found=0;txt.forEach(word=>{const clean=word.replace(/[.,!?;:]/g,'');const sp=document.createElement('span');sp.className='job-word';sp.textContent=word;sp.onclick=()=>{if(!_jobTaskState||_jobTaskState.done)return;if(errs.includes(clean)){sp.classList.add('err');found++;$('jobLeft').textContent=found;if(found>=total)jobFinishTask(i,true,1)}};w.appendChild(sp);w.appendChild(document.createTextNode(' '))});const start=Date.now();_jobTaskState={timer:setInterval(()=>{if(!_jobTaskState||_jobTaskState.done)return;const left=Math.max(0,40-(Date.now()-start)/1000);$('jobTime').textContent=left.toFixed(1);if(left<=0)jobFinishTask(i,false,0)},80),done:false}}
 function jobPolicePatrol(i){const body=$('jobBody');const totalCr=5,people=9;body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Задержать: <b id="jobLeft">'+totalCr+'</b></div><div class="job-field" id="jobField"></div><button class="duty-start" style="margin-top:14px" onclick="openJob()">← Назад</button>';const field=$('jobField'),r=field.getBoundingClientRect();const crIdx=new Set();while(crIdx.size<totalCr)crIdx.add(Math.floor(Math.random()*people));const faces=['🧑','👨','👩','🧔','👱','👴','👵','🧓','👲'];let c=0;for(let k=0;k<people;k++){const el=document.createElement('div');el.className='job-fine-man'+(crIdx.has(k)?' criminal':'');el.textContent=faces[k%faces.length];el.style.left=(10+Math.random()*(r.width-64))+'px';el.style.top=(10+Math.random()*(r.height-78))+'px';el.onclick=()=>{if(!_jobTaskState||_jobTaskState.done)return;if(crIdx.has(k)){el.classList.add('fined');c++;$('jobLeft').textContent=totalCr-c;if(c>=totalCr)jobFinishTask(i,true,1)}};field.appendChild(el)}const start=Date.now();_jobTaskState={timer:setInterval(()=>{if(!_jobTaskState||_jobTaskState.done)return;const left=Math.max(0,25-(Date.now()-start)/1000);$('jobTime').textContent=left.toFixed(1);if(left<=0)jobFinishTask(i,false,0)},80),done:false}}
-function jobPoliceRadar(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">🎯 Измерь 3 раза</div><div class="job-weld-bar" id="jobRadarBar"><div class="job-radar-zone" id="jobRadarZone"></div><div class="job-radar-marker" id="jobRadarMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><button class="duty-start" onclick="jobRadarStop()">📸 Измерить</button><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:8px" onclick="openJob()">← Назад</button>';const bar=$('jobRadarBar'),zone=$('jobRadarZone'),marker=$('jobRadarMarker');const r=bar.getBoundingClientRect();const zw=Math.max(40,r.width*0.14),zl=(r.width-zw)/2;zone.style.left=zl+'px';zone.style.width=zw+'px';const zc=r.width/2,zh=zw/2;let pos=0,dir=1,speed=1.2,shots=0;const precs=[];const step=()=>{if(!_jobTaskState||_jobTaskState.done)return;pos+=dir*speed;if(pos<=0){pos=0;dir=1}if(pos>=r.width){pos=r.width;dir=-1}marker.style.left=pos+'px';_jobTaskState.raf=requestAnimationFrame(step)};_jobTaskState={raf:null,done:false,getPos:()=>pos,onHit:(p)=>{shots++;precs.push(p);$('jobWeldResult').textContent='Замер '+shots+': '+Math.round(p*100)+'%';if(shots>=3){jobFinishTask(i,true,precs.reduce((a,b)=>a+b,0)/3)}else{speed=1+Math.random()*0.6}}};step()}
-function jobRadarStop(){if(!_jobTaskState||_jobTaskState.done)return;const pos=_jobTaskState.getPos();const zc=innerWidth/2;_jobTaskState.onHit(0.5)}
+function jobPoliceRadar(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">🎯 Измерь 3 раза</div><div class="job-weld-bar" id="jobRadarBar"><div class="job-radar-zone" id="jobRadarZone"></div><div class="job-radar-marker" id="jobRadarMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><button class="duty-start" onclick="jobRadarStop()">📸 Измерить</button><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:8px" onclick="openJob()">← Назад</button>';const bar=$('jobRadarBar'),zone=$('jobRadarZone'),marker=$('jobRadarMarker');const r=bar.getBoundingClientRect();const zw=Math.max(40,r.width*0.14),zl=(r.width-zw)/2;zone.style.left=zl+'px';zone.style.width=zw+'px';let pos=0,dir=1,speed=1.2,shots=0;const precs=[];const step=()=>{if(!_jobTaskState||_jobTaskState.done)return;pos+=dir*speed;if(pos<=0){pos=0;dir=1}if(pos>=r.width){pos=r.width;dir=-1}marker.style.left=pos+'px';_jobTaskState.raf=requestAnimationFrame(step)};_jobTaskState={raf:null,done:false,getPos:()=>pos,onHit:(p)=>{shots++;precs.push(p);$('jobWeldResult').textContent='Замер '+shots+': '+Math.round(p*100)+'%';if(shots>=3){jobFinishTask(i,true,precs.reduce((a,b)=>a+b,0)/3)}else{speed=1+Math.random()*0.6}}};step()}
+function jobRadarStop(){if(!_jobTaskState||_jobTaskState.done)return;const pos=_jobTaskState.getPos();_jobTaskState.onHit(0.5)}
 function jobPoliceDocs(i){const body=$('jobBody');const total=6,fake=3,real=3;body.innerHTML='<div class="job-timer">⏱ <span id="jobTime">25.0</span>с · Пропущено: <b id="jobLeft">0</b>/'+real+'</div><div class="job-field" id="jobField"></div><button class="duty-start" style="margin-top:14px" onclick="openJob()">← Назад</button>';const field=$('jobField'),r=field.getBoundingClientRect();const names=['Иванов','Петров','Сидоров','Кузнецов','Смирнов','Попов'];const fakes=new Set();while(fakes.size<fake)fakes.add(Math.floor(Math.random()*total));let ok=0;for(let k=0;k<total;k++){const isF=fakes.has(k);const el=document.createElement('div');el.className='job-doc '+(isF?'fake':'real');el.innerHTML='<div class="d-photo">'+(isF?'🤥':'🧑')+'</div><div style="font-size:10px;text-align:center">'+names[k%names.length]+'</div><div class="d-stamp">'+(isF?'⚠️':'✔️')+'</div>';el.style.left=(10+Math.random()*(r.width-100))+'px';el.style.top=(10+Math.random()*(r.height-130))+'px';el.onclick=()=>{if(!_jobTaskState||_jobTaskState.done)return;if(!isF){el.classList.add('approved');ok++;$('jobLeft').textContent=ok;if(ok>=real)jobFinishTask(i,true,1)}else{el.classList.add('rejected');setTimeout(()=>el.classList.remove('rejected'),350)}};field.appendChild(el)}const start=Date.now();_jobTaskState={timer:setInterval(()=>{if(!_jobTaskState||_jobTaskState.done)return;const left=Math.max(0,25-(Date.now()-start)/1000);$('jobTime').textContent=left.toFixed(1);if(left<=0)jobFinishTask(i,false,0)},80),done:false}}
 function jobWelderSeam(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">🔧 Попади в зелёную зону</div><div class="job-weld-bar" id="jobWeldBar"><div class="job-weld-zone" id="jobWeldZone"></div><div class="job-weld-marker" id="jobWeldMarker"></div></div><div class="job-weld-result" id="jobWeldResult">—</div><button class="duty-start" onclick="jobWeldStop()">⏹ СТОП</button><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:8px" onclick="openJob()">← Назад</button>';const bar=$('jobWeldBar'),zone=$('jobWeldZone'),marker=$('jobWeldMarker');const r=bar.getBoundingClientRect();const zw=Math.max(40,r.width*0.16),zl=(r.width-zw)/2;zone.style.left=zl+'px';zone.style.width=zw+'px';let pos=0,dir=1,speed=1;const step=()=>{if(!_jobTaskState||_jobTaskState.done)return;pos+=dir*speed;if(pos<=0){pos=0;dir=1}if(pos>=r.width){pos=r.width;dir=-1}marker.style.left=pos+'px';_jobTaskState.raf=requestAnimationFrame(step)};_jobTaskState={raf:null,done:false,getPos:()=>pos,zoneCenter:r.width/2,zoneHalf:zw/2,taskIdx:i};step()}
-function jobWeldStop(){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskState.done=true;if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);const pos=_jobTaskState.getPos();const diff=Math.abs(pos-_jobTaskState.zoneCenter);let p=1-diff/_jobTaskState.zoneHalf;if(p<0)p=0;if(p>1)p=1;$('jobWeldResult').textContent=Math.round(p*100)+'%';const st=jobLoad()||jobDefault();if(!st.weldPrecisions)st.weldPrecisions=[];st.weldPrecisions[_jobTaskState.taskIdx]=p;st.tasksDone=Math.max(st.tasksDone,_jobTaskState.taskIdx+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(_jobTaskState?0:0,true,p);else openJob()},700)}
+function jobWeldStop(){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskState.done=true;if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);const pos=_jobTaskState.getPos();const diff=Math.abs(pos-_jobTaskState.zoneCenter);let p=1-diff/_jobTaskState.zoneHalf;if(p<0)p=0;if(p>1)p=1;$('jobWeldResult').textContent=Math.round(p*100)+'%';const st=jobLoad()||jobDefault();if(!st.weldPrecisions)st.weldPrecisions=[];st.weldPrecisions[_jobTaskState.taskIdx]=p;st.tasksDone=Math.max(st.tasksDone,_jobTaskState.taskIdx+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(0,true,p);else openJob()},700)}
 function jobWelderMeasure(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">📏 Замер</div><div class="job-measure-track" id="jobMTrack"><div class="job-measure-zone" id="jobMZone"></div><div class="job-measure-needle" id="jobMNeedle"></div><div class="job-measure-value" id="jobMVal">0</div></div><button class="duty-start" onclick="jobMStop('+i+')">📏 Фикс</button><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:8px" onclick="openJob()">← Назад</button>';const tr=$('jobMTrack'),zn=$('jobMZone'),nd=$('jobMNeedle');const r=tr.getBoundingClientRect();const zw=Math.max(50,r.width*0.10),zl=(r.width-zw)/2;zn.style.left=zl+'px';zn.style.width=zw+'px';let pos=0,dir=1,speed=1.4;const step=()=>{if(!_jobTaskState||_jobTaskState.done)return;pos+=dir*speed;if(pos<=0){pos=0;dir=1}if(pos>=r.width){pos=r.width;dir=-1}nd.style.left=pos+'px';$('jobMVal').textContent=Math.round(pos/r.width*100);_jobTaskState.raf=requestAnimationFrame(step)};_jobTaskState={raf:null,done:false,getPos:()=>pos,zoneCenter:r.width/2,zoneHalf:zw/2};step()}
 function jobMStop(i){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskState.done=true;if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);const pos=_jobTaskState.getPos();const diff=Math.abs(pos-_jobTaskState.zoneCenter);let p=1-diff/_jobTaskState.zoneHalf;if(p<0)p=0;if(p>1)p=1;const st=jobLoad()||jobDefault();if(!st.weldPrecisions)st.weldPrecisions=[];st.weldPrecisions[i]=p;st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,p);else openJob()},500)}
-function jobWelderCut(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">✂️ Веди ЛКМ</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:14px" onclick="openJob()">← Назад</button>';const field=$('jobField'),line=$('jobCutLine'),prog=$('jobCutProg');let progress=0,pressing=false,lastX=null;const updateProg=()=>{const pct=Math.min(100,Math.round(progress));prog.style.width=pct+'%';if(pct>=100){done=true;line.classList.add('job-cut-done');const st=jobLoad()||jobDefault();st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,1);else openJob()},500)}};let done=false;const onDown=(e)=>{pressing=true;lastX=e.clientX};const onMove=(e)=>{if(!pressing)return;if(lastX!==null&&e.clientX>lastX){progress+=(e.clientX-lastX)*0.6;updateProg()}lastX=e.clientX};const onUp=()=>{pressing=false;lastX=null};field.addEventListener('mousedown',onDown);field.addEventListener('mousemove',onMove);window.addEventListener('mouseup',onUp);_jobTaskState={done:false}}
+function jobWelderCut(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">✂️ Веди ЛКМ</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:14px" onclick="openJob()">← Назад</button>';const field=$('jobField'),line=$('jobCutLine'),prog=$('jobCutProg');let progress=0,pressing=false,lastX=null,done=false;const updateProg=()=>{const pct=Math.min(100,Math.round(progress));prog.style.width=pct+'%';if(pct>=100){done=true;line.classList.add('job-cut-done');const st=jobLoad()||jobDefault();st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,1);else openJob()},500)}};const onDown=(e)=>{pressing=true;lastX=e.clientX};const onMove=(e)=>{if(!pressing)return;if(lastX!==null&&e.clientX>lastX){progress+=(e.clientX-lastX)*0.6;updateProg()}lastX=e.clientX};const onUp=()=>{pressing=false;lastX=null};field.addEventListener('mousedown',onDown);field.addEventListener('mousemove',onMove);window.addEventListener('mouseup',onUp);_jobTaskState={done:false}}
 async function jobFinishTask(i,won,p){jobStopTask();if(!won)return;const st=jobLoad()||jobDefault();if(!st.job)return;st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,i+1));if(st.tasksDone>=JOB_TASKS_PER_DAY){st.completedToday=true;st.lastComplete=jobToday();st.finishedDays=(st.finishedDays||0)+1;let r=JOBS[st.job].reward;if(st.job==='welder'){const pr=st.weldPrecisions||[];const avg=pr.length?pr.reduce((a,b)=>a+(b||0),0)/pr.length:0;r=Math.round(JOBS.welder.maxReward*avg)}if(isWeekendOptional(new Date())){r=Math.round(r*1.5);st.weekendShifts=(st.weekendShifts||0)+1}const b=frameBonusPct(myFrame);const applied=b>0?Math.round(r*(1+b/100)):r;st.weldPrecisions=[];jobSave(st);myCoins+=applied;try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI();showToast('💰 +'+applied+' монет','success')}else jobSave(st);openJob()}
 /* Дежурство */
 function getDutyPersonForEntrance(le){const d=new Date();const day=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);const base=(le-1)*10;for(let i=0;i<10;i++){const n=base+((day%10+i)%10)+1;const f=flats[n];if(f&&flatOwners(f).length){const o=flatOwners(f);return {flat:n,owner:o[day%o.length],ownerNick:de(o[day%o.length])}}}return {flat:null,owner:null,ownerNick:null}}
@@ -2120,7 +1915,6 @@ async function sendCircle(blob,dur){
     showToast('⚪ Кружок','success');
   }catch(e){showToast('❌ '+e.message,'error')}
 }
-/* Голосовые — запись */
 async function startRec(){
   if(vRec&&vRec.state==='recording')return;
   try{
@@ -2129,7 +1923,7 @@ async function startRec(){
     const mime=window.MediaRecorder&&MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';
     vRec=new MediaRecorder(stream,{mimeType:mime});
     vRec.ondataavailable=e=>{if(e.data&&e.data.size>0)vCh.push(e.data)};
-    vRec.onstop=async()=>{const dur=vS/10;vStr&&vStr.getTracks().forEach(t=>t.stop());vStr=null;const blob=new Blob(vCh,{type:vRec.mimeType||'audio/webm'});if(dur>=1)await sendVoice(blob,dur);vCh=[];vRec=null;vS=0;if(vTimer){clearInterval(vTimer);vTimer=null}const b=$('vBtn');if(b){b.classList.remove('rec');b.textContent='🎤'}};
+    vRec.onstop=async()=>{const dur=vS/10;if(vStr)vStr.getTracks().forEach(t=>t.stop());vStr=null;const blob=new Blob(vCh,{type:vRec.mimeType||'audio/webm'});if(dur>=1)await sendVoice(blob,dur);vCh=[];vRec=null;vS=0;if(vTimer){clearInterval(vTimer);vTimer=null}const b=$('vBtn');if(b){b.classList.remove('rec');b.textContent='🎤'}};
     vRec.start();
     vS=0;const b=$('vBtn');if(b){b.classList.add('rec');b.textContent='⏹'}
     if(vTimer)clearInterval(vTimer);
@@ -2138,7 +1932,6 @@ async function startRec(){
   }catch(e){showToast('🎤 '+e.message,'error')}
 }
 function stopRec(){if(vRec&&vRec.state==='recording'){try{vRec.stop()}catch(e){}}}
-/* Кружки — запись */
 async function startCircle(){
   if(cRec&&cRec.state==='recording')return;
   try{
@@ -2149,7 +1942,7 @@ async function startCircle(){
     const mime=window.MediaRecorder&&MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')?'video/webm;codecs=vp8,opus':'video/webm';
     cRec=new MediaRecorder(stream,{mimeType:mime});
     cRec.ondataavailable=e=>{if(e.data&&e.data.size>0)cCh.push(e.data)};
-    cRec.onstop=async()=>{const dur=cStart/10;cStr&&cStr.getTracks().forEach(t=>t.stop());cStr=null;const vv=$('crV');if(vv)vv.srcObject=null;const blob=new Blob(cCh,{type:cRec.mimeType||'video/webm'});if(dur>=1)await sendCircle(blob,dur);cCh=[];cRec=null;cStart=0;if(cTimer){clearInterval(cTimer);cTimer=null}$('cr').classList.remove('open')};
+    cRec.onstop=async()=>{const dur=cStart/10;if(cStr)cStr.getTracks().forEach(t=>t.stop());cStr=null;const vv=$('crV');if(vv)vv.srcObject=null;const blob=new Blob(cCh,{type:cRec.mimeType||'video/webm'});if(dur>=1)await sendCircle(blob,dur);cCh=[];cRec=null;cStart=0;if(cTimer){clearInterval(cTimer);cTimer=null}$('cr').classList.remove('open')};
     cRec.start();
     cStart=0;$('crT').textContent='0:00';$('cr').classList.add('open');
     if(cTimer)clearInterval(cTimer);
@@ -2157,7 +1950,6 @@ async function startCircle(){
   }catch(e){showToast('⚪ '+e.message,'error')}
 }
 function stopCircle(){if(cRec&&cRec.state==='recording'){try{cRec.stop()}catch(e){}}}
-/* Голосовое воспроизведение */
 function playVoice(id,url,dur){
   try{
     if(vA){vA.pause();vA=null}
@@ -2170,28 +1962,20 @@ function playVoice(id,url,dur){
   }catch(e){showToast('🔊 '+e.message,'error')}
 }
 function toggleCirclePlay(el){const v=el.querySelector('video');if(!v)return;if(v.paused){v.muted=false;v.play().catch(()=>{});el.classList.remove('paused')}else{v.pause();el.classList.add('paused')}}
-/* Контекстное меню */
 function showCtxMenu(e,msgId){e.preventDefault();e.stopPropagation();ctxMsgId=msgId;ctxMsgRoom=curRoom;const m=msgC.find(x=>x.id===msgId);if(!m)return;const mine=m.nick===meEnc;const canAdmin=hasAdmin();const em=$('ctxEmojis');em.innerHTML=QR.map(e=>'<button type="button" onclick="addReaction(\''+msgId+'\',\''+e+'\');closeCtx()">'+e+'</button>').join('');const ac=$('ctxActions');let h='';h+='<button type="button" onclick="replyMsg(\''+msgId+'\');closeCtx()">↩ Ответить</button>';if(mine)h+='<button type="button" onclick="editMsg(\''+msgId+'\');closeCtx()">✏️ Изменить</button>';h+='<button type="button" onclick="hideForMe(\''+msgId+'\');closeCtx()">🙈 Скрыть у себя</button>';if(mine||canAdmin)h+='<button type="button" class="red" onclick="delForAll(\''+msgId+'\');closeCtx()">🗑 Удалить у всех</button>';ac.innerHTML=h;const cm=$('ctxMenu');cm.classList.add('open');const w=cm.offsetWidth||200,hh=cm.offsetHeight||200;let x=e.clientX,y=e.clientY;if(x+w>innerWidth-10)x=innerWidth-w-10;if(y+hh>innerHeight-10)y=innerHeight-hh-10;cm.style.left=Math.max(8,x)+'px';cm.style.top=Math.max(8,y)+'px'}
 function closeCtx(){const cm=$('ctxMenu');if(cm)cm.classList.remove('open');ctxMsgId=null;ctxMsgRoom=null}
 document.addEventListener('click',e=>{const cm=$('ctxMenu');if(cm&&cm.classList.contains('open')&&!cm.contains(e.target))closeCtx()});
 document.addEventListener('scroll',()=>{const cm=$('ctxMenu');if(cm&&cm.classList.contains('open'))closeCtx()},true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCtx()});
-/* Реакции */
 async function addReaction(msgId,emoji){if(!msgId||!emoji)return;try{const{data:ex}=await sb.from('reactions').select('id').eq('message_id',msgId).eq('nick',meEnc).eq('emoji',emoji).maybeSingle();if(ex){await sb.from('reactions').delete().eq('id',ex.id)}else{await sb.from('reactions').insert({message_id:msgId,nick:meEnc,emoji:emoji})}if(ctxMsgRoom===rcId)await loadRM();else await loadM()}catch(e){showToast('❌ '+e.message,'error')}}
-/* Редактирование */
 function editMsg(msgId){const m=msgC.find(x=>x.id===msgId);if(!m||m.nick!==meEnc)return;editM=msgId;$('emTxt').value=m.text||'';$('em').classList.add('open')}
 function closeEm(){$('em').classList.remove('open');editM=null}
 async function saveEd(){if(!editM)return closeEm();const t=$('emTxt').value.trim();if(!t)return;const{error}=await sb.from('messages').update({text:t,edited:true}).eq('id',editM);if(error){showToast('❌ '+error.message,'error');return}closeEm();await loadM();showToast('✏️ Изменено','success')}
-/* Ответ */
 function replyMsg(msgId){const m=msgC.find(x=>x.id===msgId);if(!m)return;const inp=$('mI');if(!inp)return;const nick=de(m.nick);const snippet=(m.text||(m.photo_url?'📷':(m.voice_url?'🎤':'⚪'))).slice(0,60);inp.value='> '+nick+': '+snippet+'\n';inp.focus();inp.setSelectionRange(inp.value.length,inp.value.length)}
-/* Скрыть у себя */
 async function hideForMe(msgId){if(!msgId)return;try{await sb.from('hidden_messages').insert({message_id:msgId,user_nick:meEnc});await loadM();showToast('🙈 Скрыто','success')}catch(e){showToast('❌ '+e.message,'error')}}
-/* Удалить у всех */
 async function delForAll(msgId){if(!msgId)return;const ok=await askConfirm('Удалить?','Сообщение исчезнет у всех','Удалить',true);if(!ok)return;try{const{error}=await sb.from('messages').update({deleted_for_all:true}).eq('id',msgId);if(error){showToast('❌ '+error.message,'error');return}await loadM();showToast('🗑 Удалено','success')}catch(e){showToast('❌ '+e.message,'error')}}
-/* Sug-box */
 function suggestNicks(inputEl,boxEl,onPick){const v=(inputEl.value||'').split(/[,\n]/).pop().trim().toLowerCase();if(!v){boxEl.classList.remove('on');boxEl.innerHTML='';return}const cand=allProfiles.filter(p=>p.nick&&p.nick.toLowerCase().includes(v)&&p.nick.toLowerCase()!==v).slice(0,8);if(!cand.length){boxEl.classList.remove('on');boxEl.innerHTML='';return}boxEl.innerHTML=cand.map(p=>'<div class="sug-item" data-nick="'+eh(p.nick)+'"><span class="sn">'+eh(p.nick)+'</span>'+(p.flat?'<span class="sf">Кв. '+p.flat+'</span>':'<span class="sf no">—</span>')+'</div>').join('');boxEl.classList.add('on');boxEl.querySelectorAll('.sug-item').forEach(it=>{it.onclick=()=>{onPick(it.dataset.nick);boxEl.classList.remove('on');boxEl.innerHTML=''}})}
 function attachSug(inputEl,boxEl,getList,setList){if(!inputEl||!boxEl)return;inputEl.addEventListener('input',()=>suggestNicks(inputEl,boxEl,nick=>{const parts=(inputEl.value||'').split(/[,\n]/);parts[parts.length-1]=' '+nick;inputEl.value=parts.join(',').replace(/^\s+/,'');inputEl.focus()}));inputEl.addEventListener('blur',()=>setTimeout(()=>{boxEl.classList.remove('on')},200))}
-/* Группы */
 function gmAvaRenderEmoji(){const s=$('gmAvaEmoji');if(!s)return;if(gmAvaFile){s.textContent='';s.style.backgroundImage='url("'+gmAvaFile+'")'}else{s.textContent='👥';s.style.backgroundImage=''}}
 function gsmAvaRenderEmoji(){const s=$('gsmAvaEmoji');if(!s)return;if(gsmAvaFile){s.textContent='';s.style.backgroundImage='url("'+gsmAvaFile+'")'}else{s.textContent='👥';s.style.backgroundImage=''}}
 function renderGmMemList(){const l=$('gmMemList');if(!l)return;const parts=($('gmMem').value||'').split(/[,\n]+/).map(x=>x.trim()).filter(Boolean);l.innerHTML=parts.map(n=>'<span class="gm-mem">'+avH(n,'xs')+'<span>'+eh(n)+'</span><button class="x" onclick="removeGmMem(\''+eh(n)+'\')">✕</button></span>').join('')}
@@ -2205,9 +1989,7 @@ function openGsm(){if(!curGroup)return;$('gsmName').value=curGroup.name||'';$('g
 function closeGsm(){$('gsm').classList.remove('open')}
 async function saveGroupSettings(){if(!curGroup)return;const name=$('gsmName').value.trim();if(!name)return $('gsmErr').textContent='Введи название';const addNicks=($('gsmAddMem').value||'').split(/[,\n]+/).map(x=>x.trim()).filter(Boolean).map(en).filter(x=>!(curGroup.members||[]).includes(x));const mem=[...(curGroup.members||[]),...addNicks];const patch={name,members:mem};if(gsmAvaFile)patch.avatar_url=gsmAvaFile;const{error}=await sb.from('groups').update(patch).eq('id',curGroup.id);if(error){$('gsmErr').textContent=error.message;return}closeGsm();await loadGroups();curGroup=groups.find(g=>String(g.id)===String(curGroup.id));updateGroupHeader();renderDMs()}
 async function uploadAvaToStorage(file,prefix){const path='group_ava/'+prefix+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+(file.name.split('.').pop()||'jpg');const up=await sb.storage.from('media').upload(path,file,{cacheControl:'3600',upsert:false});if(up.error)return null;const{data:pub}=sb.storage.from('media').getPublicUrl(path);return pub?pub.publicUrl:null}
-/* Приглашение в квартиру */
 async function invite(){if(!fmN)return;const inp=$('invI');if(!inp)return;const v=(inp.value||'').trim();if(!v)return;const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return showToast('Только хозяин','error');const mp=f.max_people??2;if(owners.length>=mp)return showToast('Мест нет','error');let nick=null;if(/^\d+$/.test(v)){const n=parseInt(v);const tg=flats[n];const tOwners=flatOwners(tg);if(!tOwners.length)return showToast('Квартира пуста','error');nick=de(tOwners[0])}else{nick=v}const enc=en(nick);if(owners.includes(enc))return showToast('Уже в квартире','error');const{data:p}=await sb.from('profiles').select('nick').eq('nick',nick).maybeSingle();if(!p)return showToast('Игрок не найден','error');const newOwners=[...owners,enc];await sb.from('flats').update({owner_nicks:newOwners,owner_nick:newOwners[0],owner_nick2:newOwners[1]||null}).eq('house_id',curHouse).eq('number',fmN);inp.value='';await reloadHouse();upFm();showToast('✅ '+nick+' в квартире','success')}
-/* Сохранение медиа квартиры */
 async function saveM(){
   if(!fmN)return;
   const f=flats[fmN];if(!f)return;
@@ -2215,7 +1997,6 @@ async function saveM(){
   const mst=$('mst');mst.textContent='Сохранение...';
   try{
     let phUrl=phU||null;
-    if(phU)phUrl=phU;
     let musUpload=musU||null;
     if(musU&&musU.startsWith('data:')){
       const blob=await (await fetch(musU)).blob();
@@ -2230,45 +2011,38 @@ async function saveM(){
     await loadPhotoCache();await loadHM();renderFlats();mst.textContent='✅ Сохранено';showToast('✅ Сохранено','success');
   }catch(e){mst.textContent='❌ '+e.message}
 }
-/* Музыка в комнате */
 async function startMus(rid){try{const mm=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!mm)return null;const hn=mm[1],fn=mm[2];const{data:fl}=await sb.from('flats').select('owner_nicks').eq('house_id',hn).eq('number',fn).maybeSingle();if(!fl)return null;const owner=(fl.owner_nicks||[])[0];if(!owner)return null;const{data:um}=await sb.from('user_media').select('music_url').eq('nick',owner).maybeSingle();return (um&&um.music_url)||null}catch(e){return null}}
 async function stopMus(){try{const a=$('bgA');if(a){a.pause();a.removeAttribute('src');a.load()}const b=$('mbB');if(b)b.classList.remove('playing');musUrl=null}catch(e){}}
 function toggleMus(rid){const a=$('bgA');if(!a)return;if(a.paused){if(musUrl)a.play().catch(()=>{});const b=$('mbB');if(b)b.classList.add('playing')}else{a.pause();const b=$('mbB');if(b)b.classList.remove('playing')}}
-/* PV / Emoji */
 function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
 function closePV(){$('pv').classList.remove('open')}
-/* Подсветка/магнит кнопок */
 function magnetize(btn){if(window.matchMedia&&window.matchMedia('(hover:none)').matches)return;btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const dx=(e.clientX-cx)/(r.width/2),dy=(e.clientY-cy)/(r.height/2);btn.style.transform='perspective(500px) rotateX('+(-dy*14)+'deg) rotateY('+(dx*14)+'deg) scale(1.06)'});btn.addEventListener('mouseleave',()=>btn.style.transform='')}
-/* Объявление */
 function openAnn(hid){_annHouseId=Number(hid);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||''}
 function closeAnn(){$('annM').classList.remove('open')}
 async function postAnn(){const t=$('annInp').value.trim();if(!t)return;const hid=_annHouseId||Number(curHouse);await sb.from('houses').update({announcement:t}).eq('id',hid);closeAnn();await loadHouses();if(hid===Number(curHouse))showAnn(t);if(afT==='house')afRend()}
 async function delAnn(hid){await sb.from('houses').update({announcement:null}).eq('id',hid||Number(curHouse));await loadHouses();if(afT==='house')afRend()}
 function showAnn(t){const b=$('annBanner');if(!b)return;if(!t){b.classList.remove('on');return}$('annText').textContent=t;b.classList.add('on')}
-/* FM (квартира) */
 async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
 function upFm(){const f=flats[fmN];if(!f)return closeFm();const owners=flatOwners(f);const isOwnerF=owners[0]===meEnc,mp=f.max_people??2,others=owners.filter(o=>o!==meEnc);const gnum=(Number(curHouse)-1)*30+Number(fmN);$('fmT').textContent='🏠 Кв '+gnum+(isOwnerF?' (хозяин)':' (сосед)');$('fmTR').style.display=others.length?'block':'none';$('fmTM').style.display=(isOwnerF&&mp>=2)?'block':'none';$('lvB').style.display='block';const inf=$('rmInfo');if(!others.length)inf.innerHTML='<div class="reme">Пока никого</div>';else inf.innerHTML=others.map(o=>'<div class="rmc">'+avH(de(o),'sm')+'<div style="flex:1;margin-left:10px">'+eh(de(o))+'</div>'+(isOwnerF?'<button onclick="kickR(\''+o+'\')">Выгнать</button>':'')+'</div>').join('')}
 function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');const m={media:'fmPM',room:'fmPR',manage:'fmPN',work:'fmPW'};$(m[t]).style.display='flex';$('svB').style.display=t==='media'?'block':'none';if(t==='work')renderWork()}
 function closeFm(){if(workActive)stopWork(false);stopMus();$('fm').classList.remove('open');fmN=null}
 async function kickR(o){const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return;if(!o||o===meEnc)return;const nw=owners.filter(x=>x!==o);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',curHouse).eq('number',fmN);await reloadHouse();upFm()}
 async function leaveFlat(){const f=flats[fmN];if(!f)return;const owners=flatOwners(f);const nw=owners.filter(x=>x!==meEnc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',curHouse).eq('number',fmN);closeFm();await reloadHouse();await loadMyRooms()}
-async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;const hn=m[1],fn=Number(m[2]);if(Number(hn)!==Number(curHouse)){await switchHouse(Number(hn))}const f=flats[fn];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Нет доступа','error');rcId=rid;fmR=true;$('modal').classList.add('open');$('rt').textContent='Комната '+((Number(hn)-1)*30+fn);$('chAv').innerHTML='<div class="av av-lg" style="background:linear-gradient(135deg,#4a9eff,#2a6ecc)">🏠</div>';$('gearBtn').classList.remove('on');togIR(false);rcId=rid;clrCh($('rc'));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');$('fmPR').style.display='flex';const mb=$('mbB');const mu=await startMus(rid);if(mu){musUrl=mu;$('bgA').src=mu;mb.style.display='flex';mb.textContent='🎵 Музыка'}else{mb.style.display='none';musUrl=null}await loadRM();subRM();startRcPt()}
+async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;const hn=m[1],fn=Number(m[2]);if(Number(hn)!==Number(curHouse)){await switchHouse(Number(hn))}const f=flats[fn];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Нет доступа','error');rcId=rid;fmR=true;$('modal').classList.add('open');$('rt').textContent='Комната '+((Number(hn)-1)*30+fn);$('chAv').innerHTML='<div class="av av-lg" style="background:linear-gradient(135deg,#4a9eff,#2a6ecc)">🏠</div>';$('gearBtn').classList.remove('on');togIR(false);clrCh($('rc'));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');$('fmPR').style.display='flex';const mb=$('mbB');const mu=await startMus(rid);if(mu){musUrl=mu;$('bgA').src=mu;mb.style.display='flex';mb.textContent='🎵 Музыка'}else{mb.style.display='none';musUrl=null}await loadRM();subRM();startRcPt()}
 async function loadRM(){const tk=++rmTok,rid=rcId;if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);if(tk!==rmTok||rid!==rcId)return;if(error)return;const{data:hid}=await sb.from('hidden_messages').select('message_id').eq('user_nick',meEnc);const hI=new Set((hid||[]).map(h=>h.message_id));rmC=(data||[]).reverse().filter(m=>!hI.has(m.id)&&!m.deleted_for_all);await loadR(rmC);renderMs($('rc'),rmC)}
 function subRM(){if(rcCh)sb.removeChannel(rcCh);if(!rcId)return;rcCh=sb.channel('rc-'+rcId).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+rcId},()=>loadRM()).on('postgres_changes',{event:'*',schema:'public',table:'reactions'},()=>loadRM()).subscribe()}
 function startRcPt(){if(rcPt)clearInterval(rcPt);rcPt=setInterval(loadRM,3000)}
-/* UI / setup */
-function setupUI(){document.getElementById('mbtn').onclick=()=>document.getElementById('sb').classList.add('open');document.getElementById('cs').onclick=()=>document.getElementById('sb').classList.remove('open');const mi=$('mI');document.getElementById('sBtn').onclick=e=>{e.preventDefault();sendM()};mi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sendM()}};$('pf').addEventListener('click',e=>{if(e.target.id==='pf')closePf()});$('dutyM').addEventListener('click',e=>{if(e.target.id==='dutyM')closeDuty()});$('framesM').addEventListener('click',e=>{if(e.target.id==='framesM')closeFrames()});$('jobM').addEventListener('click',e=>{if(e.target.id==='jobM')closeJob()});$('gardenM').addEventListener('click',e=>{if(e.target.id==='gardenM')closeGarden()});$('seedShopM').addEventListener('click',e=>{if(e.target.id==='seedShopM')closeSeedShop()});$('fertShopM').addEventListener('click',e=>{if(e.target.id==='fertShopM')closeFertShop()});$('invM').addEventListener('click',e=>{if(e.target.id==='invM')closeInv()});$('giftM').addEventListener('click',e=>{if(e.target.id==='giftM')closeGift()});$('ofm').addEventListener('click',e=>{if(e.target.id==='ofm')closeOwner()});$('settM').addEventListener('click',e=>{if(e.target.id==='settM')closeSett()});$('visitInp').addEventListener('keydown',e=>{if(e.key==='Enter')doVisit()});const gf=$('giveNickField');if(gf)gf.addEventListener('keydown',e=>{if(e.key==='Enter')giveLoadUser()});
+function setupUI(){document.getElementById('mbtn').onclick=()=>document.getElementById('sb').classList.add('open');document.getElementById('cs').onclick=()=>document.getElementById('sb').classList.remove('open');const mi=$('mI');document.getElementById('sBtn').onclick=e=>{e.preventDefault();sendM()};mi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();sendM()}};$('pf').addEventListener('click',e=>{if(e.target.id==='pf')closePf()});$('dutyM').addEventListener('click',e=>{if(e.target.id==='dutyM')closeDuty()});$('framesM').addEventListener('click',e=>{if(e.target.id==='framesM')closeFrames()});$('jobM').addEventListener('click',e=>{if(e.target.id==='jobM')closeJob()});$('gardenM').addEventListener('click',e=>{if(e.target.id==='gardenM')closeGarden()});$('seedShopM').addEventListener('click',e=>{if(e.target.id==='seedShopM')closeSeedShop()});$('fertShopM').addEventListener('click',e=>{if(e.target.id==='fertShopM')closeFertShop()});$('invM').addEventListener('click',e=>{if(e.target.id==='invM')closeInv()});$('giftM').addEventListener('click',e=>{if(e.target.id==='giftM')closeGift()});$('ofm').addEventListener('click',e=>{if(e.target.id==='ofm')closeOwner()});$('visitInp').addEventListener('keydown',e=>{if(e.key==='Enter')doVisit()});const gf=$('giveNickField');if(gf)gf.addEventListener('keydown',e=>{if(e.key==='Enter')giveLoadUser()});
   const eB=$('eBtn');if(eB)eB.onclick=e=>{e.preventDefault();togEP()};
   const pB=$('pBtn');if(pB)pB.onclick=e=>{e.preventDefault();const f=$('mPI');if(f)f.click()};
   const vB=$('vBtn');if(vB)vB.onclick=e=>{e.preventDefault();if(vRec&&vRec.state==='recording')stopRec();else startRec()};
   const cB=$('cBtn');if(cB)cB.onclick=e=>{e.preventDefault();if(cRec&&cRec.state==='recording')stopCircle();else startCircle()};
   const crS=$('crS');if(crS)crS.onclick=e=>{e.preventDefault();stopCircle()};
   const mPI=$('mPI');if(mPI)mPI.onchange=async()=>{const f=mPI.files&&mPI.files[0];mPI.value='';if(f)await sendPhoto(f)};
-  const rPI=$('rPI');if(rPI)rPI.onchange=async()=>{const f=rPI.files&&rPI.files[0];rPI.value='';if(!f||!rcId)return;const rid=rcId;rcId=rid;await sendPhoto(f,rid)};
+  const rPI=$('rPI');if(rPI)rPI.onchange=async()=>{const f=rPI.files&&rPI.files[0];rPI.value='';if(!f||!rcId)return;const rid=rcId;await sendPhoto(f,rid)};
   const rPB=$('rPB');if(rPB)rPB.onclick=e=>{e.preventDefault();const f=$('rPI');if(f)f.click()};
   const rSB=$('rSB');if(rSB)rSB.onclick=e=>{e.preventDefault();const inp=$('rIn');const t=(inp.value||'').trim();if(!t||!rcId)return;inp.value='';sb.from('messages').insert({room_id:rcId,nick:meEnc,text:t,user_id:curUser.id}).then(()=>loadRM())};
   const rIn=$('rIn');if(rIn)rIn.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const t=(rIn.value||'').trim();if(!t||!rcId)return;rIn.value='';sb.from('messages').insert({room_id:rcId,nick:meEnc,text:t,user_id:curUser.id}).then(()=>loadRM())}};
-  const rVB=$('rVB');if(rVB)rVB.onclick=e=>{e.preventDefault();const inp=$('rIn');if(inp)inp.focus();showToast('🎤 Голос в чат комнаты через верхнюю панель','info')};
   const chat=$('chat');if(chat)chat.addEventListener('contextmenu',e=>{const msgEl=e.target.closest('.msg');if(!msgEl)return;const id=msgEl.dataset.id;if(id)showCtxMenu(e,id)});
   const gmAvaIn=$('gmAvaIn');if(gmAvaIn)gmAvaIn.onchange=async()=>{const f=gmAvaIn.files&&gmAvaIn.files[0];if(!f)return;const url=await uploadAvaToStorage(f,'gm');if(url){gmAvaFile=url;gmAvaRenderEmoji()}gmAvaIn.value=''};
   const gsmAvaIn=$('gsmAvaIn');if(gsmAvaIn)gsmAvaIn.onchange=async()=>{const f=gsmAvaIn.files&&gsmAvaIn.files[0];if(!f)return;const url=await uploadAvaToStorage(f,'gsm');if(url){gsmAvaFile=url;gsmAvaRenderEmoji()}gsmAvaIn.value=''};
@@ -2283,11 +2057,198 @@ function setupUI(){document.getElementById('mbtn').onclick=()=>document.getEleme
   const ctxMenu=$('ctxMenu');if(ctxMenu)ctxMenu.addEventListener('contextmenu',e=>e.preventDefault());
   initEP();
 }
-/* START */
 async function start(){meEnc=en(me);$('auth').style.display='none';$('nickScr').style.display='none';$('app').style.display='block';$('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');applyNeonCSS();upAdminTog();updateSoundBtn();subProf();subGP();subGroups();await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadEvOverrides();jobCheckDay();await loadHouses();if(!houses.length)await createHouse('Дом №1',1);curHouse=houses[0].id;renderHouses();await switchHouse(curHouse);subHouses();subFlats();await loadGroups();await loadDMs();renderDMs();subGlob();setupUI();updateSeasonBtn();setInterval(()=>{if(curHouse)loadHouses()},30000);setInterval(loadCoins,120000);setInterval(loadEvOverrides,180000);checkAllEvents();setInterval(checkAllEvents,60000);setInterval(checkGifts,120000);setInterval(autoCheckNewHouse,60000);setTimeout(checkGifts,2000)}
 function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_changes',{event:'*',schema:'public',table:'houses'},async()=>{await loadHouses();renderHouses()}).subscribe()}
 function subFlats(){if(fc)return;fc=sb.channel('flats-rt').on('postgres_changes',{event:'*',schema:'public',table:'flats'},async p=>{const r=p.new||p.old;if(!r||r.house_id!==curHouse)return;if(p.eventType==='DELETE')delete flats[r.number];else flats[r.number]=p.new;renderFlats()}).subscribe()}
 window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}});
+/* ===== СЕЗОННЫЕ ФОНЫ (canvas #seasons) ===== */
+(function(){
+  const cv=document.getElementById('seasons');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  let W=0,H=0,DPR=1,curSeason='autumn',particles=[],raf=null,sunAngle=0;
+  function detectAuto(){
+    const m=new Date().getMonth();
+    if(m>=2&&m<=4)return 'spring';
+    if(m>=5&&m<=7)return 'summer';
+    if(m>=8&&m<=10)return 'autumn';
+    return 'winter';
+  }
+  function getSeasonNow(){
+    const s=localStorage.getItem('dom_season');
+    if(s&&['spring','summer','autumn','winter'].includes(s))return s;
+    return detectAuto();
+  }
+  function resize(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=window.innerWidth;H=window.innerHeight;
+    cv.width=Math.floor(W*DPR);cv.height=Math.floor(H*DPR);
+    cv.style.width=W+'px';cv.style.height=H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  function mkParticle(type){
+    if(type==='autumn'){
+      const colors=['#f5c542','#ff9d2e','#e67e22','#d35400','#f1c40f','#cd7f32','#ffaa33'];
+      return {x:Math.random()*W,y:-20-Math.random()*H*0.4,vx:(Math.random()-0.5)*0.7,vy:0.5+Math.random()*1.1,size:6+Math.random()*8,rot:Math.random()*Math.PI*2,vrot:(Math.random()-0.5)*0.06,color:colors[Math.floor(Math.random()*colors.length)],sway:Math.random()*Math.PI*2,swaySpeed:0.01+Math.random()*0.02,swayAmp:0.5+Math.random()*1.2};
+    }
+    if(type==='winter'){
+      return {x:Math.random()*W,y:-10-Math.random()*H*0.4,vx:(Math.random()-0.5)*0.3,vy:0.4+Math.random()*0.9,size:2+Math.random()*3.5,rot:0,vrot:0,sway:Math.random()*Math.PI*2,swaySpeed:0.01+Math.random()*0.02,swayAmp:0.3+Math.random()*0.8};
+    }
+    if(type==='spring'){
+      const colors=['#ffc8dd','#ffb3d1','#ff8eb6','#ffd6e6','#ff69a0'];
+      return {x:Math.random()*W,y:-10-Math.random()*H*0.4,vx:(Math.random()-0.5)*0.4,vy:0.4+Math.random()*0.85,size:4+Math.random()*6,rot:Math.random()*Math.PI*2,vrot:(Math.random()-0.5)*0.08,color:colors[Math.floor(Math.random()*colors.length)],sway:Math.random()*Math.PI*2,swaySpeed:0.01+Math.random()*0.02,swayAmp:0.6+Math.random()*1.3};
+    }
+    return null;
+  }
+  function countForSeason(s){
+    const area=W*H;
+    if(s==='winter')return Math.min(140,Math.floor(area/12000));
+    if(s==='autumn')return Math.min(60,Math.floor(area/22000));
+    if(s==='spring')return Math.min(80,Math.floor(area/16000));
+    return 0;
+  }
+  function drawLeaf(p){
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle=p.color;
+    const s=p.size;
+    ctx.beginPath();
+    ctx.moveTo(0,-s);
+    ctx.bezierCurveTo(s*0.7,-s*0.5,s*0.7,s*0.5,0,s);
+    ctx.bezierCurveTo(-s*0.7,s*0.5,-s*0.7,-s*0.5,0,-s);
+    ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.18)';
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(0,-s*0.8);
+    ctx.lineTo(0,s*0.8);
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawSnow(p){
+    ctx.save();
+    const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size*2);
+    g.addColorStop(0,'rgba(255,255,255,0.95)');
+    g.addColorStop(0.6,'rgba(220,240,255,0.55)');
+    g.addColorStop(1,'rgba(200,230,255,0)');
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size*2,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.95)';
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+  function drawPetal(p){
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle=p.color;
+    const s=p.size;
+    ctx.beginPath();
+    ctx.moveTo(0,-s);
+    ctx.bezierCurveTo(s*0.9,-s*0.3,s*0.9,s*0.4,0,s);
+    ctx.bezierCurveTo(-s*0.4,s*0.5,-s*0.7,-s*0.2,0,-s);
+    ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.25)';
+    ctx.lineWidth=0.6;
+    ctx.stroke();
+    ctx.restore();
+  }
+  function drawSun(){
+    const cx=W-110,cy=110,R=52;
+    sunAngle+=0.002;
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(sunAngle);
+    for(let i=0;i<12;i++){
+      const a=(i/12)*Math.PI*2;
+      const r2=R+22+Math.sin(sunAngle*3+i)*4;
+      ctx.save();
+      ctx.rotate(a);
+      const grd=ctx.createLinearGradient(R,0,r2,0);
+      grd.addColorStop(0,'rgba(255,215,80,0.75)');
+      grd.addColorStop(1,'rgba(255,215,80,0)');
+      ctx.fillStyle=grd;
+      ctx.beginPath();
+      ctx.moveTo(R,0);
+      ctx.lineTo(r2,-6);
+      ctx.lineTo(r2,6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+    const g=ctx.createRadialGradient(cx,cy,4,cx,cy,R);
+    g.addColorStop(0,'rgba(255,255,220,1)');
+    g.addColorStop(0.4,'rgba(255,220,90,0.95)');
+    g.addColorStop(0.8,'rgba(255,180,50,0.55)');
+    g.addColorStop(1,'rgba(255,160,40,0)');
+    ctx.fillStyle=g;
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='rgba(255,255,200,0.95)';
+    ctx.beginPath();
+    ctx.arc(cx,cy,R*0.45,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle='rgba(255,240,150,0.85)';
+    ctx.beginPath();
+    ctx.arc(cx,cy,R*0.28,0,Math.PI*2);
+    ctx.fill();
+  }
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    if(curSeason==='summer'){
+      drawSun();
+      raf=requestAnimationFrame(loop);
+      return;
+    }
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];
+      p.sway+=p.swaySpeed;
+      p.x+=p.vx+Math.sin(p.sway)*p.swayAmp;
+      p.y+=p.vy;
+      p.rot+=p.vrot;
+      if(p.y>H+30||p.x<-40||p.x>W+40){
+        particles[i]=mkParticle(curSeason);
+        continue;
+      }
+      if(curSeason==='autumn')drawLeaf(p);
+      else if(curSeason==='winter')drawSnow(p);
+      else if(curSeason==='spring')drawPetal(p);
+    }
+    raf=requestAnimationFrame(loop);
+  }
+  function initParticles(){
+    particles=[];
+    const n=countForSeason(curSeason);
+    for(let i=0;i<n;i++){
+      const p=mkParticle(curSeason);
+      if(!p)continue;
+      p.y=Math.random()*H;
+      particles.push(p);
+    }
+  }
+  function applySeason(s){curSeason=s;initParticles()}
+  window.getSeason=function(){return curSeason};
+  window.setSeason=function(s){
+    if(!['spring','summer','autumn','winter'].includes(s))return;
+    localStorage.setItem('dom_season',s);
+    applySeason(s);
+  };
+  window.resetSeason=function(){
+    localStorage.removeItem('dom_season');
+    applySeason(getSeasonNow());
+  };
+  resize();
+  window.addEventListener('resize',()=>{resize();initParticles()});
+  applySeason(getSeasonNow());
+  loop();
+})();
 </script>
 </body>
 </html>
