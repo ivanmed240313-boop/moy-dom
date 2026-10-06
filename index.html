@@ -832,7 +832,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .ofh{padding:18px 22px;border-bottom:1px solid rgba(245,197,66,.2);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(245,197,66,.12),rgba(255,157,46,.04))}
 .ofh h3{margin:0;font-size:19px;font-weight:900;background:linear-gradient(135deg,#f5c542,#ff9d2e,#f5c542);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
 .ofh button{background:transparent;border:none;color:#f5c542;font-size:26px;cursor:pointer;line-height:1}
-.oft{display:flex;gap:6px;padding:14px 18px;border-bottom:1px solid rgba(245,197,66,.12);overflow-x:auto;scrollbar-width:none}
+.oft{display:flex;gap:6px;padding:14px 18px;border-bottom:1px solid rgba(245,197,66,.12);flex-wrap:wrap;overflow-x:auto;scrollbar-width:none}
 .oft::-webkit-scrollbar{display:none}
 .oftab{padding:9px 16px;border-radius:12px;background:rgba(245,197,66,.06);color:#c8c8d0;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap;border:1px solid rgba(245,197,66,.18);font-family:inherit}
 .oftab.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;border-color:transparent}
@@ -1093,7 +1093,7 @@ body::before{display:none !important}
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
 <div id="afm"><div class="afb"><div class="afh"><h3>⚙️ Админ-панель</h3><button onclick="closeAdmin()">×</button></div><div class="aft"><div class="aftab act" data-t="flats" onclick="afSw('flats')">🏠 Квартиры</div><div class="aftab" data-t="ent" onclick="afSw('ent')">🏢 Подъезды</div><div class="aftab" data-t="house" onclick="afSw('house')">🏘 Дом</div><div class="aftab" data-t="users" onclick="afSw('users')">👥 Юзеры</div></div><div class="afbd" id="afB"></div></div></div>
-<div id="ofm"><div class="ofb"><div class="ofh"><h3>👑 OWNER ПАНЕЛЬ</h3><button onclick="closeOwner()">×</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')">🏠 Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')">🏢 Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')">🏘 Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')">👥 Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')">🎁 Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')">🎄 Ивенты</div><div class="oftab" data-t="custom" onclick="ofSw('custom')">🎪 Свои</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')">🎭 Фейки</div></div><div class="ofbd" id="ofB"></div></div></div>
+<div id="ofm"><div class="ofb"><div class="ofh"><h3>👑 OWNER ПАНЕЛЬ</h3><button onclick="closeOwner()">×</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')">🏠 Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')">🏢 Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')">🏘 Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')">👥 Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')">🎁 Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')">🎄 Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')">🎭 Фейки</div></div><div class="ofbd" id="ofB"></div></div></div>
 <div id="fm"><div class="fmb"><h3 id="fmT">🏠 Квартира</h3><div class="fmt"><div class="fmtab act" data-t="media" onclick="fmSw('media')">📷 Медиа</div><div class="fmtab" data-t="room" id="fmTR" onclick="fmSw('room')" style="display:none">💬 Комната</div><div class="fmtab" data-t="manage" id="fmTM" onclick="fmSw('manage')" style="display:none">👥 Сосед</div><div class="fmtab" data-t="work" onclick="fmSw('work')">💼 Работа</div></div>
 <div class="fmp" id="fmPM"><div class="ms"><label>📷 Квадратное фото</label><div class="sp" id="sp"><div class="pi" id="pi"></div><span id="pe">нет фото</span></div><div class="file-row"><label class="file-btn" id="phBtn"><span>📁</span> <span>Выбрать файл</span><input type="file" id="phI" accept="image/*"></label><span class="file-name" id="phName">Файл не выбран</span></div><div class="sliders" id="slidersWrap" style="display:none;margin-top:12px"><div class="sr"><span class="ic">↔</span><input type="range" id="phX" min="0" max="100" value="50"><span class="vl" id="vX">50</span></div><div class="sr"><span class="ic">↕</span><input type="range" id="phY" min="0" max="100" value="50"><span class="vl" id="vY">50</span></div><div class="sr"><span class="ic">🔍</span><input type="range" id="phZ" min="50" max="300" value="100"><span class="vl" id="vZ">100%</span></div></div></div><div class="ms"><label>🎵 Музыка</label><div class="file-row"><label class="file-btn" id="musBtn"><span>🎵</span> <span>Выбрать файл</span><input type="file" id="musI" accept="audio/*"></label><span class="file-name" id="musName">Файл не выбран</span></div><div id="musC" style="font-size:12px;color:#666678;margin-top:8px"></div></div><div class="fms" id="mst"></div></div>
 <div class="fmp" id="fmPR" style="display:none"><div id="rc"></div><div class="ir"><input id="rIn" placeholder="Сообщение..." maxlength="500"><button id="rPB" class="ib">📎</button><button id="rVB" class="ib vb">🎤</button><button id="rSB">→</button></div></div>
@@ -1281,7 +1281,7 @@ const FRAMES=[
   {id:'neon',name:'🎨 Неон (свой цвет)',price:2000},{id:'ice',name:'Лёд',price:2000},{id:'rainbow',name:'🌈 Радужная',price:2500},{id:'sakura',name:'🌸 Сакура',price:3000},{id:'fire',name:'Огонь',price:3000},{id:'aqua',name:'🌊 Аквариум',price:4000},{id:'gardener',name:'🌾 Садовник',price:5000},{id:'storm',name:'⚡ Гроза',price:5500},{id:'cosmic',name:'Космос',price:7500},{id:'diamond',name:'💎 Алмаз',price:12000},{id:'galaxy',name:'🌌 Галактика',price:15000},{id:'legendary',name:'Легендарная',price:25000},{id:'angelic',name:'👼 Ангельская',price:50000},{id:'devil',name:'😈 Дьявольская',price:50000},{id:'dragon',name:'🐉 Драконья',price:75000},{id:'vhs',name:'📼 VHS (глитч)',price:100000}
 ];
 const FRAME_BONUS={angelic:5,devil:5,legendary:2,diamond:1.5,vhs:10,dragon:5,galaxy:4};
-const EVENTS=[{id:'xmas',name:'🎄 Ёлка',icon:'🎄'},{id:'easter',name:'🐣 Пасха',icon:'🐣'},{id:'fireworks',name:'🎆 Фейерверки',icon:'🎆'},{id:'maslenitsa',name:'🥞 Масленица',icon:'🥞'},{id:'knowledge',name:'📚 День знаний',icon:'📚'},{id:'teacher',name:'👩‍🏫 День учителя',icon:'👩‍🏫'}];
+const EVENTS=[{id:'xmas',name:'🎄 Ёлка',icon:'🎄'},{id:'easter',name:'🐣 Пасха',icon:'🐣'},{id:'fireworks',name:'🎆 Фейерверки',icon:'🎆'},{id:'maslenitsa',name:'🥞 Масленица',icon:'🥞'},{id:'knowledge',name:'📚 День знаний',icon:'📚'},{id:'teacher',name:'👩‍🏫 День учителя',icon:'👩‍🏫'},{id:'911',name:'🏙️ 9/11',icon:'🏙️'},{id:'crocus',name:'🕯️ Крокус',icon:'🕯️'}];
 let adminMode=false,pendingUser=null,curEmail='',emId=null,emRoom=null,notifPerm='default',epOpen=false;
 let curUser=null,me=null,meEnc=null,iAmAdmin=false,isBanned=false,banR='';
 let houses=[],curHouse=null,flats={},houseData=null,hm={};
@@ -1484,6 +1484,8 @@ function evDateInfo(evId){
   if(evId==='maslenitsa')return '🥞 15 февраля — 15 марта.';
   if(evId==='knowledge')return '📚 1 сентября.';
   if(evId==='teacher')return '👩‍🏫 5 октября.';
+  if(evId==='911')return '🏙️ 11–18 сентября.';
+  if(evId==='crocus')return '🕯️ 22–29 марта.';
   return '';
 }
 async function loadEvOverrides(){try{const{data}=await sb.from('event_overrides').select('*');evOverrides={};(data||[]).forEach(o=>{if(!evOverrides[o.event_id])evOverrides[o.event_id]={};evOverrides[o.event_id][o.nick]=o.mode})}catch(e){evOverrides={}}}
@@ -1670,6 +1672,8 @@ function isEventMSK(evId){
   if(evId==='maslenitsa')return (mo===1&&date>=15)||(mo===2&&date<=15);
   if(evId==='knowledge')return mo===8&&date===1;
   if(evId==='teacher')return mo===9&&date===5;
+  if(evId==='911')return mo===8&&date>=11&&date<=18;
+  if(evId==='crocus')return mo===2&&date>=22&&date<=29;
   return false;
 }
 function isMemorialMSK(which){const d=mskDate();const mo=d.getMonth();const date=d.getDate();if(which==='911')return mo===8&&date>=11&&date<=18;if(which==='crocus')return mo===2&&date>=22&&date<=29;return false}
@@ -1680,7 +1684,7 @@ function checkEaster(){const t=$('easterDecor');if(!t)return;t.classList.toggle(
 function checkMaslenitsa(){const t=$('maslenitsaDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('maslenitsa'))}
 function checkKnowledge(){const t=$('knowledgeDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('knowledge'))}
 function checkTeacher(){const t=$('teacherDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('teacher'))}
-function checkMemorials(){const b=$('memorial911'),c=$('memorialCrocus');if(b)b.classList.toggle('on',isMemorialMSK('911'));if(c)c.classList.toggle('on',isMemorialMSK('crocus'))}
+function checkMemorials(){const b=$('memorial911'),c=$('memorialCrocus');if(b)b.classList.toggle('on',shouldShowEvent('911'));if(c)c.classList.toggle('on',shouldShowEvent('crocus'))}
 
 /* ===== МОДАЛКА ПАМЯТИ ===== */
 const MEMORIAL_DATA={
