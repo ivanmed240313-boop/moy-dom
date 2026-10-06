@@ -79,7 +79,10 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes pfScaleFall{0%{transform:translate(0,0) rotate(0);opacity:0}15%{opacity:.9}100%{transform:translate(var(--dx,20px),120vh) rotate(540deg);opacity:0}}
 @keyframes voiceWave{0%,100%{transform:scaleY(.55)}50%{transform:scaleY(1.35)}}
 @keyframes candleFlick{0%,100%{filter:drop-shadow(0 0 8px #ffcc66) drop-shadow(0 0 20px #ff8800aa);opacity:1}50%{filter:drop-shadow(0 0 16px #ffcc66) drop-shadow(0 0 30px #ff8800cc);opacity:.85}}
+@keyframes ownerGlow{0%,100%{box-shadow:0 0 30px rgba(245,197,66,.15),inset 0 1px 0 rgba(255,255,255,.04)}50%{box-shadow:0 0 50px rgba(245,197,66,.3),inset 0 1px 0 rgba(255,255,255,.06)}}
+@keyframes crownShine{0%,100%{filter:drop-shadow(0 0 8px #ffcc66) drop-shadow(0 0 20px #ff8800aa) brightness(1)}50%{filter:drop-shadow(0 0 14px #ffcc66) drop-shadow(0 0 30px #ff8800cc) brightness(1.15)}}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(245,197,66,.15);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(245,197,66,.3)}
 #seasons{position:fixed;inset:0;z-index:-1;pointer-events:none;display:block;background:transparent}
 #auth{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;z-index:1}
 #auth h1{margin:0 0 32px;font-size:44px;font-weight:900;background:linear-gradient(135deg,#f5c542,#ff9d2e,#f5c542);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shim 4s infinite}
@@ -826,27 +829,61 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .visit-input-row button{padding:12px 16px;border-radius:12px;border:none;background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;flex-shrink:0}
 .visit-badge{display:inline-block;padding:3px 9px;border-radius:8px;font-size:11px;font-weight:800;background:rgba(255,152,0,.15);color:#ffa726;margin-left:6px}
 @media(max-width:600px){.garden-beds{grid-template-columns:repeat(2,1fr);gap:8px}.gbed{min-height:105px;padding:10px 6px}.gbed-icon{font-size:28px}.seed-card{padding:8px 10px;gap:8px}.seed-icon{font-size:22px;width:32px}}
-/* OWNER PANEL */
-#ofm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:420;padding:20px}
-#ofm.open{display:flex}
-.ofb{background:linear-gradient(180deg,#1a1508,#0a0700);border:1px solid rgba(245,197,66,.5);border-radius:24px;width:720px;max-width:100%;height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 60px rgba(245,197,66,.3),0 20px 80px rgba(0,0,0,.9)}
-.ofh{padding:18px 22px;border-bottom:1px solid rgba(245,197,66,.2);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(245,197,66,.12),rgba(255,157,46,.04))}
-.ofh h3{margin:0;font-size:19px;font-weight:900;background:linear-gradient(135deg,#f5c542,#ff9d2e,#f5c542);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
-.ofh button{background:transparent;border:none;color:#f5c542;font-size:26px;cursor:pointer;line-height:1}
-.oft{display:flex;gap:6px;padding:14px 18px;border-bottom:1px solid rgba(245,197,66,.12);flex-wrap:wrap;overflow-x:auto;scrollbar-width:none}
+
+/* =====================================================================
+   OWNER PANEL v3.0 — обновлённый интерфейс
+   ===================================================================== */
+#ofm{display:none;position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(245,197,66,.08),rgba(0,0,0,.94) 60%),rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:420;padding:20px;backdrop-filter:blur(8px)}
+#ofm.open{display:flex;animation:fadeIn .25s}
+.ofb{background:linear-gradient(180deg,#1a1508 0%,#0f0a02 50%,#080500 100%);border:1px solid rgba(245,197,66,.5);border-radius:26px;width:820px;max-width:100%;height:92vh;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 80px rgba(245,197,66,.35),0 30px 90px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.06);animation:ownerGlow 4s ease-in-out infinite;position:relative}
+.ofb::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(245,197,66,.7),transparent);pointer-events:none}
+
+/* HEADER */
+.ofh{padding:18px 24px;border-bottom:1px solid rgba(245,197,66,.2);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(245,197,66,.14),rgba(255,157,46,.05));flex-shrink:0;position:relative}
+.ofh::after{content:'';position:absolute;bottom:-1px;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(245,197,66,.5),transparent)}
+.ofh h3{margin:0;font-size:20px;font-weight:900;background:linear-gradient(135deg,#f5c542,#ff9d2e,#f5c542);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.6px;display:flex;align-items:center;gap:10px;animation:shim 4s infinite}
+.ofh h3 .crown{font-size:22px;animation:crownShine 3s ease-in-out infinite;filter:drop-shadow(0 0 8px #ffcc66)}
+.ofh .badge{margin-left:auto;font-size:11px;font-weight:800;color:#000;background:linear-gradient(135deg,#f5c542,#ff9d2e);padding:4px 10px;border-radius:8px;letter-spacing:.5px;text-transform:uppercase}
+.ofh button{background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.3);color:#f5c542;font-size:18px;width:34px;height:34px;border-radius:10px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;transition:all .2s;font-weight:700}
+.ofh button:hover{background:rgba(245,197,66,.2);transform:scale(1.05)}
+
+/* TABS */
+.oft{display:flex;gap:6px;padding:14px 20px;border-bottom:1px solid rgba(245,197,66,.12);flex-wrap:wrap;overflow-x:auto;scrollbar-width:none;background:rgba(0,0,0,.25);flex-shrink:0}
 .oft::-webkit-scrollbar{display:none}
-.oftab{padding:9px 16px;border-radius:12px;background:rgba(245,197,66,.06);color:#c8c8d0;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap;border:1px solid rgba(245,197,66,.18);font-family:inherit}
-.oftab.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;border-color:transparent}
-.ofbd{flex:1;overflow-y:auto;padding:18px;-webkit-overflow-scrolling:touch}
-.of-user-row{background:rgba(245,197,66,.05);border:1px solid rgba(245,197,66,.2);border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.of-user-row .nik{font-weight:800;color:#f5c542;min-width:110px;font-size:14px}
+.oftab{padding:10px 16px;border-radius:12px;background:rgba(245,197,66,.05);color:#c8c8d0;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap;border:1px solid rgba(245,197,66,.16);font-family:inherit;transition:all .2s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:7px;user-select:none}
+.oftab:hover{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.35);color:#f5c542;transform:translateY(-1px)}
+.oftab .ic{font-size:15px;line-height:1;transition:transform .2s}
+.oftab:hover .ic{transform:scale(1.15)}
+.oftab.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;border-color:transparent;box-shadow:0 4px 16px rgba(245,197,66,.45),0 0 0 1px rgba(255,255,255,.1);transform:translateY(-1px)}
+.oftab.act .ic{transform:scale(1.15)}
+
+/* BODY */
+.ofbd{flex:1;overflow-y:auto;padding:20px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.ofbd::-webkit-scrollbar-thumb{background:rgba(245,197,66,.25)}
+
+/* USER ROWS */
+.of-user-row{background:linear-gradient(135deg,rgba(245,197,66,.05),rgba(245,197,66,.02));border:1px solid rgba(245,197,66,.16);border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;transition:all .2s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.of-user-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#f5c542,#ff9d2e);opacity:0;transition:opacity .2s}
+.of-user-row:hover{background:linear-gradient(135deg,rgba(245,197,66,.1),rgba(245,197,66,.04));border-color:rgba(245,197,66,.4);transform:translateX(2px);box-shadow:0 4px 20px rgba(245,197,66,.12)}
+.of-user-row:hover::before{opacity:1}
+.of-user-row .nik{font-weight:800;color:#f5c542;min-width:100px;font-size:14px;letter-spacing:.2px}
 .of-user-row .bal{font-size:12px;color:#a0a0b8}
-.of-ev-btn{padding:7px 12px;border-radius:10px;border:1px solid rgba(245,197,66,.4);background:rgba(245,197,66,.08);color:#c8c8d0;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit}
-.of-ev-btn.on{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;border-color:transparent;box-shadow:0 0 10px rgba(76,175,80,.5)}
+
+/* OWNER BUTTONS */
+.of-ev-btn{padding:7px 12px;border-radius:10px;border:1px solid rgba(245,197,66,.35);background:rgba(245,197,66,.06);color:#c8c8d0;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;transition:all .18s cubic-bezier(.4,0,.2,1);display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.of-ev-btn:hover{background:rgba(245,197,66,.15);border-color:rgba(245,197,66,.6);color:#f5c542;transform:translateY(-1px)}
+.of-ev-btn:active{transform:scale(.96)}
+.of-ev-btn.on{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;border-color:transparent;box-shadow:0 0 12px rgba(76,175,80,.55),0 0 0 1px rgba(255,255,255,.08)}
 .of-ev-btn.test{background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff;border-color:transparent}
-.of-hint{font-size:12.5px;color:#a0a0b8;line-height:1.6;padding:12px 14px;background:rgba(245,197,66,.06);border:1px solid rgba(245,197,66,.18);border-radius:12px;margin-bottom:12px}
-.of-hint b{color:#f5c542}
-/* ===== КРАСИВЫЙ ВЫБОР ИВЕНТОВ (OWNER) ===== */
+.of-ev-btn.test:hover{box-shadow:0 0 14px rgba(160,107,255,.55)}
+.of-ev-btn.danger{background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;border-color:transparent}
+.of-ev-btn.danger:hover{box-shadow:0 0 14px rgba(211,47,47,.55)}
+
+/* HINT */
+.of-hint{font-size:12.5px;color:#a0a0b8;line-height:1.65;padding:13px 16px;background:linear-gradient(135deg,rgba(245,197,66,.08),rgba(245,197,66,.03));border:1px solid rgba(245,197,66,.2);border-left:3px solid #f5c542;border-radius:12px;margin-bottom:14px}
+.of-hint b{color:#f5c542;font-weight:800}
+
+/* EVENT TABS (красивые) */
 .of-ev-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;padding:6px;background:rgba(0,0,0,.3);border-radius:16px;border:1px solid rgba(245,197,66,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
 .of-ev-tab{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:12px;background:transparent;color:#c8c8d0;cursor:pointer;font-size:12.5px;font-weight:700;white-space:nowrap;border:1px solid transparent;transition:all .22s cubic-bezier(.4,0,.2,1);font-family:inherit;user-select:none;position:relative}
 .of-ev-tab .ev-ic{font-size:16px;line-height:1;transition:transform .22s}
@@ -858,20 +895,80 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .of-ev-date{padding:9px 14px;background:linear-gradient(135deg,rgba(245,197,66,.1),rgba(255,157,46,.03));border-left:3px solid #f5c542;border-radius:10px;font-size:12.5px;color:#e0e0e8;margin-bottom:16px;font-weight:600;letter-spacing:.2px;line-height:1.5}
 .of-ev-date b{color:#8bc34a}
 .of-ev-group{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap}
-.of-ev-group .of-ev-btn{min-width:74px;text-align:center;transition:all .18s;position:relative}
-.of-ev-group .of-ev-btn:hover{transform:translateY(-1px)}
-.of-ev-group .of-ev-btn:active{transform:scale(.96)}
-.of-ev-group .of-ev-btn:not(.on):hover{border-color:rgba(245,197,66,.7);color:#f5c542}
+.of-ev-group .of-ev-btn{min-width:72px;justify-content:center;text-align:center;position:relative}
 .of-ev-group .of-ev-btn.on{box-shadow:0 0 12px rgba(76,175,80,.55),0 0 0 1px rgba(255,255,255,.1)}
 .of-ev-group .of-ev-btn[data-mode="off"].on{background:linear-gradient(135deg,#d32f2f,#b71c1c);box-shadow:0 0 12px rgba(211,47,47,.55)}
 .of-ev-group .of-ev-btn[data-mode="auto"].on{background:linear-gradient(135deg,#5aabff,#4a90d9);box-shadow:0 0 12px rgba(90,171,255,.55)}
+
+/* GIVE / FAKES / CUSTOM INPUTS */
+.give-confirm{padding:14px;background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.3);border-radius:14px;margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.give-confirm input{padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.4);color:#e8e8f0;font-size:14px;text-align:center;font-family:inherit;transition:all .2s}
+.give-confirm input:focus{outline:none;border-color:rgba(245,197,66,.6);box-shadow:0 0 0 3px rgba(245,197,66,.12)}
+.give-confirm button{padding:9px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;font-weight:800;cursor:pointer;font-family:inherit;font-size:13px;transition:all .2s}
+.give-confirm button:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(245,197,66,.4)}
+
+/* FLAT PICKER */
+#flatPickerM{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:800;padding:20px;backdrop-filter:blur(6px)}
+#flatPickerM.open{display:flex;animation:fadeIn .2s}
+.fp-box{background:linear-gradient(180deg,#1a1508,#0a0700);border:1px solid rgba(245,197,66,.5);border-radius:22px;width:760px;max-width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 60px rgba(245,197,66,.3),0 25px 80px rgba(0,0,0,.9)}
+.fp-h{padding:16px 22px;border-bottom:1px solid rgba(245,197,66,.2);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(245,197,66,.12),rgba(255,157,46,.04))}
+.fp-h h3{margin:0;font-size:17px;font-weight:900;color:#f5c542}
+.fp-h button{background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.3);color:#f5c542;font-size:18px;width:32px;height:32px;border-radius:9px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;font-weight:700}
+.fp-h button:hover{background:rgba(245,197,66,.2)}
+.fp-body{padding:18px;overflow-y:auto;flex:1}
+.fp-house{margin-bottom:20px}
+.fp-house-title{font-size:13px;font-weight:800;color:#f5c542;padding:9px 14px;background:rgba(245,197,66,.08);border-left:3px solid #f5c542;border-radius:10px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.fp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
+.fp-flat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:9px 6px;font-size:10px;cursor:pointer;text-align:center;transition:all .18s cubic-bezier(.4,0,.2,1);color:#c8c8d0;font-weight:700;line-height:1.35;font-family:inherit}
+.fp-flat:hover{background:rgba(245,197,66,.15);border-color:rgba(245,197,66,.5);color:#f5c542;transform:translateY(-2px);box-shadow:0 4px 14px rgba(245,197,66,.15)}
+.fp-flat.full{opacity:.35;cursor:not-allowed}
+.fp-flat.full:hover{transform:none;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:#c8c8d0;box-shadow:none}
+.fp-flat.mine{background:rgba(160,107,255,.18);border-color:rgba(160,107,255,.55);color:#d0b0ff;cursor:default}
+.fp-flat.mine:hover{transform:none;box-shadow:none}
+.fp-flat .fnum{font-size:15px;font-weight:900;color:#fff;display:block;margin-bottom:3px}
+.fp-flat.mine .fnum{color:#d0b0ff}
+.fp-flat .fwho{font-size:10px;opacity:.85;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* FAKE LIST */
+#fakeListBox .of-user-row{border-color:rgba(160,107,255,.25);background:linear-gradient(135deg,rgba(160,107,255,.06),rgba(107,74,255,.02))}
+#fakeListBox .of-user-row:hover{border-color:rgba(160,107,255,.5);box-shadow:0 4px 20px rgba(160,107,255,.15)}
+#fakeListBox .of-user-row::before{background:linear-gradient(180deg,#a06bff,#6b4aff)}
+#fakeListBox .of-user-row .nik{color:#d0b0ff}
+
+/* CUSTOM EVENTS */
+#ceList .of-user-row{border-color:rgba(160,107,255,.25);background:linear-gradient(135deg,rgba(160,107,255,.06),rgba(107,74,255,.02))}
+#ceList .of-user-row:hover{border-color:rgba(160,107,255,.5);box-shadow:0 4px 20px rgba(160,107,255,.15)}
+#ceList .of-user-row::before{background:linear-gradient(180deg,#a06bff,#6b4aff)}
+#ceList .of-user-row .nik{color:#d0b0ff}
+
+/* RESPONSIVE */
 @media(max-width:768px){
+  #ofm{padding:10px}
+  .ofb{width:100%;height:96vh;border-radius:20px}
+  .ofh{padding:14px 16px}
+  .ofh h3{font-size:16px}
+  .ofh h3 .crown{font-size:18px}
+  .ofh .badge{font-size:10px;padding:3px 8px}
+  .ofh button{width:30px;height:30px;font-size:16px}
+  .oft{padding:10px 12px;gap:5px}
+  .oftab{padding:8px 12px;font-size:12px;gap:5px}
+  .oftab .ic{font-size:13px}
+  .ofbd{padding:14px}
+  .of-user-row{padding:11px 12px;gap:9px;border-radius:13px}
+  .of-user-row .nik{font-size:13px;min-width:0}
+  .of-ev-btn{padding:6px 10px;font-size:11px}
   .of-ev-tabs{padding:4px;gap:4px;border-radius:13px}
   .of-ev-tab{padding:7px 10px;font-size:11px;gap:4px;border-radius:10px}
   .of-ev-tab .ev-ic{font-size:13px}
   .of-ev-group{width:100%;justify-content:flex-start;margin-left:0;margin-top:6px}
   .of-ev-group .of-ev-btn{min-width:0;flex:1;padding:7px 8px;font-size:11px}
+  .fp-box{width:100%;border-radius:18px}
+  .fp-grid{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px}
+  .fp-flat{padding:8px 4px;border-radius:10px}
+  .fp-flat .fnum{font-size:13px}
+  .fp-flat .fwho{font-size:9px}
 }
+
 /* XMAS TREE + GIFTS */
 #xmasTree{position:fixed;right:24px;bottom:24px;z-index:2;pointer-events:none;display:none;overflow:visible}
 #xmasTree.on{display:block}
@@ -884,25 +981,10 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #easterDecor.on{display:block}
 #easterDecor svg{display:block;width:180px;height:220px;filter:drop-shadow(0 0 20px rgba(255,182,210,.7)) drop-shadow(0 0 45px rgba(255,220,120,.4))}
 @media(max-width:768px){#easterDecor{right:auto;left:50%;bottom:0;transform:translateX(-50%);opacity:.24}#easterDecor svg{width:200px;height:240px}}
-/* ===== ФЕЙЕРВЕРКИ — ЗАДНИЙ ФОН + ПРИГЛУШЕНИЕ UI ===== */
 #fireworksCv{position:fixed;inset:0;z-index:0;pointer-events:none;display:none}
 #fireworksCv.on{display:block}
-body.fireworks-bg .hbtn,
-body.fireworks-bg .ebtn,
-body.fireworks-bg .flat,
-body.fireworks-bg .add-btn,
-body.fireworks-bg .sb-h,
-body.fireworks-bg #topRight,
-body.fireworks-bg #mbtn,
-body.fireworks-bg .ntf{opacity:.35;transition:opacity .25s ease}
-body.fireworks-bg .hbtn:hover,
-body.fireworks-bg .ebtn:hover,
-body.fireworks-bg .flat:hover,
-body.fireworks-bg .add-btn:hover,
-body.fireworks-bg .sb-h:hover,
-body.fireworks-bg #topRight:hover,
-body.fireworks-bg #mbtn:hover,
-body.fireworks-bg .ntf:hover{opacity:1}
+body.fireworks-bg .hbtn,body.fireworks-bg .ebtn,body.fireworks-bg .flat,body.fireworks-bg .add-btn,body.fireworks-bg .sb-h,body.fireworks-bg #topRight,body.fireworks-bg #mbtn,body.fireworks-bg .ntf{opacity:.35;transition:opacity .25s ease}
+body.fireworks-bg .hbtn:hover,body.fireworks-bg .ebtn:hover,body.fireworks-bg .flat:hover,body.fireworks-bg .add-btn:hover,body.fireworks-bg .sb-h:hover,body.fireworks-bg #topRight:hover,body.fireworks-bg #mbtn:hover,body.fireworks-bg .ntf:hover{opacity:1}
 #memorial911{position:fixed;right:24px;bottom:110px;z-index:6;pointer-events:auto;cursor:pointer;display:none;overflow:visible;filter:drop-shadow(0 0 12px rgba(200,220,255,.35))}
 #memorial911.on{display:block}
 #memorial911 svg{display:block;width:56px;height:90px;transition:transform .3s}
@@ -954,10 +1036,8 @@ body.fireworks-bg .ntf:hover{opacity:1}
 .give-item .gi{font-size:22px;width:32px;text-align:center}
 .give-item .gn{flex:1;font-size:13px;font-weight:700;color:#e8e8f0}
 .give-item .gp{font-size:11px;color:#f5c542}
-.give-confirm{padding:14px;background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.3);border-radius:12px;margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.give-confirm input{width:80px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(0,0,0,.4);color:#e8e8f0;font-size:14px;text-align:center;font-family:inherit}
-.give-confirm button{padding:9px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px}
 .give-msg{font-size:12px;color:#8bc34a;text-align:center;min-height:16px;margin-top:8px;font-weight:600}
+
 @media(max-width:768px){
 .dom-toast{bottom:20px;font-size:13.5px;padding:11px 18px;max-width:calc(100vw - 32px)}
 .sb{position:fixed;left:-100%;top:0;height:100vh;width:86%;max-width:340px;z-index:200;transition:left .3s;box-shadow:4px 0 24px rgba(0,0,0,.6)}
@@ -1079,6 +1159,8 @@ body::before{display:none !important}
 .cr{backdrop-filter:none !important}
 #cfm{backdrop-filter:none !important}
 #sendCoinsM{backdrop-filter:none !important}
+#ofm{backdrop-filter:none !important}
+#flatPickerM{backdrop-filter:none !important}
 .msg{animation:none !important}
 .ntf{animation:none !important}
 .avw .ondot{animation:none !important}
@@ -1137,7 +1219,7 @@ body::before{display:none !important}
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
 <div id="afm"><div class="afb"><div class="afh"><h3>⚙️ Админ-панель</h3><button onclick="closeAdmin()">×</button></div><div class="aft"><div class="aftab act" data-t="flats" onclick="afSw('flats')">🏠 Квартиры</div><div class="aftab" data-t="ent" onclick="afSw('ent')">🏢 Подъезды</div><div class="aftab" data-t="house" onclick="afSw('house')">🏘 Дом</div><div class="aftab" data-t="users" onclick="afSw('users')">👥 Юзеры</div></div><div class="afbd" id="afB"></div></div></div>
-<div id="ofm"><div class="ofb"><div class="ofh"><h3>👑 OWNER ПАНЕЛЬ</h3><button onclick="closeOwner()">×</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')">🏠 Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')">🏢 Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')">🏘 Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')">👥 Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')">🎁 Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')">🎄 Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')">🎭 Фейки</div></div><div class="ofbd" id="ofB"></div></div></div>
+<div id="ofm"><div class="ofb"><div class="ofh"><h3><span class="crown">👑</span>OWNER ПАНЕЛЬ<span class="badge">v3.0</span></h3><button onclick="closeOwner()">✕</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')"><span class="ic">🏠</span>Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')"><span class="ic">🏢</span>Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')"><span class="ic">🏘</span>Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')"><span class="ic">👥</span>Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')"><span class="ic">🎁</span>Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')"><span class="ic">🎄</span>Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')"><span class="ic">🎭</span>Фейки</div></div><div class="ofbd" id="ofB"></div></div></div>
 <div id="fm"><div class="fmb"><h3 id="fmT">🏠 Квартира</h3><div class="fmt"><div class="fmtab act" data-t="media" onclick="fmSw('media')">📷 Медиа</div><div class="fmtab" data-t="room" id="fmTR" onclick="fmSw('room')" style="display:none">💬 Комната</div><div class="fmtab" data-t="manage" id="fmTM" onclick="fmSw('manage')" style="display:none">👥 Сосед</div><div class="fmtab" data-t="work" onclick="fmSw('work')">💼 Работа</div></div>
 <div class="fmp" id="fmPM"><div class="ms"><label>📷 Квадратное фото</label><div class="sp" id="sp"><div class="pi" id="pi"></div><span id="pe">нет фото</span></div><div class="file-row"><label class="file-btn" id="phBtn"><span>📁</span> <span>Выбрать файл</span><input type="file" id="phI" accept="image/*"></label><span class="file-name" id="phName">Файл не выбран</span></div><div class="sliders" id="slidersWrap" style="display:none;margin-top:12px"><div class="sr"><span class="ic">↔</span><input type="range" id="phX" min="0" max="100" value="50"><span class="vl" id="vX">50</span></div><div class="sr"><span class="ic">↕</span><input type="range" id="phY" min="0" max="100" value="50"><span class="vl" id="vY">50</span></div><div class="sr"><span class="ic">🔍</span><input type="range" id="phZ" min="50" max="300" value="100"><span class="vl" id="vZ">100%</span></div></div></div><div class="ms"><label>🎵 Музыка</label><div class="file-row"><label class="file-btn" id="musBtn"><span>🎵</span> <span>Выбрать файл</span><input type="file" id="musI" accept="audio/*"></label><span class="file-name" id="musName">Файл не выбран</span></div><div id="musC" style="font-size:12px;color:#666678;margin-top:8px"></div></div><div class="fms" id="mst"></div></div>
 <div class="fmp" id="fmPR" style="display:none"><div id="rc"></div><div class="ir"><input id="rIn" placeholder="Сообщение..." maxlength="500"><button id="rPB" class="ib">📎</button><button id="rVB" class="ib vb">🎤</button><button id="rSB">→</button></div></div>
@@ -1313,6 +1395,11 @@ body::before{display:none !important}
   </div>
 </div></div>
 
+<div id="flatPickerM"><div class="fp-box">
+  <div class="fp-h"><h3 id="fpTitle">🏠 Куда заселить</h3><button onclick="closeFlatPicker()">✕</button></div>
+  <div class="fp-body" id="fpBody"></div>
+</div></div>
+
 <div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1356,6 +1443,7 @@ let customEvents=[];
 let giveTarget=null,giveTab='frame';
 let _fireworksActive=false,_fireworksRaf=null,_fireworksTimer=null;
 let curInvite=null,roomInvCh=null;
+let fpTargetNick=null;
 const WORK_TASKS=[
   {id:'dishes',name:'Намыть посуду',icon:'🍽️',target:8,desc:'Кликай по тарелкам'},
   {id:'vacuum',name:'Пропылесосить',icon:'🧹',target:8,desc:'Води мышкой по полу'},
@@ -1401,7 +1489,7 @@ window.alert=function(m){showToast(String(m||''))};
 let _cfmResolve=null;
 function askConfirm(title,text,okText,danger){return new Promise(resolve=>{_cfmResolve=resolve;$('cfmTitle').textContent=title||'Подтвердите действие';$('cfmText').textContent=text||'';const b=$('cfmOk');b.textContent=okText||'OK';b.classList.toggle('danger',!!danger);$('cfm').classList.add('open')})}
 function _cfmClose(r){$('cfm').classList.remove('open');if(_cfmResolve){const f=_cfmResolve;_cfmResolve=null;f(r)}}
-document.addEventListener('DOMContentLoaded',()=>{const ok=$('cfmOk');if(ok)ok.onclick=()=>_cfmClose(true);const cc=$('cfmCancel');if(cc)cc.onclick=()=>_cfmClose(false);const cfm=$('cfm');if(cfm)cfm.addEventListener('click',e=>{if(e.target.id==='cfm')_cfmClose(false)});document.addEventListener('keydown',e=>{const m=$('cfm');if(!m||!m.classList.contains('open'))return;if(e.key==='Escape')_cfmClose(false);else if(e.key==='Enter'){e.preventDefault();_cfmClose(true)}});const sm=$('sendCoinsM');if(sm)sm.addEventListener('click',e=>{if(e.target.id==='sendCoinsM')closeSendCoins()});const inp=$('scAmt');if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doSendCoins()}});const np=$('npRgb');if(np)np.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();applyNeonFromUI()}});const nc=$('npColor');if(nc)nc.addEventListener('input',()=>{const h=hexToRgb(nc.value);if(h)setNeonRGB(h[0],h[1],h[2])});applyNeonCSS();const mm=$('memorialModal');if(mm)mm.addEventListener('click',e=>{if(e.target.id==='memorialModal')closeMemorial()})});
+document.addEventListener('DOMContentLoaded',()=>{const ok=$('cfmOk');if(ok)ok.onclick=()=>_cfmClose(true);const cc=$('cfmCancel');if(cc)cc.onclick=()=>_cfmClose(false);const cfm=$('cfm');if(cfm)cfm.addEventListener('click',e=>{if(e.target.id==='cfm')_cfmClose(false)});document.addEventListener('keydown',e=>{const m=$('cfm');if(!m||!m.classList.contains('open'))return;if(e.key==='Escape')_cfmClose(false);else if(e.key==='Enter'){e.preventDefault();_cfmClose(true)}});const sm=$('sendCoinsM');if(sm)sm.addEventListener('click',e=>{if(e.target.id==='sendCoinsM')closeSendCoins()});const inp=$('scAmt');if(inp)inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();doSendCoins()}});const np=$('npRgb');if(np)np.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();applyNeonFromUI()}});const nc=$('npColor');if(nc)nc.addEventListener('input',()=>{const h=hexToRgb(nc.value);if(h)setNeonRGB(h[0],h[1],h[2])});applyNeonCSS();const mm=$('memorialModal');if(mm)mm.addEventListener('click',e=>{if(e.target.id==='memorialModal')closeMemorial()});const fpm=$('flatPickerM');if(fpm)fpm.addEventListener('click',e=>{if(e.target.id==='flatPickerM')closeFlatPicker()})});
 async function openSendCoins(nick){if(!nick||nick===me)return;if(pfCurrent)closePf();const{data:p}=await sb.from('profiles').select('coins').eq('nick',nick).maybeSingle();const tc=(p&&p.coins)||0;$('scNick').textContent=nick;$('scToCoins').textContent=tc+' 💰';$('scMyCoins').textContent=myCoins+' 💰';$('scAmt').value='';$('scErr').textContent='';const btn=$('scSendBtn');if(btn){btn.disabled=false;btn.textContent='Отправить'}$('sendCoinsM').classList.add('open');setTimeout(()=>$('scAmt').focus(),100)}
 function closeSendCoins(){$('sendCoinsM').classList.remove('open')}
 function scQuick(frac){const amt=Math.floor(myCoins*frac);$('scAmt').value=amt>0?String(amt):''}
@@ -1458,7 +1546,7 @@ function openOwner(){if(!isOwner())return showToast('Только владеле
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b);if(afT==='custom')return ofCustomEvents(b);if(afT==='fakes')return ofFakes(b)}
-const APP_VERSION='2.9.4';
+const APP_VERSION='3.0.0';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 
@@ -1508,27 +1596,66 @@ async function doGiveSeed(id){if(!giveTarget)return showToast('Введи ник
 async function doGiveFert(id){if(!giveTarget)return showToast('Введи ник','error');const msg=$('giveMsgInline');const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();if(e0||!p){if(msg)msg.textContent='❌ Не найден';return showToast('❌','error')}const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(msg)msg.textContent='✅ Выдано: '+id;showToast('🎁 '+id,'success');if(giveTarget===me)setTimeout(checkGifts,300)}
 async function doGiveCoins(delta){if(!giveTarget)return showToast('Введи ник','error');if(!delta||isNaN(delta))return showToast('Некорректная сумма','error');const msg=$('giveMsgInline');const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:giveTarget,p_delta:delta});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(data&&data.ok===false){if(msg)msg.textContent='❌ '+(data.error||'');return showToast('❌','error')}if(giveTarget===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}if(msg)msg.textContent='✅ '+(delta>0?'+':'')+delta+' → '+(data.coins!=null?data.coins:'—');showToast('💰 '+(delta>0?'+':'')+delta,'success')}
 
-/* ===== OWNER: заселение/выселение юзера ===== */
+/* ===== OWNER: заселение/выселение юзера (flat picker) ===== */
+function closeFlatPicker(){$('flatPickerM').classList.remove('open');fpTargetNick=null}
 async function ownerSetFlat(nick){
   if(!isOwner())return;
-  const v=prompt('Кв. (1-30) для '+nick, '');
-  if(v===null)return;
-  const n=parseInt(v);
-  if(!n||n<1||n>30)return showToast('Номер 1-30','error');
+  fpTargetNick=nick;
+  $('fpTitle').textContent='🏠 Куда заселить: '+nick;
+  $('fpBody').innerHTML='<div class="afe">Загрузка...</div>';
+  $('flatPickerM').classList.add('open');
+  await renderFlatPicker();
+}
+async function renderFlatPicker(){
+  if(!fpTargetNick)return;
+  const{data:hs}=await sb.from('houses').select('*').order('id');
+  const{data:fl}=await sb.from('flats').select('*');
+  const allHouses=hs||[];
+  const allFlats=fl||[];
+  const enc=en(fpTargetNick);
+  let curH=0,curF=0;
+  for(const f of allFlats){if((f.owner_nicks||[]).includes(enc)){curH=f.house_id;curF=f.number;break}}
+  const byHouse={};
+  allFlats.forEach(f=>{if(!byHouse[f.house_id])byHouse[f.house_id]=[];byHouse[f.house_id].push(f)});
+  let html='';
+  for(const h of allHouses){
+    const flats=(byHouse[h.id]||[]).sort((a,b)=>a.number-b.number);
+    if(!flats.length)continue;
+    const isMyHouse=curH===h.id;
+    html+='<div class="fp-house"><div class="fp-house-title">🏘 '+eh(h.name||('Дом №'+h.id))+(isMyHouse?' <span style="color:#a06bff;font-size:11px">← он здесь (Кв. '+curF+')</span>':'')+'</div><div class="fp-grid">';
+    for(const f of flats){
+      const owners=flatOwners(f);
+      const mp=f.max_people??2;
+      const iAmHere=owners.includes(enc);
+      const isFull=owners.length>=mp;
+      const ownersNames=owners.map(de).join(', ');
+      const cls='fp-flat'+(iAmHere?' mine':(isFull?' full':''));
+      const click=iAmHere||isFull?'':'onclick="pickFlatToMove('+h.id+','+f.number+')"';
+      html+='<div class="'+cls+'" '+click+'><span class="fnum">№'+f.number+'</span><span class="fwho">'+(owners.length?eh(ownersNames):'свободно')+'</span><span class="fwho">'+owners.length+'/'+mp+'</span></div>';
+    }
+    html+='</div></div>';
+  }
+  if(!html)html='<div class="afe">Нет домов</div>';
+  $('fpBody').innerHTML=html;
+}
+async function pickFlatToMove(hid,fn){
+  if(!fpTargetNick)return;
+  const nick=fpTargetNick;
   const enc=en(nick);
   const{data:myFlats}=await sb.from('flats').select('house_id,number,owner_nicks').contains('owner_nicks',[enc]);
   for(const f of (myFlats||[])){
     const nw=(f.owner_nicks||[]).filter(x=>x!==enc);
     await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',f.house_id).eq('number',f.number);
   }
-  const{data:tgt}=await sb.from('flats').select('*').eq('house_id',curHouse).eq('number',n).maybeSingle();
+  const{data:tgt}=await sb.from('flats').select('*').eq('house_id',hid).eq('number',fn).maybeSingle();
   if(!tgt)return showToast('Квартира не найдена','error');
   const owners=flatOwners(tgt).filter(x=>x!==enc);
   const mp=tgt.max_people??2;
   if(owners.length>=mp)return showToast('Мест нет','error');
   const nw=[...owners,enc];
-  await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0],owner_nick2:nw[1]||null}).eq('house_id',curHouse).eq('number',n);
-  showToast('✅ '+nick+' → Кв. '+n,'success');
+  await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0],owner_nick2:nw[1]||null}).eq('house_id',hid).eq('number',fn);
+  showToast('✅ '+nick+' → Дом '+hid+', Кв. '+fn,'success');
+  closeFlatPicker();
   afRend();
 }
 async function ownerKickUser(nick){
@@ -1603,7 +1730,7 @@ async function ofCustomEvents(b){
     '<div id="ceList" style="margin-top:14px"><div class="afe">Загрузка...</div></div>';
   await loadCustomEvents();renderCustomEventsList();
 }
-function renderCustomEventsList(){const box=$('ceList');if(!box)return;if(!customEvents.length){box.innerHTML='<div class="afe">Пока нет своих ивентов</div>';return}box.innerHTML=customEvents.map(e=>{const active=isCustomEventActive(e);return '<div class="of-user-row" style="border-color:'+(active?'rgba(76,175,80,.5)':'rgba(160,107,255,.25)')+'"><div style="font-size:26px;width:40px;text-align:center">'+eh(e.icon||'🎉')+'</div><div style="flex:1;min-width:0"><div class="nik" style="color:#fff;font-size:14px">'+eh(e.name)+'</div><div style="font-size:11px;color:#8888a0;margin-top:2px">'+eh(e.date_from)+' → '+eh(e.date_to)+(e.enabled?'':' · 🚫 ВЫКЛ')+(active?' · <b style="color:#8bc34a">СЕЙЧАС</b>':'')+'</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="of-ev-btn'+(e.enabled?' on':'')+'" onclick="toggleCustomEvent('+e.id+','+(!e.enabled)+')">'+(e.enabled?'✅ Вкл':'🚫 Выкл')+'</button><button class="of-ev-btn test" onclick="testCustomEvent('+e.id+')">👁 Тест</button><button class="of-ev-btn" style="background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;border-color:transparent" onclick="deleteCustomEvent('+e.id+')">🗑</button></div></div>'}).join('')}
+function renderCustomEventsList(){const box=$('ceList');if(!box)return;if(!customEvents.length){box.innerHTML='<div class="afe">Пока нет своих ивентов</div>';return}box.innerHTML=customEvents.map(e=>{const active=isCustomEventActive(e);return '<div class="of-user-row" style="border-color:'+(active?'rgba(76,175,80,.5)':'rgba(160,107,255,.25)')+'"><div style="font-size:26px;width:40px;text-align:center">'+eh(e.icon||'🎉')+'</div><div style="flex:1;min-width:0"><div class="nik" style="color:#fff;font-size:14px">'+eh(e.name)+'</div><div style="font-size:11px;color:#8888a0;margin-top:2px">'+eh(e.date_from)+' → '+eh(e.date_to)+(e.enabled?'':' · 🚫 ВЫКЛ')+(active?' · <b style="color:#8bc34a">СЕЙЧАС</b>':'')+'</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="of-ev-btn'+(e.enabled?' on':'')+'" onclick="toggleCustomEvent('+e.id+','+(!e.enabled)+')">'+(e.enabled?'✅ Вкл':'🚫 Выкл')+'</button><button class="of-ev-btn test" onclick="testCustomEvent('+e.id+')">👁 Тест</button><button class="of-ev-btn danger" onclick="deleteCustomEvent('+e.id+')">🗑</button></div></div>'}).join('')}
 function validMMDD(s){if(!/^\d{2}-\d{2}$/.test(s))return false;const mm=parseInt(s.slice(0,2)),dd=parseInt(s.slice(3,5));return mm>=1&&mm<=12&&dd>=1&&dd<=31}
 async function createCustomEvent(){if(!isOwner())return;const icon=$('ceIcon').value.trim()||'🎉';const name=$('ceName').value.trim();const from=$('ceFrom').value.trim();const to=$('ceTo').value.trim();const msg=$('ceMsg');msg.style.color='#ff6b6b';if(!name){msg.textContent='❌ Впиши название';return}if(!validMMDD(from)||!validMMDD(to)){msg.textContent='❌ Формат ММ-ДД';return}if(from>to){msg.textContent='❌ «От» > «До»';return}const{error}=await sb.from('custom_events').insert({name,icon,date_from:from,date_to:to,enabled:true});if(error){msg.textContent='❌ '+error.message;return}msg.style.color='#8bc34a';msg.textContent='✅ Создан: '+name;$('ceIcon').value='';$('ceName').value='';$('ceFrom').value='';$('ceTo').value='';await loadCustomEvents();renderCustomEventsList()}
 async function toggleCustomEvent(id,newVal){if(!isOwner())return;const{error}=await sb.from('custom_events').update({enabled:newVal}).eq('id',id);if(error)return showToast('❌ '+error.message,'error');await loadCustomEvents();renderCustomEventsList()}
@@ -1624,7 +1751,7 @@ async function ofFakes(b){
   await loadFakes();renderFakeList();
 }
 async function loadFakes(){try{const{data,error}=await sb.rpc('owner_list_fakes');if(error){fakeList=[];return}fakeList=data||[]}catch(e){fakeList=[]}}
-function renderFakeList(){const box=$('fakeListBox');if(!box)return;if(!fakeList.length){box.innerHTML='<div class="afe">Пока нет фейков</div>';return}box.innerHTML=fakeList.map(f=>{const isCurrent=(me===f.nick);return '<div class="of-user-row"><div style="flex:1;min-width:0"><div class="nik" style="color:#fff;font-size:14px">'+eh(f.nick)+(isCurrent?' <b style="color:#a06bff">●</b>':'')+'</div><div style="font-size:11px;color:#8888a0;margin-top:2px">💰 '+f.coins+' · '+new Date(f.created_at).toLocaleDateString('ru-RU')+'</div></div><div style="display:flex;gap:6px;flex-wrap:wrap">'+(isCurrent?'<button class="of-ev-btn on" disabled>● В нём</button>':'<button class="of-ev-btn" style="background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff;border-color:transparent" onclick="switchToFake(\''+eh(f.nick)+'\')">🎭 Войти</button>')+'<button class="of-ev-btn" style="background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;border-color:transparent" onclick="deleteFake(\''+eh(f.nick)+'\')">🗑</button></div></div>'}).join('')}
+function renderFakeList(){const box=$('fakeListBox');if(!box)return;if(!fakeList.length){box.innerHTML='<div class="afe">Пока нет фейков</div>';return}box.innerHTML=fakeList.map(f=>{const isCurrent=(me===f.nick);return '<div class="of-user-row"><div style="flex:1;min-width:0"><div class="nik" style="color:#fff;font-size:14px">'+eh(f.nick)+(isCurrent?' <b style="color:#a06bff">●</b>':'')+'</div><div style="font-size:11px;color:#8888a0;margin-top:2px">💰 '+f.coins+' · '+new Date(f.created_at).toLocaleDateString('ru-RU')+'</div></div><div style="display:flex;gap:6px;flex-wrap:wrap">'+(isCurrent?'<button class="of-ev-btn on" disabled>● В нём</button>':'<button class="of-ev-btn test" onclick="switchToFake(\''+eh(f.nick)+'\')">🎭 Войти</button>')+'<button class="of-ev-btn danger" onclick="deleteFake(\''+eh(f.nick)+'\')">🗑</button></div></div>'}).join('')}
 async function createFake(){if(!isOwner())return;const inp=$('fakeNickInp');const msg=$('fakeMsg');const nick=(inp.value||'').trim();msg.style.color='#ff6b6b';if(!nick||nick.length<2){msg.textContent='❌ Ник короткий';return}if(!/^[а-яА-Яa-zA-Z0-9_\- ]+$/.test(nick)){msg.textContent='❌ Только буквы, цифры, _, -, пробел';return}const{data,error}=await sb.rpc('owner_create_fake',{p_nick:nick});if(error){msg.textContent='❌ '+error.message;return}if(data&&data.ok===false){msg.textContent='❌ '+(data.error||'ошибка');return}msg.style.color='#8bc34a';msg.textContent='✅ Создан: '+nick;inp.value='';await loadFakes();renderFakeList();showToast('🎭 Фейк создан: '+nick,'success')}
 async function deleteFake(nick){if(!isOwner())return;const ok=await askConfirm('Удалить фейка?','Все его данные удалятся безвозвратно.\n\nНик: '+nick,'Удалить',true);if(!ok)return;const{data,error}=await sb.rpc('owner_delete_fake',{p_nick:nick});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||'ошибка'),'error');return}if(me===nick){returnToOwner();setTimeout(()=>{loadFakes().then(renderFakeList)},200);return}await loadFakes();renderFakeList();showToast('🗑 Удалён: '+nick,'success')}
 async function switchToFake(nick){if(!isOwner())return;const f=fakeList.find(x=>x.nick===nick);if(!f)return showToast('Не найден','error');if(!realMe){realMe=me;realMeEnc=meEnc}try{localStorage.setItem('dom_fake_me',nick);localStorage.setItem('dom_real_me',realMe)}catch(e){}me=nick;meEnc=en(nick);closeOwner();closeUserMenu();try{showToast('🎭 Под фейком: '+nick,'success')}catch(e){}$('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');$('fakeBadge').classList.add('on');upAdminTog();await loadMyRooms();await loadPhotoCache();await loadCoins();await loadGroups();await loadDMs();renderDMs();await loadHouses();curHouse=houses[0]?.id||curHouse;renderHouses();await switchHouse(curHouse);jobCheckDay();if(ch){sb.removeChannel(ch);ch=null}if(curRoom)closeM()}
@@ -1667,7 +1794,7 @@ function afEnt(b){const bl=houseData?.blocked_entrances||[];let h='';for(let e=1
 async function afHouse(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data:hs,error}=await sb.from('houses').select('*').order('id');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}const all=hs||[];const{data:fl}=await sb.from('flats').select('house_id,owner_nicks,owner_nick,owner_nick2');const cnt={};(fl||[]).forEach(f=>{const h=Number(f.house_id);if(!cnt[h])cnt[h]=0;if(flatOwners(f).length)cnt[h]++});let html='';if(isOwner()){html+='<div class="afr" style="border-left:4px solid #d32f2f"><div class="info"><div class="ti">🏗 Управление домами</div><div class="su">Всего домов: <b>'+all.length+'</b></div></div><div class="ac"><button class="afbtn r" onclick="quickCreateHouse()">➕ Создать новый дом</button></div></div>'}if(!all.length){html+='<div class="afe">Домов нет</div>';b.innerHTML=html;return}all.forEach(h=>{const hid=Number(h.id);const blocked=!!h.blocked;const c=cnt[hid]||0;const isCur=(hid===Number(curHouse));const ann=h.announcement||'';const start=(hid-1)*30+1,end=(hid-1)*30+30;html+='<div class="afr"'+(isCur?' style="border-left:4px solid #f5c542"':'')+'><div class="info"><div class="ti">🏘 '+eh(h.name||('Дом №'+hid))+' <span class="afbdg '+(blocked?'r':'g')+'">'+(blocked?'заблокирован':'открыт')+'</span>'+(isCur?' <span class="afbdg" style="background:rgba(245,197,66,.15);color:#f5c542">текущий</span>':'')+'</div><div class="su">Квартиры '+start+'–'+end+' · Занято: '+c+'/30</div></div><div class="ac">'+(blocked?'<button class="afbtn g" onclick="afTogHouse('+hid+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogHouse('+hid+',true)">Закрыть</button>')+'<button class="afbtn gr" onclick="openAnn('+hid+')">📢 Объявление</button></div></div>';if(ann){html+='<div class="afr" style="border-left:4px solid #f5c542;margin-left:16px"><div class="info"><div class="ti">📢 Объявление дома '+hid+'</div><div class="su" style="margin-top:8px;white-space:pre-wrap;color:#c8c8d0">'+eh(ann)+'</div></div><div class="ac"><button class="afbtn r" onclick="delAnn('+hid+')">Удалить</button></div></div>'}});b.innerHTML=html}
 async function quickCreateHouse(){if(!isOwner())return showToast('Только владелец','error');if(lock)return;const nextId=houses.length?Math.max(...houses.map(h=>Number(h.id)||0))+1:1;const name='Дом №'+nextId;const ok=await askConfirm('Создать дом?','«'+name+'» с 30 квартирами.','Создать');if(!ok)return;lock=true;try{const{data:h,error:e1}=await sb.from('houses').insert({id:nextId,name}).select().single();if(e1){showToast('Ошибка: '+e1.message,'error');return}const rows=[];for(let k=1;k<=30;k++)rows.push({house_id:nextId,number:k});const{error:e2}=await sb.from('flats').insert(rows);if(e2){await sb.from('houses').delete().eq('id',nextId);showToast('Ошибка: '+e2.message,'error');return}houses.push(h);await loadHouses();renderHouses();await switchHouse(nextId)}finally{lock=false}}
 async function autoCheckNewHouse(){if(lock)return;if(!houses.length)return;try{const{data,error}=await sb.from('flats').select('house_id,owner_nicks,owner_nick,owner_nick2');if(error)return;const byHouse={};(data||[]).forEach(f=>{const h=Number(f.house_id);if(!byHouse[h])byHouse[h]={total:0,taken:0};byHouse[h].total++;if(flatOwners(f).length)byHouse[h].taken++});let allFull=true;for(const h of houses){const s=byHouse[h.id]||{total:0,taken:0};if(s.total===0||s.taken<s.total){allFull=false;break}}if(allFull){const nextId=Math.max(...houses.map(h=>Number(h.id)||0))+1;const name='Дом №'+nextId;const{data:nh,error:e1}=await sb.from('houses').insert({id:nextId,name}).select().single();if(e1)return;const rows=[];for(let k=1;k<=30;k++)rows.push({house_id:nextId,number:k});const{error:e2}=await sb.from('flats').insert(rows);if(e2){await sb.from('houses').delete().eq('id',nextId);return}houses.push(nh);renderHouses()}}catch(e){}}
-async function afUsers(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('profiles').select('*').order('nick');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}usersAll=data||[];const bannedCount=usersAll.filter(u=>u.banned).length;const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);const o=hasAdmin();const isOwn=isOwner();let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'"><div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div></div><div class="ac">'+(showBanned?'<button class="afbtn gr" onclick="toggleBannedView()">👁 Скрыть</button>':'<button class="afbtn r" onclick="toggleBannedView()">👁 Показать ('+bannedCount+')</button>')+'</div></div>';if(!visible.length){b.innerHTML=top+'<div class="afe">Пусто</div>';return}b.innerHTML=top+visible.map(u=>{const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;const nickEnc=eh(u.nick);const coinBtns=isOwn?('<button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 100)">+100</button><button class="afbtn g" onclick="admCoins(\''+nickEnc+'\', 1000)">+1000</button><button class="afbtn r" onclick="admCoins(\''+nickEnc+'\', -100)">−100</button>'):'';const banBtns=o?(bn?'<button class="afbtn g" onclick="unBan(\''+nickEnc+'\')">Разбан</button>':'<button class="afbtn r" onclick="banU(\''+nickEnc+'\')">Бан</button>'):'';const admBtns=isOwn?(ad?'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="afbtn gr" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>'):'';const flatBtns=isOwn?('<button class="afbtn g" onclick="ownerSetFlat(\''+nickEnc+'\')" title="Заселить в квартиру">🏠 Заселить</button><button class="afbtn r" onclick="ownerKickUser(\''+nickEnc+'\')" title="Выселить из всех квартир">🚪 Выселить</button>'):'';return '<div class="ur '+(bn?'banned':'')+'">'+avH(u.nick,'sm')+'<div style="flex:1;min-width:140px;margin-left:4px">'+'<div class="nk" style="cursor:pointer" onclick="openProfile(\''+nickEnc+'\')">'+eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')+'</div>'+'<div class="rs" style="color:#f5c542;font-size:12px">💰 '+coins+'</div>'+(u.ban_reason?'<div class="rs">'+eh(u.ban_reason)+'</div>':'')+'</div>'+'<div style="display:flex;gap:6px;flex-wrap:wrap">'+flatBtns+coinBtns+banBtns+admBtns+'</div></div>'}).join('')}
+async function afUsers(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('profiles').select('*').order('nick');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}usersAll=data||[];const bannedCount=usersAll.filter(u=>u.banned).length;const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);const o=hasAdmin();const isOwn=isOwner();let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'"><div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div></div><div class="ac">'+(showBanned?'<button class="afbtn gr" onclick="toggleBannedView()">👁 Скрыть</button>':'<button class="afbtn r" onclick="toggleBannedView()">👁 Показать ('+bannedCount+')</button>')+'</div></div>';if(!visible.length){b.innerHTML=top+'<div class="afe">Пусто</div>';return}b.innerHTML=top+visible.map(u=>{const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;const nickEnc=eh(u.nick);const coinBtns=isOwn?('<button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 100)">+100</button><button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 1000)">+1000</button><button class="of-ev-btn danger" onclick="admCoins(\''+nickEnc+'\', -100)">−100</button>'):'';const banBtns=o?(bn?'<button class="of-ev-btn on" onclick="unBan(\''+nickEnc+'\')">Разбан</button>':'<button class="of-ev-btn danger" onclick="banU(\''+nickEnc+'\')">Бан</button>'):'';const admBtns=isOwn?(ad?'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>'):'';const flatBtns=isOwn?('<button class="of-ev-btn" onclick="ownerSetFlat(\''+nickEnc+'\')" title="Заселить в квартиру">🏠 Заселить</button><button class="of-ev-btn danger" onclick="ownerKickUser(\''+nickEnc+'\')" title="Выселить из всех квартир">🚪 Выселить</button>'):'';return '<div class="of-user-row">'+avH(u.nick,'sm')+'<div style="flex:1;min-width:140px;margin-left:4px">'+'<div class="nik" style="cursor:pointer;color:#fff" onclick="openProfile(\''+nickEnc+'\')">'+eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')+'</div>'+'<div style="color:#f5c542;font-size:12px;margin-top:2px">💰 '+coins+'</div>'+(u.ban_reason?'<div style="font-size:11px;color:#ff6666;margin-top:2px">'+eh(u.ban_reason)+'</div>':'')+'</div>'+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">'+flatBtns+coinBtns+banBtns+admBtns+'</div></div>'}).join('')}
 function toggleBannedView(){showBanned=!showBanned;afRend()}
 async function admCoins(nick,delta){if(!isOwner())return showToast('Только владелец','error');const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:nick,p_delta:delta});if(error)return showToast('Ошибка: '+error.message,'error');if(data&&data.ok===false)return showToast(data.error||'Ошибка','error');if(nick===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}afRend()}
 async function banU(n){if(!hasAdmin())return showToast('Только админам','error');if(n===me)return showToast('Себя нельзя','error');const r=prompt('Причина','нарушение');if(r===null)return;await sb.from('profiles').update({banned:true,ban_reason:r||''}).eq('nick',n);afRend()}
