@@ -34,7 +34,7 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes neonFlick{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,22%,24%,55%{opacity:.35}40%{opacity:1}41%{opacity:.4}42%{opacity:1}}
 @keyframes sakuraPulse{0%,100%{box-shadow:0 0 22px #ff8eb6cc,0 0 45px #ffb3d1aa,inset 0 0 12px #ff8eb655;filter:brightness(1)}50%{box-shadow:0 0 32px #ff8eb6ff,0 0 65px #ffb3d1dd,inset 0 0 18px #ff8eb688;filter:brightness(1.1)}}
 @keyframes aquaPulse{0%,100%{box-shadow:0 0 22px #00d4ffcc,0 0 45px #0099ff88,inset 0 0 12px #00d4ff55;filter:brightness(1) hue-rotate(0)}50%{box-shadow:0 0 38px #00d4ffff,0 0 70px #0099ffdd,inset 0 0 20px #00d4ff88;filter:brightness(1.15) hue-rotate(8deg)}}
-@keyframes stormFlick{0%,88%,92%,96%,100%{box-shadow:0 0 22px #ffd700cc,0 0 45px #1a3a6eaa,inset 0 0 12px #ffd70055}90%{box-shadow:0 0 55px #ffffff,0 0 110px #ffd700,0 0 180px #fff,inset 0 0 35px #ffffff}94%{box-shadow:0 0 40px #ffd700,0 0 80px #1a3a6e,inset 0 0 20px #ffd70099}}
+@keyframes stormFlick{0%,88%,92%,96%,100%{box-shadow:0 0 22px #ffd700cc,0 0 45px #1a3a6eaa,inset 0 0 12px #ffd70055}90%{box-shadow:0 0 55px #ffffff,0 0 110px #ffd700,0 0 180px #fff,inset 0 0 35px #ffffff}94%{box-shadow:0 0 40px #ffd700,0 0 80px #1a3a6e,inset 0 0 20px #d70099}}
 @keyframes galaxyGlow{0%,100%{box-shadow:0 0 0 3px #6b00aa,0 0 35px #a06bffcc,0 0 70px #ff69b488,inset 0 0 18px #6b00aa88}50%{box-shadow:0 0 0 3px #a06bff,0 0 60px #d0a0ffdd,0 0 120px #ff69b4aa,inset 0 0 28px #6b00aacc}}
 @keyframes dragonGlow{0%,100%{box-shadow:0 0 0 3px #15803d,0 0 30px #22c55ecc,0 0 60px #4ade8088,inset 0 0 20px #22c55e66}50%{box-shadow:0 0 0 3px #22c55e,0 0 55px #4ade80ff,0 0 100px #86efaccc,inset 0 0 30px #22c55e88}}
 @keyframes dragonBreath{0%,90%,100%{filter:brightness(1) saturate(1)}92%{filter:brightness(1.5) saturate(1.5) hue-rotate(-15deg)}95%{filter:brightness(1.25) saturate(1.25)}}
@@ -1615,10 +1615,10 @@ function stopFireworks(){
   if(_fireworksRaf){cancelAnimationFrame(_fireworksRaf);_fireworksRaf=null}
   if(_fireworksTimer){clearInterval(_fireworksTimer);_fireworksTimer=null}
 }
-/* ===== НАСТРОЙКИ СЕЗОНОВ ===== */
+/* ===== СЕЗОНЫ ===== */
 function cycleSeason(){const cur=window.getSeason?window.getSeason():'autumn';const order=['autumn','winter','spring','summer'];const i=order.indexOf(cur);const next=order[(i+1)%order.length];if(window.setSeason)window.setSeason(next);updateSeasonBtn();closeUserMenu()}
 function updateSeasonBtn(){const b=$('seasonBtn');if(!b)return;const s=window.getSeason?window.getSeason():'autumn';const L={autumn:'🍂 осень',winter:'❄️ зима',spring:'🌸 весна',summer:'☀️ лето'};const span=b.querySelector('span');if(span)span.textContent='Сезон: '+L[s]}
-/* ===== КВАРТИРЫ / ЮЗЕРЫ (AF/OF) ===== */
+/* ===== AF/OF ===== */
 async function afFlats(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('flats').select('*').order('house_id').order('number');if(error){b.innerHTML='<div class="afe">Ошибка: '+eh(error.message)+'</div>';return}const all=data||[];const taken=all.filter(f=>flatOwners(f).length);if(!taken.length){b.innerHTML='<div class="afe">Нет занятых</div>';return}const byHouse={};taken.forEach(f=>{const h=Number(f.house_id);if(!byHouse[h])byHouse[h]=[];byHouse[h].push(f)});const ids=Object.keys(byHouse).map(Number).sort((a,b)=>a-b);let html='';for(const hid of ids){const hInfo=houses.find(x=>Number(x.id)===hid);const start=(hid-1)*30+1,end=(hid-1)*30+30;html+='<div style="margin:16px 0 8px;padding:10px 14px;background:rgba(245,197,66,.08);border-left:3px solid #f5c542;border-radius:10px"><b style="color:#f5c542;font-size:14px">🏘 '+eh(hInfo?hInfo.name:'Дом №'+hid)+'</b> <span style="color:#8888a0;font-size:12px;margin-left:8px">квартиры '+start+'–'+end+' · занято '+byHouse[hid].length+'/30</span></div>';html+=byHouse[hid].sort((a,b)=>a.number-b.number).map(f=>{const owners=flatOwners(f).map(de),mp=f.max_people??2;const ent=gloEnt(f.house_id,Math.ceil(f.number/10));const hD=houses.find(x=>Number(x.id)===Number(f.house_id));const bl=(hD?.blocked_entrances||[]).includes(ent);const gNum=(f.house_id-1)*30+Number(f.number);return '<div class="afr"><div class="info"><div class="ti">🏠 Кв. '+gNum+'<span class="afbdg '+(bl?'r':'g')+'">'+(bl?'закрыт':'ок')+'</span></div><div class="su">👤 '+owners.map((o,i)=>eh(o)+(i===0?' 👑':'')).join(', ')+'</div><div class="su">👥 <b>'+owners.length+'/'+mp+'</b></div></div><div class="ac"><button class="afbtn g" onclick="afMax('+f.house_id+','+f.number+')">👥 Мест: '+mp+'</button><button class="afbtn r" onclick="afEvict('+f.house_id+','+f.number+')">выселить</button></div></div>'}).join('')}b.innerHTML=html}
 function afEnt(b){const bl=houseData?.blocked_entrances||[];let h='';for(let e=1;e<=3;e++){const g=gloEnt(curHouse,e),is=bl.includes(g),c=Object.values(flats).filter(f=>flatOwners(f).length&&Math.ceil(f.number/10)===e).length;h+='<div class="afr"><div class="info"><div class="ti">🏢 Подъезд '+g+' <span class="afbdg '+(is?'r':'g')+'">'+(is?'заблокирован':'открыт')+'</span></div><div class="su">Занято: '+c+'/10</div></div><div class="ac">'+(is?'<button class="afbtn g" onclick="afTogEnt('+g+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogEnt('+g+',true)">Закрыть</button>')+'</div></div>'}b.innerHTML=h}
 async function afHouse(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data:hs,error}=await sb.from('houses').select('*').order('id');if(error){b.innerHTML='<div class="afe">Ошибка: '+eh(error.message)+'</div>';return}const all=hs||[];const{data:fl}=await sb.from('flats').select('house_id,owner_nicks,owner_nick,owner_nick2');const cnt={};(fl||[]).forEach(f=>{const h=Number(f.house_id);if(!cnt[h])cnt[h]=0;if(flatOwners(f).length)cnt[h]++});let html='';if(isOwner()){html+='<div class="afr" style="border-left:4px solid #d32f2f"><div class="info"><div class="ti">🏗 Управление домами</div><div class="su">Всего домов: <b>'+all.length+'</b></div></div><div class="ac"><button class="afbtn r" onclick="quickCreateHouse()">➕ Создать новый дом</button></div></div>'}if(!all.length){html+='<div class="afe">Домов нет</div>';b.innerHTML=html;return}all.forEach(h=>{const hid=Number(h.id);const blocked=!!h.blocked;const c=cnt[hid]||0;const isCur=(hid===Number(curHouse));const ann=h.announcement||'';const start=(hid-1)*30+1,end=(hid-1)*30+30;html+='<div class="afr"'+(isCur?' style="border-left:4px solid #f5c542"':'')+'><div class="info"><div class="ti">🏘 '+eh(h.name||('Дом №'+hid))+' <span class="afbdg '+(blocked?'r':'g')+'">'+(blocked?'заблокирован':'открыт')+'</span>'+(isCur?' <span class="afbdg" style="background:rgba(245,197,66,.15);color:#f5c542">текущий</span>':'')+'</div><div class="su">Квартиры '+start+'–'+end+' · Занято: '+c+'/30</div></div><div class="ac">'+(blocked?'<button class="afbtn g" onclick="afTogHouse('+hid+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogHouse('+hid+',true)">Закрыть</button>')+'<button class="afbtn gr" onclick="openAnn('+hid+')">📢 Объявление</button></div></div>';if(ann){html+='<div class="afr" style="border-left:4px solid #f5c542;margin-left:16px"><div class="info"><div class="ti">📢 Объявление дома '+hid+'</div><div class="su" style="margin-top:8px;white-space:pre-wrap;color:#c8c8d0">'+eh(ann)+'</div></div><div class="ac"><button class="afbtn r" onclick="delAnn('+hid+')">Удалить</button></div></div>'}});b.innerHTML=html}
@@ -1665,7 +1665,7 @@ function jobWeldStop(){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskStat
 function jobWelderMeasure(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">📏 Замер</div><div class="job-measure-track" id="jobMTrack"><div class="job-measure-zone" id="jobMZone"></div><div class="job-measure-needle" id="jobMNeedle"></div><div class="job-measure-value" id="jobMVal">0</div></div><button class="duty-start" onclick="jobMStop('+i+')">📏 Фикс</button><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:8px" onclick="openJob()">← Назад</button>';const tr=$('jobMTrack'),zn=$('jobMZone'),nd=$('jobMNeedle');const r=tr.getBoundingClientRect();const zw=Math.max(50,r.width*0.10),zl=(r.width-zw)/2;zn.style.left=zl+'px';zn.style.width=zw+'px';let pos=0,dir=1,speed=1.4;const step=()=>{if(!_jobTaskState||_jobTaskState.done)return;pos+=dir*speed;if(pos<=0){pos=0;dir=1}if(pos>=r.width){pos=r.width;dir=-1}nd.style.left=pos+'px';$('jobMVal').textContent=Math.round(pos/r.width*100);_jobTaskState.raf=requestAnimationFrame(step)};_jobTaskState={raf:null,done:false,getPos:()=>pos,zoneCenter:r.width/2,zoneHalf:zw/2};step()}
 function jobMStop(i){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskState.done=true;if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);const pos=_jobTaskState.getPos();const diff=Math.abs(pos-_jobTaskState.zoneCenter);let p=1-diff/_jobTaskState.zoneHalf;if(p<0)p=0;if(p>1)p=1;const st=jobLoad()||jobDefault();if(!st.weldPrecisions)st.weldPrecisions=[];st.weldPrecisions[i]=p;st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,p);else openJob()},500)}
 function jobWelderCut(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">✂️ Веди ЛКМ</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:14px" onclick="openJob()">← Назад</button>';const field=$('jobField'),line=$('jobCutLine'),prog=$('jobCutProg');let progress=0,pressing=false,lastX=null,done=false;const updateProg=()=>{const pct=Math.min(100,Math.round(progress));prog.style.width=pct+'%';if(pct>=100){done=true;line.classList.add('job-cut-done');const st=jobLoad()||jobDefault();st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,1);else openJob()},500)}};const onDown=(e)=>{pressing=true;lastX=e.clientX};const onMove=(e)=>{if(!pressing)return;if(lastX!==null&&e.clientX>lastX){progress+=(e.clientX-lastX)*0.6;updateProg()}lastX=e.clientX};const onUp=()=>{pressing=false;lastX=null};field.addEventListener('mousedown',onDown);field.addEventListener('mousemove',onMove);window.addEventListener('mouseup',onUp);_jobTaskState={done:false}}
-async function jobFinishTask(i,won,p){jobStopTask();if(!won)return;const st=jobLoad()||jobDefault();if(!st.job)return;st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,i+1));if(st.tasksDone>=JOB_TASKS_PER_DAY){st.completedToday=true;st.lastComplete=jobToday();st.finishedDays=(st.finishedDays||0)+1;let r=JOBS[st.job].reward;if(st.job==='welder'){const pr=st.weldPrecisions||[];const avg=pr.length?pr.reduce((a,b)=>a+(b||0),0)/pr.length:0;r=Math.round(JOBS.welder.maxReward*avg)}if(isWeekendOptional(new Date())){r=Math.round(r*1.5);st.weekendShifts=(st.weekendShifts||0)+1}const b=frameBonusPct(myFrame);const applied=b>0?Math.round(r*(1+b/100)):r;st.weldPrecisions=[];jobSave(st);myCoins+=applied;try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI();showToast('💰 +'+applied+' монет','success')}else jobSave(st);openJob()}
+async function jobFinishTask(i,won,p){jobStopTask();if(!won)return;const st=jobLoad()||jobDefault();if(!st.job)return;st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,i+1));if(st.tasksDone>=JOB_TASKS_PER_DAY){st.completedToday=true;st.lastComplete=jobToday();st.finishedDays=(st.finishedDays||0)+1;let r=JOBS[st.job].reward;if(st.job==='welder'){const pr=st.weldPrecisions||[];const avg=pr.length?pr.reduce((a,b)=>a+(b||0),0)/pr.length:0;r=Math.round(JOBS.welder.maxReward*avg)}if(isWeekendOptional(new Date())){r=Math.round(r*1.5);st.weekendShifts=(st.weekendShifts||0)+1}const b=frameBonusPct(myFrame);const applied=b>0?Math.round(r*(1+b/100)):r;st.weldPrecisions=[];jobSave(st);try{const{data,error}=await sb.rpc('add_coins',{p_delta:applied});if(error){showToast('❌ '+error.message,'error')}else if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}showToast('💰 +'+applied+' монет','success')}else jobSave(st);openJob()}
 /* Дежурство */
 function getDutyPersonForEntrance(le){const d=new Date();const day=Math.floor((d-new Date(d.getFullYear(),0,0))/86400000);const base=(le-1)*10;for(let i=0;i<10;i++){const n=base+((day%10+i)%10)+1;const f=flats[n];if(f&&flatOwners(f).length){const o=flatOwners(f);return {flat:n,owner:o[day%o.length],ownerNick:de(o[day%o.length])}}}return {flat:null,owner:null,ownerNick:null}}
 function dutyKey(le){const d=new Date();return 'dutyDone_'+curHouse+'_'+le+'_'+d.getFullYear()+(d.getMonth()+1)+d.getDate()}
@@ -1674,7 +1674,7 @@ function closeDuty(){stopMiniGame();$('dutyM').classList.remove('open')}
 function startMiniGame(){if(!dutyIsDuty)return;dutyGameActive=true;dutyGameCaught=0;dutyGameStart=Date.now();$('dutyScore').textContent='0';$('dutyStartBtn').style.display='none';$('dutyGame').style.display='block';const field=$('dutyField');field.innerHTML='';field.classList.add('floor');for(let i=0;i<8;i++)spawnDirt(field,i);dutyGameTimer=setInterval(()=>{const left=Math.max(0,15-(Date.now()-dutyGameStart)/1000);$('dutyTime').textContent=left.toFixed(1);if(left<=0)stopMiniGame(true)},80)}
 function spawnDirt(field,idx){const size=40+Math.random()*40;const d=document.createElement('div');d.className='duty-dirt';d.style.width=size+'px';d.style.height=size*0.75+'px';const r=field.getBoundingClientRect();d.style.left=(Math.random()*(r.width-size))+'px';d.style.top=(Math.random()*(r.height-size*0.75))+'px';d.onclick=()=>{if(!dutyGameActive)return;d.classList.add('clean');dutyGameCaught++;$('dutyScore').textContent=dutyGameCaught;if(dutyGameCaught>=8)stopMiniGame(true)};field.appendChild(d)}
 function stopMiniGame(t){if(!dutyGameActive)return;dutyGameActive=false;if(dutyGameTimer)clearInterval(dutyGameTimer);const won=dutyGameCaught>=8;const field=$('dutyField');field.innerHTML='';field.classList.remove('floor');$('dutyStartBtn').style.display='block';$('dutyGame').style.display='none';if(won){const le=((myEnt()-1)%3)+1;localStorage.setItem(dutyKey(le),'1');addCoins(dutyGameReward);$('dutyMsg').textContent='✅ +'+dutyGameReward+'💰';$('dutyMsg').style.color='#8bc34a'}else{$('dutyMsg').textContent='Собрано '+dutyGameCaught+'/8';$('dutyMsg').style.color='#ff8888'}}
-/* Работа (в квартире) */
+/* Работа в квартире */
 function workCdKey(id){return 'workCd_'+meEnc+'_'+id}
 function workCdLeft(id){return Math.max(0,Number(localStorage.getItem(workCdKey(id))||0)+30000-Date.now())}
 function workCdSet(id){localStorage.setItem(workCdKey(id),String(Date.now()))}
@@ -1752,11 +1752,11 @@ function harvestBed(i,guest){if(guest)return showToast('🚫 Только про
 function openSeedShop(){$('seedShopM').classList.add('open');renderSeedShop();if(window._seedTick)clearInterval(window._seedTick);window._seedTick=setInterval(()=>{if($('seedShopM').classList.contains('open'))renderSeedShop();else{clearInterval(window._seedTick);window._seedTick=null}},1000)}
 function closeSeedShop(){$('seedShopM').classList.remove('open')}
 function renderSeedShop(){const slot=mskSlot();const stock=genSeedStock(slot);const bought=JSON.parse(localStorage.getItem('seedBought_'+slot)||'{}');const left=mskSlotLeft();const t=$('seedStockTimer');if(t)t.textContent='⏱ Обновление через '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0');const list=$('seedStockList');if(!list)return;const f=stock.filter(it=>it.always||(bought[it.id]||0)<it.qty);list.innerHTML=f.map(it=>{const s=SEEDS.find(x=>x.id===it.id);const r=RARITY[s.rarity];const can=myCoins>=s.price;return '<div class="seed-card"><div class="seed-icon">'+s.icon+'</div><div class="seed-info"><div class="seed-name">'+s.name+'</div><div class="seed-rarity" style="color:'+r.color+'">'+r.name+'</div><div class="seed-stats">💰'+s.price+' · 🌱'+s.grow+'с · 💵'+s.sell+'</div></div><button class="seed-buy'+(can?' buy':'')+'" '+(can?'':'disabled')+' onclick="buySeed(\''+s.id+'\')">Купить</button></div>'}).join('')}
-function buySeed(sid){const s=SEEDS.find(x=>x.id===sid);if(!s)return;if(myCoins<s.price)return showToast('Мало монет','error');const slot=mskSlot();const stock=genSeedStock(slot);const it=stock.find(x=>x.id===sid);if(!it)return;const bought=JSON.parse(localStorage.getItem('seedBought_'+slot)||'{}');if(!it.always&&(bought[sid]||0)>=it.qty)return;const g=loadGarden(me);g.inv[sid]=(g.inv[sid]||0)+1;myCoins-=s.price;saveGarden(me,g);try{sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI();bought[sid]=(bought[sid]||0)+1;localStorage.setItem('seedBought_'+slot,JSON.stringify(bought));showToast('🌱 '+s.name,'success');renderSeedShop()}
+async function buySeed(sid){const s=SEEDS.find(x=>x.id===sid);if(!s)return;if(myCoins<s.price)return showToast('Мало монет','error');const slot=mskSlot();const stock=genSeedStock(slot);const it=stock.find(x=>x.id===sid);if(!it)return;const bought=JSON.parse(localStorage.getItem('seedBought_'+slot)||'{}');if(!it.always&&(bought[sid]||0)>=it.qty)return;const g=loadGarden(me);g.inv[sid]=(g.inv[sid]||0)+1;try{const{data,error}=await sb.rpc('add_coins',{p_delta:-s.price});if(error){showToast('❌ '+error.message,'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error');return}saveGarden(me,g);bought[sid]=(bought[sid]||0)+1;localStorage.setItem('seedBought_'+slot,JSON.stringify(bought));showToast('🌱 '+s.name,'success');renderSeedShop()}
 function openFertShop(){$('fertShopM').classList.add('open');renderFertShop()}
 function closeFertShop(){$('fertShopM').classList.remove('open')}
 function renderFertShop(){const slot=mskSlot();const stock=genFertStock(slot);const bought=JSON.parse(localStorage.getItem('fertBought_'+slot)||'{}');const left=mskSlotLeft();const t=$('fertStockTimer');if(t)t.textContent='⏱ '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0');const list=$('fertStockList');if(!list)return;const f=stock.filter(it=>it.always||(bought[it.id]||0)<it.qty);list.innerHTML=f.map(it=>{const ff=FERTS.find(x=>x.id===it.id);const can=myCoins>=ff.price;return '<div class="seed-card"><div class="seed-icon">💧</div><div class="seed-info"><div class="seed-name">'+ff.name+'</div><div class="seed-rarity" style="color:'+ff.color+'">×'+ff.mult+'</div><div class="seed-stats">💰'+ff.price+'</div></div><button class="seed-buy'+(can?' buy':'')+'" '+(can?'':'disabled')+' onclick="buyFert(\''+ff.id+'\')">Купить</button></div>'}).join('')}
-function buyFert(fid){const f=FERTS.find(x=>x.id===fid);if(!f)return;if(myCoins<f.price)return showToast('Мало монет','error');const g=loadGarden(me);g.ferts[fid]=(g.ferts[fid]||0)+1;myCoins-=f.price;saveGarden(me,g);try{sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI();showToast('💧 '+f.name,'success');renderFertShop()}
+async function buyFert(fid){const f=FERTS.find(x=>x.id===fid);if(!f)return;if(myCoins<f.price)return showToast('Мало монет','error');const g=loadGarden(me);g.ferts[fid]=(g.ferts[fid]||0)+1;try{const{data,error}=await sb.rpc('add_coins',{p_delta:-f.price});if(error){showToast('❌ '+error.message,'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error');return}saveGarden(me,g);showToast('💧 '+f.name,'success');renderFertShop()}
 function openInv(){$('invM').classList.add('open');renderInv()}
 function closeInv(){$('invM').classList.remove('open');_invMode='view';_plantBedIdx=null}
 function renderInv(){const g=loadGarden(me);const se=$('invSeeds'),fe=$('invFerts');const sEnt=Object.entries(g.inv).filter(([k,v])=>v>0);if(!sEnt.length)se.innerHTML='<div class="inv-empty">Пусто</div>';else se.innerHTML=sEnt.map(([sid,qty])=>{const s=SEEDS.find(x=>x.id===sid);if(!s)return '';const r=RARITY[s.rarity];let pb=_invMode==='plant'?'<button class="seed-buy buy" onclick="plantSeed('+_plantBedIdx+',\''+s.id+'\')">Посадить</button>':'<button class="seed-buy" onclick="plantFirstFree(\''+s.id+'\')">🌱</button>';const gb='<button class="seed-buy gift" onclick="openGift(\''+s.id+'\')">🎁</button>';return '<div class="seed-card"><div class="seed-icon">'+s.icon+'</div><div class="seed-info"><div class="seed-name">'+s.name+' ×'+qty+'</div><div class="seed-rarity" style="color:'+r.color+'">'+r.name+'</div></div>'+pb+gb+'</div>'}).join('');const fEnt=Object.entries(g.ferts).filter(([k,v])=>v>0);if(!fEnt.length)fe.innerHTML='<div class="inv-empty">Нет удобрений</div>';else fe.innerHTML=fEnt.map(([fid,qty])=>{const f=FERTS.find(x=>x.id===fid);if(!f)return '';return '<div class="seed-card"><div class="seed-icon">💧</div><div class="seed-info"><div class="seed-name">'+f.name+' ×'+qty+'</div><div class="seed-rarity" style="color:'+f.color+'">×'+f.mult+'</div></div></div>'}).join('')}
@@ -1789,7 +1789,7 @@ function applyNeonPreset(key){const p=key.split(',').map(Number);if(p.length>=3)
 /* Монеты */
 async function loadCoins(){try{const{data}=await sb.from('profiles').select('coins,active_frame,owned_frames').eq('nick',me).maybeSingle();myCoins=(data&&data.coins)||0;myFrame=(data&&data.active_frame)||'none';myOwnedFrames=(data&&data.owned_frames)||['none']}catch(e){myCoins=0;myFrame='none';myOwnedFrames=['none']}updateCoinsUI()}
 function updateCoinsUI(){const b=$('myCoinsBadge');if(b)b.textContent='💰 '+myCoins;const d=$('dutyCoins');if(d)d.textContent=myCoins;const f=$('framesCoins');if(f)f.textContent=myCoins}
-async function addCoins(n){let ap=n;if(n>0){const b=frameBonusPct(myFrame);if(b>0)ap=Math.round(n*(1+b/100))}myCoins=Math.max(0,myCoins+ap);try{await sb.from('profiles').update({coins:myCoins}).eq('nick',me)}catch(e){}updateCoinsUI()}
+async function addCoins(n){let ap=n;if(n>0){const b=frameBonusPct(myFrame);if(b>0)ap=Math.round(n*(1+b/100))}try{const{data,error}=await sb.rpc('add_coins',{p_delta:ap});if(error){showToast('❌ '+error.message,'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}}
 function withBonus(b){const bo=frameBonusPct(myFrame);return bo>0?Math.round(b*(1+bo/100)):b}
 /* Дома/квартиры */
 function myFlat(){for(const n in flats)if(flatOwners(flats[n])[0]===meEnc)return Number(n);return null}
@@ -1814,7 +1814,7 @@ async function loadAllProfiles(){try{const{data}=await sb.from('profiles').selec
 async function loadPhotoCache(){try{const{data}=await sb.from('user_media').select('nick,photo_url');photoCache={};(data||[]).forEach(m=>{if(m.photo_url)photoCache[m.nick]=m.photo_url});const{data:fr}=await sb.from('profiles').select('nick,active_frame');frameCache={};(fr||[]).forEach(p=>{if(p.active_frame)frameCache[en(p.nick)]=p.active_frame})}catch(e){}}
 async function loadMyRooms(){const{data}=await sb.from('flats').select('house_id,number,owner_nicks');myRooms.clear();myAllFlats=[];(data||[]).forEach(f=>{const o=f.owner_nicks||[];if(o.includes(meEnc)){myAllFlats.push({house_id:f.house_id,number:f.number,owner:o[0]===meEnc});if(o.length>=2)myRooms.add('h'+f.house_id+'_flat'+f.number+'_room')}})}
 async function createHouse(n,i){const id=i||(houses.length?Math.max(...houses.map(h=>h.id))+1:1);const{data:h}=await sb.from('houses').insert({id,name:n}).select().single();const r=[];for(let k=1;k<=30;k++)r.push({house_id:id,number:k});await sb.from('flats').insert(r);houses.push(h);renderHouses();await switchHouse(id)}
-/* Рендер чатов */
+/* Чаты */
 function getHC(){try{return new Set(JSON.parse(localStorage.getItem('hc_'+meEnc)||'[]'))}catch(e){return new Set()}}
 function saveHC(s){localStorage.setItem('hc_'+meEnc,JSON.stringify(Array.from(s)))}
 async function hideC(rid,e){if(e)e.stopPropagation();const h=getHC();h.add(rid);saveHC(h);renderDMs()}
@@ -2108,142 +2108,60 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
     return 0;
   }
   function drawLeaf(p){
-    ctx.save();
-    ctx.translate(p.x,p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle=p.color;
-    const s=p.size;
-    ctx.beginPath();
-    ctx.moveTo(0,-s);
-    ctx.bezierCurveTo(s*0.7,-s*0.5,s*0.7,s*0.5,0,s);
-    ctx.bezierCurveTo(-s*0.7,s*0.5,-s*0.7,-s*0.5,0,-s);
-    ctx.fill();
-    ctx.strokeStyle='rgba(0,0,0,0.18)';
-    ctx.lineWidth=1;
-    ctx.beginPath();
-    ctx.moveTo(0,-s*0.8);
-    ctx.lineTo(0,s*0.8);
-    ctx.stroke();
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+    ctx.fillStyle=p.color;const s=p.size;
+    ctx.beginPath();ctx.moveTo(0,-s);ctx.bezierCurveTo(s*0.7,-s*0.5,s*0.7,s*0.5,0,s);ctx.bezierCurveTo(-s*0.7,s*0.5,-s*0.7,-s*0.5,0,-s);ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.18)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,-s*0.8);ctx.lineTo(0,s*0.8);ctx.stroke();
     ctx.restore();
   }
   function drawSnow(p){
     ctx.save();
     const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.size*2);
-    g.addColorStop(0,'rgba(255,255,255,0.95)');
-    g.addColorStop(0.6,'rgba(220,240,255,0.55)');
-    g.addColorStop(1,'rgba(200,230,255,0)');
-    ctx.fillStyle=g;
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size*2,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,0.95)';
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-    ctx.fill();
+    g.addColorStop(0,'rgba(255,255,255,0.95)');g.addColorStop(0.6,'rgba(220,240,255,0.55)');g.addColorStop(1,'rgba(200,230,255,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.size*2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.95)';ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
     ctx.restore();
   }
   function drawPetal(p){
-    ctx.save();
-    ctx.translate(p.x,p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle=p.color;
-    const s=p.size;
-    ctx.beginPath();
-    ctx.moveTo(0,-s);
-    ctx.bezierCurveTo(s*0.9,-s*0.3,s*0.9,s*0.4,0,s);
-    ctx.bezierCurveTo(-s*0.4,s*0.5,-s*0.7,-s*0.2,0,-s);
-    ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.25)';
-    ctx.lineWidth=0.6;
-    ctx.stroke();
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+    ctx.fillStyle=p.color;const s=p.size;
+    ctx.beginPath();ctx.moveTo(0,-s);ctx.bezierCurveTo(s*0.9,-s*0.3,s*0.9,s*0.4,0,s);ctx.bezierCurveTo(-s*0.4,s*0.5,-s*0.7,-s*0.2,0,-s);ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=0.6;ctx.stroke();
     ctx.restore();
   }
   function drawSun(){
-    const cx=W-110,cy=110,R=52;
-    sunAngle+=0.002;
-    ctx.save();
-    ctx.translate(cx,cy);
-    ctx.rotate(sunAngle);
+    const cx=W-110,cy=110,R=52;sunAngle+=0.002;
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(sunAngle);
     for(let i=0;i<12;i++){
-      const a=(i/12)*Math.PI*2;
-      const r2=R+22+Math.sin(sunAngle*3+i)*4;
-      ctx.save();
-      ctx.rotate(a);
+      const a=(i/12)*Math.PI*2;const r2=R+22+Math.sin(sunAngle*3+i)*4;
+      ctx.save();ctx.rotate(a);
       const grd=ctx.createLinearGradient(R,0,r2,0);
-      grd.addColorStop(0,'rgba(255,215,80,0.75)');
-      grd.addColorStop(1,'rgba(255,215,80,0)');
-      ctx.fillStyle=grd;
-      ctx.beginPath();
-      ctx.moveTo(R,0);
-      ctx.lineTo(r2,-6);
-      ctx.lineTo(r2,6);
-      ctx.closePath();
-      ctx.fill();
+      grd.addColorStop(0,'rgba(255,215,80,0.75)');grd.addColorStop(1,'rgba(255,215,80,0)');
+      ctx.fillStyle=grd;ctx.beginPath();ctx.moveTo(R,0);ctx.lineTo(r2,-6);ctx.lineTo(r2,6);ctx.closePath();ctx.fill();
       ctx.restore();
     }
     ctx.restore();
     const g=ctx.createRadialGradient(cx,cy,4,cx,cy,R);
-    g.addColorStop(0,'rgba(255,255,220,1)');
-    g.addColorStop(0.4,'rgba(255,220,90,0.95)');
-    g.addColorStop(0.8,'rgba(255,180,50,0.55)');
-    g.addColorStop(1,'rgba(255,160,40,0)');
-    ctx.fillStyle=g;
-    ctx.beginPath();
-    ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle='rgba(255,255,200,0.95)';
-    ctx.beginPath();
-    ctx.arc(cx,cy,R*0.45,0,Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle='rgba(255,240,150,0.85)';
-    ctx.beginPath();
-    ctx.arc(cx,cy,R*0.28,0,Math.PI*2);
-    ctx.fill();
+    g.addColorStop(0,'rgba(255,255,220,1)');g.addColorStop(0.4,'rgba(255,220,90,0.95)');g.addColorStop(0.8,'rgba(255,180,50,0.55)');g.addColorStop(1,'rgba(255,160,40,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,200,0.95)';ctx.beginPath();ctx.arc(cx,cy,R*0.45,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,240,150,0.85)';ctx.beginPath();ctx.arc(cx,cy,R*0.28,0,Math.PI*2);ctx.fill();
   }
   function loop(){
     ctx.clearRect(0,0,W,H);
-    if(curSeason==='summer'){
-      drawSun();
-      raf=requestAnimationFrame(loop);
-      return;
-    }
+    if(curSeason==='summer'){drawSun();raf=requestAnimationFrame(loop);return}
     for(let i=particles.length-1;i>=0;i--){
-      const p=particles[i];
-      p.sway+=p.swaySpeed;
-      p.x+=p.vx+Math.sin(p.sway)*p.swayAmp;
-      p.y+=p.vy;
-      p.rot+=p.vrot;
-      if(p.y>H+30||p.x<-40||p.x>W+40){
-        particles[i]=mkParticle(curSeason);
-        continue;
-      }
-      if(curSeason==='autumn')drawLeaf(p);
-      else if(curSeason==='winter')drawSnow(p);
-      else if(curSeason==='spring')drawPetal(p);
+      const p=particles[i];p.sway+=p.swaySpeed;p.x+=p.vx+Math.sin(p.sway)*p.swayAmp;p.y+=p.vy;p.rot+=p.vrot;
+      if(p.y>H+30||p.x<-40||p.x>W+40){particles[i]=mkParticle(curSeason);continue}
+      if(curSeason==='autumn')drawLeaf(p);else if(curSeason==='winter')drawSnow(p);else if(curSeason==='spring')drawPetal(p);
     }
     raf=requestAnimationFrame(loop);
   }
-  function initParticles(){
-    particles=[];
-    const n=countForSeason(curSeason);
-    for(let i=0;i<n;i++){
-      const p=mkParticle(curSeason);
-      if(!p)continue;
-      p.y=Math.random()*H;
-      particles.push(p);
-    }
-  }
+  function initParticles(){particles=[];const n=countForSeason(curSeason);for(let i=0;i<n;i++){const p=mkParticle(curSeason);if(!p)continue;p.y=Math.random()*H;particles.push(p)}}
   function applySeason(s){curSeason=s;initParticles()}
   window.getSeason=function(){return curSeason};
-  window.setSeason=function(s){
-    if(!['spring','summer','autumn','winter'].includes(s))return;
-    localStorage.setItem('dom_season',s);
-    applySeason(s);
-  };
-  window.resetSeason=function(){
-    localStorage.removeItem('dom_season');
-    applySeason(getSeasonNow());
-  };
+  window.setSeason=function(s){if(!['spring','summer','autumn','winter'].includes(s))return;localStorage.setItem('dom_season',s);applySeason(s)};
+  window.resetSeason=function(){localStorage.removeItem('dom_season');applySeason(getSeasonNow())};
   resize();
   window.addEventListener('resize',()=>{resize();initParticles()});
   applySeason(getSeasonNow());
