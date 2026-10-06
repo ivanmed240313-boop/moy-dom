@@ -845,6 +845,32 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .of-ev-btn.test{background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff;border-color:transparent}
 .of-hint{font-size:12.5px;color:#a0a0b8;line-height:1.6;padding:12px 14px;background:rgba(245,197,66,.06);border:1px solid rgba(245,197,66,.18);border-radius:12px;margin-bottom:12px}
 .of-hint b{color:#f5c542}
+/* ===== КРАСИВЫЙ ВЫБОР ИВЕНТОВ (OWNER) ===== */
+.of-ev-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;padding:6px;background:rgba(0,0,0,.3);border-radius:16px;border:1px solid rgba(245,197,66,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+.of-ev-tab{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:12px;background:transparent;color:#c8c8d0;cursor:pointer;font-size:12.5px;font-weight:700;white-space:nowrap;border:1px solid transparent;transition:all .22s cubic-bezier(.4,0,.2,1);font-family:inherit;user-select:none;position:relative}
+.of-ev-tab .ev-ic{font-size:16px;line-height:1;transition:transform .22s}
+.of-ev-tab:hover{background:rgba(245,197,66,.1);color:#f5c542;border-color:rgba(245,197,66,.3);transform:translateY(-1px)}
+.of-ev-tab:hover .ev-ic{transform:scale(1.18) rotate(-4deg)}
+.of-ev-tab.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;border-color:transparent;box-shadow:0 4px 14px rgba(245,197,66,.4),0 0 0 1px rgba(255,255,255,.15)}
+.of-ev-tab.act .ev-ic{transform:scale(1.15)}
+.of-ev-tab.act::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:22px;height:3px;border-radius:3px;background:#f5c542;box-shadow:0 0 10px #f5c542}
+.of-ev-date{padding:9px 14px;background:linear-gradient(135deg,rgba(245,197,66,.1),rgba(255,157,46,.03));border-left:3px solid #f5c542;border-radius:10px;font-size:12.5px;color:#e0e0e8;margin-bottom:16px;font-weight:600;letter-spacing:.2px;line-height:1.5}
+.of-ev-date b{color:#8bc34a}
+.of-ev-group{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap}
+.of-ev-group .of-ev-btn{min-width:74px;text-align:center;transition:all .18s;position:relative}
+.of-ev-group .of-ev-btn:hover{transform:translateY(-1px)}
+.of-ev-group .of-ev-btn:active{transform:scale(.96)}
+.of-ev-group .of-ev-btn:not(.on):hover{border-color:rgba(245,197,66,.7);color:#f5c542}
+.of-ev-group .of-ev-btn.on{box-shadow:0 0 12px rgba(76,175,80,.55),0 0 0 1px rgba(255,255,255,.1)}
+.of-ev-group .of-ev-btn[data-mode="off"].on{background:linear-gradient(135deg,#d32f2f,#b71c1c);box-shadow:0 0 12px rgba(211,47,47,.55)}
+.of-ev-group .of-ev-btn[data-mode="auto"].on{background:linear-gradient(135deg,#5aabff,#4a90d9);box-shadow:0 0 12px rgba(90,171,255,.55)}
+@media(max-width:768px){
+  .of-ev-tabs{padding:4px;gap:4px;border-radius:13px}
+  .of-ev-tab{padding:7px 10px;font-size:11px;gap:4px;border-radius:10px}
+  .of-ev-tab .ev-ic{font-size:13px}
+  .of-ev-group{width:100%;justify-content:flex-start;margin-left:0;margin-top:6px}
+  .of-ev-group .of-ev-btn{min-width:0;flex:1;padding:7px 8px;font-size:11px}
+}
 /* XMAS TREE + GIFTS */
 #xmasTree{position:fixed;right:24px;bottom:24px;z-index:2;pointer-events:none;display:none;overflow:visible}
 #xmasTree.on{display:block}
@@ -1456,26 +1482,46 @@ async function doGiveSeed(id){if(!giveTarget)return showToast('Введи ник
 async function doGiveFert(id){if(!giveTarget)return showToast('Введи ник','error');const msg=$('giveMsgInline');const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();if(e0||!p){if(msg)msg.textContent='❌ Не найден';return showToast('❌','error')}const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(msg)msg.textContent='✅ Выдано: '+id;showToast('🎁 '+id,'success');if(giveTarget===me)setTimeout(checkGifts,300)}
 async function doGiveCoins(delta){if(!giveTarget)return showToast('Введи ник','error');if(!delta||isNaN(delta))return showToast('Некорректная сумма','error');const msg=$('giveMsgInline');const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:giveTarget,p_delta:delta});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(data&&data.ok===false){if(msg)msg.textContent='❌ '+(data.error||'');return showToast('❌','error')}if(giveTarget===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}if(msg)msg.textContent='✅ '+(delta>0?'+':'')+delta+' → '+(data.coins!=null?data.coins:'—');showToast('💰 '+(delta>0?'+':'')+delta,'success')}
 
-/* ===== ИВЕНТЫ (OWNER) ===== */
+/* ===== КРАСИВЫЙ ВЫБОР ИВЕНТОВ (OWNER) ===== */
 let curEvTab='xmas';
-function ofEvTabSet(t){curEvTab=t;ofSw('events')}
+function ofEvTabSet(t){
+  if(curEvTab===t)return;
+  curEvTab=t;
+  ofSw('events');
+}
 async function ofEvents(b){
-  b.innerHTML='<div class="of-hint">🎆 <b>Ивенты.</b> Выбери ивент, потом для каждого игрока: Авто / Вкл / Выкл.</div>'+
-    '<div class="of-ev-tabs">'+EVENTS.map(e=>'<div class="of-ev-tab'+(curEvTab===e.id?' act':'')+'" onclick="ofEvTabSet(\''+e.id+'\')">'+e.icon+' '+e.name+'</div>').join('')+'</div>'+
-    '<div class="afe">Загрузка...</div>';
+  if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}
+  b.innerHTML='<div class="afe">Загрузка...</div>';
   const{data,error}=await sb.from('profiles').select('nick').order('nick');
-  if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}
+  if(error){b.innerHTML='<div class="afe">Ошибка загрузки</div>';return}
   const users=data||[];
-  const tabsHtml='<div class="of-hint">🎆 <b>Ивенты.</b> Авто / Вкл / Выкл.</div>'+
-    '<div class="of-ev-tabs">'+EVENTS.map(e=>'<div class="of-ev-tab'+(curEvTab===e.id?' act':'')+'" onclick="ofEvTabSet(\''+e.id+'\')">'+e.icon+' '+e.name+'</div>').join('')+'</div>';
   const dateInfo=evDateInfo(curEvTab);
-  b.innerHTML=tabsHtml+'<div style="font-size:12px;color:#a0a0b8;padding:6px 0 12px">'+dateInfo+'</div>'+
-    users.map(u=>{const m=evModeFor(u.nick,curEvTab);const nickEnc=eh(u.nick);
-      return '<div class="of-user-row">'+avH(u.nick,'sm')+'<div class="nik">'+eh(u.nick)+'</div><div style="display:flex;gap:4px;margin-left:auto;flex-wrap:wrap">'+
-        '<button class="of-ev-btn'+(m==='auto'?' on':'')+'" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'auto\')">🔘 Авто</button>'+
-        '<button class="of-ev-btn'+(m==='on'?' on':'')+'" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'on\')">✅ Вкл</button>'+
-        '<button class="of-ev-btn'+(m==='off'?' on':'')+'" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'off\')">🚫 Выкл</button>'+
-        '</div></div>'}).join('');
+  const activeCount=users.filter(u=>{
+    const m=evModeFor(u.nick,curEvTab);
+    return m==='on'||(m==='auto'&&isEventMSK(curEvTab));
+  }).length;
+  const tabsHtml=
+    '<div class="of-hint">🎆 <b>Ивенты.</b> Выбери ивент, потом для каждого игрока: <b>Авто</b> / <b>Вкл</b> / <b>Выкл</b>.</div>'+
+    '<div class="of-ev-tabs">'+
+      EVENTS.map(e=>'<div class="of-ev-tab'+(curEvTab===e.id?' act':'')+'" onclick="ofEvTabSet(\''+e.id+'\')">'+
+        '<span class="ev-ic">'+e.icon+'</span>'+e.name+
+      '</div>').join('')+
+    '</div>'+
+    '<div class="of-ev-date">📅 '+dateInfo+' · <b>активен у '+activeCount+' из '+users.length+'</b></div>';
+  if(!users.length){b.innerHTML=tabsHtml+'<div class="afe">Нет игроков</div>';return}
+  b.innerHTML=tabsHtml+users.map(u=>{
+    const m=evModeFor(u.nick,curEvTab);
+    const nickEnc=eh(u.nick);
+    return '<div class="of-user-row">'+
+      avH(u.nick,'sm')+
+      '<div class="nik">'+eh(u.nick)+'</div>'+
+      '<div class="of-ev-group">'+
+        '<button class="of-ev-btn'+(m==='auto'?' on':'')+'" data-mode="auto" title="По календарю" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'auto\')">🔘 Авто</button>'+
+        '<button class="of-ev-btn'+(m==='on'?' on':'')+'" data-mode="on" title="Всегда включён" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'on\')">✅ Вкл</button>'+
+        '<button class="of-ev-btn'+(m==='off'?' on':'')+'" data-mode="off" title="Всегда выключен" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'off\')">🚫 Выкл</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
 }
 function evDateInfo(evId){
   if(evId==='xmas')return '🎄 Декабрь и январь (МСК).';
@@ -1994,8 +2040,7 @@ function stopAllMedia(){
   vA=null;vId=null;
   document.querySelectorAll('.mc video').forEach(v=>{try{if(!v.paused){v.pause();const c=v.closest('.mc');if(c)c.classList.add('paused')}}catch(e){}});
   document.querySelectorAll('.voice-msg.playing').forEach(v=>{try{v.classList.remove('playing');v.querySelectorAll('.wb').forEach(b=>b.classList.remove('played'))}catch(e){}});
-  const bg=$('bgA');if(bg&&!bg.paused){try{bg.pause();const mb=$('mbB');if(mb)mb.classList.remove('playing')}catch(e){}}
-}
+  const bg=$('bgA');if(bg&&!bg.paused){try{bg.pause();const mb=$('mbB');if(mb)mb.classList.remove('playing')}catch(e){}}}
 function playVoice(id,url,dur){
   try{
     stopAllMedia();
