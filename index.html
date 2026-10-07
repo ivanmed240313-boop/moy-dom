@@ -2306,5 +2306,6 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
   resize();window.addEventListener('resize',()=>{resize();initParticles()});applySeason(getSeasonNow());loop();
 })();
 </script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/moy-dom/sw.js',{scope:'/moy-dom/'}).catch(()=>{});}</script>
 </body>
 </html>
