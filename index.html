@@ -31,7 +31,12 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes haloPulse{0%,100%{box-shadow:0 0 10px #fff7c0,0 0 22px #ffe066,inset 0 0 6px #ffffffcc;transform:translateX(-50%) scale(1)}50%{box-shadow:0 0 16px #fff7c0,0 0 34px #ffe066,inset 0 0 10px #ffffff;transform:translateX(-50%) scale(1.08)}}
 @keyframes hornTwitch{0%,100%{transform:rotate(var(--hr,0deg)) scale(1)}50%{transform:rotate(calc(var(--hr,0deg) + 4deg)) scale(1.06)}}
 @keyframes rainbowShift{0%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}16%{border-color:#ff5500;box-shadow:0 0 20px #ff5500cc,0 0 40px #ff5500aa,inset 0 0 10px #ff550066}33%{border-color:#ffcc00;box-shadow:0 0 20px #ffcc00cc,0 0 40px #ffcc00aa,inset 0 0 10px #ffcc0066}50%{border-color:#22dd66;box-shadow:0 0 20px #22dd66cc,0 0 40px #22dd66aa,inset 0 0 10px #22dd6666}66%{border-color:#00ccff;box-shadow:0 0 20px #00ccffcc,0 0 40px #00ccffaa,inset 0 0 10px #00ccff66}83%{border-color:#a020ff;box-shadow:0 0 20px #a020ffcc,0 0 40px #a020ffaa,inset 0 0 10px #a020ff66}100%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}}
-@keyframes vhsGlitch{0%{box-shadow:0 0 0 3px #ff0033,0 0 25px #ff0033,0 0 50px #00ffff,inset 0 0 15px #ffffff88;transform:translate(0,0)}10%{box-shadow:0 0 0 3px #00ffff,0 0 25px #00ffff,0 0 50px #ff0033,inset 0 0 15px #ffffff88;transform:translate(-2px,0)}20%{box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffff,0 0 55px #ff0033,inset 0 0 20px #ffffffaa;transform:translate(2px,0)}30%{box-shadow:0 0 0 3px #ff0033,0 0 30px #ff0033,0 0 55px #00ffff,inset 0 0 20px #ffffffaa;transform:translate(0,-2px)}40%{box-shadow:0 0 0 3px #00ffff,0 0 35px #00ffff,0 0 60px #ff0033,inset 0 0 25px #ffffffcc;transform:translate(0,2px)}50%{box-shadow:0 0 0 3px #ffffff,0 0 40px #ffffff,0 0 65px #ff0033,inset 0 0 25px #ffffffcc;transform:translate(-1px,-1px)}60%{box-shadow:0 0 0 3px #ff0033,0 0 35px #ff0033,0 0 60px #00ffff,inset 0 0 25px #ffffffcc;transform:translate(1px,1px)}70%{box-shadow:0 0 0 3px #00ffff,0 0 30px #00ffff,0 0 55px #ff0033,inset 0 0 20px #ffffffaa;transform:translate(-2px,0)}80%{box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffff,0 0 55px #ff0033,inset 0 0 20px #ffffffaa;transform:translate(2px,0)}90%{box-shadow:0 0 0 3px #ff0033,0 0 25px #ff0033,0 0 50px #00ffff,inset 0 0 15px #ffffff88;transform:translate(0,0)}100%{box-shadow:0 0 0 3px #00ffff,0 0 25px #00ffff,0 0 50px #ff0033,inset 0 0 15px #ffffff88;transform:translate(0,0)}}
+@keyframes vhsGlitch{
+  0%,100%{border-color:#ff0033!important;box-shadow:0 0 0 3px #ff0033,0 0 25px #ff0033,0 0 50px #00ffff}
+  25%{border-color:#00ffff!important;box-shadow:0 0 0 3px #00ffff,0 0 25px #00ffff,0 0 50px #ff0033}
+  50%{border-color:#ffffff!important;box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffff,0 0 60px #ff0033}
+  75%{border-color:#ff0033!important;box-shadow:0 0 0 3px #ff0033,0 0 25px #00ffff,0 0 50px #ff0033}
+}
 @keyframes vhsScan{0%{background-position:0 0}100%{background-position:0 4px}}
 @keyframes vhsFlick{0%,100%{opacity:1}10%{opacity:.6}11%{opacity:1}45%{opacity:.85}46%{opacity:1}78%{opacity:.7}79%{opacity:1}}
 @keyframes vhsBar{0%,100%{transform:translateY(-120%)}50%{transform:translateY(120%)}}
@@ -209,7 +214,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .flat.frame-rainbow{border-color:transparent!important;animation:rainbowShift 3s linear infinite;overflow:visible!important}
 .flat.frame-angelic{border-color:#ffffff!important;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important;z-index:15!important}
 .flat.frame-devil{border-color:#8b0000!important;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important;z-index:15!important}
-.flat.frame-vhs{border-color:#fff!important;animation:vhsGlitch .5s steps(11,end) infinite;overflow:visible!important;z-index:16!important}
+.flat.frame-vhs{border-color:#fff!important;animation:vhsGlitch .4s linear infinite;overflow:visible!important;z-index:16!important}
 .flat.frame-sakura{border-color:#ff8eb6!important;animation:sakuraPulse 3s ease-in-out infinite}
 .flat.frame-aqua{border-color:#00d4ff!important;animation:aquaPulse 3.5s ease-in-out infinite}
 .flat.frame-storm{border-color:#4a6da8!important;animation:stormFlick 3s ease-in-out infinite}
@@ -450,7 +455,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .pf-av.frame-rainbow{border-color:transparent;animation:rainbowShift 3s linear infinite}
 .pf-av.frame-angelic{border-color:#ffffff;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important;z-index:5}
 .pf-av.frame-devil{border-color:#8b0000;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important;z-index:5}
-.pf-av.frame-vhs{border-color:#fff;animation:vhsGlitch .5s steps(11,end) infinite;overflow:visible!important;z-index:6}
+.pf-av.frame-vhs{border-color:#fff;animation:vhsGlitch .4s linear infinite;overflow:visible!important;z-index:6}
 .pf-av.frame-sakura{border-color:#ff8eb6;animation:sakuraPulse 3s ease-in-out infinite}
 .pf-av.frame-aqua{border-color:#00d4ff;animation:aquaPulse 3.5s ease-in-out infinite}
 .pf-av.frame-storm{border-color:#4a6da8;animation:stormFlick 3s ease-in-out infinite}
@@ -732,7 +737,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fr-preview.frame-rainbow{border-color:transparent;box-shadow:0 0 0 3px #ff0055,0 0 22px #ff0055cc;animation:rainbowShift 3s linear infinite;overflow:visible!important}
 .fr-preview.frame-angelic{border-color:#ffffff;box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffffdd,0 0 55px #c8e8ffaa;animation:angelGlow 2.5s ease-in-out infinite;overflow:visible!important}
 .fr-preview.frame-devil{border-color:#8b0000;box-shadow:0 0 0 3px #8b0000,0 0 28px #ff0000cc,0 0 50px #ff440088;animation:devilGlow 2s ease-in-out infinite;overflow:visible!important}
-.fr-preview.frame-vhs{border-color:#fff;box-shadow:0 0 0 3px #fff,0 0 25px #ff0033,0 0 50px #00ffff;animation:vhsGlitch .5s steps(11,end) infinite;overflow:visible!important}
+.fr-preview.frame-vhs{border-color:#fff;box-shadow:0 0 0 3px #fff,0 0 25px #ff0033,0 0 50px #00ffff;animation:vhsGlitch .4s linear infinite;overflow:visible!important}
 .fr-preview.frame-sakura{border-color:#ff8eb6;box-shadow:0 0 0 3px #ff8eb6,0 0 26px #ff8eb6cc,0 0 50px #ffb3d1aa;animation:sakuraPulse 3s ease-in-out infinite}
 .fr-preview.frame-aqua{border-color:#00d4ff;box-shadow:0 0 0 3px #00d4ff,0 0 28px #00d4ffcc,0 0 55px #0099ffaa;animation:aquaPulse 3.5s ease-in-out infinite}
 .fr-preview.frame-storm{border-color:#4a6da8;box-shadow:0 0 0 3px #4a6da8,0 0 28px #ffd70088,0 0 55px #1a3a6eaa;animation:stormFlick 3s ease-in-out infinite}
