@@ -1025,6 +1025,8 @@ body.fireworks-bg .hbtn:hover,body.fireworks-bg .ebtn:hover,body.fireworks-bg .f
 .hc{opacity:1}
 .add-btn{width:38px;height:38px;font-size:18px}
 .sb-h{padding:12px 14px;font-size:14px}
+.sb-h{gap:6px}
+.add-btn{width:36px !important;height:36px !important;font-size:16px !important;border-radius:10px !important}
 #dml{padding:6px}
 .ntf{padding:10px 12px;gap:10px}
 .nname{font-size:13.5px}
@@ -1046,7 +1048,7 @@ body.fireworks-bg .hbtn:hover,body.fireworks-bg .ebtn:hover,body.fireworks-bg .f
 #adminB{top:62px !important;right:10px !important;padding:6px 12px;font-size:11px;border-radius:10px;z-index:59}
 #hb{padding:64px 12px 10px 12px !important;gap:8px;background:rgba(15,15,22,.7)}
 .hbtn{padding:8px 14px;font-size:13px;border-radius:12px}
-#house{gap:10px;padding:12px;align-items:flex-start;justify-content:flex-start;flex-wrap:wrap}
+#house{gap:10px;padding:12px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
 .ewr{gap:8px}
 .ent{gap:6px}
 .flr{gap:6px}
@@ -1165,6 +1167,17 @@ body::before{display:none !important}
 .ebtn{padding:7px 8px;font-size:10px}
 .frames-list{grid-template-columns:repeat(2,1fr)}
 .fr-preview{width:44px;height:44px}
+}
+@media(max-width:768px){
+#seasons{display:none !important}
+body::before{display:none !important}
+#fireworksCv{display:none !important}
+.sb,.mn,.hb{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+.flat{box-shadow:none !important;transform-style:flat !important;transition:border-color .15s !important}
+.ebtn,.hbtn{transition:none !important}
+.msg,.ntf,.avw .ondot{animation:none !important}
+.umBtn{backdrop-filter:none !important}
+#modal,.em,.cr,#cfm,#sendCoinsM,#ofm,#flatPickerM{backdrop-filter:none !important}
 }
 @media(prefers-reduced-motion:reduce){
 *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
