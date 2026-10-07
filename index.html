@@ -2320,5 +2320,34 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
 })();
 </script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/moy-dom/sw.js',{scope:'/moy-dom/'}).catch(()=>{});}</script>
+<script>
+(function(){
+  var CURRENT = document.currentScript ? document.currentScript.src : '';
+  var lastHash = null;
+  var checkUrl = window.location.pathname + '?_=' + Date.now();
+  
+  async function checkUpdate(){
+    try{
+      var r = await fetch(checkUrl, {method:'HEAD', cache:'no-store'});
+      var lm = r.headers.get('last-modified') || r.headers.get('etag') || '';
+      if(lastHash === null){ lastHash = lm; return; }
+      if(lm && lm !== lastHash){
+        lastHash = lm;
+        if('caches' in window){
+          var names = await caches.keys();
+          await Promise.all(names.map(n=>caches.delete(n)));
+        }
+        window.location.reload();
+      }
+    }catch(e){}
+  }
+  
+  setInterval(checkUpdate, 30000);
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) checkUpdate();
+  });
+  window.addEventListener('focus', checkUpdate);
+})();
+</script>
 </body>
 </html>
