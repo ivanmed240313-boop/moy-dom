@@ -831,14 +831,12 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 @media(max-width:600px){.garden-beds{grid-template-columns:repeat(2,1fr);gap:8px}.gbed{min-height:105px;padding:10px 6px}.gbed-icon{font-size:28px}.seed-card{padding:8px 10px;gap:8px}.seed-icon{font-size:22px;width:32px}}
 
 /* =====================================================================
-   OWNER PANEL v3.0 — обновлённый интерфейс
+   OWNER PANEL v3.0.1 — обновлённый интерфейс
    ===================================================================== */
 #ofm{display:none;position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(245,197,66,.08),rgba(0,0,0,.94) 60%),rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:420;padding:20px;backdrop-filter:blur(8px)}
 #ofm.open{display:flex;animation:fadeIn .25s}
 .ofb{background:linear-gradient(180deg,#1a1508 0%,#0f0a02 50%,#080500 100%);border:1px solid rgba(245,197,66,.5);border-radius:26px;width:820px;max-width:100%;height:92vh;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 80px rgba(245,197,66,.35),0 30px 90px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.06);animation:ownerGlow 4s ease-in-out infinite;position:relative}
 .ofb::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(245,197,66,.7),transparent);pointer-events:none}
-
-/* HEADER */
 .ofh{padding:18px 24px;border-bottom:1px solid rgba(245,197,66,.2);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(245,197,66,.14),rgba(255,157,46,.05));flex-shrink:0;position:relative}
 .ofh::after{content:'';position:absolute;bottom:-1px;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,rgba(245,197,66,.5),transparent)}
 .ofh h3{margin:0;font-size:20px;font-weight:900;background:linear-gradient(135deg,#f5c542,#ff9d2e,#f5c542);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.6px;display:flex;align-items:center;gap:10px;animation:shim 4s infinite}
@@ -846,8 +844,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .ofh .badge{margin-left:auto;font-size:11px;font-weight:800;color:#000;background:linear-gradient(135deg,#f5c542,#ff9d2e);padding:4px 10px;border-radius:8px;letter-spacing:.5px;text-transform:uppercase}
 .ofh button{background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.3);color:#f5c542;font-size:18px;width:34px;height:34px;border-radius:10px;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;transition:all .2s;font-weight:700}
 .ofh button:hover{background:rgba(245,197,66,.2);transform:scale(1.05)}
-
-/* TABS */
 .oft{display:flex;gap:6px;padding:14px 20px;border-bottom:1px solid rgba(245,197,66,.12);flex-wrap:wrap;overflow-x:auto;scrollbar-width:none;background:rgba(0,0,0,.25);flex-shrink:0}
 .oft::-webkit-scrollbar{display:none}
 .oftab{padding:10px 16px;border-radius:12px;background:rgba(245,197,66,.05);color:#c8c8d0;cursor:pointer;font-size:13px;font-weight:700;white-space:nowrap;border:1px solid rgba(245,197,66,.16);font-family:inherit;transition:all .2s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:7px;user-select:none}
@@ -856,20 +852,14 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .oftab:hover .ic{transform:scale(1.15)}
 .oftab.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;border-color:transparent;box-shadow:0 4px 16px rgba(245,197,66,.45),0 0 0 1px rgba(255,255,255,.1);transform:translateY(-1px)}
 .oftab.act .ic{transform:scale(1.15)}
-
-/* BODY */
 .ofbd{flex:1;overflow-y:auto;padding:20px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
 .ofbd::-webkit-scrollbar-thumb{background:rgba(245,197,66,.25)}
-
-/* USER ROWS */
 .of-user-row{background:linear-gradient(135deg,rgba(245,197,66,.05),rgba(245,197,66,.02));border:1px solid rgba(245,197,66,.16);border-radius:16px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;transition:all .2s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
 .of-user-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#f5c542,#ff9d2e);opacity:0;transition:opacity .2s}
 .of-user-row:hover{background:linear-gradient(135deg,rgba(245,197,66,.1),rgba(245,197,66,.04));border-color:rgba(245,197,66,.4);transform:translateX(2px);box-shadow:0 4px 20px rgba(245,197,66,.12)}
 .of-user-row:hover::before{opacity:1}
 .of-user-row .nik{font-weight:800;color:#f5c542;min-width:100px;font-size:14px;letter-spacing:.2px}
 .of-user-row .bal{font-size:12px;color:#a0a0b8}
-
-/* OWNER BUTTONS */
 .of-ev-btn{padding:7px 12px;border-radius:10px;border:1px solid rgba(245,197,66,.35);background:rgba(245,197,66,.06);color:#c8c8d0;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;transition:all .18s cubic-bezier(.4,0,.2,1);display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .of-ev-btn:hover{background:rgba(245,197,66,.15);border-color:rgba(245,197,66,.6);color:#f5c542;transform:translateY(-1px)}
 .of-ev-btn:active{transform:scale(.96)}
@@ -878,12 +868,8 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .of-ev-btn.test:hover{box-shadow:0 0 14px rgba(160,107,255,.55)}
 .of-ev-btn.danger{background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;border-color:transparent}
 .of-ev-btn.danger:hover{box-shadow:0 0 14px rgba(211,47,47,.55)}
-
-/* HINT */
 .of-hint{font-size:12.5px;color:#a0a0b8;line-height:1.65;padding:13px 16px;background:linear-gradient(135deg,rgba(245,197,66,.08),rgba(245,197,66,.03));border:1px solid rgba(245,197,66,.2);border-left:3px solid #f5c542;border-radius:12px;margin-bottom:14px}
 .of-hint b{color:#f5c542;font-weight:800}
-
-/* EVENT TABS (красивые) */
 .of-ev-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;padding:6px;background:rgba(0,0,0,.3);border-radius:16px;border:1px solid rgba(245,197,66,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
 .of-ev-tab{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:12px;background:transparent;color:#c8c8d0;cursor:pointer;font-size:12.5px;font-weight:700;white-space:nowrap;border:1px solid transparent;transition:all .22s cubic-bezier(.4,0,.2,1);font-family:inherit;user-select:none;position:relative}
 .of-ev-tab .ev-ic{font-size:16px;line-height:1;transition:transform .22s}
@@ -899,15 +885,11 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .of-ev-group .of-ev-btn.on{box-shadow:0 0 12px rgba(76,175,80,.55),0 0 0 1px rgba(255,255,255,.1)}
 .of-ev-group .of-ev-btn[data-mode="off"].on{background:linear-gradient(135deg,#d32f2f,#b71c1c);box-shadow:0 0 12px rgba(211,47,47,.55)}
 .of-ev-group .of-ev-btn[data-mode="auto"].on{background:linear-gradient(135deg,#5aabff,#4a90d9);box-shadow:0 0 12px rgba(90,171,255,.55)}
-
-/* GIVE / FAKES / CUSTOM INPUTS */
 .give-confirm{padding:14px;background:rgba(245,197,66,.08);border:1px solid rgba(245,197,66,.3);border-radius:14px;margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .give-confirm input{padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.4);color:#e8e8f0;font-size:14px;text-align:center;font-family:inherit;transition:all .2s}
 .give-confirm input:focus{outline:none;border-color:rgba(245,197,66,.6);box-shadow:0 0 0 3px rgba(245,197,66,.12)}
 .give-confirm button{padding:9px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;font-weight:800;cursor:pointer;font-family:inherit;font-size:13px;transition:all .2s}
 .give-confirm button:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(245,197,66,.4)}
-
-/* FLAT PICKER */
 #flatPickerM{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;z-index:800;padding:20px;backdrop-filter:blur(6px)}
 #flatPickerM.open{display:flex;animation:fadeIn .2s}
 .fp-box{background:linear-gradient(180deg,#1a1508,#0a0700);border:1px solid rgba(245,197,66,.5);border-radius:22px;width:760px;max-width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 60px rgba(245,197,66,.3),0 25px 80px rgba(0,0,0,.9)}
@@ -928,20 +910,14 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fp-flat .fnum{font-size:15px;font-weight:900;color:#fff;display:block;margin-bottom:3px}
 .fp-flat.mine .fnum{color:#d0b0ff}
 .fp-flat .fwho{font-size:10px;opacity:.85;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-
-/* FAKE LIST */
 #fakeListBox .of-user-row{border-color:rgba(160,107,255,.25);background:linear-gradient(135deg,rgba(160,107,255,.06),rgba(107,74,255,.02))}
 #fakeListBox .of-user-row:hover{border-color:rgba(160,107,255,.5);box-shadow:0 4px 20px rgba(160,107,255,.15)}
 #fakeListBox .of-user-row::before{background:linear-gradient(180deg,#a06bff,#6b4aff)}
 #fakeListBox .of-user-row .nik{color:#d0b0ff}
-
-/* CUSTOM EVENTS */
 #ceList .of-user-row{border-color:rgba(160,107,255,.25);background:linear-gradient(135deg,rgba(160,107,255,.06),rgba(107,74,255,.02))}
 #ceList .of-user-row:hover{border-color:rgba(160,107,255,.5);box-shadow:0 4px 20px rgba(160,107,255,.15)}
 #ceList .of-user-row::before{background:linear-gradient(180deg,#a06bff,#6b4aff)}
 #ceList .of-user-row .nik{color:#d0b0ff}
-
-/* RESPONSIVE */
 @media(max-width:768px){
   #ofm{padding:10px}
   .ofb{width:100%;height:96vh;border-radius:20px}
@@ -968,8 +944,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
   .fp-flat .fnum{font-size:13px}
   .fp-flat .fwho{font-size:9px}
 }
-
-/* XMAS TREE + GIFTS */
 #xmasTree{position:fixed;right:24px;bottom:24px;z-index:2;pointer-events:none;display:none;overflow:visible}
 #xmasTree.on{display:block}
 #xmasGifts{position:fixed;right:34px;bottom:8px;z-index:3;pointer-events:none;display:none;width:180px;height:70px;overflow:visible}
@@ -1219,7 +1193,7 @@ body::before{display:none !important}
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
 <div id="afm"><div class="afb"><div class="afh"><h3>⚙️ Админ-панель</h3><button onclick="closeAdmin()">×</button></div><div class="aft"><div class="aftab act" data-t="flats" onclick="afSw('flats')">🏠 Квартиры</div><div class="aftab" data-t="ent" onclick="afSw('ent')">🏢 Подъезды</div><div class="aftab" data-t="house" onclick="afSw('house')">🏘 Дом</div><div class="aftab" data-t="users" onclick="afSw('users')">👥 Юзеры</div></div><div class="afbd" id="afB"></div></div></div>
-<div id="ofm"><div class="ofb"><div class="ofh"><h3><span class="crown">👑</span>OWNER ПАНЕЛЬ<span class="badge">v3.0</span></h3><button onclick="closeOwner()">✕</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')"><span class="ic">🏠</span>Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')"><span class="ic">🏢</span>Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')"><span class="ic">🏘</span>Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')"><span class="ic">👥</span>Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')"><span class="ic">🎁</span>Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')"><span class="ic">🎄</span>Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')"><span class="ic">🎭</span>Фейки</div></div><div class="ofbd" id="ofB"></div></div></div>
+<div id="ofm"><div class="ofb"><div class="ofh"><h3><span class="crown">👑</span>OWNER ПАНЕЛЬ<span class="badge">v3.0.1</span></h3><button onclick="closeOwner()">✕</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')"><span class="ic">🏠</span>Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')"><span class="ic">🏢</span>Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')"><span class="ic">🏘</span>Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')"><span class="ic">👥</span>Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')"><span class="ic">🎁</span>Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')"><span class="ic">🎄</span>Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')"><span class="ic">🎭</span>Фейки</div></div><div class="ofbd" id="ofB"></div></div></div>
 <div id="fm"><div class="fmb"><h3 id="fmT">🏠 Квартира</h3><div class="fmt"><div class="fmtab act" data-t="media" onclick="fmSw('media')">📷 Медиа</div><div class="fmtab" data-t="room" id="fmTR" onclick="fmSw('room')" style="display:none">💬 Комната</div><div class="fmtab" data-t="manage" id="fmTM" onclick="fmSw('manage')" style="display:none">👥 Сосед</div><div class="fmtab" data-t="work" onclick="fmSw('work')">💼 Работа</div></div>
 <div class="fmp" id="fmPM"><div class="ms"><label>📷 Квадратное фото</label><div class="sp" id="sp"><div class="pi" id="pi"></div><span id="pe">нет фото</span></div><div class="file-row"><label class="file-btn" id="phBtn"><span>📁</span> <span>Выбрать файл</span><input type="file" id="phI" accept="image/*"></label><span class="file-name" id="phName">Файл не выбран</span></div><div class="sliders" id="slidersWrap" style="display:none;margin-top:12px"><div class="sr"><span class="ic">↔</span><input type="range" id="phX" min="0" max="100" value="50"><span class="vl" id="vX">50</span></div><div class="sr"><span class="ic">↕</span><input type="range" id="phY" min="0" max="100" value="50"><span class="vl" id="vY">50</span></div><div class="sr"><span class="ic">🔍</span><input type="range" id="phZ" min="50" max="300" value="100"><span class="vl" id="vZ">100%</span></div></div></div><div class="ms"><label>🎵 Музыка</label><div class="file-row"><label class="file-btn" id="musBtn"><span>🎵</span> <span>Выбрать файл</span><input type="file" id="musI" accept="audio/*"></label><span class="file-name" id="musName">Файл не выбран</span></div><div id="musC" style="font-size:12px;color:#666678;margin-top:8px"></div></div><div class="fms" id="mst"></div></div>
 <div class="fmp" id="fmPR" style="display:none"><div id="rc"></div><div class="ir"><input id="rIn" placeholder="Сообщение..." maxlength="500"><button id="rPB" class="ib">📎</button><button id="rVB" class="ib vb">🎤</button><button id="rSB">→</button></div></div>
@@ -1546,7 +1520,7 @@ function openOwner(){if(!isOwner())return showToast('Только владеле
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b);if(afT==='custom')return ofCustomEvents(b);if(afT==='fakes')return ofFakes(b)}
-const APP_VERSION='3.0.0';
+const APP_VERSION='3.0.1';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 
@@ -1836,7 +1810,7 @@ function jobWeldStop(){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskStat
 function jobWelderMeasure(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">📏 Замер</div><div class="job-measure-track" id="jobMTrack"><div class="job-measure-zone" id="jobMZone"></div><div class="job-measure-needle" id="jobMNeedle"></div><div class="job-measure-value" id="jobMVal">0</div></div><button class="duty-start" onclick="jobMStop('+i+')">📏 Фикс</button><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:8px" onclick="openJob()">← Назад</button>';const tr=$('jobMTrack'),zn=$('jobMZone'),nd=$('jobMNeedle');const r=tr.getBoundingClientRect();const zw=Math.max(50,r.width*0.10),zl=(r.width-zw)/2;zn.style.left=zl+'px';zn.style.width=zw+'px';let pos=0,dir=1,speed=1.4;const step=()=>{if(!_jobTaskState||_jobTaskState.done)return;pos+=dir*speed;if(pos<=0){pos=0;dir=1}if(pos>=r.width){pos=r.width;dir=-1}nd.style.left=pos+'px';$('jobMVal').textContent=Math.round(pos/r.width*100);_jobTaskState.raf=requestAnimationFrame(step)};_jobTaskState={raf:null,done:false,getPos:()=>pos,zoneCenter:r.width/2,zoneHalf:zw/2};step()}
 function jobMStop(i){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskState.done=true;if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);const pos=_jobTaskState.getPos();const diff=Math.abs(pos-_jobTaskState.zoneCenter);let p=1-diff/_jobTaskState.zoneHalf;if(p<0)p=0;if(p>1)p=1;const st=jobLoad()||jobDefault();if(!st.weldPrecisions)st.weldPrecisions=[];st.weldPrecisions[i]=p;st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,p);else openJob()},500)}
 function jobWelderCut(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">✂️ Веди ЛКМ / пальцем</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:14px" onclick="openJob()">← Назад</button>';const field=$('jobField'),line=$('jobCutLine'),prog=$('jobCutProg');let progress=0,pressing=false,lastX=null,done=false;const updateProg=()=>{const pct=Math.min(100,Math.round(progress));prog.style.width=pct+'%';if(pct>=100){done=true;line.classList.add('job-cut-done');const st=jobLoad()||jobDefault();st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,1);else openJob()},500)}};const onDown=(x)=>{pressing=true;lastX=x};const onMove=(x)=>{if(!pressing)return;if(lastX!==null&&x>lastX){progress+=(x-lastX)*0.6;updateProg()}lastX=x};const onUp=()=>{pressing=false;lastX=null};field.addEventListener('mousedown',e=>onDown(e.clientX));field.addEventListener('mousemove',e=>onMove(e.clientX));window.addEventListener('mouseup',onUp);field.addEventListener('touchstart',e=>{e.preventDefault();onDown(e.touches[0].clientX)},{passive:false});field.addEventListener('touchmove',e=>{e.preventDefault();onMove(e.touches[0].clientX)},{passive:false});field.addEventListener('touchend',e=>{e.preventDefault();onUp()},{passive:false});field.addEventListener('touchcancel',onUp);_jobTaskState={done:false}}
-async function jobFinishTask(i,won,p){jobStopTask();if(!won)return;const st=jobLoad()||jobDefault();if(!st.job)return;st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,i+1));if(st.tasksDone>=JOB_TASKS_PER_DAY){st.completedToday=true;st.lastComplete=jobToday();st.finishedDays=(st.finishedDays||0)+1;let r=JOBS[st.job].reward;if(st.job==='welder'){const pr=st.weldPrecisions||[];const avg=pr.length?pr.reduce((a,b)=>a+(b||0),0)/pr.length:0;r=Math.max(Math.round(JOBS.welder.maxReward*avg),Math.round(JOBS.welder.maxReward*0.25))}if(isWeekendOptional(new Date())){r=Math.round(r*1.5);st.weekendShifts=(st.weekendShifts||0)+1}const b=frameBonusPct(myFrame);const applied=b>0?Math.round(r*(1+b/100)):r;st.weldPrecisions=[];jobSave(st);try{const{data,error}=await sb.rpc('add_coins',{p_delta:applied});if(error){showToast('❌ '+error.message,'error')}else if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}showToast('💰 +'+applied+' монет','success')}else jobSave(st);openJob()}
+async function jobFinishTask(i,won,p){jobStopTask();if(!won)return;const st=jobLoad()||jobDefault();if(!st.job)return;st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,i+1));if(st.tasksDone>=JOB_TASKS_PER_DAY){st.completedToday=true;st.lastComplete=jobToday();st.finishedDays=(st.finishedDays||0)+1;let r=JOBS[st.job].reward;if(st.job==='welder'){const pr=st.weldPrecisions||[];const avg=pr.length?pr.reduce((a,b)=>a+(b||0),0)/pr.length:0;r=Math.max(Math.round(JOBS.welder.maxReward*avg),Math.round(JOBS.welder.maxReward*0.25))}if(isWeekendOptional(new Date())){r=Math.round(r*1.5);st.weekendShifts=(st.weekendShifts||0)+1}const b=frameBonusPct(myFrame);const applied=b>0?Math.round(r*(1+b/100)):r;st.weldPrecisions=[];jobSave(st);try{const{data,error}=await sb.rpc('earn_coins',{p_delta:applied});if(error){showToast('❌ '+error.message,'error')}else if(data&&data.ok===false){showToast('❌ '+(data.error||'Ошибка'),'error')}else if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}showToast('💰 +'+applied+' монет','success')}else jobSave(st);openJob()}
 
 /* ===== ДЕЖУРСТВО (1 раз в день) ===== */
 async function getEntranceOccupants(houseId,le){try{const{data}=await sb.from('flats').select('number,owner_nicks').eq('house_id',houseId);const start=(le-1)*10+1,end=le*10;const arr=[];(data||[]).forEach(f=>{if(f.number>=start&&f.number<=end){const o=f.owner_nicks||[];if(o.length)arr.push({num:f.number,owner:o[0]})}});arr.sort((a,b)=>a.num-b.num);return arr.map(x=>x.owner)}catch(e){return[]}}
@@ -1963,7 +1937,7 @@ function applyNeonPreset(key){const p=key.split(',').map(Number);if(p.length>=3)
 /* ===== МОНЕТЫ ===== */
 async function loadCoins(){try{const{data}=await sb.from('profiles').select('coins,active_frame,owned_frames').eq('nick',me).maybeSingle();myCoins=(data&&data.coins)||0;myFrame=(data&&data.active_frame)||'none';myOwnedFrames=(data&&data.owned_frames)||['none']}catch(e){myCoins=0;myFrame='none';myOwnedFrames=['none']}updateCoinsUI()}
 function updateCoinsUI(){const b=$('myCoinsBadge');if(b)b.textContent='💰 '+myCoins;const d=$('dutyCoins');if(d)d.textContent=myCoins;const f=$('framesCoins');if(f)f.textContent=myCoins}
-async function addCoins(n){let ap=n;if(n>0){const b=frameBonusPct(myFrame);if(b>0)ap=Math.round(n*(1+b/100))}try{const{data,error}=await sb.rpc('add_coins',{p_delta:ap});if(error){showToast('❌ '+error.message,'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}}
+async function addCoins(n){let ap=n;if(n>0){const b=frameBonusPct(myFrame);if(b>0)ap=Math.round(n*(1+b/100))}try{const{data,error}=await sb.rpc('earn_coins',{p_delta:ap});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||'Ошибка'),'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}}
 function withBonus(b){const bo=frameBonusPct(myFrame);return bo>0?Math.round(b*(1+bo/100)):b}
 
 /* ===== ДОМА/КВАРТИРЫ ===== */
