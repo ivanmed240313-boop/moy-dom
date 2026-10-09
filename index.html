@@ -35,6 +35,7 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes vhsScan{0%{background-position:0 0}100%{background-position:0 4px}}
 @keyframes vhsFlick{0%,100%{opacity:1}10%{opacity:.6}11%{opacity:1}45%{opacity:.85}46%{opacity:1}78%{opacity:.7}79%{opacity:1}}
 @keyframes vhsBar{0%,100%{transform:translateY(-120%)}50%{transform:translateY(120%)}}
+@keyframes vhsMobFlick{0%,100%{box-shadow:0 0 0 3px #fff,0 0 22px #ff0033,0 0 40px #00ffff}33%{box-shadow:0 0 0 3px #fff,0 0 28px #00ffff,0 0 50px #ff0033}66%{box-shadow:0 0 0 3px #fff,0 0 25px #ff0033,0 0 45px #00ffff}}
 @keyframes vhsShake{0%,100%{transform:translate(0,0)}15%{transform:translate(-1px,1px)}30%{transform:translate(1px,-1px)}45%{transform:translate(-1.5px,0.5px)}60%{transform:translate(1px,1.5px)}75%{transform:translate(-1px,-1px)}90%{transform:translate(0.5px,-1.5px)}}
 @keyframes neonFlick{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,22%,24%,55%{opacity:.35}40%{opacity:1}41%{opacity:.4}42%{opacity:1}}
 @keyframes sakuraPulse{0%,100%{box-shadow:0 0 22px #ff8eb6cc,0 0 45px #ffb3d1aa,inset 0 0 12px #ff8eb655;filter:brightness(1)}50%{box-shadow:0 0 32px #ff8eb6ff,0 0 65px #ffb3d1dd,inset 0 0 18px #ff8eb688;filter:brightness(1.1)}}
@@ -1112,6 +1113,31 @@ body.fireworks-bg .hbtn:hover,body.fireworks-bg .ebtn:hover,body.fireworks-bg .f
   #callMini{top:64px;padding:8px 14px}
 }
 
+/* ===== SHOP TABS ===== */
+.shop-tabs{display:flex;gap:6px;padding:0 0 14px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:14px}
+.shop-tab{flex:1;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#a0a0b8;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;transition:all .15s;text-align:center;user-select:none}
+.shop-tab:hover{background:rgba(255,255,255,.08);color:#e8e8f0}
+.shop-tab.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;border-color:transparent;box-shadow:0 4px 14px rgba(245,197,66,.4)}
+
+/* ===== ITEMS LIST ===== */
+.items-list{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:460px;overflow-y:auto;padding:2px}
+.item-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;transition:transform .2s,border-color .2s}
+.item-card:hover{transform:translateY(-2px);border-color:rgba(245,197,66,.4)}
+.item-card.owned{border-color:rgba(76,175,80,.5);background:rgba(76,175,80,.06)}
+.item-preview{width:64px;height:64px;border-radius:16px;background:linear-gradient(145deg,#1a1a24,#0f0f16);display:flex;align-items:center;justify-content:center;font-size:36px;border:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.item-name{font-size:12px;font-weight:700;color:#e8e8f0}
+.item-price{font-size:11px;color:#f5c542;font-weight:700}
+.item-btn{width:100%;padding:8px;border-radius:10px;border:none;cursor:pointer;font-weight:700;font-size:11px;font-family:inherit}
+.item-btn.buy{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
+.item-btn.buy:disabled{opacity:.4;cursor:not-allowed}
+.item-btn.owned{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff}
+@media(max-width:600px){.items-list{grid-template-columns:repeat(2,1fr);gap:8px}.item-preview{width:54px;height:54px;font-size:30px}}
+
+/* ===== PROFILE ITEMS ===== */
+.pf-items{display:none;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.06)}
+.pf-item{width:44px;height:44px;border-radius:12px;background:linear-gradient(145deg,#1a1a24,#0f0f16);display:flex;align-items:center;justify-content:center;font-size:24px;border:1px solid rgba(255,255,255,.1);cursor:help;transition:transform .15s}
+.pf-item:hover{transform:scale(1.1);border-color:rgba(245,197,66,.5)}
+
 @media(max-width:768px){
 .dom-toast{bottom:20px;font-size:13.5px;padding:11px 18px;max-width:calc(100vw - 32px)}
 .sb{position:fixed;left:-100%;top:0;height:100vh;width:86%;max-width:340px;z-index:200;transition:left .3s;box-shadow:4px 0 24px rgba(0,0,0,.6)}
@@ -1279,9 +1305,9 @@ body::before{display:none !important}
 <div id="em" class="em"><div class="emb"><h3>✏️ Редактировать</h3><textarea id="emTxt" maxlength="500"></textarea><div class="ema"><button class="cn" onclick="closeEm()">Отмена</button><button class="sv" onclick="saveEd()">Сохранить</button></div></div></div>
 <div id="annM" class="em"><div class="emb" style="width:460px"><h3>📢 Объявление для дома</h3><textarea id="annInp" placeholder="Напиши объявление..." maxlength="500"></textarea><div class="ema"><button class="cn" onclick="closeAnn()">Отмена</button><button class="sv" onclick="postAnn()" id="annPostBtn">📢 Опубликовать</button></div><div class="fms" id="annErr" style="color:#ff6b6b"></div></div></div>
 <div id="dutyM" class="em" style="z-index:670"><div class="emb" style="width:520px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🧹 Дежурство · 150💰</div><button class="pf-close" onclick="closeDuty()">✕</button></div><div class="duty-body"><div class="duty-info" id="dutyInfo"></div><div class="duty-coins">💰 Монет: <b id="dutyCoins">0</b></div><button class="duty-start" id="dutyStartBtn" onclick="startMiniGame()">▶ Начать уборку</button><div class="duty-game" id="dutyGame" style="display:none"><div class="duty-timer">⏱ <span id="dutyTime">15.0</span>с</div><div class="duty-field" id="dutyField"></div><div class="duty-score">🧽 Протёрто: <b id="dutyScore">0</b> / 8</div></div><div class="duty-msg" id="dutyMsg"></div></div></div></div>
-<div id="framesM" class="em" style="z-index:670"><div class="emb" style="width:640px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">◻ Магазин рамок</div><button class="pf-close" onclick="closeFrames()">✕</button></div><div class="duty-body"><div class="duty-coins">💰 Твои монеты: <b id="framesCoins">0</b></div><div class="frames-list" id="framesList"></div><div class="neon-picker" id="neonPicker" style="display:none"><div class="np-title">🎨 Свой цвет неона</div><div class="np-row"><input type="color" id="npColor" class="np-color" value="#00e5ff"><input type="text" id="npRgb" class="np-rgb" placeholder="0, 229, 255" maxlength="15"><button class="np-apply" onclick="applyNeonFromUI()">Применить</button></div><div class="np-saved-title">💾 Сохранённые цвета:</div><div class="np-saved" id="npSaved"></div><button class="np-save-btn" onclick="saveCurrentNeon()">💾 Сохранить этот цвет</button></div><div class="duty-msg" id="framesMsg"></div></div></div></div>
+<div id="framesM" class="em" style="z-index:670"><div class="emb" style="width:680px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">🛒 Магазин</div><button class="pf-close" onclick="closeFrames()">✕</button></div><div class="duty-body"><div class="duty-coins">💰 Твои монеты: <b id="framesCoins">0</b></div><div class="shop-tabs"><div class="shop-tab act" data-tab="frames" onclick="shopSw('frames')">🖼️ Рамки</div><div class="shop-tab" data-tab="items" onclick="shopSw('items')">🎁 Предметы</div></div><div id="shopFramesPane"><div class="frames-list" id="framesList"></div><div class="neon-picker" id="neonPicker" style="display:none"><div class="np-title">🎨 Свой цвет неона</div><div class="np-row"><input type="color" id="npColor" class="np-color" value="#00e5ff"><input type="text" id="npRgb" class="np-rgb" placeholder="0, 229, 255" maxlength="15"><button class="np-apply" onclick="applyNeonFromUI()">Применить</button></div><div class="np-saved-title">💾 Сохранённые цвета:</div><div class="np-saved" id="npSaved"></div><button class="np-save-btn" onclick="saveCurrentNeon()">💾 Сохранить этот цвет</button></div></div><div id="shopItemsPane" style="display:none"><div class="items-list" id="itemsList"></div></div><div class="duty-msg" id="framesMsg"></div></div></div></div>
 <div id="jobM" class="em" style="z-index:670"><div class="emb" style="width:560px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">💼 Работа</div><button class="pf-close" onclick="closeJob()">✕</button></div><div class="duty-body" id="jobBody"></div></div></div>
-<div id="pf" class="em" style="z-index:660"><div class="emb"><div class="pf-head"><div class="pf-cover"><div class="pf-fx" id="pfFx"></div></div><div class="pf-av" id="pfAv"></div><button class="pf-close" onclick="closePf()">✕</button></div><div class="pf-body"><div class="pf-name"><span id="pfNick"></span><span class="pf-online" id="pfOnline" style="display:none">● в сети</span></div><div class="pf-status" id="pfStatus"></div><div class="pf-bio" id="pfBio"></div><div class="pf-row"><span class="pf-ic">🏠</span><span id="pfFlat">—</span></div><div class="pf-row"><span class="pf-ic">📅</span><span id="pfReg">—</span></div><div class="pf-row"><span class="pf-ic">💬</span><span id="pfMsgs">—</span></div><div class="pf-row" id="pfCoinsRow" style="display:none"><span class="pf-ic">💰</span><span id="pfCoinsInfo">—</span></div><div class="pf-row" id="pfSeenRow"><span class="pf-ic">🕐</span><span id="pfSeen">—</span></div></div><div class="pf-actions" id="pfActions"></div><div class="pf-edit" id="pfEdit"><label class="gm-lbl">Статус</label><div class="pf-status-edit"><input id="pfEmojiInp" maxlength="2" placeholder="😎" class="pf-emoji-inp"><input id="pfStatusInp" maxlength="40" placeholder="Чем занят?" class="gm-inp" style="margin-bottom:0"></div><label class="gm-lbl" style="margin-top:14px">О себе</label><textarea id="pfBioInp" maxlength="200" placeholder="Пара слов..." class="gm-inp" style="min-height:80px;resize:vertical;margin-bottom:0"></textarea><div class="gm-err" id="pfErr"></div><div class="pf-edit-actions"><button class="cn" onclick="cancelPfEdit()">Отмена</button><button class="cr-btn" onclick="savePf(event)">Сохранить</button></div></div></div></div>
+<div id="pf" class="em" style="z-index:660"><div class="emb"><div class="pf-head"><div class="pf-cover"><div class="pf-fx" id="pfFx"></div></div><div class="pf-av" id="pfAv"></div><button class="pf-close" onclick="closePf()">✕</button></div><div class="pf-body"><div class="pf-name"><span id="pfNick"></span><span class="pf-online" id="pfOnline" style="display:none">● в сети</span></div><div class="pf-status" id="pfStatus"></div><div class="pf-bio" id="pfBio"></div><div class="pf-items" id="pfItems"></div><div class="pf-row"><span class="pf-ic">🏠</span><span id="pfFlat">—</span></div><div class="pf-row"><span class="pf-ic">📅</span><span id="pfReg">—</span></div><div class="pf-row"><span class="pf-ic">💬</span><span id="pfMsgs">—</span></div><div class="pf-row" id="pfCoinsRow" style="display:none"><span class="pf-ic">💰</span><span id="pfCoinsInfo">—</span></div><div class="pf-row" id="pfSeenRow"><span class="pf-ic">🕐</span><span id="pfSeen">—</span></div></div><div class="pf-actions" id="pfActions"></div><div class="pf-edit" id="pfEdit"><label class="gm-lbl">Статус</label><div class="pf-status-edit"><input id="pfEmojiInp" maxlength="2" placeholder="😎" class="pf-emoji-inp"><input id="pfStatusInp" maxlength="40" placeholder="Чем занят?" class="gm-inp" style="margin-bottom:0"></div><label class="gm-lbl" style="margin-top:14px">О себе</label><textarea id="pfBioInp" maxlength="200" placeholder="Пара слов..." class="gm-inp" style="min-height:80px;resize:vertical;margin-bottom:0"></textarea><div class="gm-err" id="pfErr"></div><div class="pf-edit-actions"><button class="cn" onclick="cancelPfEdit()">Отмена</button><button class="cr-btn" onclick="savePf(event)">Сохранить</button></div></div></div></div>
 <div id="gm"><div class="gmb"><div class="gmh"><h3>👥 Новая группа</h3><button onclick="closeGm()">×</button></div><div class="gmbd"><div class="gm-ava-wrap"><label class="gm-ava" id="gmAva" for="gmAvaIn"><input type="file" id="gmAvaIn" accept="image/*"><span id="gmAvaEmoji">👥</span></label></div><label class="gm-lbl">Название</label><input id="gmName" class="gm-inp" maxlength="40" placeholder="Название..." autocomplete="off"><label class="gm-lbl">Участники</label><div class="inp-rel"><input id="gmMem" class="gm-inp" placeholder="nick1, nick2..." autocomplete="off"><div class="sug-box" id="gmSug"></div></div><div class="gm-mem-list" id="gmMemList"></div><div class="gm-err" id="gmErr"></div></div><div class="gm-ma"><button class="cn" onclick="closeGm()">Отмена</button><button class="cr-btn" id="gmCreate" onclick="createGroup()">Создать</button></div></div></div>
 <div id="gsm"><div class="gmb"><div class="gmh"><h3>⚙️ Настройки группы</h3><button onclick="closeGsm()">×</button></div><div class="gmbd"><div class="gm-ava-wrap"><label class="gm-ava" id="gsmAva" for="gsmAvaIn"><input type="file" id="gsmAvaIn" accept="image/*"><span id="gsmAvaEmoji">👥</span></label></div><label class="gm-lbl">Название</label><input id="gsmName" class="gm-inp" maxlength="40"><label class="gm-lbl">Участники</label><div class="inp-rel"><input id="gsmAddMem" class="gm-inp" placeholder="nick1, nick2..."><div class="sug-box" id="gsmSug"></div></div><div class="gm-mem-list" id="gsmMemList"></div><div class="gm-err" id="gsmErr"></div></div><div class="gm-ma"><button class="cn" onclick="closeGsm()">Закрыть</button><button class="cr-btn" onclick="saveGroupSettings()">Сохранить</button></div></div></div>
 <div id="cr" class="cr"><video id="crV" autoplay muted playsinline></video><div class="tm" id="crT">0:00</div><div class="hh">Запись кружка...</div><button class="sb" id="crS">⏹ Остановить</button></div>
@@ -1294,8 +1320,8 @@ body::before{display:none !important}
 <div id="customPills"></div>
 <div id="topRight"><button id="ownerTog" onclick="openOwner()">👑 OWNER</button><button id="adminTog" onclick="toggleAdmin()">⚙️ Админка</button><div id="myCoinsBadge" onclick="openDuty()">💰 0</div>
 <div id="userMenu"><button class="umBtn" onclick="toggleUserMenu()"><span id="myAv"></span><span id="myNick"></span><span class="umArrow">▾</span></button>
-<div class="umDropdown" id="umDropdown"><button onclick="openPfMine();closeUserMenu()">👤 <span>Мой профиль</span></button><button onclick="openGarden();closeUserMenu()">🌱 <span>Моя грядка</span></button><button onclick="openFrames();closeUserMenu()">◻ <span>Магазин рамок</span></button><button onclick="openDuty();closeUserMenu()">🎮 <span>Дежурство</span></button><button onclick="openJob();closeUserMenu()">💼 <span>Работа</span></button><button onclick="openGm();closeUserMenu()">👥 <span>Создать группу</span></button><button onclick="enableNotif();closeUserMenu()" id="notifB">🔔 <span>Уведомления</span></button><button id="soundBtn" onclick="toggleSound();closeUserMenu()">🔊 <span>Звук: вкл</span></button><button id="adminMItem" onclick="toggleAdmin();closeUserMenu()">⚙️ <span>Админка</span></button><button id="ownerMItem" onclick="openOwner();closeUserMenu()">👑 <span>OWNER панель</span></button><div class="umDiv"></div><button onclick="cycleSeason()" id="seasonBtn">🍂 <span>Сезон: осень</span></button><div class="umDiv"></div><button class="umExit" onclick="logout()">🚪 <span>Выйти</span></button></div></div></div>
-<div class="layout"><aside class="sb" id="sb"><div class="sb-h"><span>💬 Мои чаты</span><button class="add-btn" onclick="openDuty()" title="Дежурство" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);font-size:16px">🎮</button><button class="add-btn" onclick="openJob()" title="Работа" style="background:linear-gradient(135deg,#4caf50,#2e7d32);font-size:16px">💼</button><button class="add-btn" onclick="openFrames()" title="Рамки" style="background:linear-gradient(135deg,#a06bff,#6b4aff);font-size:20px">◻</button><button class="add-btn" onclick="openGarden()" title="Грядка" style="background:linear-gradient(135deg,#2e7d32,#8bc34a);font-size:20px">🌱</button><button class="add-btn" onclick="openGm()">＋</button><button class="cs" id="cs">×</button></div><div id="dml"></div></aside>
+<div class="umDropdown" id="umDropdown"><button onclick="openPfMine();closeUserMenu()">👤 <span>Мой профиль</span></button><button onclick="openGarden();closeUserMenu()">🌱 <span>Моя грядка</span></button><button onclick="openFrames();closeUserMenu()">🛒 <span>Магазин</span></button><button onclick="openDuty();closeUserMenu()">🎮 <span>Дежурство</span></button><button onclick="openJob();closeUserMenu()">💼 <span>Работа</span></button><button onclick="openGm();closeUserMenu()">👥 <span>Создать группу</span></button><button onclick="enableNotif();closeUserMenu()" id="notifB">🔔 <span>Уведомления</span></button><button id="soundBtn" onclick="toggleSound();closeUserMenu()">🔊 <span>Звук: вкл</span></button><button id="adminMItem" onclick="toggleAdmin();closeUserMenu()">⚙️ <span>Админка</span></button><button id="ownerMItem" onclick="openOwner();closeUserMenu()">👑 <span>OWNER панель</span></button><div class="umDiv"></div><button onclick="cycleSeason()" id="seasonBtn">🍂 <span>Сезон: осень</span></button><div class="umDiv"></div><button class="umExit" onclick="logout()">🚪 <span>Выйти</span></button></div></div></div>
+<div class="layout"><aside class="sb" id="sb"><div class="sb-h"><span>💬 Мои чаты</span><button class="add-btn" onclick="openDuty()" title="Дежурство" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);font-size:16px">🎮</button><button class="add-btn" onclick="openJob()" title="Работа" style="background:linear-gradient(135deg,#4caf50,#2e7d32);font-size:16px">💼</button><button class="add-btn" onclick="openFrames()" title="Магазин" style="background:linear-gradient(135deg,#a06bff,#6b4aff);font-size:20px">🛒</button><button class="add-btn" onclick="openGarden()" title="Грядка" style="background:linear-gradient(135deg,#2e7d32,#8bc34a);font-size:20px">🌱</button><button class="add-btn" onclick="openGm()">＋</button><button class="cs" id="cs">×</button></div><div id="dml"></div></aside>
 <main class="mn"><button class="mbtn" id="mbtn">☰</button><div id="adminB" onclick="openAdmin()">🔴 ADMIN</div><div id="hb"></div><div id="house"></div></main></div>
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
@@ -1332,291 +1358,54 @@ body::before{display:none !important}
 <div id="giftM" class="em" style="z-index:700"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800" id="giftTitle">🎁 Подарить семя</h3><label class="gm-lbl">Кому (ник)</label><input id="giftNickInp" class="gm-inp" maxlength="20" placeholder="Ник получателя" autocomplete="off"><label class="gm-lbl">Количество</label><input id="giftQtyInp" class="gm-inp" type="number" min="1" value="1" inputmode="numeric"><div class="gm-err" id="giftErr"></div><div class="ema"><button class="cn" onclick="closeGift()">Отмена</button><button class="sv" onclick="sendGift()">🎁 Подарить</button></div></div></div>
 <div id="roomInviteM" class="em" style="z-index:750"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800">👥 Приглашение в комнату</h3><div id="riText" style="font-size:14px;color:#c8c8d0;line-height:1.65;margin-bottom:18px"></div><div class="ema"><button class="cn" onclick="declineInvite()">Отклонить</button><button class="sv" onclick="acceptInvite()">✅ Согласиться</button></div></div></div>
 
-<!-- ===== DATES STAR ===== -->
 <div id="dtsStar" title="Памятные даты" onclick="openDtsPanel()">
   <svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%">
     <g fill="#e60000" stroke="#8b0000" stroke-width="0.15">
-      <rect x="4" y="0" width="1" height="2"/>
-      <rect x="4" y="7" width="1" height="2"/>
-      <rect x="0" y="4" width="2" height="1"/>
-      <rect x="7" y="4" width="2" height="1"/>
-      <rect x="1" y="1" width="1" height="1"/>
-      <rect x="7" y="1" width="1" height="1"/>
-      <rect x="1" y="7" width="1" height="1"/>
-      <rect x="7" y="7" width="1" height="1"/>
-      <rect x="2" y="2" width="5" height="5"/>
-      <rect x="3" y="3" width="3" height="3" fill="#ff3333"/>
-      <rect x="4" y="4" width="1" height="1" fill="#ffcc00"/>
+      <rect x="4" y="0" width="1" height="2"/><rect x="4" y="7" width="1" height="2"/><rect x="0" y="4" width="2" height="1"/><rect x="7" y="4" width="2" height="1"/>
+      <rect x="1" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/>
+      <rect x="2" y="2" width="5" height="5"/><rect x="3" y="3" width="3" height="3" fill="#ff3333"/><rect x="4" y="4" width="1" height="1" fill="#ffcc00"/>
     </g>
   </svg>
 </div>
 
-<!-- ===== UT HEART ===== -->
 <div id="utHeart" title="Deltarune · Undertale" onclick="openUTArticle()">
   <svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%">
     <g fill="#ff0000">
-      <rect x="1" y="0" width="2" height="1"/>
-      <rect x="6" y="0" width="2" height="1"/>
-      <rect x="0" y="1" width="4" height="1"/>
-      <rect x="5" y="1" width="4" height="1"/>
-      <rect x="0" y="2" width="9" height="3"/>
-      <rect x="1" y="5" width="7" height="1"/>
-      <rect x="2" y="6" width="5" height="1"/>
-      <rect x="3" y="7" width="3" height="1"/>
-      <rect x="4" y="8" width="1" height="1"/>
+      <rect x="1" y="0" width="2" height="1"/><rect x="6" y="0" width="2" height="1"/><rect x="0" y="1" width="4" height="1"/><rect x="5" y="1" width="4" height="1"/>
+      <rect x="0" y="2" width="9" height="3"/><rect x="1" y="5" width="7" height="1"/><rect x="2" y="6" width="5" height="1"/><rect x="3" y="7" width="3" height="1"/><rect x="4" y="8" width="1" height="1"/>
     </g>
   </svg>
 </div>
 
-<!-- ===== GAME EVENT ICONS ===== -->
 <div id="gameIcons"></div>
 
-<div id="dtsPanel" class="em" style="z-index:760" onclick="if(event.target.id==='dtsPanel')closeDtsPanel()">
-<div class="emb">
-  <div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)">
-    <div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">★ Памятные даты</div>
-    <button class="pf-close" onclick="closeDtsPanel()">✕</button>
-  </div>
-  <div class="dts-list" id="dtsList"></div>
-</div>
-</div>
+<div id="dtsPanel" class="em" style="z-index:760" onclick="if(event.target.id==='dtsPanel')closeDtsPanel()"><div class="emb"><div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)"><div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">★ Памятные даты</div><button class="pf-close" onclick="closeDtsPanel()">✕</button></div><div class="dts-list" id="dtsList"></div></div></div>
+<div id="dtsArticle" class="em" style="z-index:770" onclick="if(event.target.id==='dtsArticle')closeDtsArticle()"><div class="emb"><div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)"><div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="dtsArtTitleBar">★ Статья</div><button class="pf-close" onclick="closeDtsArticle()">✕</button></div><div class="dts-art-hero"><img id="dtsArtImg" src="" alt=""><div class="dts-art-date" id="dtsArtDate"></div><div class="dts-art-h" id="dtsArtHead"></div></div><div class="dts-art-body" id="dtsArtBody"></div></div></div>
+<div id="utArticle" class="em" style="z-index:760" onclick="if(event.target.id==='utArticle')closeUTArticle()"><div class="emb" style="width:640px;max-width:92vw;max-height:88vh;padding:0;overflow:hidden;display:flex;flex-direction:column"><div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)"><div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">❤ Deltarune · Undertale</div><button class="pf-close" onclick="closeUTArticle()">✕</button></div><div class="duty-body" style="overflow-y:auto;font-size:14.5px;line-height:1.75;color:#d8d8e0"><h4 style="margin:6px 0 8px;font-size:16px;color:#ff5566;font-weight:800">🎮 Undertale</h4><p style="margin:0 0 14px"><b style="color:#fff">Undertale</b> — инди-RPG <b style="color:#ff8888">2015 года</b> от <b style="color:#fff">Тоби Фокса</b>.</p><div style="padding:14px 18px;background:rgba(255,60,60,.06);border-left:3px solid #ff3333;border-radius:10px;font-style:italic;color:#e8c8c8"><div style="margin-bottom:8px">* «Ты полон решимости.»</div><div>* «Должно быть, ты новенький. Привет. Я — Санс.»</div></div></div></div></div>
 
-<div id="dtsArticle" class="em" style="z-index:770" onclick="if(event.target.id==='dtsArticle')closeDtsArticle()">
-<div class="emb">
-  <div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)">
-    <div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="dtsArtTitleBar">★ Статья</div>
-    <button class="pf-close" onclick="closeDtsArticle()">✕</button>
-  </div>
-  <div class="dts-art-hero">
-    <img id="dtsArtImg" src="" alt="">
-    <div class="dts-art-date" id="dtsArtDate"></div>
-    <div class="dts-art-h" id="dtsArtHead"></div>
-  </div>
-  <div class="dts-art-body" id="dtsArtBody"></div>
-</div>
-</div>
+<div id="callScreen"><div class="call-bg"></div><div class="call-video-wrap"><video id="callRemoteVideo" class="call-remote-video" autoplay playsinline></video><video id="callLocalVideo" class="call-local-video" autoplay playsinline muted></video><div class="call-video-overlay"><div class="call-name" id="callVideoName">—</div><div class="call-timer" id="callVideoTimer">0:00</div></div></div><div class="call-stage" id="callStage"><div class="call-av" id="callAv">?</div><div class="call-name" id="callName">—</div><div class="call-subtitle" id="callSubtitle">вызов...</div><div class="call-timer" id="callTimer" style="display:none">0:00</div></div><div class="call-actions" id="callActions"><div class="call-btn-wrap"><button class="call-btn mute" id="callMuteBtn" title="Микрофон">🎤</button><div class="call-btn-lbl">микро</div></div><div class="call-btn-wrap"><button class="call-btn cam" id="callCamBtn" title="Камера">📹</button><div class="call-btn-lbl">камера</div></div><div class="call-btn-wrap"><button class="call-btn end" id="callEndBtn" title="Завершить">✕</button><div class="call-btn-lbl">завершить</div></div></div></div>
+<div id="callMini" onclick="expandCallScreen()"><span class="call-mini-dot"></span><span class="call-mini-name" id="callMiniName">—</span><span class="call-mini-time" id="callMiniTime">0:00</span></div>
+<div id="callIncoming" class="em" style="z-index:9960"><div class="emb" style="width:360px;padding:24px;text-align:center"><div style="font-size:52px;margin-bottom:8px">📞</div><div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:6px" id="callIncName">—</div><div style="font-size:13px;color:#a0a0b8;margin-bottom:22px" id="callIncSubtitle">входящий звонок</div><div style="display:flex;gap:14px;justify-content:center"><button id="callIncReject" style="width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg,#ff3333,#b71c1c);color:#fff;font-size:26px;cursor:pointer">✕</button><button id="callIncAccept" style="width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;font-size:26px;cursor:pointer;animation:acceptPulse 1.4s ease-in-out infinite">📞</button></div></div></div>
 
-<div id="utArticle" class="em" style="z-index:760" onclick="if(event.target.id==='utArticle')closeUTArticle()">
-<div class="emb" style="width:640px;max-width:92vw;max-height:88vh;padding:0;overflow:hidden;display:flex;flex-direction:column">
-  <div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)">
-    <div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">❤ Deltarune · Undertale</div>
-    <button class="pf-close" onclick="closeUTArticle()">✕</button>
-  </div>
-  <div class="duty-body" style="overflow-y:auto;font-size:14.5px;line-height:1.75;color:#d8d8e0">
-    <h4 style="margin:6px 0 8px;font-size:16px;color:#ff5566;font-weight:800">🎮 Что такое Undertale</h4>
-    <p style="margin:0 0 14px"><b style="color:#fff">Undertale</b> — инди-RPG <b style="color:#ff8888">2015 года</b> от <b style="color:#fff">Тоби Фокса</b>.</p>
-    <p style="margin:0 0 14px">Можно пройти всю игру <b style="color:#ff8888">не убив ни одного врага</b>.</p>
-    <h4 style="margin:20px 0 8px;font-size:16px;color:#ff5566;font-weight:800">❤️ Души</h4>
-    <ul style="margin:0 0 14px;padding-left:22px">
-      <li><b style="color:#ff3333">🔴 Решимость</b> — красная</li>
-      <li><b style="color:#ff9d2e">🟠 Храбрость</b></li>
-      <li><b style="color:#ffd700">🟡 Справедливость</b></li>
-      <li><b style="color:#4caf50">🟢 Доброта</b></li>
-      <li><b style="color:#5aabff">🔵 Терпение</b></li>
-      <li><b style="color:#00d4ff">🔷 Честность</b></li>
-      <li><b style="color:#a06bff">🟣 Настойчивость</b></li>
-    </ul>
-    <h4 style="margin:20px 0 8px;font-size:16px;color:#ff5566;font-weight:800">🌟 Deltarune</h4>
-    <p style="margin:0 0 14px">Первая глава вышла в <b style="color:#ff8888">2018</b>, вторая — в <b style="color:#ff8888">2021</b>.</p>
-    <div style="padding:14px 18px;background:rgba(255,60,60,.06);border-left:3px solid #ff3333;border-radius:10px;font-style:italic;color:#e8c8c8">
-      <div style="margin-bottom:8px">* «Ты полон решимости.»</div>
-      <div>* «Должно быть, ты новенький. Привет. Я — Санс.»</div>
-    </div>
-  </div>
-</div>
-</div>
+<div id="xmasTree" aria-hidden="true"><svg viewBox="0 0 140 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="xTrunk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b5a2b"/><stop offset="1" stop-color="#3a2210"/></linearGradient><linearGradient id="xT1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2eb878"/><stop offset="1" stop-color="#0a4020"/></linearGradient><linearGradient id="xT2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#33c988"/><stop offset="1" stop-color="#0c4a24"/></linearGradient><linearGradient id="xT3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ddc98"/><stop offset="1" stop-color="#0e5529"/></linearGradient><radialGradient id="xStarG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fffbe0"/><stop offset="0.5" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff9d00"/></radialGradient><filter id="xGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect x="60" y="170" width="20" height="22" rx="2" fill="url(#xTrunk)"/><polygon points="70,88 15,170 125,170" fill="url(#xT1)" stroke="#0a4020" stroke-width="1.2"/><polygon points="70,55 30,128 110,128" fill="url(#xT2)" stroke="#0a4020" stroke-width="1.2"/><polygon points="70,22 42,85 98,85" fill="url(#xT3)" stroke="#0a4020" stroke-width="1.2"/><g transform="translate(70,20)"><g><polygon points="0,-15 4,-4 16,-4 6,3 10,15 0,8 -10,15 -6,3 -16,-4 -4,-4" fill="url(#xStarG)" stroke="#ff9900" stroke-width="1" filter="url(#xGlow)"/><animateTransform attributeName="transform" type="scale" values="1;1.15;1" dur="2s" repeatCount="indefinite"/></g></g></svg></div>
 
-<!-- ===== CALL SCREEN ===== -->
-<div id="callScreen">
-  <div class="call-bg"></div>
-  <div class="call-video-wrap">
-    <video id="callRemoteVideo" class="call-remote-video" autoplay playsinline></video>
-    <video id="callLocalVideo" class="call-local-video" autoplay playsinline muted></video>
-    <div class="call-video-overlay">
-      <div class="call-name" id="callVideoName">—</div>
-      <div class="call-timer" id="callVideoTimer">0:00</div>
-    </div>
-  </div>
-  <div class="call-stage" id="callStage">
-    <div class="call-av" id="callAv">?</div>
-    <div class="call-name" id="callName">—</div>
-    <div class="call-subtitle" id="callSubtitle">вызов...</div>
-    <div class="call-timer" id="callTimer" style="display:none">0:00</div>
-  </div>
-  <div class="call-actions" id="callActions">
-    <div class="call-btn-wrap"><button class="call-btn mute" id="callMuteBtn" title="Микрофон">🎤</button><div class="call-btn-lbl">микро</div></div>
-    <div class="call-btn-wrap"><button class="call-btn cam" id="callCamBtn" title="Камера">📹</button><div class="call-btn-lbl">камера</div></div>
-    <div class="call-btn-wrap"><button class="call-btn end" id="callEndBtn" title="Завершить">✕</button><div class="call-btn-lbl">завершить</div></div>
-  </div>
-</div>
+<div id="easterDecor" aria-hidden="true"><svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="eCake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5deb3"/><stop offset="1" stop-color="#d2a679"/></linearGradient><linearGradient id="eGlaze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e8e0d0"/></linearGradient></defs><g transform="translate(60,80)"><rect x="0" y="80" width="60" height="70" rx="4" fill="url(#eCake)"/><path d="M 0 80 Q 30 60 60 80 L 60 95 L 0 95 Z" fill="url(#eGlaze)"/><circle cx="15" cy="70" r="4" fill="#ff6b9d"/><circle cx="30" cy="65" r="4" fill="#6bc4ff"/><circle cx="45" cy="70" r="4" fill="#8bc34a"/></g></svg></div>
 
-<div id="callMini" onclick="expandCallScreen()">
-  <span class="call-mini-dot"></span>
-  <span class="call-mini-name" id="callMiniName">—</span>
-  <span class="call-mini-time" id="callMiniTime">0:00</span>
-</div>
+<div id="maslenitsaDecor" aria-hidden="true"><svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="msSun" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff8c0"/><stop offset="0.55" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff9d00"/></radialGradient></defs><g transform="translate(90,55)"><circle r="24" fill="url(#msSun)"/></g><g transform="translate(90,155)"><ellipse cx="0" cy="0" rx="52" ry="16" fill="#a97836"/><ellipse cx="0" cy="-6" rx="52" ry="16" fill="#f7d08a"/><ellipse cx="0" cy="-22" rx="52" ry="16" fill="#f7d08a"/><ellipse cx="0" cy="-38" rx="52" ry="16" fill="#e8b86c"/><ellipse cx="0" cy="-48" rx="52" ry="16" fill="#f7d08a"/></g></svg></div>
 
-<div id="callIncoming" class="em" style="z-index:9960">
-<div class="emb" style="width:360px;padding:24px;text-align:center">
-  <div style="font-size:52px;margin-bottom:8px">📞</div>
-  <div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:6px" id="callIncName">—</div>
-  <div style="font-size:13px;color:#a0a0b8;margin-bottom:22px" id="callIncSubtitle">входящий звонок</div>
-  <div style="display:flex;gap:14px;justify-content:center">
-    <button id="callIncReject" style="width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg,#ff3333,#b71c1c);color:#fff;font-size:26px;cursor:pointer;box-shadow:0 6px 20px rgba(255,50,50,.4)">✕</button>
-    <button id="callIncAccept" style="width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;font-size:26px;cursor:pointer;box-shadow:0 6px 20px rgba(76,175,80,.4);animation:acceptPulse 1.4s ease-in-out infinite">📞</button>
-  </div>
-</div>
-</div>
+<div id="knowledgeDecor" aria-hidden="true"><svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg"><g><path d="M 90 45 Q 65 30 45 35 L 45 65 Q 65 60 90 75 Q 115 60 135 65 L 135 35 Q 115 30 90 45 Z" fill="#f5c542" stroke="#b8860b"/></g><g transform="translate(90,150)"><rect x="-55" y="-15" width="110" height="60" rx="4" fill="#5a8fd0"/><rect x="-45" y="-25" width="90" height="50" rx="4" fill="#d0a85a"/></g></svg></div>
 
-<div id="xmasTree" aria-hidden="true">
-<svg viewBox="0 0 140 200" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="xTrunk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b5a2b"/><stop offset="1" stop-color="#3a2210"/></linearGradient>
-    <linearGradient id="xT1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2eb878"/><stop offset="1" stop-color="#0a4020"/></linearGradient>
-    <linearGradient id="xT2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#33c988"/><stop offset="1" stop-color="#0c4a24"/></linearGradient>
-    <linearGradient id="xT3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ddc98"/><stop offset="1" stop-color="#0e5529"/></linearGradient>
-    <radialGradient id="xStarG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fffbe0"/><stop offset="0.5" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff9d00"/></radialGradient>
-    <filter id="xGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <rect x="60" y="170" width="20" height="22" rx="2" fill="url(#xTrunk)"/>
-  <polygon points="70,88 15,170 125,170" fill="url(#xT1)" stroke="#0a4020" stroke-width="1.2"/>
-  <polygon points="70,55 30,128 110,128" fill="url(#xT2)" stroke="#0a4020" stroke-width="1.2"/>
-  <polygon points="70,22 42,85 98,85" fill="url(#xT3)" stroke="#0a4020" stroke-width="1.2"/>
-  <g transform="translate(70,20)"><g><polygon points="0,-15 4,-4 16,-4 6,3 10,15 0,8 -10,15 -6,3 -16,-4 -4,-4" fill="url(#xStarG)" stroke="#ff9900" stroke-width="1" filter="url(#xGlow)"/><animateTransform attributeName="transform" type="scale" values="1;1.15;1" dur="2s" repeatCount="indefinite"/></g></g>
-  <g filter="url(#xGlow)">
-    <circle cx="70" cy="42" r="3" fill="#ff4444"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0s" repeatCount="indefinite"/></circle>
-    <circle cx="60" cy="72" r="3" fill="#44aaff"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.2s" repeatCount="indefinite"/></circle>
-    <circle cx="80" cy="72" r="3" fill="#ffdd44"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.4s" repeatCount="indefinite"/></circle>
-    <circle cx="70" cy="60" r="3" fill="#44ff88"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.6s" repeatCount="indefinite"/></circle>
-    <circle cx="55" cy="100" r="3.2" fill="#ff44aa"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.8s" repeatCount="indefinite"/></circle>
-    <circle cx="85" cy="100" r="3.2" fill="#ffdd44"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.0s" repeatCount="indefinite"/></circle>
-    <circle cx="70" cy="90" r="3.2" fill="#44aaff"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.2s" repeatCount="indefinite"/></circle>
-    <circle cx="63" cy="115" r="3.2" fill="#ff4444"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.4s" repeatCount="indefinite"/></circle>
-    <circle cx="77" cy="115" r="3.2" fill="#44ff88"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.1s" repeatCount="indefinite"/></circle>
-    <circle cx="42" cy="148" r="3.6" fill="#ff4444"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.3s" repeatCount="indefinite"/></circle>
-    <circle cx="98" cy="148" r="3.6" fill="#44aaff"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.5s" repeatCount="indefinite"/></circle>
-    <circle cx="55" cy="158" r="3.6" fill="#ffdd44"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.7s" repeatCount="indefinite"/></circle>
-    <circle cx="85" cy="158" r="3.6" fill="#ff44aa"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="0.9s" repeatCount="indefinite"/></circle>
-    <circle cx="70" cy="140" r="3.6" fill="#44ff88"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.1s" repeatCount="indefinite"/></circle>
-    <circle cx="70" cy="165" r="3.6" fill="#44aaff"><animate attributeName="opacity" values="1;0.25;1" dur="1.6s" begin="1.3s" repeatCount="indefinite"/></circle>
-  </g>
-</svg>
-</div>
+<div id="teacherDecor" aria-hidden="true"><svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg"><g><ellipse cx="90" cy="55" rx="20" ry="12" fill="#fff8c0" opacity="0.55"/><text x="90" y="68" text-anchor="middle" font-size="42" font-weight="900" fill="#f5c542">А</text></g><g transform="translate(90,150)"><rect x="-60" y="-10" width="120" height="55" rx="4" fill="#3a7a4a"/><rect x="-50" y="-30" width="100" height="45" rx="3" fill="#f5e6c0"/></g></svg></div>
 
-<div id="xmasGifts" aria-hidden="true">
-<svg viewBox="0 0 180 70" xmlns="http://www.w3.org/2000/svg">
-  <g transform="translate(10,20)"><rect x="0" y="10" width="44" height="40" rx="3" fill="#c62828" stroke="#7f0000" stroke-width="1"/><rect x="0" y="10" width="44" height="8" fill="#e53935"/><rect x="18" y="10" width="8" height="40" fill="#ffd700"/><path d="M 22 10 C 16 -2, 8 2, 22 10 M 22 10 C 28 -2, 36 2, 22 10" fill="#ffd700" stroke="#b8860b" stroke-width="1"/></g>
-  <g transform="translate(52,25)"><rect x="0" y="8" width="38" height="34" rx="3" fill="#1565c0" stroke="#0d47a1" stroke-width="1"/><rect x="0" y="8" width="38" height="7" fill="#1e88e5"/><rect x="15" y="8" width="8" height="34" fill="#e0e0e0"/><path d="M 19 8 C 13 -2, 6 2, 19 8 M 19 8 C 25 -2, 32 2, 19 8" fill="#e0e0e0" stroke="#9e9e9e" stroke-width="1"/></g>
-  <g transform="translate(88,18)"><rect x="0" y="12" width="48" height="42" rx="3" fill="#2e7d32" stroke="#1b5e20" stroke-width="1"/><rect x="0" y="12" width="48" height="9" fill="#43a047"/><rect x="20" y="12" width="8" height="42" fill="#c62828"/><path d="M 24 12 C 18 0, 8 4, 24 12 M 24 12 C 30 0, 40 4, 24 12" fill="#c62828" stroke="#7f0000" stroke-width="1"/></g>
-  <g transform="translate(134,28)"><rect x="0" y="6" width="36" height="32" rx="3" fill="#6a1b9a" stroke="#4a148c" stroke-width="1"/><rect x="0" y="6" width="36" height="6" fill="#8e24aa"/><rect x="14" y="6" width="8" height="32" fill="#ffd700"/><path d="M 18 6 C 12 -3, 6 1, 18 6 M 18 6 C 24 -3, 30 1, 18 6" fill="#ffd700" stroke="#b8860b" stroke-width="1"/></g>
-</svg>
-</div>
+<div id="memorial911" title="9/11" onclick="openMemorial('911')"><svg viewBox="0 0 40 64" xmlns="http://www.w3.org/2000/svg"><rect x="11" y="4" width="7" height="56" fill="#a8b8d0"/><rect x="22" y="4" width="7" height="56" fill="#a8b8d0"/></svg></div>
+<div id="memorialCrocus" title="Крокус" onclick="openMemorial('crocus')"><svg viewBox="0 0 40 64" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="22" width="12" height="38" fill="#e8dfc5" rx="1"/><path d="M 20 6 Q 14 12 16 20 Q 18 15 20 20 Q 22 15 24 20 Q 26 12 20 6 Z" fill="#ffcc66"/></svg></div>
 
-<div id="easterDecor" aria-hidden="true">
-<svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="eCake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5deb3"/><stop offset="1" stop-color="#d2a679"/></linearGradient>
-    <linearGradient id="eGlaze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e8e0d0"/></linearGradient>
-    <filter id="eGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <g transform="translate(60,80)"><rect x="0" y="80" width="60" height="70" rx="4" fill="url(#eCake)" stroke="#8b6914" stroke-width="1"/><path d="M 0 80 Q 30 60 60 80 L 60 95 L 0 95 Z" fill="url(#eGlaze)"/><circle cx="15" cy="70" r="4" fill="#ff6b9d"/><circle cx="30" cy="65" r="4" fill="#6bc4ff"/><circle cx="45" cy="70" r="4" fill="#8bc34a"/><circle cx="22" cy="80" r="3" fill="#ffdd44"/><circle cx="38" cy="80" r="3" fill="#a06bff"/></g>
-  <g filter="url(#eGlow)"><ellipse cx="30" cy="185" rx="14" ry="20" fill="#ff6b9d" stroke="#c2185b" stroke-width="1"/><ellipse cx="30" cy="182" rx="14" ry="8" fill="#ff8fb1"/><ellipse cx="70" cy="190" rx="13" ry="18" fill="#6bc4ff" stroke="#1565c0" stroke-width="1"/><line x1="60" y1="190" x2="80" y2="190" stroke="#fff" stroke-width="2"/><ellipse cx="110" cy="185" rx="14" ry="20" fill="#8bc34a" stroke="#2e7d32" stroke-width="1"/><circle cx="110" cy="180" r="3" fill="#fff"/><circle cx="105" cy="190" r="3" fill="#fff"/><circle cx="115" cy="190" r="3" fill="#fff"/><ellipse cx="150" cy="190" rx="13" ry="18" fill="#ffdd44" stroke="#f57f17" stroke-width="1"/><path d="M 140 190 Q 150 180 160 190 Q 150 200 140 190" fill="#ff8f00"/></g>
-</svg>
-</div>
-
-<div id="maslenitsaDecor" aria-hidden="true">
-<svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <radialGradient id="msSun" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff8c0"/><stop offset="0.55" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff9d00"/></radialGradient>
-    <linearGradient id="msP1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7d08a"/><stop offset="1" stop-color="#d9a95b"/></linearGradient>
-    <filter id="msGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <g transform="translate(90,55)" filter="url(#msGlow)"><circle r="24" fill="url(#msSun)" stroke="#e58b00" stroke-width="1.5"/><g stroke="#ffb300" stroke-width="3" stroke-linecap="round"><line x1="0" y1="-38" x2="0" y2="-30"/><line x1="0" y1="38" x2="0" y2="30"/><line x1="-38" y1="0" x2="-30" y2="0"/><line x1="38" y1="0" x2="30" y2="0"/><line x1="-27" y1="-27" x2="-21" y2="-21"/><line x1="27" y1="-27" x2="21" y2="-21"/><line x1="-27" y1="27" x2="-21" y2="21"/><line x1="27" y1="27" x2="21" y2="21"/></g></g>
-  <g transform="translate(90,155)"><ellipse cx="0" cy="0" rx="52" ry="16" fill="#a97836"/><ellipse cx="0" cy="-6" rx="52" ry="16" fill="url(#msP1)"/><ellipse cx="0" cy="-22" rx="52" ry="16" fill="#f7d08a"/><ellipse cx="0" cy="-38" rx="52" ry="16" fill="#e8b86c"/><ellipse cx="0" cy="-48" rx="52" ry="16" fill="url(#msP1)"/><ellipse cx="0" cy="-48" rx="40" ry="10" fill="#fff1c8" opacity="0.55"/></g>
-</svg>
-</div>
-
-<div id="knowledgeDecor" aria-hidden="true">
-<svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="knB1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a8fd0"/><stop offset="1" stop-color="#2a5288"/></linearGradient>
-    <linearGradient id="knB2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0a85a"/><stop offset="1" stop-color="#8b6a1a"/></linearGradient>
-    <filter id="knGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <g filter="url(#knGlow)"><path d="M 90 45 Q 65 30 45 35 L 45 65 Q 65 60 90 75 Q 115 60 135 65 L 135 35 Q 115 30 90 45 Z" fill="#f5c542" stroke="#b8860b" stroke-width="1.5"/><circle cx="90" cy="30" r="6" fill="#f5c542" stroke="#b8860b" stroke-width="1.5"/><line x1="90" y1="36" x2="90" y2="44" stroke="#b8860b" stroke-width="2"/></g>
-  <g transform="translate(90,150)"><rect x="-55" y="-15" width="110" height="60" rx="4" fill="url(#knB1)" stroke="#173a5e" stroke-width="1.5"/><rect x="-45" y="-25" width="90" height="50" rx="4" fill="url(#knB2)" stroke="#5c4408" stroke-width="1.5"/><rect x="-45" y="-25" width="90" height="8" fill="#e8c56c"/><line x1="0" y1="-25" x2="0" y2="25" stroke="#5c4408" stroke-width="1"/><text x="0" y="8" text-anchor="middle" font-size="20" font-weight="900" fill="#fff8dc" font-family="Georgia,serif">АБВ</text></g>
-</svg>
-</div>
-
-<div id="teacherDecor" aria-hidden="true">
-<svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="tcB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a7a4a"/><stop offset="1" stop-color="#1a4020"/></linearGradient>
-    <linearGradient id="tcP" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8c56c"/><stop offset="1" stop-color="#8b6a1a"/></linearGradient>
-    <filter id="tcGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <g filter="url(#tcGlow)"><ellipse cx="90" cy="55" rx="20" ry="12" fill="#fff8c0" opacity="0.55"/><text x="90" y="68" text-anchor="middle" font-size="42" font-weight="900" fill="#f5c542" font-family="Georgia,serif">А</text></g>
-  <g transform="translate(90,150)"><rect x="-60" y="-10" width="120" height="55" rx="4" fill="url(#tcB)" stroke="#0d2a12" stroke-width="1.5"/><rect x="-60" y="-10" width="120" height="9" fill="#5fa06f"/><rect x="-50" y="-30" width="100" height="45" rx="3" fill="#f5e6c0" stroke="#8b6a1a" stroke-width="1.5"/><line x1="-40" y1="-20" x2="40" y2="-20" stroke="#8b6a1a" stroke-width="0.8" opacity="0.6"/><line x1="-40" y1="-10" x2="40" y2="-10" stroke="#8b6a1a" stroke-width="0.8" opacity="0.6"/><line x1="-40" y1="0" x2="20" y2="0" stroke="#8b6a1a" stroke-width="0.8" opacity="0.6"/></g>
-  <g transform="translate(140,80) rotate(20)" filter="url(#tcGlow)"><rect x="-3" y="0" width="6" height="90" fill="url(#tcP)" stroke="#5c4408" stroke-width="1"/><path d="M -5 0 L 5 0 L 3 -10 L -3 -10 Z" fill="#1a1a1a"/></g>
-</svg>
-</div>
-
-<div id="memorial911" title="9/11 — любим, помним, скорбим" onclick="openMemorial('911')">
-<svg viewBox="0 0 40 64" xmlns="http://www.w3.org/2000/svg">
-  <defs><linearGradient id="twG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e0e8f5"/><stop offset="0.5" stop-color="#a8b8d0"/><stop offset="1" stop-color="#6a7a95"/></linearGradient></defs>
-  <rect x="0" y="58" width="40" height="3" fill="#3a3a4a"/>
-  <rect x="11" y="4" width="7" height="56" fill="url(#twG)" stroke="#5a6a85" stroke-width="0.8"/>
-  <rect x="22" y="4" width="7" height="56" fill="url(#twG)" stroke="#5a6a85" stroke-width="0.8"/>
-  <line x1="14.5" y1="8" x2="14.5" y2="56" stroke="#fff" stroke-width="0.4" opacity="0.7"/>
-  <line x1="25.5" y1="8" x2="25.5" y2="56" stroke="#fff" stroke-width="0.4" opacity="0.7"/>
-  <path d="M 19 4 L 19 0 M 21 4 L 21 0" stroke="#c8d0e0" stroke-width="0.8"/>
-</svg>
-</div>
-
-<div id="memorialCrocus" title="Крокус Сити Холл — любим, помним, скорбим" onclick="openMemorial('crocus')">
-<svg viewBox="0 0 40 64" xmlns="http://www.w3.org/2000/svg">
-  <ellipse cx="20" cy="60" rx="13" ry="3" fill="#3a3a4a"/>
-  <rect x="14" y="22" width="12" height="38" fill="#e8dfc5" stroke="#a89870" stroke-width="0.6" rx="1"/>
-  <ellipse cx="20" cy="22" rx="6" ry="2" fill="#f5eed6"/>
-  <path d="M 20 6 Q 14 12 16 20 Q 18 15 20 20 Q 22 15 24 20 Q 26 12 20 6 Z" fill="#ffcc66" stroke="#e8a83a" stroke-width="0.5"/>
-  <circle cx="20" cy="14" r="2.6" fill="#fff8c0" opacity="0.95"/>
-  <circle cx="20" cy="14" r="1.4" fill="#ffffff"/>
-</svg>
-</div>
-
-<div id="memorialModal" onclick="if(event.target.id==='memorialModal')closeMemorial()">
-<div class="mem-box">
-  <div class="mem-candle" id="memIcon">🕯️</div>
-  <h2 class="mem-title" id="memTitle"></h2>
-  <div class="mem-date" id="memDate"></div>
-  <div class="mem-text" id="memText"></div>
-  <div class="mem-sign">🕯️ ЛЮБИМ · ПОМНИМ · СКОРБИМ</div>
-  <button class="mem-close" onclick="closeMemorial()">Закрыть</button>
-</div>
-</div>
+<div id="memorialModal" onclick="if(event.target.id==='memorialModal')closeMemorial()"><div class="mem-box"><div class="mem-candle" id="memIcon">🕯️</div><h2 class="mem-title" id="memTitle"></h2><div class="mem-date" id="memDate"></div><div class="mem-text" id="memText"></div><div class="mem-sign">🕯️ ЛЮБИМ · ПОМНИМ · СКОРБИМ</div><button class="mem-close" onclick="closeMemorial()">Закрыть</button></div></div>
 
 <canvas id="fireworksCv"></canvas>
 
-<div id="giveM"><div class="give-box">
-  <div class="give-h"><h3 id="giveTitle">🎁 Выдать предмет</h3><button onclick="closeGive()">×</button></div>
-  <div class="give-b">
-    <div style="font-size:12px;color:#a0a0b8;margin-bottom:12px">Игрок: <b id="giveNick" style="color:#f5c542">—</b></div>
-    <div class="give-tabs">
-      <div class="give-tab act" data-t="frame" onclick="giveSw('frame')">🖼️ Рамка</div>
-      <div class="give-tab" data-t="seed" onclick="giveSw('seed')">🌱 Семя</div>
-      <div class="give-tab" data-t="fert" onclick="giveSw('fert')">💧 Удобрение</div>
-      <div class="give-tab" data-t="coins" onclick="giveSw('coins')">💰 Монеты</div>
-    </div>
-    <div id="giveBody"></div>
-    <div class="give-msg" id="giveMsg"></div>
-  </div>
-</div></div>
-
-<div id="flatPickerM"><div class="fp-box">
-  <div class="fp-h"><h3 id="fpTitle">🏠 Куда заселить</h3><button onclick="closeFlatPicker()">✕</button></div>
-  <div class="fp-body" id="fpBody"></div>
-</div></div>
-
+<div id="giveM"><div class="give-box"><div class="give-h"><h3 id="giveTitle">🎁 Выдать предмет</h3><button onclick="closeGive()">×</button></div><div class="give-b"><div style="font-size:12px;color:#a0a0b8;margin-bottom:12px">Игрок: <b id="giveNick" style="color:#f5c542">—</b></div><div class="give-tabs"><div class="give-tab act" data-t="frame" onclick="giveSw('frame')">🖼️ Рамка</div><div class="give-tab" data-t="seed" onclick="giveSw('seed')">🌱 Семя</div><div class="give-tab" data-t="fert" onclick="giveSw('fert')">💧 Удобрение</div><div class="give-tab" data-t="coins" onclick="giveSw('coins')">💰 Монеты</div></div><div id="giveBody"></div><div class="give-msg" id="giveMsg"></div></div></div></div>
+<div id="flatPickerM"><div class="fp-box"><div class="fp-h"><h3 id="fpTitle">🏠 Куда заселить</h3><button onclick="closeFlatPicker()">✕</button></div><div class="fp-body" id="fpBody"></div></div></div>
 <div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1630,6 +1419,29 @@ const FRAMES=[
   {id:'neon',name:'🎨 Неон (свой цвет)',price:2000},{id:'ice',name:'Лёд',price:2000},{id:'rainbow',name:'🌈 Радужная',price:2500},{id:'sakura',name:'🌸 Сакура',price:3000},{id:'fire',name:'Огонь',price:3000},{id:'aqua',name:'🌊 Аквариум',price:4000},{id:'gardener',name:'🌾 Садовник',price:5000},{id:'storm',name:'⚡ Гроза',price:5500},{id:'cosmic',name:'Космос',price:7500},{id:'diamond',name:'💎 Алмаз',price:12000},{id:'galaxy',name:'🌌 Галактика',price:15000},{id:'legendary',name:'Легендарная',price:25000},{id:'angelic',name:'👼 Ангельская',price:50000},{id:'devil',name:'😈 Дьявольская',price:50000},{id:'dragon',name:'🐉 Драконья',price:75000},{id:'vhs',name:'📼 VHS (глитч)',price:100000}
 ];
 const FRAME_BONUS={angelic:5,devil:5,legendary:2,diamond:1.5,vhs:10,dragon:5,galaxy:4};
+/* ===== ПРЕДМЕТЫ (20 шт) ===== */
+const ITEMS=[
+  {id:'coffee',name:'Кофе',icon:'☕',price:50,desc:'Тёплый напиток'},
+  {id:'donut',name:'Пончик',icon:'🍩',price:60,desc:'Сладкий перекус'},
+  {id:'pizza',name:'Пицца',icon:'🍕',price:75,desc:'Кусочек счастья'},
+  {id:'balloon',name:'Шарик',icon:'🎈',price:100,desc:'Лёгкий и яркий'},
+  {id:'teddy',name:'Медвежонок',icon:'🧸',price:150,desc:'Мягкий друг'},
+  {id:'toygun',name:'Цветной автомат',icon:'🔫',price:300,desc:'Пластиковая игрушка'},
+  {id:'headphones',name:'Наушники',icon:'🎧',price:350,desc:'Для музыки'},
+  {id:'guitar',name:'Гитара',icon:'🎸',price:400,desc:'Для души'},
+  {id:'phone',name:'Телефон',icon:'📱',price:500,desc:'Новый смартфон'},
+  {id:'cat',name:'Кот',icon:'🐱',price:600,desc:'Мурлыка'},
+  {id:'dog',name:'Собака',icon:'🐶',price:700,desc:'Верный друг'},
+  {id:'gamepad',name:'Джойстик',icon:'🎮',price:800,desc:'Для игр'},
+  {id:'trumpet',name:'Труба',icon:'🎺',price:900,desc:'Громкий звук'},
+  {id:'magicball',name:'Магический шар',icon:'🔮',price:1000,desc:'Предсказывает будущее'},
+  {id:'laptop',name:'Ноутбук',icon:'💻',price:1200,desc:'Для работы'},
+  {id:'ring',name:'Кольцо',icon:'💍',price:2000,desc:'Драгоценность'},
+  {id:'crown',name:'Корона',icon:'👑',price:3500,desc:'Для королей'},
+  {id:'trophy',name:'Кубок',icon:'🏆',price:5000,desc:'Знак победы'},
+  {id:'car',name:'Машина',icon:'🚗',price:8000,desc:'Крутая тачка'},
+  {id:'plane',name:'Самолёт',icon:'✈️',price:15000,desc:'Мечта неба'}
+];
 const EVENTS=[
   {id:'xmas',name:'🎄 Ёлка',icon:'🎄'},{id:'easter',name:'🐣 Пасха',icon:'🐣'},{id:'fireworks',name:'🎆 Фейерверки',icon:'🎆'},{id:'maslenitsa',name:'🥞 Масленица',icon:'🥞'},{id:'knowledge',name:'📚 День знаний',icon:'📚'},{id:'teacher',name:'👩‍🏫 День учителя',icon:'👩‍🏫'},{id:'911',name:'🏙️ 9/11',icon:'🏙️'},{id:'crocus',name:'🕯️ Крокус',icon:'🕯️'},
   {id:'utHeart',name:'❤ Undertale',icon:'❤'},{id:'dtsStar',name:'★ Даты',icon:'★'},
@@ -1657,6 +1469,8 @@ let vRec=null,vStr=null,vCh=[],vS=0,vTimer=null;
 let cRec=null,cStr=null,cCh=[],cTimer=null,cStart=0,mPIbusy=false,rPIbusy=false;
 let realMe=null,realMeEnc=null,fakeList=[];
 let ctxMsgId=null,ctxMsgRoom=null,gmAvaFile=null,gsmAvaFile=null,gsmGroupId=null,pfCurrent=null,myCoins=0,myFrame='none',myOwnedFrames=['none'];
+let myOwnedItems=[];
+let shopTab='frames';
 let showBanned=false;
 let dutyGameActive=false,dutyGameTimer=null,dutyGameStart=0,dutyGameCaught=0,dutyGameTotal=8,dutyGameReward=0,dutyIsDuty=false,dutyLocalEntrance=0;
 let workActive=false,workTimer=null,workStart=0,workCaught=0,workTaskId=null,workCdInt=null;
@@ -1751,7 +1565,7 @@ async function logout(){const ok=await askConfirm('Выйти?','Ты выйде
 function showBan(){$('auth').style.display='none';$('nickScr').style.display='none';$('app').style.display='none';$('banR').textContent=banR||'Доступ закрыт';$('banO').classList.add('on')}
 window.addEventListener('DOMContentLoaded',async()=>{if('Notification'in window){notifPerm=Notification.permission;if(notifPerm==='granted'){const b=$('notifB');if(b)b.style.color='#4caf50'}}updateSoundBtn();const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}else $('auth').style.display='flex'});
 sb.auth.onAuthStateChange(async(e,s)=>{if(e==='SIGNED_IN'&&s&&!curUser){curUser=s.user;await afterAuth()}});
-function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+curUser.id},p=>{if(!p.new)return;if(p.new.banned&&!isBanned){isBanned=true;banR=p.new.ban_reason||'';showBan();try{closeM()}catch(e){}try{closeFm()}catch(e){}try{closeAdmin()}catch(e){}}iAmAdmin=!!p.new.is_admin||curUser.id===OWNER_ID;upAdminTog();if(!hasAdmin()&&adminMode)exitAdmin();if(typeof p.new.coins!=='undefined'){myCoins=p.new.coins||0;updateCoinsUI()}if(typeof p.new.active_frame!=='undefined'){myFrame=p.new.active_frame||'none';frameCache[meEnc]=myFrame;renderFlats()}if(Array.isArray(p.new.owned_frames)){myOwnedFrames=p.new.owned_frames}}).subscribe()}
+function subProf(){if(pc)return;pc=sb.channel('my-prof').on('postgres_changes',{event:'UPDATE',schema:'public',table:'profiles',filter:'id=eq.'+curUser.id},p=>{if(!p.new)return;if(p.new.banned&&!isBanned){isBanned=true;banR=p.new.ban_reason||'';showBan();try{closeM()}catch(e){}try{closeFm()}catch(e){}try{closeAdmin()}catch(e){}}iAmAdmin=!!p.new.is_admin||curUser.id===OWNER_ID;upAdminTog();if(!hasAdmin()&&adminMode)exitAdmin();if(typeof p.new.coins!=='undefined'){myCoins=p.new.coins||0;updateCoinsUI()}if(typeof p.new.active_frame!=='undefined'){myFrame=p.new.active_frame||'none';frameCache[meEnc]=myFrame;renderFlats()}if(Array.isArray(p.new.owned_frames)){myOwnedFrames=p.new.owned_frames}if(Array.isArray(p.new.owned_items)){myOwnedItems=p.new.owned_items}}).subscribe()}
 function subGP(){if(gpres)return;gpres=sb.channel('gonline',{config:{presence:{key:meEnc}}});gpres.on('presence',{event:'sync'},()=>{const s=gpres.presenceState();online=new Set();for(const k in s)if(k&&k!==meEnc)online.add(k);renderDMs();upChSt()}).subscribe(async st=>{if(st==='SUBSCRIBED')await gpres.track({nick:meEnc,since:Date.now()})})}
 function subGroups(){if(gch)return;gch=sb.channel('groups-rt').on('postgres_changes',{event:'*',schema:'public',table:'groups'},async p=>{await loadGroups();await loadDMs();renderDMs();if(p.new&&curGroup&&p.new.id===curGroup.id&&p.eventType==='UPDATE'){curGroup=p.new;updateGroupHeader()}}).subscribe()}
 function subRoomInvites(){if(roomInvCh)return;roomInvCh=sb.channel('room-invites-rt').on('postgres_changes',{event:'INSERT',schema:'public',table:'room_invites',filter:'to_nick=eq.'+meEnc},p=>{if(p.new)showRoomInvite(p.new)}).subscribe()}
@@ -1761,7 +1575,6 @@ function closeRoomInvite(){$('roomInviteM').classList.remove('open');curInvite=n
 async function acceptInvite(){if(!curInvite)return;const inv=curInvite;try{const{data:tgt}=await sb.from('flats').select('*').eq('house_id',inv.house_id).eq('number',inv.flat_number).maybeSingle();if(!tgt){closeRoomInvite();return showToast('Комната пропала','error')}const tOwners=flatOwners(tgt).filter(x=>x!==meEnc);if(tOwners.length>=(tgt.max_people??2)){closeRoomInvite();await sb.from('room_invites').delete().eq('id',inv.id);return showToast('Комната полна','error')}const{data:myFlats}=await sb.from('flats').select('house_id,number,owner_nicks').contains('owner_nicks',[meEnc]);if(myFlats&&myFlats.length){for(const f of myFlats){const nw=(f.owner_nicks||[]).filter(x=>x!==meEnc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',f.house_id).eq('number',f.number)}}const newOwners=[...tOwners,meEnc];await sb.from('flats').update({owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',inv.house_id).eq('number',inv.flat_number);await sb.from('room_invites').delete().eq('id',inv.id);closeRoomInvite();await loadMyRooms();if(Number(inv.house_id)!==Number(curHouse)){await switchHouse(Number(inv.house_id))}else{await reloadHouse()}showToast('✅ Переселён в Кв. '+((inv.house_id-1)*30+inv.flat_number),'success')}catch(e){showToast('❌ '+e.message,'error')}}
 async function declineInvite(){if(!curInvite)return;try{await sb.from('room_invites').delete().eq('id',curInvite.id);closeRoomInvite();showToast('Отклонено')}catch(e){showToast('❌ '+e.message,'error')}}
 function upChSt(){if(!curPartner)return;const st=$('chs');if(!st)return;if(online.has(curPartner)){st.textContent='в сети';st.classList.add('online')}else{st.classList.remove('online')}}
-/* ===== ОБЕ ПАНЕЛИ: owner видит и admin и owner ===== */
 function upAdminTog(){
   const ow=isOwner();
   const o=hasAdmin();
@@ -1784,7 +1597,7 @@ function openOwner(){if(!isOwner())return showToast('Только владеле
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b);if(afT==='custom')return ofCustomEvents(b);if(afT==='fakes')return ofFakes(b);if(afT==='dates')return ofDates(b)}
-const APP_VERSION='3.1.0';
+const APP_VERSION='3.2.0';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 
@@ -1807,7 +1620,7 @@ async function renderFlatPicker(){if(!fpTargetNick)return;const{data:hs}=await s
 async function pickFlatToMove(hid,fn){if(!fpTargetNick)return;const nick=fpTargetNick;const enc=en(nick);const{data:myFlats}=await sb.from('flats').select('house_id,number,owner_nicks').contains('owner_nicks',[enc]);for(const f of (myFlats||[])){const nw=(f.owner_nicks||[]).filter(x=>x!==enc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',f.house_id).eq('number',f.number)}const{data:tgt}=await sb.from('flats').select('*').eq('house_id',hid).eq('number',fn).maybeSingle();if(!tgt)return showToast('Квартира не найдена','error');const owners=flatOwners(tgt).filter(x=>x!==enc);const mp=tgt.max_people??2;if(owners.length>=mp)return showToast('Мест нет','error');const nw=[...owners,enc];await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0],owner_nick2:nw[1]||null}).eq('house_id',hid).eq('number',fn);showToast('✅ '+nick+' → Дом '+hid+', Кв. '+fn,'success');closeFlatPicker();afRend()}
 async function ownerKickUser(nick){if(!isOwner())return;const ok=await askConfirm('Выселить?','Убрать '+nick+' из всех квартир.','Выселить',true);if(!ok)return;const enc=en(nick);const{data:myFlats}=await sb.from('flats').select('house_id,number,owner_nicks').contains('owner_nicks',[enc]);if(!myFlats||!myFlats.length)return showToast('Не живёт нигде','error');for(const f of myFlats){const nw=(f.owner_nicks||[]).filter(x=>x!==enc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',f.house_id).eq('number',f.number)}showToast('🚪 '+nick+' выселен','success');afRend()}
 
-/* ===== OWNER: ИВЕНТЫ (с показом дат в табах) ===== */
+/* ===== OWNER: ИВЕНТЫ ===== */
 let curEvTab='xmas';
 function ofEvTabSet(t){if(curEvTab===t)return;curEvTab=t;ofSw('events')}
 async function ofEvents(b){
@@ -1856,15 +1669,15 @@ async function setEvOv(nick,evId,m){if(!isOwner())return;const enc=en(nick);try{
 
 /* ===== ДАТЫ ===== */
 const DATES_DEFAULT=[
-  {date:'23.02',title:'День защитника Отечества',short:'Праздник всех, кто служил и служит',emoji:'🎖️',body:'<p><b>23 февраля</b> — День защитника Отечества.</p><div class="dts-quote">От всей души — тем, кто стоит на страже.</div>'},
+  {date:'23.02',title:'День защитника Отечества',short:'Праздник всех, кто служил и служит',emoji:'🎖️',body:'<p><b>23 февраля</b> — День защитника Отечества.</p>'},
   {date:'08.03',title:'Международный женский день',short:'8 марта — женский день',emoji:'🌷',body:'<p><b>8 марта</b> — Международный женский день.</p>'},
-  {date:'12.04',title:'День космонавтики',short:'12 апреля — полёт Гагарина',emoji:'🚀',body:'<p><b>12 апреля 1961 года</b> Юрий Гагарин на «Востоке-1» совершил первый полёт человека в космос.</p><div class="dts-quote">«Поехали!» — Ю. А. Гагарин</div>'},
+  {date:'12.04',title:'День космонавтики',short:'12 апреля — полёт Гагарина',emoji:'🚀',body:'<p><b>12 апреля 1961 года</b> Юрий Гагарин на «Востоке-1» совершил первый полёт человека в космос.</p><div class="dts-quote">«Поехали!»</div>'},
   {date:'09.05',title:'День Победы',short:'9 мая — победа в ВОВ',emoji:'🎗️',body:'<p><b>9 мая 1945 года</b> — День Победы в Великой Отечественной войне.</p><div class="dts-quote">Никто не забыт, ничто не забыто.</div>'},
-  {date:'22.06',title:'День памяти и скорби',short:'22 июня — начало ВОВ',emoji:'🕯️',body:'<p><b>22 июня 1941 года</b> — начало Великой Отечественной войны.</p><div class="dts-quote">Свеча памяти — каждому имени.</div>'},
-  {date:'03.09',title:'День солидарности в борьбе с терроризмом',short:'3 сентября — память жертв терактов',emoji:'🕊️',body:'<p><b>3 сентября</b> — установлен в память о трагедии в <b>Беслане</b>.</p><div class="dts-quote">Терроризму — нет.</div>'},
-  {date:'10.12',title:'DOOM — прародитель шутеров',short:'10 декабря 1993 — релиз DOOM',emoji:'💀',body:'<p><b>10 декабря 1993 года</b> вышла <b>DOOM</b> от id Software — игра, которая создала жанр шутеров от первого лица.</p><div class="dts-quote">RIP AND TEAR!</div>'},
-  {date:'19.11',title:'Half-Life — легенда Valve',short:'19 ноября 1998 — релиз Half-Life',emoji:'🧪',body:'<p><b>19 ноября 1998 года</b> вышла <b>Half-Life</b> от Valve.</p><div class="dts-quote">«The right man in the wrong place can make all the difference.»</div>'},
-  {date:'17.05',title:'Minecraft — первый публичный релиз',short:'17 мая 2009 — Minecraft Classic',emoji:'⛏️',body:'<p><b>17 мая 2009 года</b> Notch выложил первую публичную версию Minecraft.</p><p>Сегодня продано более <b>300 миллионов копий</b>.</p>'},
+  {date:'22.06',title:'День памяти и скорби',short:'22 июня — начало ВОВ',emoji:'🕯️',body:'<p><b>22 июня 1941 года</b> — начало Великой Отечественной войны.</p>'},
+  {date:'03.09',title:'День солидарности в борьбе с терроризмом',short:'3 сентября — память жертв терактов',emoji:'🕊️',body:'<p><b>3 сентября</b> — установлен в память о трагедии в <b>Беслане</b>.</p>'},
+  {date:'10.12',title:'DOOM — прародитель шутеров',short:'10 декабря 1993 — релиз DOOM',emoji:'💀',body:'<p><b>10 декабря 1993 года</b> вышла <b>DOOM</b> от id Software.</p><div class="dts-quote">RIP AND TEAR!</div>'},
+  {date:'19.11',title:'Half-Life — легенда Valve',short:'19 ноября 1998 — релиз Half-Life',emoji:'🧪',body:'<p><b>19 ноября 1998 года</b> вышла <b>Half-Life</b> от Valve.</p>'},
+  {date:'17.05',title:'Minecraft — первый публичный релиз',short:'17 мая 2009 — Minecraft Classic',emoji:'⛏️',body:'<p><b>17 мая 2009 года</b> Notch выложил первую публичную версию Minecraft.</p>'},
   {date:'01.09',title:'Roblox — день рождения',short:'1 сентября 2006 — запуск Roblox',emoji:'🟥',body:'<p><b>1 сентября 2006 года</b> выпущена платформа <b>Roblox</b>.</p>'},
   {date:'10.10',title:'Portal — с кубом и тортом',short:'10 октября 2007 — релиз Portal',emoji:'🟦',body:'<p><b>10 октября 2007 года</b> вышла <b>Portal</b> от Valve.</p><div class="dts-quote">«The cake is a lie.»</div>'},
   {date:'16.05',title:'Terraria — 2D-песочница',short:'16 мая 2011 — релиз Terraria',emoji:'🌳',body:'<p><b>16 мая 2011 года</b> вышла <b>Terraria</b> от Re-Logic.</p>'}
@@ -1880,7 +1693,7 @@ function _renderDtsArticle(d){$('dtsArtTitleBar').textContent='★ '+d.title;$('
 function openDtsArticle(i){const d=getAllDates()[i];if(!d)return;_renderDtsArticle(d);closeDtsPanel();$('dtsArticle').classList.add('open')}
 function closeDtsArticle(){$('dtsArticle').classList.remove('open')}
 function openGameArticle(evId){const g=EVENTS.find(e=>e.id===evId);if(!g||!g.title)return;const d=DATES_DEFAULT.find(x=>x.title===g.title);if(!d){showToast('Статья не найдена','error');return}_renderDtsArticle(d);$('dtsArticle').classList.add('open')}
-async function ofDates(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}const custom=getCustomDates();const hidden=getHiddenDates();b.innerHTML='<div class="of-hint">📅 <b>Памятные даты.</b> Добавляй свои статьи с эмодзи. Встроенные можно скрыть.</div>'+'<div class="odt-form">'+'<input id="odtDate" placeholder="ДД.ММ" maxlength="5">'+'<input id="odtTitle" placeholder="Заголовок" maxlength="80">'+'<input id="odtShort" class="odt-full" placeholder="Краткое описание" maxlength="120">'+'<input id="odtEmoji" placeholder="📅" maxlength="4">'+'<input id="odtImg" placeholder="URL картинки">'+'<textarea id="odtBody" placeholder="Текст статьи"></textarea>'+'<button onclick="odtAdd()">➕ Добавить дату</button>'+'</div>'+'<div class="odt-default-title">🌐 Встроенные (можно скрыть)</div>'+'<div id="odtDefList">'+DATES_DEFAULT.map(d=>{const isHidden=hidden.includes('def:'+d.title);const k='def:'+d.title.replace(/'/g,"\\'");return '<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><span class="bd def">ВСТР</span><button class="toggle" onclick="odtToggle(\''+k+'\')">'+(isHidden?'👁 Показать':'🙈 Скрыть')+'</button></div>'}).join('')+'</div>'+'<div class="odt-default-title" style="margin-top:22px">✏️ Свои ('+custom.length+')</div>'+'<div id="odtCustomList">'+(custom.length?custom.map((d,i)=>'<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><button class="del" onclick="odtDel('+i+')">🗑</button></div>').join(''):'<div class="afe">Пока пусто</div>')+'</div>'+'<div class="give-msg" id="odtMsg" style="min-height:18px;margin-top:10px"></div>'}
+async function ofDates(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}const custom=getCustomDates();const hidden=getHiddenDates();b.innerHTML='<div class="of-hint">📅 <b>Памятные даты.</b> Добавляй свои статьи с эмодзи.</div>'+'<div class="odt-form">'+'<input id="odtDate" placeholder="ДД.ММ" maxlength="5">'+'<input id="odtTitle" placeholder="Заголовок" maxlength="80">'+'<input id="odtShort" class="odt-full" placeholder="Краткое описание" maxlength="120">'+'<input id="odtEmoji" placeholder="📅" maxlength="4">'+'<input id="odtImg" placeholder="URL картинки">'+'<textarea id="odtBody" placeholder="Текст статьи"></textarea>'+'<button onclick="odtAdd()">➕ Добавить дату</button>'+'</div>'+'<div class="odt-default-title">🌐 Встроенные (можно скрыть)</div>'+'<div id="odtDefList">'+DATES_DEFAULT.map(d=>{const isHidden=hidden.includes('def:'+d.title);const k='def:'+d.title.replace(/'/g,"\\'");return '<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><span class="bd def">ВСТР</span><button class="toggle" onclick="odtToggle(\''+k+'\')">'+(isHidden?'👁 Показать':'🙈 Скрыть')+'</button></div>'}).join('')+'</div>'+'<div class="odt-default-title" style="margin-top:22px">✏️ Свои ('+custom.length+')</div>'+'<div id="odtCustomList">'+(custom.length?custom.map((d,i)=>'<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><button class="del" onclick="odtDel('+i+')">🗑</button></div>').join(''):'<div class="afe">Пока пусто</div>')+'</div>'+'<div class="give-msg" id="odtMsg" style="min-height:18px;margin-top:10px"></div>'}
 function odtToggle(titleKey){const hidden=getHiddenDates();const i=hidden.indexOf(titleKey);if(i>=0)hidden.splice(i,1);else hidden.push(titleKey);setHiddenDates(hidden);ofSw('dates')}
 function odtAdd(){const date=$('odtDate').value.trim();const title=$('odtTitle').value.trim();const short=$('odtShort').value.trim();const emoji=$('odtEmoji').value.trim()||'📅';const img=$('odtImg').value.trim();const body=$('odtBody').value.trim();const msg=$('odtMsg');msg.style.color='#ff6b6b';if(!/^\d{2}\.\d{2}$/.test(date)){msg.textContent='❌ Дата в формате ДД.ММ';return}if(!title){msg.textContent='❌ Впиши заголовок';return}if(!body){msg.textContent='❌ Впиши текст статьи';return}const custom=getCustomDates();custom.push({date,title,short,emoji,img,body});setCustomDates(custom);msg.style.color='#8bc34a';msg.textContent='✅ Добавлено';setTimeout(()=>ofSw('dates'),400)}
 function odtDel(i){const custom=getCustomDates();if(!confirm('Удалить «'+(custom[i]?.title||'')+'»?'))return;custom.splice(i,1);setCustomDates(custom);ofSw('dates')}
@@ -1944,8 +1757,8 @@ function checkGameIcons(){
   box.classList.add('on');
 }
 const MEMORIAL_DATA={
-  '911':{icon:'🏙️',title:'11 сентября 2001',date:'Теракт в США · 2 977 погибших',text:'Утром 11 сентября 2001 года террористы захватили четыре пассажирских самолёта...\n\nОбе башни-близнецы обрушились в течение двух часов. Погибли 2 977 человек.\n\nЭтот день изменил мир. Мы помним всех.'},
-  'crocus':{icon:'🕯️',title:'22 марта 2024',date:'Теракт в Крокус Сити Холл, Москва',text:'Вечером 22 марта 2024 года террористы ворвались в «Крокус Сити Холл» в Красногорске.\n\nПогибли 145 человек, более 550 пострадали.\n\nМы скорбим вместе со всеми.'}
+  '911':{icon:'🏙️',title:'11 сентября 2001',date:'Теракт в США · 2 977 погибших',text:'Утром 11 сентября 2001 года террористы захватили четыре пассажирских самолёта. Два из них врезались в башни-близнецы.\n\nПогибли 2 977 человек.\n\nМы помним всех.'},
+  'crocus':{icon:'🕯️',title:'22 марта 2024',date:'Теракт в Крокус Сити Холл, Москва',text:'Вечером 22 марта 2024 года террористы ворвались в «Крокус Сити Холл».\n\nПогибли 145 человек, более 550 пострадали.\n\nМы скорбим вместе со всеми.'}
 };
 function openMemorial(which){const d=MEMORIAL_DATA[which];if(!d)return;$('memIcon').textContent=d.icon;$('memTitle').textContent=d.title;$('memDate').textContent=d.date;$('memText').innerHTML=d.text.replace(/</g,'&lt;').replace(/\n/g,'<br>');$('memorialModal').classList.add('open');try{stopAllMedia()}catch(e){}}
 function closeMemorial(){$('memorialModal').classList.remove('open')}
@@ -2079,7 +1892,17 @@ function renderVisitGarden(){if(!_visitGarden)return;const b=$('visitBeds');cons
 if(!window._gardenVisitTick)window._gardenVisitTick=setInterval(()=>{if($('gardenM')?.classList.contains('open')&&$('gardenVisit')?.style.display==='block'&&_visitGarden)renderVisitGarden()},800)
 
 /* ===== ПРОФИЛЬ ===== */
-async function openProfile(nick){closeUserMenu();pfCurrent=nick||null;const target=nick||me;const isMine=(!nick||nick===me);const av=$('pfAv');av.classList.remove('has-img');FRAMES.forEach(f=>av.classList.remove('frame-'+f.id));av.style.backgroundImage='';av.style.background='';try{const{data:um}=await sb.from('user_media').select('photo_url').eq('nick',en(target)).maybeSingle();if(um&&um.photo_url){av.style.backgroundImage='url("'+um.photo_url+'")';av.classList.add('has-img');av.textContent=''}else throw 0}catch(e){av.textContent=firstL(target);av.style.background='linear-gradient(135deg,'+nCol(target)+','+shCol(nCol(target),-18)+')'}const fr=getFrame(target);if(fr&&fr!=='none')av.classList.add('frame-'+fr);decorateFrame(av,fr);const pfEmb=$('pf').querySelector('.emb');if(pfEmb){const allBg=FRAMES.map(f=>'fr-bg-'+f.id);allBg.push('fr-bg-rainbow-anim');pfEmb.classList.remove(...allBg);if(fr&&fr!=='none')pfEmb.classList.add('fr-bg-'+fr)}pfFxSpawn(fr);$('pfNick').textContent=target;const isOnline=online.has(en(target));$('pfOnline').style.display=(!isMine&&isOnline)?'inline':'none';let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',target).maybeSingle();p=r.data}catch(e){}if(p&&p.status)$('pfStatus').textContent=((p.status_emoji||'')+' '+p.status).trim();else $('pfStatus').textContent=isMine?'Нажми «Редактировать»':'';$('pfBio').textContent=(p&&p.bio)?p.bio:(isMine?'Расскажи о себе':'');let myF=null;try{const{data:fl}=await sb.from('flats').select('house_id,number,owner_nicks');(fl||[]).forEach(x=>{if((x.owner_nicks||[]).includes(en(target)))myF=x})}catch(e){}const gNum=myF?((Number(myF.house_id)-1)*30+Number(myF.number)):null;$('pfFlat').textContent=myF?'Кв. '+gNum:'Не заселён';$('pfReg').textContent='С нами давно';$('pfMsgs').textContent='';$('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';$('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);const seenRow=$('pfSeenRow');if(isMine||isOnline)seenRow.style.display='none';else if(p&&p.last_seen){seenRow.style.display='flex';$('pfSeen').textContent=lastSeenText(p.last_seen)}else seenRow.style.display='none';const acts=$('pfActions');if(isMine){const b=frameBonusPct(myFrame);const bT=b?' (+'+b+'%)':'';acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Ред</button><button class="garden" onclick="closePf();openGarden()">🌱 Грядка</button><button class="frames" onclick="closePf();openFrames()">⬜ Рамки'+bT+'</button>'}else{const enc=en(target);acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+enc+'\')">💬 Написать</button><button class="call" onclick="startCall(\''+enc+'\',\'audio\')">📞 Аудио</button><button class="callvid" onclick="startCall(\''+enc+'\',\'video\')">📹 Видео</button><button class="garden" onclick="closePf();openVisitGarden(\''+eh(target)+'\')">🌱 Грядка</button><button class="send-coins" onclick="openSendCoins(\''+eh(target)+'\')">💰 Монеты</button>'}$('pfEdit').classList.remove('on');$('pfErr').textContent='';$('pf').classList.add('open')}
+async function openProfile(nick){closeUserMenu();pfCurrent=nick||null;const target=nick||me;const isMine=(!nick||nick===me);const av=$('pfAv');av.classList.remove('has-img');FRAMES.forEach(f=>av.classList.remove('frame-'+f.id));av.style.backgroundImage='';av.style.background='';try{const{data:um}=await sb.from('user_media').select('photo_url').eq('nick',en(target)).maybeSingle();if(um&&um.photo_url){av.style.backgroundImage='url("'+um.photo_url+'")';av.classList.add('has-img');av.textContent=''}else throw 0}catch(e){av.textContent=firstL(target);av.style.background='linear-gradient(135deg,'+nCol(target)+','+shCol(nCol(target),-18)+')'}const fr=getFrame(target);if(fr&&fr!=='none')av.classList.add('frame-'+fr);decorateFrame(av,fr);const pfEmb=$('pf').querySelector('.emb');if(pfEmb){const allBg=FRAMES.map(f=>'fr-bg-'+f.id);allBg.push('fr-bg-rainbow-anim');pfEmb.classList.remove(...allBg);if(fr&&fr!=='none')pfEmb.classList.add('fr-bg-'+fr)}pfFxSpawn(fr);$('pfNick').textContent=target;const isOnline=online.has(en(target));$('pfOnline').style.display=(!isMine&&isOnline)?'inline':'none';let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',target).maybeSingle();p=r.data}catch(e){}if(p&&p.status)$('pfStatus').textContent=((p.status_emoji||'')+' '+p.status).trim();else $('pfStatus').textContent=isMine?'Нажми «Редактировать»':'';$('pfBio').textContent=(p&&p.bio)?p.bio:(isMine?'Расскажи о себе':'');
+/* ===== предметы в профиле ===== */
+const pfItemsEl=$('pfItems');
+if(pfItemsEl){
+  const items=(p&&p.owned_items)||[];
+  if(items.length){
+    pfItemsEl.innerHTML=items.map(id=>{const it=ITEMS.find(x=>x.id===id);if(!it)return '';return '<div class="pf-item" title="'+eh(it.name)+'">'+it.icon+'</div>'}).join('');
+    pfItemsEl.style.display='flex';
+  }else{pfItemsEl.innerHTML='';pfItemsEl.style.display='none'}
+}
+let myF=null;try{const{data:fl}=await sb.from('flats').select('house_id,number,owner_nicks');(fl||[]).forEach(x=>{if((x.owner_nicks||[]).includes(en(target)))myF=x})}catch(e){}const gNum=myF?((Number(myF.house_id)-1)*30+Number(myF.number)):null;$('pfFlat').textContent=myF?'Кв. '+gNum:'Не заселён';$('pfReg').textContent='С нами давно';$('pfMsgs').textContent='';$('pfCoinsRow').style.display=(isMine||(p&&p.coins>0))?'flex':'none';$('pfCoinsInfo').textContent='Монет: '+((p&&p.coins)||0);const seenRow=$('pfSeenRow');if(isMine||isOnline)seenRow.style.display='none';else if(p&&p.last_seen){seenRow.style.display='flex';$('pfSeen').textContent=lastSeenText(p.last_seen)}else seenRow.style.display='none';const acts=$('pfActions');if(isMine){const b=frameBonusPct(myFrame);const bT=b?' (+'+b+'%)':'';acts.innerHTML='<button class="edit" onclick="startPfEdit()">✏️ Ред</button><button class="garden" onclick="closePf();openGarden()">🌱 Грядка</button><button class="frames" onclick="closePf();openFrames()">🛒 Магазин'+bT+'</button>'}else{const enc=en(target);acts.innerHTML='<button class="msg" onclick="closePf();openDm(\''+enc+'\')">💬 Написать</button><button class="call" onclick="startCall(\''+enc+'\',\'audio\')">📞 Аудио</button><button class="callvid" onclick="startCall(\''+enc+'\',\'video\')">📹 Видео</button><button class="garden" onclick="closePf();openVisitGarden(\''+eh(target)+'\')">🌱 Грядка</button><button class="send-coins" onclick="openSendCoins(\''+eh(target)+'\')">💰 Монеты</button>'}$('pfEdit').classList.remove('on');$('pfErr').textContent='';$('pf').classList.add('open')}
 function closePf(){$('pf').classList.remove('open');pfFxClear();pfCurrent=null}
 function openPfMine(){openProfile(null)}
 async function startPfEdit(){let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',me).maybeSingle();p=r.data}catch(e){}$('pfEmojiInp').value=(p&&p.status_emoji)||'';$('pfStatusInp').value=(p&&p.status)||'';$('pfBioInp').value=(p&&p.bio)||'';$('pfEdit').classList.add('on')}
@@ -2090,16 +1913,62 @@ async function savePf(ev){const e=$('pfEmojiInp').value.trim(),s=$('pfStatusInp'
 function frameBonusPct(id){return FRAME_BONUS[id]||0}
 function getFrame(n){return frameCache[en(n)]||'none'}
 function decorateFrame(el,id){el.querySelectorAll(':scope > .halo, :scope > .horn').forEach(x=>x.remove());if(id==='angelic'){const h=document.createElement('div');h.className='halo';el.appendChild(h)}else if(id==='devil'){const hl=document.createElement('div');hl.className='horn hl';const hr=document.createElement('div');hr.className='horn hr';el.appendChild(hl);el.appendChild(hr)}}
-function openFrames(){$('framesMsg').textContent='';applyNeonCSS();renderFramesList();renderNeonPicker();const np=$('neonPicker');if(np)np.style.display=(myFrame==='neon')?'block':'none';loadCoins();$('framesM').classList.add('open')}
+
+/* ===== МАГАЗИН ===== */
+function openFrames(){
+  $('framesMsg').textContent='';
+  applyNeonCSS();
+  renderFramesList();
+  renderItemsList();
+  renderNeonPicker();
+  const np=$('neonPicker');
+  if(np)np.style.display=(shopTab==='frames'&&myFrame==='neon')?'block':'none';
+  loadCoins();
+  shopSw(shopTab);
+  $('framesM').classList.add('open');
+}
 function closeFrames(){$('framesM').classList.remove('open')}
+function shopSw(t){
+  shopTab=t;
+  document.querySelectorAll('.shop-tab').forEach(x=>x.classList.toggle('act',x.dataset.tab===t));
+  const fp=$('shopFramesPane'),ip=$('shopItemsPane');
+  if(fp)fp.style.display=(t==='frames')?'block':'none';
+  if(ip)ip.style.display=(t==='items')?'block':'none';
+  if(t==='items')renderItemsList();else renderFramesList();
+}
 function renderFramesList(){const l=$('framesList');if(!l)return;l.innerHTML=FRAMES.map(f=>{const owned=myOwnedFrames.includes(f.id);const isActive=myFrame===f.id;const canBuy=myCoins>=f.price;const bonus=FRAME_BONUS[f.id];let btn='';if(isActive)btn='<div class="fr-active">✅ Активна</div>';else if(owned)btn='<button class="fr-btn fr-set" onclick="setFrame(\''+f.id+'\')">Надеть</button>';else if(f.id==='none')btn='<button class="fr-btn fr-set" onclick="setFrame(\'none\')">Снять</button>';else btn='<button class="fr-btn fr-buy'+(canBuy?'':' disabled')+'" '+(canBuy?'onclick="buyFrame(\''+f.id+'\','+f.price+')"':'')+'>Купить '+f.price+'💰</button>';let bH='';if(f.id==='gardener')bH='<div class="fr-bonus">+25% к грядке</div>';else if(bonus)bH='<div class="fr-bonus">+'+bonus+'% к доходу</div>';const ic=iconsFor(f.id);return '<div class="fr-item'+(isActive?' active':'')+'"><div class="fr-preview'+(f.id!=='none'?' frame-'+f.id:'')+'"><span style="font-size:24px">'+ic+'</span></div><div class="fr-name">'+f.name+'</div>'+bH+btn+'</div>'}).join('');if($('neonPicker')&&$('neonPicker').style.display!=='none')renderNeonPicker()}
+function renderItemsList(){
+  const l=$('itemsList');if(!l)return;
+  const owned=myOwnedItems||[];
+  l.innerHTML=ITEMS.map(it=>{
+    const has=owned.includes(it.id);
+    const can=myCoins>=it.price;
+    const btn=has
+      ?'<button class="item-btn owned" disabled>✅ Куплено</button>'
+      :'<button class="item-btn buy" '+(can?'':'disabled')+' onclick="buyItem(\''+it.id+'\','+it.price+')">Купить '+it.price+'💰</button>';
+    return '<div class="item-card'+(has?' owned':'')+'" title="'+eh(it.desc||'')+'"><div class="item-preview">'+it.icon+'</div><div class="item-name">'+eh(it.name)+'</div><div class="item-price">'+it.price+' 💰</div>'+btn+'</div>';
+  }).join('');
+}
+async function buyItem(id,price){
+  if((myOwnedItems||[]).includes(id))return;
+  if(myCoins<price)return showToast('Мало монет','error');
+  const it=ITEMS.find(x=>x.id===id);if(!it)return;
+  const ok=await askConfirm('Купить?','Купить «'+it.name+'» за '+price+'💰?','Купить');
+  if(!ok)return;
+  const newOwned=[...(myOwnedItems||[]),id];
+  const newCoins=myCoins-price;
+  const{error}=await sb.from('profiles').update({owned_items:newOwned,coins:newCoins}).eq('nick',me);
+  if(error)return showToast('❌ '+error.message,'error');
+  myOwnedItems=newOwned;myCoins=newCoins;updateCoinsUI();renderItemsList();
+  showToast('✅ '+it.name,'success');
+}
 async function buyFrame(id,price){if(myOwnedFrames.includes(id))return;if(myCoins<price)return showToast('Мало монет','error');const ok=await askConfirm('Купить?','Купить рамку за '+price+'💰?','Купить');if(!ok)return;const{data,error}=await sb.rpc('buy_frame',{p_frame_id:id,p_price:price});if(error)return showToast(error.message,'error');if(data&&data.ok===false)return showToast(data.error||'Ошибка','error');await loadCoins();renderFramesList();await loadPhotoCache();renderFlats();showToast('✅ Куплено','success')}
 async function setFrame(id){if(id!=='none'&&!myOwnedFrames.includes(id))return showToast('Не куплено','error');const{error}=await sb.rpc('set_active_frame',{p_frame_id:id});if(error)return showToast(error.message,'error');myFrame=id;frameCache[meEnc]=id;renderFramesList();renderFlats();const np=$('neonPicker');if(np)np.style.display=(id==='neon')?'block':'none';if(id==='neon')renderNeonPicker();if($('pf').classList.contains('open'))openProfile(pfCurrent?de(pfCurrent):null);showToast('✅ Надета','success')}
 function renderNeonPicker(){const cur=getNeonRGB();const cI=$('npColor');if(cI&&document.activeElement!==cI)cI.value=rgbToHex(cur[0],cur[1],cur[2]);const rI=$('npRgb');if(rI&&document.activeElement!==rI)rI.value=cur.join(', ');const box=$('npSaved');if(!box)return;const saved=getSavedNeons();if(!saved.length){box.innerHTML='<span style="color:#666678;font-size:12px">Пусто</span>';return}box.innerHTML=saved.map(key=>{const p=key.split(',').map(Number);const hex=rgbToHex(p[0],p[1],p[2]);return '<div class="np-chip" style="background:'+hex+'" onclick="applyNeonPreset(\''+key+'\')"><button class="np-x" onclick="event.stopPropagation();removeNeonPreset(\''+key+'\')">✕</button></div>'}).join('')}
 function applyNeonPreset(key){const p=key.split(',').map(Number);if(p.length>=3)setNeonRGB(p[0],p[1],p[2]);renderNeonPicker()}
 
 /* ===== МОНЕТЫ ===== */
-async function loadCoins(){try{const{data}=await sb.from('profiles').select('coins,active_frame,owned_frames').eq('nick',me).maybeSingle();myCoins=(data&&data.coins)||0;myFrame=(data&&data.active_frame)||'none';myOwnedFrames=(data&&data.owned_frames)||['none']}catch(e){myCoins=0;myFrame='none';myOwnedFrames=['none']}updateCoinsUI()}
+async function loadCoins(){try{const{data}=await sb.from('profiles').select('coins,active_frame,owned_frames,owned_items').eq('nick',me).maybeSingle();myCoins=(data&&data.coins)||0;myFrame=(data&&data.active_frame)||'none';myOwnedFrames=(data&&data.owned_frames)||['none'];myOwnedItems=(data&&data.owned_items)||[]}catch(e){myCoins=0;myFrame='none';myOwnedFrames=['none'];myOwnedItems=[]}updateCoinsUI()}
 function updateCoinsUI(){const b=$('myCoinsBadge');if(b)b.textContent='💰 '+myCoins;const d=$('dutyCoins');if(d)d.textContent=myCoins;const f=$('framesCoins');if(f)f.textContent=myCoins}
 async function addCoins(n){let ap=n;if(n>0){const b=frameBonusPct(myFrame);if(b>0)ap=Math.round(n*(1+b/100))}try{const{data,error}=await sb.rpc('earn_coins',{p_delta:ap});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||'Ошибка'),'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}}
 function withBonus(b){const bo=frameBonusPct(myFrame);return bo>0?Math.round(b*(1+bo/100)):b}
@@ -2147,23 +2016,7 @@ function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
 async function loadM(){const tk=++mTok,rid=curRoom;if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);if(tk!==mTok||rid!==curRoom)return;if(error)return;msgC=(data||[]).reverse().filter(m=>!m.deleted_for_all);await loadR(msgC);renderMs($('chat'),msgC)}
 async function loadR(list){try{const ids=(list||[]).map(m=>m.id).filter(Boolean);if(!ids.length){allR={};return}const{data}=await sb.from('reactions').select('*').in('message_id',ids);allR={};(data||[]).forEach(r=>{if(!allR[r.message_id])allR[r.message_id]=[];allR[r.message_id].push(r)})}catch(e){allR={}}}
 function voiceBarHTML(id,dur,played){const bars=Math.max(12,Math.min(40,Math.round((dur||3)*3)));let h='';for(let i=0;i<bars;i++){const hgt=6+Math.round(Math.abs(Math.sin(i*0.9+id.length))*18);h+='<div class="wb'+(played&&i/bars<played?' played':'')+'" style="height:'+hgt+'px"></div>'}return h}
-function renderMs(el,list,opts){
-  const top=(opts&&opts.topBanner)?'<div class="msg roomtitle">'+opts.topBanner+'</div>':'';
-  const nh=top+list.map(m=>{
-    const mine=m.nick===meEnc;let body='';
-    if(m.voice_url){const d=m.voice_dur||vDur[m.id]||3;body='<div class="voice-msg" data-id="'+m.id+'" onclick="playVoice(\''+m.id+'\',\''+m.voice_url+'\','+d+')"><button class="voice-play-btn" type="button"></button><div class="voice-bar" data-id="'+m.id+'">'+voiceBarHTML(m.id,d,0)+'</div><div class="voice-time">'+fT(d)+'</div></div>'}
-    else if(m.video_url){body='<div class="mc paused" onclick="toggleCirclePlay(this)"><video src="'+m.video_url+'" playsinline preload="metadata"></video></div>'}
-    else if(m.photo_url){body='<img class="mp" src="'+m.photo_url+'" onclick="openPV(\''+m.photo_url+'\')">'}
-    else{body='<span class="txt">'+eh(m.text||'')+'</span>'}
-    const tm='<span class="time">'+new Date(m.created_at).toLocaleTimeString().slice(0,5)+'</span>'+(m.edited?'<span class="med">ред.</span>':'');
-    const nk=mine?'':'<span class="nick" onclick="openProfile(\''+eh(de(m.nick))+'\')">'+eh(de(m.nick))+'</span>';
-    const rl=(allR[m.id]||[]).reduce((acc,r)=>{const k=r.emoji;if(!acc[k])acc[k]={c:0,mine:false};acc[k].c++;if(r.nick===meEnc)acc[k].mine=true;return acc},{});
-    const rlH=Object.keys(rl).length?'<div class="mr">'+Object.entries(rl).map(([e,o])=>'<div class="rc'+(o.mine?' mine':'')+'" onclick="event.stopPropagation();addReaction(\''+m.id+'\',\''+e+'\')"><span>'+e+'</span><span class="rn">'+o.c+'</span></div>').join('')+'</div>':'';
-    return '<div class="msg '+(mine?'own':'other')+'" data-id="'+m.id+'" oncontextmenu="showCtxMenu(event,\''+m.id+'\')">'+nk+body+tm+rlH+'</div>'
-  }).join('');
-  const fh=nh||'<div style="color:#55556a;text-align:center;padding:30px">Пусто</div>';
-  if(el.dataset.lastHtml!==fh){const ab=el.scrollTop+el.clientHeight>=el.scrollHeight-40,fr=!el.dataset.lastHtml;el.innerHTML=fh;el.dataset.lastHtml=fh;if(fr||ab)el.scrollTop=el.scrollHeight}
-}
+function renderMs(el,list,opts){const top=(opts&&opts.topBanner)?'<div class="msg roomtitle">'+opts.topBanner+'</div>':'';const nh=top+list.map(m=>{const mine=m.nick===meEnc;let body='';if(m.voice_url){const d=m.voice_dur||vDur[m.id]||3;body='<div class="voice-msg" data-id="'+m.id+'" onclick="playVoice(\''+m.id+'\',\''+m.voice_url+'\','+d+')"><button class="voice-play-btn" type="button"></button><div class="voice-bar" data-id="'+m.id+'">'+voiceBarHTML(m.id,d,0)+'</div><div class="voice-time">'+fT(d)+'</div></div>'}else if(m.video_url){body='<div class="mc paused" onclick="toggleCirclePlay(this)"><video src="'+m.video_url+'" playsinline preload="metadata"></video></div>'}else if(m.photo_url){body='<img class="mp" src="'+m.photo_url+'" onclick="openPV(\''+m.photo_url+'\')">'}else{body='<span class="txt">'+eh(m.text||'')+'</span>'}const tm='<span class="time">'+new Date(m.created_at).toLocaleTimeString().slice(0,5)+'</span>'+(m.edited?'<span class="med">ред.</span>':'');const nk=mine?'':'<span class="nick" onclick="openProfile(\''+eh(de(m.nick))+'\')">'+eh(de(m.nick))+'</span>';const rl=(allR[m.id]||[]).reduce((acc,r)=>{const k=r.emoji;if(!acc[k])acc[k]={c:0,mine:false};acc[k].c++;if(r.nick===meEnc)acc[k].mine=true;return acc},{});const rlH=Object.keys(rl).length?'<div class="mr">'+Object.entries(rl).map(([e,o])=>'<div class="rc'+(o.mine?' mine':'')+'" onclick="event.stopPropagation();addReaction(\''+m.id+'\',\''+e+'\')"><span>'+e+'</span><span class="rn">'+o.c+'</span></div>').join('')+'</div>':'';return '<div class="msg '+(mine?'own':'other')+'" data-id="'+m.id+'" oncontextmenu="showCtxMenu(event,\''+m.id+'\')">'+nk+body+tm+rlH+'</div>'}).join('');const fh=nh||'<div style="color:#55556a;text-align:center;padding:30px">Пусто</div>';if(el.dataset.lastHtml!==fh){const ab=el.scrollTop+el.clientHeight>=el.scrollHeight-40,fr=!el.dataset.lastHtml;el.innerHTML=fh;el.dataset.lastHtml=fh;if(fr||ab)el.scrollTop=el.scrollHeight}}
 function subM(){if(ch)sb.removeChannel(ch);if(!curRoom)return;ch=sb.channel('rm-'+curRoom).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+curRoom},()=>loadM()).on('postgres_changes',{event:'*',schema:'public',table:'reactions'},()=>loadM()).subscribe()}
 let _subGlobCh=null;
 function subGlob(){if(_subGlobCh)return;_subGlobCh=sb.channel('glob-msg').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},async p=>{const m=p.new;if(!m)return;if(!isMyR(m.room_id))return;if(m.nick===meEnc){await loadDMs();renderDMs();return}if(curRoom===m.room_id)return;if(rcId===m.room_id){if($('fm').classList.contains('open'))loadRM();return}unread[m.room_id]=(unread[m.room_id]||0)+1;const w=de(m.nick),pr=m.voice_url?'🎤':(m.video_url?'⚪':(m.photo_url?'📷':m.text));showNotif('💬 '+w,pr);await loadDMs();renderDMs()}).subscribe()}
@@ -2242,21 +2095,7 @@ async function uploadAvaToStorage(file,prefix){const path='group_ava/'+prefix+'_
 /* ===== ПРИГЛАШЕНИЕ / МЕДИА ===== */
 async function invite(){if(!fmN)return;const inp=$('invI');if(!inp)return;const v=(inp.value||'').trim();if(!v)return;const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return showToast('Только хозяин','error');const mp=f.max_people??2;if(owners.length>=mp)return showToast('Мест нет','error');let nick=null;if(/^\d+$/.test(v)){const n=parseInt(v);const tg=flats[n];const tOwners=flatOwners(tg);if(!tOwners.length)return showToast('Квартира пуста','error');nick=de(tOwners[0])}else{nick=v}if(nick===me)return showToast('Себя нельзя','error');const enc=en(nick);if(owners.includes(enc))return showToast('Уже в квартире','error');const{data:p}=await sb.from('profiles').select('nick').eq('nick',nick).maybeSingle();if(!p)return showToast('Игрок не найден','error');const{data:ex}=await sb.from('room_invites').select('id').eq('from_nick',meEnc).eq('to_nick',enc).eq('house_id',curHouse).eq('flat_number',fmN).maybeSingle();if(ex)return showToast('Уже приглашён','error');const{error}=await sb.from('room_invites').insert({from_nick:meEnc,to_nick:enc,house_id:curHouse,flat_number:fmN});if(error)return showToast('❌ '+error.message,'error');inp.value='';showToast('📨 Приглашение отправлено','success')}
 async function saveM(){if(!fmN)return;const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Только жильцы','error');const mst=$('mst');mst.textContent='Сохранение...';try{let phUrl=phU||null;let musUpload=musU||null;if(musU&&musU.startsWith('data:')){const blob=await (await fetch(musU)).blob();const path='flat_music/'+meEnc+'/'+Date.now()+'.mp3';const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:true});if(!up.error){const{data:pub}=sb.storage.from('media').getPublicUrl(path);musUpload=pub?pub.publicUrl:null}}const x=parseInt($('phX').value)||50,y=parseInt($('phY').value)||50,z=parseInt($('phZ').value)||100;const rec={nick:meEnc,photo_url:phUrl,photo_x:x,photo_y:y,photo_zoom:z,music_url:musUpload,updated_at:new Date().toISOString()};const{error}=await sb.from('user_media').upsert(rec,{onConflict:'nick'});if(error){mst.textContent='❌ '+error.message;return}await loadPhotoCache();await loadHM();renderFlats();mst.textContent='✅ Сохранено';showToast('✅ Сохранено','success')}catch(e){mst.textContent='❌ '+e.message}}
-async function startMus(rid){
-  try{
-    const mm=rid.match(/^h(\d+)_flat(\d+)_room$/);
-    if(!mm)return null;
-    const hn=mm[1],fn=mm[2];
-    const{data:fl}=await sb.from('flats').select('owner_nicks').eq('house_id',hn).eq('number',fn).maybeSingle();
-    if(!fl)return null;
-    const owner=(fl.owner_nicks||[])[0];
-    if(!owner)return null;
-    const{data:um}=await sb.from('user_media').select('music_url').eq('nick',owner).maybeSingle();
-    const url=(um&&um.music_url)||null;
-    if(url){const a=$('bgA');if(a&&a.src!==url){a.src=url;a.loop=true;a.load()}}
-    return url;
-  }catch(e){return null}
-}
+async function startMus(rid){try{const mm=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!mm)return null;const hn=mm[1],fn=mm[2];const{data:fl}=await sb.from('flats').select('owner_nicks').eq('house_id',hn).eq('number',fn).maybeSingle();if(!fl)return null;const owner=(fl.owner_nicks||[])[0];if(!owner)return null;const{data:um}=await sb.from('user_media').select('music_url').eq('nick',owner).maybeSingle();const url=(um&&um.music_url)||null;if(url){const a=$('bgA');if(a&&a.src!==url){a.src=url;a.loop=true;a.load()}}return url}catch(e){return null}}
 async function stopMus(){try{const a=$('bgA');if(a){a.pause();a.removeAttribute('src');a.load()}const b=$('mbB');if(b)b.classList.remove('playing');musUrl=null}catch(e){}}
 function toggleMus(rid){const a=$('bgA');if(!a)return;if(a.paused){stopAllMedia();if(musUrl)a.play().catch(()=>{});const b=$('mbB');if(b)b.classList.add('playing')}else{a.pause();const b=$('mbB');if(b)b.classList.remove('playing')}}
 function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
@@ -2282,7 +2121,6 @@ function fmSw(t){
     loadRM();subRM();
     if(rcPt){clearInterval(rcPt);rcPt=null}
     rcPt=setInterval(loadRM,3000);
-    /* ← ЗАГРУЗКА МУЗЫКИ */
     startMus(rcId).then(url=>{
       musUrl=url;
       const b=$('mbB');
@@ -2295,97 +2133,18 @@ function fmSw(t){
 function closeFm(){if(workActive)stopWork(false);stopMus();if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;$('fm').classList.remove('open');fmN=null}
 async function kickR(o){const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return;if(!o||o===meEnc)return;const nw=owners.filter(x=>x!==o);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',curHouse).eq('number',fmN);await reloadHouse();upFm()}
 async function leaveFlat(){const f=flats[fmN];if(!f)return;const owners=flatOwners(f);const nw=owners.filter(x=>x!==meEnc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',curHouse).eq('number',fmN);closeFm();await reloadHouse();await loadMyRooms()}
-async function openRFromN(rid){
-  const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;
-  const hn=Number(m[1]),fn=Number(m[2]);
-  if(hn!==Number(curHouse)){await switchHouse(hn)}
-  const f=flats[fn];if(!f)return;
-  const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Нет доступа','error');
-  if($('modal').classList.contains('open'))await closeM();
-  fmN=fn;$('fm').classList.add('open');upFm();fmSw('room');
-}
-async function loadRM(){
-  const tk=++rmTok,rid=rcId;if(!rid)return;
-  const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);
-  if(tk!==rmTok||rid!==rcId)return;if(error)return;
-  const{data:hid}=await sb.from('hidden_messages').select('message_id').eq('user_nick',meEnc);
-  const hI=new Set((hid||[]).map(h=>h.message_id));
-  rmC=(data||[]).reverse().filter(m=>!hI.has(m.id)&&!m.deleted_for_all);
-  await loadR(rmC);
-  const gNum=(Number(curHouse)-1)*30+Number(fmN||0);
-  const owners=fmN&&flats[fmN]?flatOwners(flats[fmN]).map(de):[];
-  const ownersTxt=owners.length?'<br><span style="font-size:11px;font-weight:600;opacity:.8">👥 '+owners.map(n=>n===me?'ты':eh(n)).join(' · ')+'</span>':'';
-  renderMs($('rc'),rmC,{topBanner:'🏠 Ваша Комната · Кв. '+gNum+ownersTxt});
-}
+async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;const hn=Number(m[1]),fn=Number(m[2]);if(hn!==Number(curHouse)){await switchHouse(hn)}const f=flats[fn];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Нет доступа','error');if($('modal').classList.contains('open'))await closeM();fmN=fn;$('fm').classList.add('open');upFm();fmSw('room')}
+async function loadRM(){const tk=++rmTok,rid=rcId;if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);if(tk!==rmTok||rid!==rcId)return;if(error)return;const{data:hid}=await sb.from('hidden_messages').select('message_id').eq('user_nick',meEnc);const hI=new Set((hid||[]).map(h=>h.message_id));rmC=(data||[]).reverse().filter(m=>!hI.has(m.id)&&!m.deleted_for_all);await loadR(rmC);const gNum=(Number(curHouse)-1)*30+Number(fmN||0);const owners=fmN&&flats[fmN]?flatOwners(flats[fmN]).map(de):[];const ownersTxt=owners.length?'<br><span style="font-size:11px;font-weight:600;opacity:.8">👥 '+owners.map(n=>n===me?'ты':eh(n)).join(' · ')+'</span>':'';renderMs($('rc'),rmC,{topBanner:'🏠 Ваша Комната · Кв. '+gNum+ownersTxt})}
 function subRM(){if(rcCh)sb.removeChannel(rcCh);if(!rcId)return;rcCh=sb.channel('rc-'+rcId).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+rcId},()=>loadRM()).on('postgres_changes',{event:'*',schema:'public',table:'reactions'},()=>loadRM()).subscribe()}
 function sendRoomMsg(){const inp=$('rIn');if(!inp)return;const t=(inp.value||'').trim();if(!t||!rcId)return;inp.value='';sb.from('messages').insert({room_id:rcId,nick:meEnc,text:t,user_id:curUser.id}).select().then(r=>{if(r.error){showToast('❌ '+r.error.message,'error');inp.value=t;return null}return loadRM()}).catch(e=>showToast('❌ '+e.message,'error'))}
-async function startRoomRec(){
-  if(vRec&&vRec.state==='recording')return;if(!rcId)return;
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-    vCh=[];vStr=stream;
-    const mime=window.MediaRecorder&&MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';
-    vRec=new MediaRecorder(stream,{mimeType:mime});
-    vRec.ondataavailable=e=>{if(e.data&&e.data.size>0)vCh.push(e.data)};
-    vRec.onstop=async()=>{
-      const dur=vS/10;if(vStr)vStr.getTracks().forEach(t=>t.stop());vStr=null;
-      const blob=new Blob(vCh,{type:vRec.mimeType||'audio/webm'});
-      vCh=[];vRec=null;vS=0;
-      if(vTimer){clearInterval(vTimer);vTimer=null}
-      const b=$('rVB');if(b){b.classList.remove('rec');b.textContent='🎤'}
-      if(dur>=1){try{
-        const path='voice/'+rcId+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.webm';
-        const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:false});
-        if(up.error){showToast('❌ '+up.error.message,'error');return}
-        const{data:pub}=sb.storage.from('media').getPublicUrl(path);
-        const url=pub&&pub.publicUrl;if(!url)return;
-        const{data:ins,error}=await sb.from('messages').insert({room_id:rcId,nick:meEnc,voice_url:url,voice_dur:Math.max(1,Math.round(dur)),user_id:curUser.id}).select().single();
-        if(error){showToast('❌ '+error.message,'error');return}
-        if(ins&&ins.id){vDur[ins.id]=Math.max(1,Math.round(dur));vWaveCache[ins.id]=Math.random()}
-        await loadRM();showToast('🎤','success');
-      }catch(e){showToast('❌ '+e.message,'error')}}
-    };
-    vRec.start();vS=0;
-    const b=$('rVB');if(b){b.classList.add('rec');b.textContent='⏹'}
-    if(vTimer)clearInterval(vTimer);
-    vTimer=setInterval(()=>{vS++;if(vS>=60)stopRec()},100);
-  }catch(e){showToast('🎤 '+e.message,'error')}
-}
+async function startRoomRec(){if(vRec&&vRec.state==='recording')return;if(!rcId)return;try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});vCh=[];vStr=stream;const mime=window.MediaRecorder&&MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';vRec=new MediaRecorder(stream,{mimeType:mime});vRec.ondataavailable=e=>{if(e.data&&e.data.size>0)vCh.push(e.data)};vRec.onstop=async()=>{const dur=vS/10;if(vStr)vStr.getTracks().forEach(t=>t.stop());vStr=null;const blob=new Blob(vCh,{type:vRec.mimeType||'audio/webm'});vCh=[];vRec=null;vS=0;if(vTimer){clearInterval(vTimer);vTimer=null}const b=$('rVB');if(b){b.classList.remove('rec');b.textContent='🎤'}if(dur>=1){try{const path='voice/'+rcId+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.webm';const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:false});if(up.error){showToast('❌ '+up.error.message,'error');return}const{data:pub}=sb.storage.from('media').getPublicUrl(path);const url=pub&&pub.publicUrl;if(!url)return;const{data:ins,error}=await sb.from('messages').insert({room_id:rcId,nick:meEnc,voice_url:url,voice_dur:Math.max(1,Math.round(dur)),user_id:curUser.id}).select().single();if(error){showToast('❌ '+error.message,'error');return}if(ins&&ins.id){vDur[ins.id]=Math.max(1,Math.round(dur));vWaveCache[ins.id]=Math.random()}await loadRM();showToast('🎤','success')}catch(e){showToast('❌ '+e.message,'error')}}};vRec.start();vS=0;const b=$('rVB');if(b){b.classList.add('rec');b.textContent='⏹'}if(vTimer)clearInterval(vTimer);vTimer=setInterval(()=>{vS++;if(vS>=60)stopRec()},100)}catch(e){showToast('🎤 '+e.message,'error')}}
 
 /* ===== ЗВОНКИ ===== */
 let _callPc=null,_callId=null,_callFrom=null,_callTo=null,_callKind='audio',_callRole='caller',_callTimerInt=null,_callStartTs=0,_callLocalStream=null,_callRemoteStream=null,_callMiniMode=false,_callSubCh=null;
 const _ICE_CONFIG={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}]};
-async function startCall(toNickEnc,kind){
-  if(_callPc){showToast('Уже в звонке','error');return}
-  if(!curUser)return;
-  const toNick=de(toNickEnc);
-  if(!toNick||toNick===me)return;
-  _callKind=kind||'audio';_callRole='caller';_callTo=toNickEnc;_callFrom=meEnc;
-  try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(kind==='video'?'камере':'микрофону'),'error');return}
-  const{data,error}=await sb.from('calls').insert({from_nick:meEnc,to_nick:toNickEnc,status:'ringing',kind:_callKind}).select().single();
-  if(error){showToast('❌ '+error.message,'error');_cleanupCallLocal();return}
-  _callId=data.id;
-  _callPc=new RTCPeerConnection(_ICE_CONFIG);
-  _setupPc(_callPc);
-  _callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));
-  const offer=await _callPc.createOffer();
-  await _callPc.setLocalDescription(offer);
-  await sb.from('calls').update({sdp_offer:JSON.stringify(offer)}).eq('id',_callId);
-  _callSub();
-  _showCallScreen(toNick,'Звоним...');
-  if(_callKind==='video')_showLocalVideo();
-  showToast('📞 '+toNick,'success');
-}
-function _setupPc(pc){
-  pc.onicecandidate=(e)=>{if(e.candidate){const cand=e.candidate.toJSON();sb.from('calls').select('ice_from,ice_to').eq('id',_callId).maybeSingle().then(({data})=>{if(!data)return;if(_callRole==='caller'){const arr=Array.isArray(data.ice_from)?data.ice_from:[];arr.push(cand);sb.from('calls').update({ice_from:arr}).eq('id',_callId)}else{const arr=Array.isArray(data.ice_to)?data.ice_to:[];arr.push(cand);sb.from('calls').update({ice_to:arr}).eq('id',_callId)}})}};
-  pc.ontrack=(e)=>{_callRemoteStream=e.streams[0];const rv=$('callRemoteVideo');if(rv){rv.srcObject=_callRemoteStream}const au=new Audio();au.srcObject=_callRemoteStream;au.autoplay=true;au.play().catch(()=>{})};
-  pc.onconnectionstatechange=()=>{if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){endCall(false)}}
-}
-function _callSub(){if(_callSubCh)return;_callSubCh=sb.channel('call-'+_callId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'calls',filter:'id=eq.'+_callId},async p=>{if(!p.new)return;const r=p.new;
-  if(_callRole==='caller'&&r.sdp_answer&&_callPc&&!_callPc.currentRemoteDescription){try{await _callPc.setRemoteDescription(JSON.parse(r.sdp_answer))}catch(e){}const iceTo=Array.isArray(r.ice_to)?r.ice_to:[];for(const c of iceTo){try{await _callPc.addIceCandidate(c)}catch(e){}}_startCallTimer();_hideRinging()}
-  if(_callRole==='caller'&&Array.isArray(r.ice_to)){const applied=_callPc&&_callPc._appliedIceTo||0;const fresh=r.ice_to.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceTo=r.ice_to.length}
-  if(_callRole==='callee'&&Array.isArray(r.ice_from)){const applied=_callPc&&_callPc._appliedIceFrom||0;const fresh=r.ice_from.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceFrom=r.ice_from.length}
-  if(r.status==='ended'||r.status==='rejected'||r.status==='missed'){_endCallLocal();if(r.status==='rejected')showToast('📵 Отклонено','error');else if(r.status==='missed')showToast('📵 Не ответил','error')}}).subscribe()}
+async function startCall(toNickEnc,kind){if(_callPc){showToast('Уже в звонке','error');return}if(!curUser)return;const toNick=de(toNickEnc);if(!toNick||toNick===me)return;_callKind=kind||'audio';_callRole='caller';_callTo=toNickEnc;_callFrom=meEnc;try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(kind==='video'?'камере':'микрофону'),'error');return}const{data,error}=await sb.from('calls').insert({from_nick:meEnc,to_nick:toNickEnc,status:'ringing',kind:_callKind}).select().single();if(error){showToast('❌ '+error.message,'error');_cleanupCallLocal();return}_callId=data.id;_callPc=new RTCPeerConnection(_ICE_CONFIG);_setupPc(_callPc);_callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));const offer=await _callPc.createOffer();await _callPc.setLocalDescription(offer);await sb.from('calls').update({sdp_offer:JSON.stringify(offer)}).eq('id',_callId);_callSub();_showCallScreen(toNick,'Звоним...');if(_callKind==='video')_showLocalVideo();showToast('📞 '+toNick,'success')}
+function _setupPc(pc){pc.onicecandidate=(e)=>{if(e.candidate){const cand=e.candidate.toJSON();sb.from('calls').select('ice_from,ice_to').eq('id',_callId).maybeSingle().then(({data})=>{if(!data)return;if(_callRole==='caller'){const arr=Array.isArray(data.ice_from)?data.ice_from:[];arr.push(cand);sb.from('calls').update({ice_from:arr}).eq('id',_callId)}else{const arr=Array.isArray(data.ice_to)?data.ice_to:[];arr.push(cand);sb.from('calls').update({ice_to:arr}).eq('id',_callId)}})}};pc.ontrack=(e)=>{_callRemoteStream=e.streams[0];const rv=$('callRemoteVideo');if(rv){rv.srcObject=_callRemoteStream}const au=new Audio();au.srcObject=_callRemoteStream;au.autoplay=true;au.play().catch(()=>{})};pc.onconnectionstatechange=()=>{if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){endCall(false)}}}
+function _callSub(){if(_callSubCh)return;_callSubCh=sb.channel('call-'+_callId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'calls',filter:'id=eq.'+_callId},async p=>{if(!p.new)return;const r=p.new;if(_callRole==='caller'&&r.sdp_answer&&_callPc&&!_callPc.currentRemoteDescription){try{await _callPc.setRemoteDescription(JSON.parse(r.sdp_answer))}catch(e){}const iceTo=Array.isArray(r.ice_to)?r.ice_to:[];for(const c of iceTo){try{await _callPc.addIceCandidate(c)}catch(e){}}_startCallTimer();_hideRinging()}if(_callRole==='caller'&&Array.isArray(r.ice_to)){const applied=_callPc&&_callPc._appliedIceTo||0;const fresh=r.ice_to.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceTo=r.ice_to.length}if(_callRole==='callee'&&Array.isArray(r.ice_from)){const applied=_callPc&&_callPc._appliedIceFrom||0;const fresh=r.ice_from.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceFrom=r.ice_from.length}if(r.status==='ended'||r.status==='rejected'||r.status==='missed'){_endCallLocal();if(r.status==='rejected')showToast('📵 Отклонено','error');else if(r.status==='missed')showToast('📵 Не ответил','error')}}).subscribe()}
 function _showCallScreen(name,subtitle){const av=$('callAv');const url=photoCache[_callFrom===meEnc?_callTo:_callFrom];if(url){av.style.backgroundImage='url("'+url+'")';av.textContent='';av.classList.add('has-img')}else{const nick=_callFrom===meEnc?_callTo:_callFrom;av.textContent=firstL(de(nick));av.style.background='linear-gradient(135deg,'+nCol(de(nick))+','+shCol(nCol(de(nick)),-18)+')'}$('callName').textContent=de(name);$('callVideoName').textContent=de(name);$('callSubtitle').textContent=subtitle||'';$('callSubtitle').style.display=subtitle?'block':'none';$('callTimer').style.display='none';$('callVideoTimer').textContent='0:00';$('callMiniName').textContent=de(name);const sc=$('callScreen');sc.classList.toggle('video',_callKind==='video');sc.classList.add('on');const btn=$('callMuteBtn');if(btn)btn.classList.remove('on');const cbtn=$('callCamBtn');if(cbtn)cbtn.classList.toggle('on',_callKind==='video')}
 function _hideRinging(){$('callSubtitle').textContent='';$('callSubtitle').style.display='none'}
 function _showLocalVideo(){const v=$('callLocalVideo');if(v&&_callLocalStream){v.srcObject=_callLocalStream;v.muted=true;v.play().catch(()=>{})}}
@@ -2399,31 +2158,7 @@ function minimizeCallScreen(){_callMiniMode=true;$('callScreen').classList.remov
 function expandCallScreen(){_callMiniMode=false;$('callMini').classList.remove('on');$('callScreen').classList.add('on')}
 let _incomingCall=null;
 function subCalls(){if(window._callsSubCh)return;window._callsSubCh=sb.channel('calls-incoming').on('postgres_changes',{event:'INSERT',schema:'public',table:'calls',filter:'to_nick=eq.'+meEnc},async p=>{const r=p.new;if(!r)return;if(r.status!=='ringing')return;if(_callPc){try{await sb.from('calls').update({status:'rejected',ended_at:new Date().toISOString()}).eq('id',r.id)}catch(e){}return}_incomingCall=r;$('callIncName').textContent=de(r.from_nick);$('callIncSubtitle').textContent=(r.kind==='video'?'📹 Видеозвонок':'📞 Аудиозвонок');$('callIncoming').classList.add('open');try{playNotifSound()}catch(e){}setTimeout(()=>{if(_incomingCall&&_incomingCall.id===r.id){_incomingCall=null;$('callIncoming').classList.remove('open');sb.from('calls').update({status:'missed',ended_at:new Date().toISOString()}).eq('id',r.id)}},30000)}).subscribe()}
-async function acceptCall(){
-  const inc=_incomingCall;if(!inc)return;
-  _incomingCall=null;$('callIncoming').classList.remove('open');
-  _callId=inc.id;_callFrom=inc.from_nick;_callTo=inc.to_nick;_callKind=inc.kind||'audio';_callRole='callee';
-  try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(inc.kind==='video'?'камере':'микрофону'),'error');sb.from('calls').update({status:'rejected'}).eq('id',inc.id);return}
-  await sb.from('calls').update({status:'accepted'}).eq('id',_callId);
-  _callPc=new RTCPeerConnection(_ICE_CONFIG);
-  _setupPc(_callPc);
-  _callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));
-  try{
-    const offer=JSON.parse(inc.sdp_offer);
-    await _callPc.setRemoteDescription(offer);
-    const answer=await _callPc.createAnswer();
-    await _callPc.setLocalDescription(answer);
-    await sb.from('calls').update({sdp_answer:JSON.stringify(answer)}).eq('id',_callId);
-    const iceFrom=Array.isArray(inc.ice_from)?inc.ice_from:[];
-    for(const c of iceFrom){try{await _callPc.addIceCandidate(c)}catch(e){}}
-    _callPc._appliedIceFrom=iceFrom.length;
-  }catch(e){showToast('❌ '+e.message,'error');endCall();return}
-  _callSub();
-  _showCallScreen(de(_callFrom),'');
-  _hideRinging();
-  _startCallTimer();
-  if(_callKind==='video')_showLocalVideo();
-}
+async function acceptCall(){const inc=_incomingCall;if(!inc)return;_incomingCall=null;$('callIncoming').classList.remove('open');_callId=inc.id;_callFrom=inc.from_nick;_callTo=inc.to_nick;_callKind=inc.kind||'audio';_callRole='callee';try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(inc.kind==='video'?'камере':'микрофону'),'error');sb.from('calls').update({status:'rejected'}).eq('id',inc.id);return}await sb.from('calls').update({status:'accepted'}).eq('id',_callId);_callPc=new RTCPeerConnection(_ICE_CONFIG);_setupPc(_callPc);_callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));try{const offer=JSON.parse(inc.sdp_offer);await _callPc.setRemoteDescription(offer);const answer=await _callPc.createAnswer();await _callPc.setLocalDescription(answer);await sb.from('calls').update({sdp_answer:JSON.stringify(answer)}).eq('id',_callId);const iceFrom=Array.isArray(inc.ice_from)?inc.ice_from:[];for(const c of iceFrom){try{await _callPc.addIceCandidate(c)}catch(e){}}_callPc._appliedIceFrom=iceFrom.length}catch(e){showToast('❌ '+e.message,'error');endCall();return}_callSub();_showCallScreen(de(_callFrom),'');_hideRinging();_startCallTimer();if(_callKind==='video')_showLocalVideo()}
 async function rejectCall(){const inc=_incomingCall;if(!inc)return;_incomingCall=null;$('callIncoming').classList.remove('open');try{await sb.from('calls').update({status:'rejected',ended_at:new Date().toISOString()}).eq('id',inc.id)}catch(e){}}
 function closeIncomingUI(){_incomingCall=null;$('callIncoming').classList.remove('open')}
 
