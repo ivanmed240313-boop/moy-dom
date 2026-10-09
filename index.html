@@ -31,25 +31,11 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes haloPulse{0%,100%{box-shadow:0 0 10px #fff7c0,0 0 22px #ffe066,inset 0 0 6px #ffffffcc;transform:translateX(-50%) scale(1)}50%{box-shadow:0 0 16px #fff7c0,0 0 34px #ffe066,inset 0 0 10px #ffffff;transform:translateX(-50%) scale(1.08)}}
 @keyframes hornTwitch{0%,100%{transform:rotate(var(--hr,0deg)) scale(1)}50%{transform:rotate(calc(var(--hr,0deg) + 4deg)) scale(1.06)}}
 @keyframes rainbowShift{0%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}16%{border-color:#ff5500;box-shadow:0 0 20px #ff5500cc,0 0 40px #ff5500aa,inset 0 0 10px #ff550066}33%{border-color:#ffcc00;box-shadow:0 0 20px #ffcc00cc,0 0 40px #ffcc00aa,inset 0 0 10px #ffcc0066}50%{border-color:#22dd66;box-shadow:0 0 20px #22dd66cc,0 0 40px #22dd66aa,inset 0 0 10px #22dd6666}66%{border-color:#00ccff;box-shadow:0 0 20px #00ccffcc,0 0 40px #00ccffaa,inset 0 0 10px #00ccff66}83%{border-color:#a020ff;box-shadow:0 0 20px #a020ffcc,0 0 40px #a020ffaa,inset 0 0 10px #a020ff66}100%{border-color:#ff0055;box-shadow:0 0 20px #ff0055cc,0 0 40px #ff0055aa,inset 0 0 10px #ff005566}}
-@keyframes vhsGlitch{
-  0%,100%{border-color:#ff0033!important;box-shadow:0 0 0 3px #ff0033,0 0 25px #ff0033,0 0 50px #00ffff}
-  25%{border-color:#00ffff!important;box-shadow:0 0 0 3px #00ffff,0 0 25px #00ffff,0 0 50px #ff0033}
-  50%{border-color:#ffffff!important;box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffff,0 0 60px #ff0033}
-  75%{border-color:#ff0033!important;box-shadow:0 0 0 3px #ff0033,0 0 25px #00ffff,0 0 50px #ff0033}
-}
+@keyframes vhsGlitch{0%,100%{border-color:#ff0033!important;box-shadow:0 0 0 3px #ff0033,0 0 25px #ff0033,0 0 50px #00ffff}25%{border-color:#00ffff!important;box-shadow:0 0 0 3px #00ffff,0 0 25px #00ffff,0 0 50px #ff0033}50%{border-color:#ffffff!important;box-shadow:0 0 0 3px #ffffff,0 0 30px #ffffff,0 0 60px #ff0033}75%{border-color:#ff0033!important;box-shadow:0 0 0 3px #ff0033,0 0 25px #00ffff,0 0 50px #ff0033}}
 @keyframes vhsScan{0%{background-position:0 0}100%{background-position:0 4px}}
 @keyframes vhsFlick{0%,100%{opacity:1}10%{opacity:.6}11%{opacity:1}45%{opacity:.85}46%{opacity:1}78%{opacity:.7}79%{opacity:1}}
 @keyframes vhsBar{0%,100%{transform:translateY(-120%)}50%{transform:translateY(120%)}}
-@keyframes vhsMobFlick{0%,100%{box-shadow:0 0 0 3px #fff,0 0 22px #ff0033,0 0 40px #00ffff}33%{box-shadow:0 0 0 3px #fff,0 0 28px #00ffff,0 0 50px #ff0033}66%{box-shadow:0 0 0 3px #fff,0 0 25px #ff0033,0 0 45px #00ffff}}
-@keyframes vhsShake{
-  0%,100%{transform:translate(0,0)}
-  15%{transform:translate(-1px,1px)}
-  30%{transform:translate(1px,-1px)}
-  45%{transform:translate(-1.5px,0.5px)}
-  60%{transform:translate(1px,1.5px)}
-  75%{transform:translate(-1px,-1px)}
-  90%{transform:translate(0.5px,-1.5px)}
-}
+@keyframes vhsShake{0%,100%{transform:translate(0,0)}15%{transform:translate(-1px,1px)}30%{transform:translate(1px,-1px)}45%{transform:translate(-1.5px,0.5px)}60%{transform:translate(1px,1.5px)}75%{transform:translate(-1px,-1px)}90%{transform:translate(0.5px,-1.5px)}}
 @keyframes neonFlick{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,22%,24%,55%{opacity:.35}40%{opacity:1}41%{opacity:.4}42%{opacity:1}}
 @keyframes sakuraPulse{0%,100%{box-shadow:0 0 22px #ff8eb6cc,0 0 45px #ffb3d1aa,inset 0 0 12px #ff8eb655;filter:brightness(1)}50%{box-shadow:0 0 32px #ff8eb6ff,0 0 65px #ffb3d1dd,inset 0 0 18px #ff8eb688;filter:brightness(1.1)}}
 @keyframes aquaPulse{0%,100%{box-shadow:0 0 22px #00d4ffcc,0 0 45px #0099ff88,inset 0 0 12px #00d4ff55;filter:brightness(1) hue-rotate(0)}50%{box-shadow:0 0 38px #00d4ffff,0 0 70px #0099ffdd,inset 0 0 20px #00d4ff88;filter:brightness(1.15) hue-rotate(8deg)}}
@@ -96,12 +82,7 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes pfShoot2{0%{transform:translate(0,0) rotate(30deg) scaleX(.2);opacity:0}12%{opacity:1}55%{opacity:1}100%{transform:translate(140vw,80vh) rotate(30deg) scaleX(1.4);opacity:0}}
 @keyframes pfDragonEmber{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx,25px),-160px) scale(1.2);opacity:0}}
 @keyframes pfScaleFall{0%{transform:translate(0,0) rotate(0);opacity:0}15%{opacity:.9}100%{transform:translate(var(--dx,20px),120vh) rotate(540deg);opacity:0}}
-@keyframes voiceWave{
-  0%,100%{transform:scaleY(.35)}
-  25%{transform:scaleY(1.25)}
-  50%{transform:scaleY(.55)}
-  75%{transform:scaleY(1.1)}
-}
+@keyframes voiceWave{0%,100%{transform:scaleY(.35)}25%{transform:scaleY(1.25)}50%{transform:scaleY(.55)}75%{transform:scaleY(1.1)}}
 @keyframes candleFlick{0%,100%{filter:drop-shadow(0 0 8px #ffcc66) drop-shadow(0 0 20px #ff8800aa);opacity:1}50%{filter:drop-shadow(0 0 16px #ffcc66) drop-shadow(0 0 30px #ff8800cc);opacity:.85}}
 @keyframes ownerGlow{0%,100%{box-shadow:0 0 30px rgba(245,197,66,.15),inset 0 1px 0 rgba(255,255,255,.04)}50%{box-shadow:0 0 50px rgba(245,197,66,.3),inset 0 1px 0 rgba(255,255,255,.06)}}
 @keyframes crownShine{0%,100%{filter:drop-shadow(0 0 8px #ffcc66) drop-shadow(0 0 20px #ff8800aa) brightness(1)}50%{filter:drop-shadow(0 0 14px #ffcc66) drop-shadow(0 0 30px #ff8800cc) brightness(1.15)}}
@@ -1014,7 +995,7 @@ body.fireworks-bg .hbtn:hover,body.fireworks-bg .ebtn:hover,body.fireworks-bg .f
 .give-item .gp{font-size:11px;color:#f5c542}
 .give-msg{font-size:12px;color:#8bc34a;text-align:center;min-height:16px;margin-top:8px;font-weight:600}
 
-/* ===== DATES STAR (скрыто по умолчанию, включается ивентом) ===== */
+/* ===== DATES STAR ===== */
 #dtsStar{display:none;position:fixed;left:24px;bottom:24px;width:46px;height:46px;z-index:12;cursor:pointer;pointer-events:auto;filter:drop-shadow(0 0 8px rgba(255,50,50,.55)) drop-shadow(0 0 20px rgba(255,50,50,.3));transition:transform .15s,filter .15s;user-select:none;-webkit-tap-highlight-color:transparent}
 #dtsStar.on{display:block}
 #dtsStar svg{display:block;width:46px;height:46px;transform-origin:center;animation:dtsSpin 12s linear infinite}
@@ -1023,7 +1004,7 @@ body.fireworks-bg .hbtn:hover,body.fireworks-bg .ebtn:hover,body.fireworks-bg .f
 #dtsStar:active{transform:scale(.94)}
 @media(max-width:768px){#dtsStar{width:38px;height:38px;left:14px;bottom:14px}#dtsStar svg{width:38px;height:38px}}
 
-/* ===== UT HEART (скрыто по умолчанию, включается ивентом) ===== */
+/* ===== UT HEART ===== */
 #utHeart{display:none;position:fixed;right:24px;bottom:24px;width:46px;height:46px;z-index:12;cursor:pointer;pointer-events:auto;filter:drop-shadow(0 0 8px rgba(255,0,0,.55)) drop-shadow(0 0 20px rgba(255,0,0,.3));transition:transform .15s,filter .15s;user-select:none;-webkit-tap-highlight-color:transparent}
 #utHeart.on{display:block}
 #utHeart svg{display:block;width:46px;height:46px;transform-origin:center;animation:utBeat 1.6s ease-in-out infinite}
@@ -1032,7 +1013,7 @@ body.fireworks-bg .hbtn:hover,body.fireworks-bg .ebtn:hover,body.fireworks-bg .f
 #utHeart:active{transform:scale(.94)}
 @media(max-width:768px){#utHeart{width:38px;height:38px;right:14px;bottom:14px}#utHeart svg{width:38px;height:38px}}
 
-/* ===== GAME EVENT ICONS (правый столбик над звездой) ===== */
+/* ===== GAME EVENT ICONS ===== */
 #gameIcons{display:none;position:fixed;right:24px;bottom:86px;z-index:12;flex-direction:column;gap:10px;pointer-events:none}
 #gameIcons.on{display:flex}
 .game-icon{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,rgba(30,30,40,.95),rgba(20,20,28,.98));border:2px solid rgba(245,197,66,.55);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;pointer-events:auto;box-shadow:0 0 14px rgba(245,197,66,.35),0 4px 14px rgba(0,0,0,.55);transition:transform .15s,box-shadow .15s,border-color .15s;user-select:none;-webkit-tap-highlight-color:transparent;position:relative;overflow:hidden}
@@ -1351,7 +1332,7 @@ body::before{display:none !important}
 <div id="giftM" class="em" style="z-index:700"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800" id="giftTitle">🎁 Подарить семя</h3><label class="gm-lbl">Кому (ник)</label><input id="giftNickInp" class="gm-inp" maxlength="20" placeholder="Ник получателя" autocomplete="off"><label class="gm-lbl">Количество</label><input id="giftQtyInp" class="gm-inp" type="number" min="1" value="1" inputmode="numeric"><div class="gm-err" id="giftErr"></div><div class="ema"><button class="cn" onclick="closeGift()">Отмена</button><button class="sv" onclick="sendGift()">🎁 Подарить</button></div></div></div>
 <div id="roomInviteM" class="em" style="z-index:750"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800">👥 Приглашение в комнату</h3><div id="riText" style="font-size:14px;color:#c8c8d0;line-height:1.65;margin-bottom:18px"></div><div class="ema"><button class="cn" onclick="declineInvite()">Отклонить</button><button class="sv" onclick="acceptInvite()">✅ Согласиться</button></div></div></div>
 
-<!-- ===== DATES STAR (скрыто по умолчанию) ===== -->
+<!-- ===== DATES STAR ===== -->
 <div id="dtsStar" title="Памятные даты" onclick="openDtsPanel()">
   <svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%">
     <g fill="#e60000" stroke="#8b0000" stroke-width="0.15">
@@ -1370,7 +1351,7 @@ body::before{display:none !important}
   </svg>
 </div>
 
-<!-- ===== UT HEART (скрыто по умолчанию) ===== -->
+<!-- ===== UT HEART ===== -->
 <div id="utHeart" title="Deltarune · Undertale" onclick="openUTArticle()">
   <svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%">
     <g fill="#ff0000">
@@ -1650,16 +1631,8 @@ const FRAMES=[
 ];
 const FRAME_BONUS={angelic:5,devil:5,legendary:2,diamond:1.5,vhs:10,dragon:5,galaxy:4};
 const EVENTS=[
-  {id:'xmas',name:'🎄 Ёлка',icon:'🎄'},
-  {id:'easter',name:'🐣 Пасха',icon:'🐣'},
-  {id:'fireworks',name:'🎆 Фейерверки',icon:'🎆'},
-  {id:'maslenitsa',name:'🥞 Масленица',icon:'🥞'},
-  {id:'knowledge',name:'📚 День знаний',icon:'📚'},
-  {id:'teacher',name:'👩‍🏫 День учителя',icon:'👩‍🏫'},
-  {id:'911',name:'🏙️ 9/11',icon:'🏙️'},
-  {id:'crocus',name:'🕯️ Крокус',icon:'🕯️'},
-  {id:'utHeart',name:'❤ Undertale',icon:'❤'},
-  {id:'dtsStar',name:'★ Памятные даты',icon:'★'},
+  {id:'xmas',name:'🎄 Ёлка',icon:'🎄'},{id:'easter',name:'🐣 Пасха',icon:'🐣'},{id:'fireworks',name:'🎆 Фейерверки',icon:'🎆'},{id:'maslenitsa',name:'🥞 Масленица',icon:'🥞'},{id:'knowledge',name:'📚 День знаний',icon:'📚'},{id:'teacher',name:'👩‍🏫 День учителя',icon:'👩‍🏫'},{id:'911',name:'🏙️ 9/11',icon:'🏙️'},{id:'crocus',name:'🕯️ Крокус',icon:'🕯️'},
+  {id:'utHeart',name:'❤ Undertale',icon:'❤'},{id:'dtsStar',name:'★ Даты',icon:'★'},
   {id:'doom',name:'💀 DOOM',icon:'💀',md:'12-10',title:'DOOM — прародитель шутеров'},
   {id:'halflife',name:'🧪 Half-Life',icon:'🧪',md:'11-19',title:'Half-Life — легенда Valve'},
   {id:'minecraft',name:'⛏️ Minecraft',icon:'⛏️',md:'05-17',title:'Minecraft — первый публичный релиз'},
@@ -1788,7 +1761,19 @@ function closeRoomInvite(){$('roomInviteM').classList.remove('open');curInvite=n
 async function acceptInvite(){if(!curInvite)return;const inv=curInvite;try{const{data:tgt}=await sb.from('flats').select('*').eq('house_id',inv.house_id).eq('number',inv.flat_number).maybeSingle();if(!tgt){closeRoomInvite();return showToast('Комната пропала','error')}const tOwners=flatOwners(tgt).filter(x=>x!==meEnc);if(tOwners.length>=(tgt.max_people??2)){closeRoomInvite();await sb.from('room_invites').delete().eq('id',inv.id);return showToast('Комната полна','error')}const{data:myFlats}=await sb.from('flats').select('house_id,number,owner_nicks').contains('owner_nicks',[meEnc]);if(myFlats&&myFlats.length){for(const f of myFlats){const nw=(f.owner_nicks||[]).filter(x=>x!==meEnc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',f.house_id).eq('number',f.number)}}const newOwners=[...tOwners,meEnc];await sb.from('flats').update({owner_nicks:newOwners,owner_nick:newOwners[0]||null,owner_nick2:newOwners[1]||null}).eq('house_id',inv.house_id).eq('number',inv.flat_number);await sb.from('room_invites').delete().eq('id',inv.id);closeRoomInvite();await loadMyRooms();if(Number(inv.house_id)!==Number(curHouse)){await switchHouse(Number(inv.house_id))}else{await reloadHouse()}showToast('✅ Переселён в Кв. '+((inv.house_id-1)*30+inv.flat_number),'success')}catch(e){showToast('❌ '+e.message,'error')}}
 async function declineInvite(){if(!curInvite)return;try{await sb.from('room_invites').delete().eq('id',curInvite.id);closeRoomInvite();showToast('Отклонено')}catch(e){showToast('❌ '+e.message,'error')}}
 function upChSt(){if(!curPartner)return;const st=$('chs');if(!st)return;if(online.has(curPartner)){st.textContent='в сети';st.classList.add('online')}else{st.classList.remove('online')}}
-function upAdminTog(){const ow=isOwner();const o=hasAdmin();const b=$('adminTog');if(b){b.style.display=(o&&!ow)?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка'}const ob=$('ownerTog');if(ob)ob.style.display=ow?'inline-flex':'none';const m=$('adminMItem');if(m)m.style.display=(o&&!ow)?'flex':'none';const om=$('ownerMItem');if(om)om.style.display=ow?'flex':'none'}
+/* ===== ОБЕ ПАНЕЛИ: owner видит и admin и owner ===== */
+function upAdminTog(){
+  const ow=isOwner();
+  const o=hasAdmin();
+  const b=$('adminTog');
+  if(b){b.style.display=o?'inline-flex':'none';b.classList.toggle('on',adminMode);b.textContent=adminMode?'✖ Выйти':'⚙️ Админка'}
+  const ob=$('ownerTog');
+  if(ob)ob.style.display=ow?'inline-flex':'none';
+  const m=$('adminMItem');
+  if(m)m.style.display=o?'flex':'none';
+  const om=$('ownerMItem');
+  if(om)om.style.display=ow?'flex':'none';
+}
 function toggleAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(adminMode)exitAdmin();else enterAdmin()}
 function enterAdmin(){if(!hasAdmin())return showToast('Только админам','error');adminMode=true;document.body.classList.add('admin-mode');$('adminB').classList.add('on');$('ap').classList.add('on');upAdminTog();renderFlats()}
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');$('adminB').classList.remove('on');$('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
@@ -1822,13 +1807,30 @@ async function renderFlatPicker(){if(!fpTargetNick)return;const{data:hs}=await s
 async function pickFlatToMove(hid,fn){if(!fpTargetNick)return;const nick=fpTargetNick;const enc=en(nick);const{data:myFlats}=await sb.from('flats').select('house_id,number,owner_nicks').contains('owner_nicks',[enc]);for(const f of (myFlats||[])){const nw=(f.owner_nicks||[]).filter(x=>x!==enc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',f.house_id).eq('number',f.number)}const{data:tgt}=await sb.from('flats').select('*').eq('house_id',hid).eq('number',fn).maybeSingle();if(!tgt)return showToast('Квартира не найдена','error');const owners=flatOwners(tgt).filter(x=>x!==enc);const mp=tgt.max_people??2;if(owners.length>=mp)return showToast('Мест нет','error');const nw=[...owners,enc];await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0],owner_nick2:nw[1]||null}).eq('house_id',hid).eq('number',fn);showToast('✅ '+nick+' → Дом '+hid+', Кв. '+fn,'success');closeFlatPicker();afRend()}
 async function ownerKickUser(nick){if(!isOwner())return;const ok=await askConfirm('Выселить?','Убрать '+nick+' из всех квартир.','Выселить',true);if(!ok)return;const enc=en(nick);const{data:myFlats}=await sb.from('flats').select('house_id,number,owner_nicks').contains('owner_nicks',[enc]);if(!myFlats||!myFlats.length)return showToast('Не живёт нигде','error');for(const f of myFlats){const nw=(f.owner_nicks||[]).filter(x=>x!==enc);await sb.from('flats').update({owner_nicks:nw,owner_nick:nw[0]||null,owner_nick2:nw[1]||null}).eq('house_id',f.house_id).eq('number',f.number)}showToast('🚪 '+nick+' выселен','success');afRend()}
 
-/* ===== OWNER: ИВЕНТЫ ===== */
+/* ===== OWNER: ИВЕНТЫ (с показом дат в табах) ===== */
 let curEvTab='xmas';
 function ofEvTabSet(t){if(curEvTab===t)return;curEvTab=t;ofSw('events')}
-async function ofEvents(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('profiles').select('nick').order('nick');if(error){b.innerHTML='<div class="afe">Ошибка загрузки</div>';return}const users=data||[];const dateInfo=evDateInfo(curEvTab);const activeCount=users.filter(u=>{const m=evModeFor(u.nick,curEvTab);return m==='on'||(m==='auto'&&isEventMSK(curEvTab))}).length;
-const curEvForHint=EVENTS.find(e=>e.id===curEvTab);
-const curHintDate=curEvForHint&&curEvForHint.md?' · <b style="color:#ffcc66">📅 активен '+curEvForHint.md.split('-').reverse().join('.')+'</b>':'';
-const tabsHtml='<div class="of-hint">🎆 <b>Ивенты.</b> Выбери ивент, потом для каждого игрока: <b>Авто</b> / <b>Вкл</b> / <b>Выкл</b>.'+curHintDate+'</div>'+'<div class="of-ev-tabs">'+EVENTS.map(e=>{const dt=e.md?e.md.split('-').reverse().join('.'):'';return '<div class="of-ev-tab'+(curEvTab===e.id?' act':'')+'" onclick="ofEvTabSet(\''+e.id+'\')"><span class="ev-ic">'+e.icon+'</span>'+e.name+(dt?' <span style="font-size:10px;opacity:.65;font-weight:600;margin-left:2px">'+dt+'</span>':'')+'</div>'}).join('')+'</div>'+'<div class="of-ev-date">📅 '+dateInfo+' · <b>активен у '+activeCount+' из '+users.length+'</b></div>';if(!users.length){b.innerHTML=tabsHtml+'<div class="afe">Нет игроков</div>';return}const curEvObj=EVENTS.find(e=>e.id===curEvTab); const curEvDate=curEvObj&&curEvObj.md?curEvObj.md.split('-').reverse().join('.'):''; b.innerHTML=tabsHtml+users.map(u=>{const m=evModeFor(u.nick,curEvTab);const nickEnc=eh(u.nick);return '<div class="of-user-row">'+avH(u.nick,'sm')+'<div class="nik">'+eh(u.nick)+'</div>'+'<div class="of-ev-group">'+'<button class="of-ev-btn'+(m==='auto'?' on':'')+'" data-mode="auto" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'auto\')">🔘 Авто</button>'+'<button class="of-ev-btn'+(m==='on'?' on':'')+'" data-mode="on" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'on\')">✅ Вкл</button>'+'<button class="of-ev-btn'+(m==='off'?' on':'')+'" data-mode="off" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'off\')">🚫 Выкл</button>'+'</div></div>'}).join('')}
+async function ofEvents(b){
+  if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}
+  b.innerHTML='<div class="afe">Загрузка...</div>';
+  const{data,error}=await sb.from('profiles').select('nick').order('nick');
+  if(error){b.innerHTML='<div class="afe">Ошибка загрузки</div>';return}
+  const users=data||[];
+  const activeCount=users.filter(u=>{const m=evModeFor(u.nick,curEvTab);return m==='on'||(m==='auto'&&isEventMSK(curEvTab))}).length;
+  const curEvObj=EVENTS.find(e=>e.id===curEvTab);
+  const curEvDate=curEvObj&&curEvObj.md?' · <b style="color:#ffcc66">📅 '+curEvObj.md.split('-').reverse().join('.')+'</b>':'';
+  const tabsHtml='<div class="of-hint">🎆 <b>Ивенты.</b> Выбери ивент, потом для каждого игрока: <b>Авто</b> / <b>Вкл</b> / <b>Выкл</b>.'+curEvDate+'</div>'+
+    '<div class="of-ev-tabs">'+EVENTS.map(e=>{const dt=e.md?e.md.split('-').reverse().join('.'):'';return '<div class="of-ev-tab'+(curEvTab===e.id?' act':'')+'" onclick="ofEvTabSet(\''+e.id+'\')"><span class="ev-ic">'+e.icon+'</span>'+e.name+(dt?' <span style="font-size:10px;opacity:.65;font-weight:600;margin-left:2px">'+dt+'</span>':'')+'</div>'}).join('')+'</div>'+
+    '<div class="of-ev-date">📅 '+evDateInfo(curEvTab)+' · <b>активен у '+activeCount+' из '+users.length+'</b></div>';
+  if(!users.length){b.innerHTML=tabsHtml+'<div class="afe">Нет игроков</div>';return}
+  b.innerHTML=tabsHtml+users.map(u=>{const m=evModeFor(u.nick,curEvTab);const nickEnc=eh(u.nick);
+    return '<div class="of-user-row">'+avH(u.nick,'sm')+'<div class="nik">'+eh(u.nick)+'</div>'+
+      '<div class="of-ev-group">'+
+        '<button class="of-ev-btn'+(m==='auto'?' on':'')+'" data-mode="auto" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'auto\')">🔘 Авто</button>'+
+        '<button class="of-ev-btn'+(m==='on'?' on':'')+'" data-mode="on" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'on\')">✅ Вкл</button>'+
+        '<button class="of-ev-btn'+(m==='off'?' on':'')+'" data-mode="off" onclick="setEvOv(\''+nickEnc+'\',\''+curEvTab+'\',\'off\')">🚫 Выкл</button>'+
+      '</div></div>'}).join('');
+}
 function evDateInfo(evId){
   if(evId==='xmas')return '🎄 Декабрь и январь (МСК).';
   if(evId==='easter')return '🐣 1–30 апреля.';
@@ -1852,7 +1854,7 @@ async function loadEvOverrides(){try{const{data}=await sb.from('event_overrides'
 function evModeFor(nick,evId){return (evOverrides[evId]||{})[en(nick)]||'auto'}
 async function setEvOv(nick,evId,m){if(!isOwner())return;const enc=en(nick);try{if(m==='auto')await sb.from('event_overrides').delete().eq('nick',enc).eq('event_id',evId);else await sb.from('event_overrides').upsert({nick:enc,event_id:evId,mode:m},{onConflict:'nick,event_id'})}catch(e){showToast('Ошибка: '+e.message,'error');return}if(!evOverrides[evId])evOverrides[evId]={};if(m==='auto')delete evOverrides[evId][enc];else evOverrides[evId][enc]=m;if(nick===me){checkAllEvents()}ofSw('events')}
 
-/* ===== ПАМЯТНЫЕ ДАТЫ ===== */
+/* ===== ДАТЫ ===== */
 const DATES_DEFAULT=[
   {date:'23.02',title:'День защитника Отечества',short:'Праздник всех, кто служил и служит',emoji:'🎖️',body:'<p><b>23 февраля</b> — День защитника Отечества.</p><div class="dts-quote">От всей души — тем, кто стоит на страже.</div>'},
   {date:'08.03',title:'Международный женский день',short:'8 марта — женский день',emoji:'🌷',body:'<p><b>8 марта</b> — Международный женский день.</p>'},
@@ -1860,12 +1862,12 @@ const DATES_DEFAULT=[
   {date:'09.05',title:'День Победы',short:'9 мая — победа в ВОВ',emoji:'🎗️',body:'<p><b>9 мая 1945 года</b> — День Победы в Великой Отечественной войне.</p><div class="dts-quote">Никто не забыт, ничто не забыто.</div>'},
   {date:'22.06',title:'День памяти и скорби',short:'22 июня — начало ВОВ',emoji:'🕯️',body:'<p><b>22 июня 1941 года</b> — начало Великой Отечественной войны.</p><div class="dts-quote">Свеча памяти — каждому имени.</div>'},
   {date:'03.09',title:'День солидарности в борьбе с терроризмом',short:'3 сентября — память жертв терактов',emoji:'🕊️',body:'<p><b>3 сентября</b> — установлен в память о трагедии в <b>Беслане</b>.</p><div class="dts-quote">Терроризму — нет.</div>'},
-  {date:'10.12',title:'DOOM — прародитель шутеров',short:'10 декабря 1993 — релиз DOOM',emoji:'💀',body:'<p><b>10 декабря 1993 года</b> вышла <b>DOOM</b> от id Software — игра, которая создала жанр шутеров от первого лица.</p><p>Уильям Кармак и Джон Ромеро сделали то, что до них никто не делал.</p><div class="dts-quote">RIP AND TEAR!</div>'},
-  {date:'19.11',title:'Half-Life — легенда Valve',short:'19 ноября 1998 — релиз Half-Life',emoji:'🧪',body:'<p><b>19 ноября 1998 года</b> вышла <b>Half-Life</b> от Valve — она изменила представление о сюжете в шутерах.</p><p>Гордон Фримен, Чёрная Меза, монтировка и G-Man.</p><div class="dts-quote">«The right man in the wrong place can make all the difference.»</div>'},
-  {date:'17.05',title:'Minecraft — первый публичный релиз',short:'17 мая 2009 — Minecraft Classic',emoji:'⛏️',body:'<p><b>17 мая 2009 года</b> Notch выложил первую публичную версию Minecraft.</p><p>Сегодня продано более <b>300 миллионов копий</b>.</p><div class="dts-quote">«Майнкрафт — это не игра, это платформа для творчества.»</div>'},
-  {date:'01.09',title:'Roblox — день рождения',short:'1 сентября 2006 — запуск Roblox',emoji:'🟥',body:'<p><b>1 сентября 2006 года</b> выпущена платформа <b>Roblox</b> от Дэвида Башуки и Эрика Кассела.</p><p>Сегодня в Roblox играют <b>более 70 миллионов человек в день</b>.</p>'},
-  {date:'10.10',title:'Portal — с кубом и тортом',short:'10 октября 2007 — релиз Portal',emoji:'🟦',body:'<p><b>10 октября 2007 года</b> вышла <b>Portal</b> — головоломка от Valve, ставшая культовой за один вечер.</p><p>Портал-ган, GLaDOS, Weighted Companion Cube и «The cake is a lie» — уже классика.</p><div class="dts-quote">«The cake is a lie.» — GLaDOS</div>'},
-  {date:'16.05',title:'Terraria — 2D-песочница',short:'16 мая 2011 — релиз Terraria',emoji:'🌳',body:'<p><b>16 мая 2011 года</b> вышла <b>Terraria</b> от Re-Logic.</p><p>Боссы, биомы, оружие, NPC, строительство — контента на <b>1000+ часов</b>.</p>'}
+  {date:'10.12',title:'DOOM — прародитель шутеров',short:'10 декабря 1993 — релиз DOOM',emoji:'💀',body:'<p><b>10 декабря 1993 года</b> вышла <b>DOOM</b> от id Software — игра, которая создала жанр шутеров от первого лица.</p><div class="dts-quote">RIP AND TEAR!</div>'},
+  {date:'19.11',title:'Half-Life — легенда Valve',short:'19 ноября 1998 — релиз Half-Life',emoji:'🧪',body:'<p><b>19 ноября 1998 года</b> вышла <b>Half-Life</b> от Valve.</p><div class="dts-quote">«The right man in the wrong place can make all the difference.»</div>'},
+  {date:'17.05',title:'Minecraft — первый публичный релиз',short:'17 мая 2009 — Minecraft Classic',emoji:'⛏️',body:'<p><b>17 мая 2009 года</b> Notch выложил первую публичную версию Minecraft.</p><p>Сегодня продано более <b>300 миллионов копий</b>.</p>'},
+  {date:'01.09',title:'Roblox — день рождения',short:'1 сентября 2006 — запуск Roblox',emoji:'🟥',body:'<p><b>1 сентября 2006 года</b> выпущена платформа <b>Roblox</b>.</p>'},
+  {date:'10.10',title:'Portal — с кубом и тортом',short:'10 октября 2007 — релиз Portal',emoji:'🟦',body:'<p><b>10 октября 2007 года</b> вышла <b>Portal</b> от Valve.</p><div class="dts-quote">«The cake is a lie.»</div>'},
+  {date:'16.05',title:'Terraria — 2D-песочница',short:'16 мая 2011 — релиз Terraria',emoji:'🌳',body:'<p><b>16 мая 2011 года</b> вышла <b>Terraria</b> от Re-Logic.</p>'}
 ];
 function getCustomDates(){try{const s=localStorage.getItem('dom_custom_dates');const a=s?JSON.parse(s):[];return Array.isArray(a)?a:[]}catch(e){return[]}}
 function setCustomDates(a){try{localStorage.setItem('dom_custom_dates',JSON.stringify(a))}catch(e){}}
@@ -1874,21 +1876,11 @@ function setHiddenDates(a){try{localStorage.setItem('dom_hidden_dates',JSON.stri
 function getAllDates(){const hidden=getHiddenDates();const custom=getCustomDates();const defs=DATES_DEFAULT.filter(d=>!hidden.includes('def:'+d.title));const customs=custom.filter(d=>!hidden.includes('cus:'+d.title));return [...customs,...defs].sort((a,b)=>{const pa=(a.date||'').split('.').map(Number),pb=(b.date||'').split('.').map(Number);return (pa[1]-pb[1])||(pa[0]-pb[0])})}
 function openDtsPanel(){const list=$('dtsList');if(!list)return;const all=getAllDates();if(!all.length){list.innerHTML='<div class="dts-art-empty">Пока нет дат</div>'}else{list.innerHTML=all.map((d,i)=>'<div class="dts-item" onclick="openDtsArticle('+i+')"><div class="dts-date">'+eh(d.date)+'</div><div class="dts-meta"><div class="dts-t">'+eh(d.title)+'</div><div class="dts-s">'+eh(d.short||'')+'</div></div></div>').join('')}$('dtsPanel').classList.add('open')}
 function closeDtsPanel(){$('dtsPanel').classList.remove('open')}
-function _renderDtsArticle(d){
-  $('dtsArtTitleBar').textContent='★ '+d.title;
-  $('dtsArtDate').textContent=d.date;
-  $('dtsArtHead').textContent=d.title;
-  const img=$('dtsArtImg');const hero=img.parentElement;
-  if(d.img){img.src=d.img;img.style.display='block';hero.style.background='#0a0a10';hero.dataset.emoji=''}
-  else{img.style.display='none';hero.style.background='linear-gradient(135deg,#3a1a00,#1a0a00,#3a0a00)';hero.dataset.emoji=d.emoji||'📅'}
-  $('dtsArtBody').innerHTML=d.body;
-}
+function _renderDtsArticle(d){$('dtsArtTitleBar').textContent='★ '+d.title;$('dtsArtDate').textContent=d.date;$('dtsArtHead').textContent=d.title;const img=$('dtsArtImg');const hero=img.parentElement;if(d.img){img.src=d.img;img.style.display='block';hero.style.background='#0a0a10';hero.dataset.emoji=''}else{img.style.display='none';hero.style.background='linear-gradient(135deg,#3a1a00,#1a0a00,#3a0a00)';hero.dataset.emoji=d.emoji||'📅'}$('dtsArtBody').innerHTML=d.body}
 function openDtsArticle(i){const d=getAllDates()[i];if(!d)return;_renderDtsArticle(d);closeDtsPanel();$('dtsArticle').classList.add('open')}
 function closeDtsArticle(){$('dtsArticle').classList.remove('open')}
-/* Клик по игровой иконке — открывает статью */
 function openGameArticle(evId){const g=EVENTS.find(e=>e.id===evId);if(!g||!g.title)return;const d=DATES_DEFAULT.find(x=>x.title===g.title);if(!d){showToast('Статья не найдена','error');return}_renderDtsArticle(d);$('dtsArticle').classList.add('open')}
-
-async function ofDates(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}const custom=getCustomDates();const hidden=getHiddenDates();b.innerHTML='<div class="of-hint">📅 <b>Памятные даты.</b> Добавляй свои статьи с эмодзи. Встроенные можно скрыть.</div>'+'<div class="odt-form">'+'<input id="odtDate" placeholder="ДД.ММ" maxlength="5">'+'<input id="odtTitle" placeholder="Заголовок" maxlength="80">'+'<input id="odtShort" class="odt-full" placeholder="Краткое описание" maxlength="120">'+'<input id="odtEmoji" placeholder="📅" maxlength="4">'+'<input id="odtImg" placeholder="URL картинки (необязательно)">'+'<textarea id="odtBody" placeholder="Текст статьи. HTML разрешён."></textarea>'+'<button onclick="odtAdd()">➕ Добавить дату</button>'+'</div>'+'<div class="odt-default-title">🌐 Встроенные (можно скрыть)</div>'+'<div id="odtDefList">'+DATES_DEFAULT.map(d=>{const isHidden=hidden.includes('def:'+d.title);const k='def:'+d.title.replace(/'/g,"\\'");return '<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><span class="bd def">ВСТР</span><button class="toggle" onclick="odtToggle(\''+k+'\')">'+(isHidden?'👁 Показать':'🙈 Скрыть')+'</button></div>'}).join('')+'</div>'+'<div class="odt-default-title" style="margin-top:22px">✏️ Свои ('+custom.length+')</div>'+'<div id="odtCustomList">'+(custom.length?custom.map((d,i)=>'<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><button class="del" onclick="odtDel('+i+')">🗑</button></div>').join(''):'<div class="afe">Пока пусто</div>')+'</div>'+'<div class="give-msg" id="odtMsg" style="min-height:18px;margin-top:10px"></div>'}
+async function ofDates(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}const custom=getCustomDates();const hidden=getHiddenDates();b.innerHTML='<div class="of-hint">📅 <b>Памятные даты.</b> Добавляй свои статьи с эмодзи. Встроенные можно скрыть.</div>'+'<div class="odt-form">'+'<input id="odtDate" placeholder="ДД.ММ" maxlength="5">'+'<input id="odtTitle" placeholder="Заголовок" maxlength="80">'+'<input id="odtShort" class="odt-full" placeholder="Краткое описание" maxlength="120">'+'<input id="odtEmoji" placeholder="📅" maxlength="4">'+'<input id="odtImg" placeholder="URL картинки">'+'<textarea id="odtBody" placeholder="Текст статьи"></textarea>'+'<button onclick="odtAdd()">➕ Добавить дату</button>'+'</div>'+'<div class="odt-default-title">🌐 Встроенные (можно скрыть)</div>'+'<div id="odtDefList">'+DATES_DEFAULT.map(d=>{const isHidden=hidden.includes('def:'+d.title);const k='def:'+d.title.replace(/'/g,"\\'");return '<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><span class="bd def">ВСТР</span><button class="toggle" onclick="odtToggle(\''+k+'\')">'+(isHidden?'👁 Показать':'🙈 Скрыть')+'</button></div>'}).join('')+'</div>'+'<div class="odt-default-title" style="margin-top:22px">✏️ Свои ('+custom.length+')</div>'+'<div id="odtCustomList">'+(custom.length?custom.map((d,i)=>'<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><button class="del" onclick="odtDel('+i+')">🗑</button></div>').join(''):'<div class="afe">Пока пусто</div>')+'</div>'+'<div class="give-msg" id="odtMsg" style="min-height:18px;margin-top:10px"></div>'}
 function odtToggle(titleKey){const hidden=getHiddenDates();const i=hidden.indexOf(titleKey);if(i>=0)hidden.splice(i,1);else hidden.push(titleKey);setHiddenDates(hidden);ofSw('dates')}
 function odtAdd(){const date=$('odtDate').value.trim();const title=$('odtTitle').value.trim();const short=$('odtShort').value.trim();const emoji=$('odtEmoji').value.trim()||'📅';const img=$('odtImg').value.trim();const body=$('odtBody').value.trim();const msg=$('odtMsg');msg.style.color='#ff6b6b';if(!/^\d{2}\.\d{2}$/.test(date)){msg.textContent='❌ Дата в формате ДД.ММ';return}if(!title){msg.textContent='❌ Впиши заголовок';return}if(!body){msg.textContent='❌ Впиши текст статьи';return}const custom=getCustomDates();custom.push({date,title,short,emoji,img,body});setCustomDates(custom);msg.style.color='#8bc34a';msg.textContent='✅ Добавлено';setTimeout(()=>ofSw('dates'),400)}
 function odtDel(i){const custom=getCustomDates();if(!confirm('Удалить «'+(custom[i]?.title||'')+'»?'))return;custom.splice(i,1);setCustomDates(custom);ofSw('dates')}
@@ -1919,15 +1911,9 @@ function restoreFakeSession(){try{const fake=localStorage.getItem('dom_fake_me')
 /* ===== ИВЕНТЫ (МСК) ===== */
 function mskDate(){const n=new Date();return new Date(n.getTime()+n.getTimezoneOffset()*60000+3*3600000)}
 function isEventMSK(evId){
-  /* utHeart и dtsStar — только через Вкл (override), календарь их не включает */
   if(evId==='utHeart'||evId==='dtsStar')return false;
-  /* Игровые ивенты — по ММ-ДД */
   const evDef=EVENTS.find(e=>e.id===evId);
-  if(evDef&&evDef.md){
-    const d=mskDate();
-    const cur=String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-    return cur===evDef.md;
-  }
+  if(evDef&&evDef.md){const d=mskDate();const cur=String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');return cur===evDef.md}
   const d=mskDate();const mo=d.getMonth();const date=d.getDate();const h=d.getHours();const mi=d.getMinutes();
   if(evId==='xmas')return mo===11||mo===0;
   if(evId==='easter')return mo===3&&date>=1&&date<=30;
@@ -1940,19 +1926,13 @@ function isEventMSK(evId){
   return false;
 }
 function shouldShowEvent(evId){const m=evModeFor(me,evId);if(m==='on')return true;if(m==='off')return false;return isEventMSK(evId)}
-function checkAllEvents(){
-  if(!me)return;
-  checkXmas();checkEaster();checkFireworks();checkMaslenitsa();
-  checkKnowledge();checkTeacher();checkMemorials();
-  checkUtHeart();checkDtsStar();checkGameIcons();
-}
+function checkAllEvents(){if(!me)return;checkXmas();checkEaster();checkFireworks();checkMaslenitsa();checkKnowledge();checkTeacher();checkMemorials();checkUtHeart();checkDtsStar();checkGameIcons()}
 function checkXmas(){const t=$('xmasTree'),g=$('xmasGifts');if(!t)return;const show=shouldShowEvent('xmas');t.classList.toggle('on',show);if(g)g.classList.toggle('on',show)}
 function checkEaster(){const t=$('easterDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('easter'))}
 function checkMaslenitsa(){const t=$('maslenitsaDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('maslenitsa'))}
 function checkKnowledge(){const t=$('knowledgeDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('knowledge'))}
 function checkTeacher(){const t=$('teacherDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('teacher'))}
 function checkMemorials(){const b=$('memorial911'),c=$('memorialCrocus');if(b)b.classList.toggle('on',shouldShowEvent('911'));if(c)c.classList.toggle('on',shouldShowEvent('crocus'))}
-/* ===== НОВЫЕ ФУНКЦИИ ===== */
 function checkUtHeart(){const t=$('utHeart');if(!t)return;t.classList.toggle('on',shouldShowEvent('utHeart'))}
 function checkDtsStar(){const t=$('dtsStar');if(!t)return;t.classList.toggle('on',shouldShowEvent('dtsStar'))}
 function checkGameIcons(){
@@ -1964,8 +1944,8 @@ function checkGameIcons(){
   box.classList.add('on');
 }
 const MEMORIAL_DATA={
-  '911':{icon:'🏙️',title:'11 сентября 2001',date:'Теракт в США · 2 977 погибших',text:'Утром 11 сентября 2001 года террористы захватили четыре пассажирских самолёта. Два из них врезались в башни-близнецы Всемирного торгового центра в Нью-Йорке, третий — в здание Пентагона, четвёртый разбился в поле в Пенсильвании.\n\nОбе башни-близнецы обрушились в течение двух часов. Погибли 2 977 человек, более 25 000 получили ранения.\n\nЭтот день изменил мир. Мы помним всех, кто погиб, и тех, кто спасал жизни, не жалея себя.'},
-  'crocus':{icon:'🕯️',title:'22 марта 2024',date:'Теракт в Крокус Сити Холл, Москва',text:'Вечером 22 марта 2024 года вооружённые террористы ворвались в концертный зал «Крокус Сити Холл» в Красногорске перед началом концерта и открыли огонь по людям. В здании начался пожар, крыша частично обрушилась.\n\nПогибли 145 человек, более 550 пострадали. Это один из крупнейших терактов в современной истории России.\n\nМы скорбим вместе со всеми, кто потерял близких. Такое не должно повториться никогда.'}
+  '911':{icon:'🏙️',title:'11 сентября 2001',date:'Теракт в США · 2 977 погибших',text:'Утром 11 сентября 2001 года террористы захватили четыре пассажирских самолёта...\n\nОбе башни-близнецы обрушились в течение двух часов. Погибли 2 977 человек.\n\nЭтот день изменил мир. Мы помним всех.'},
+  'crocus':{icon:'🕯️',title:'22 марта 2024',date:'Теракт в Крокус Сити Холл, Москва',text:'Вечером 22 марта 2024 года террористы ворвались в «Крокус Сити Холл» в Красногорске.\n\nПогибли 145 человек, более 550 пострадали.\n\nМы скорбим вместе со всеми.'}
 };
 function openMemorial(which){const d=MEMORIAL_DATA[which];if(!d)return;$('memIcon').textContent=d.icon;$('memTitle').textContent=d.title;$('memDate').textContent=d.date;$('memText').innerHTML=d.text.replace(/</g,'&lt;').replace(/\n/g,'<br>');$('memorialModal').classList.add('open');try{stopAllMedia()}catch(e){}}
 function closeMemorial(){$('memorialModal').classList.remove('open')}
@@ -1983,7 +1963,7 @@ function afEnt(b){const bl=houseData?.blocked_entrances||[];let h='';for(let e=1
 async function afHouse(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data:hs,error}=await sb.from('houses').select('*').order('id');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}const all=hs||[];const{data:fl}=await sb.from('flats').select('house_id,owner_nicks,owner_nick,owner_nick2');const cnt={};(fl||[]).forEach(f=>{const h=Number(f.house_id);if(!cnt[h])cnt[h]=0;if(flatOwners(f).length)cnt[h]++});let html='';if(isOwner()){html+='<div class="afr" style="border-left:4px solid #d32f2f"><div class="info"><div class="ti">🏗 Управление домами</div><div class="su">Всего домов: <b>'+all.length+'</b></div></div><div class="ac"><button class="afbtn r" onclick="quickCreateHouse()">➕ Создать новый дом</button></div></div>'}if(!all.length){html+='<div class="afe">Домов нет</div>';b.innerHTML=html;return}all.forEach(h=>{const hid=Number(h.id);const blocked=!!h.blocked;const c=cnt[hid]||0;const isCur=(hid===Number(curHouse));const ann=h.announcement||'';const start=(hid-1)*30+1,end=(hid-1)*30+30;html+='<div class="afr"'+(isCur?' style="border-left:4px solid #f5c542"':'')+'><div class="info"><div class="ti">🏘 '+eh(h.name||('Дом №'+hid))+' <span class="afbdg '+(blocked?'r':'g')+'">'+(blocked?'заблокирован':'открыт')+'</span>'+(isCur?' <span class="afbdg" style="background:rgba(245,197,66,.15);color:#f5c542">текущий</span>':'')+'</div><div class="su">Квартиры '+start+'–'+end+' · Занято: '+c+'/30</div></div><div class="ac">'+(blocked?'<button class="afbtn g" onclick="afTogHouse('+hid+',false)">Открыть</button>':'<button class="afbtn r" onclick="afTogHouse('+hid+',true)">Закрыть</button>')+'<button class="afbtn gr" onclick="openAnn('+hid+')">📢 Объявление</button></div></div>';if(ann){html+='<div class="afr" style="border-left:4px solid #f5c542;margin-left:16px"><div class="info"><div class="ti">📢 Объявление дома '+hid+'</div><div class="su" style="margin-top:8px;white-space:pre-wrap;color:#c8c8d0">'+eh(ann)+'</div></div><div class="ac"><button class="afbtn r" onclick="delAnn('+hid+')">Удалить</button></div></div>'}});b.innerHTML=html}
 async function quickCreateHouse(){if(!isOwner())return showToast('Только владелец','error');if(lock)return;const nextId=houses.length?Math.max(...houses.map(h=>Number(h.id)||0))+1:1;const name='Дом №'+nextId;const ok=await askConfirm('Создать дом?','«'+name+'» с 30 квартирами.','Создать');if(!ok)return;lock=true;try{const{data:h,error:e1}=await sb.from('houses').insert({id:nextId,name}).select().single();if(e1){showToast('Ошибка: '+e1.message,'error');return}const rows=[];for(let k=1;k<=30;k++)rows.push({house_id:nextId,number:k});const{error:e2}=await sb.from('flats').insert(rows);if(e2){await sb.from('houses').delete().eq('id',nextId);showToast('Ошибка: '+e2.message,'error');return}houses.push(h);await loadHouses();renderHouses();await switchHouse(nextId)}finally{lock=false}}
 async function autoCheckNewHouse(){if(lock)return;if(!houses.length)return;try{const{data,error}=await sb.from('flats').select('house_id,owner_nicks,owner_nick,owner_nick2');if(error)return;const byHouse={};(data||[]).forEach(f=>{const h=Number(f.house_id);if(!byHouse[h])byHouse[h]={total:0,taken:0};byHouse[h].total++;if(flatOwners(f).length)byHouse[h].taken++});let allFull=true;for(const h of houses){const s=byHouse[h.id]||{total:0,taken:0};if(s.total===0||s.taken<s.total){allFull=false;break}}if(allFull){const nextId=Math.max(...houses.map(h=>Number(h.id)||0))+1;const name='Дом №'+nextId;const{data:nh,error:e1}=await sb.from('houses').insert({id:nextId,name}).select().single();if(e1)return;const rows=[];for(let k=1;k<=30;k++)rows.push({house_id:nextId,number:k});const{error:e2}=await sb.from('flats').insert(rows);if(e2){await sb.from('houses').delete().eq('id',nextId);return}houses.push(nh);renderHouses()}}catch(e){}}
-async function afUsers(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('profiles').select('*').order('nick');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}usersAll=data||[];const bannedCount=usersAll.filter(u=>u.banned).length;const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);const o=hasAdmin();const isOwn=isOwner();let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'"><div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div></div><div class="ac">'+(showBanned?'<button class="afbtn gr" onclick="toggleBannedView()">👁 Скрыть</button>':'<button class="afbtn r" onclick="toggleBannedView()">👁 Показать ('+bannedCount+')</button>')+'</div></div>';if(!visible.length){b.innerHTML=top+'<div class="afe">Пусто</div>';return}b.innerHTML=top+visible.map(u=>{const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;const nickEnc=eh(u.nick);const coinBtns=isOwn?('<button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 100)">+100</button><button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 1000)">+1000</button><button class="of-ev-btn danger" onclick="admCoins(\''+nickEnc+'\', -100)">−100</button>'):'';const banBtns=o?(bn?'<button class="of-ev-btn on" onclick="unBan(\''+nickEnc+'\')">Разбан</button>':'<button class="of-ev-btn danger" onclick="banU(\''+nickEnc+'\')">Бан</button>'):'';const admBtns=isOwn?(ad?'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>'):'';const flatBtns=isOwn?('<button class="of-ev-btn" onclick="ownerSetFlat(\''+nickEnc+'\')" title="Заселить в квартиру">🏠 Заселить</button><button class="of-ev-btn danger" onclick="ownerKickUser(\''+nickEnc+'\')" title="Выселить из всех квартир">🚪 Выселить</button>'):'';return '<div class="of-user-row">'+avH(u.nick,'sm')+'<div style="flex:1;min-width:140px;margin-left:4px">'+'<div class="nik" style="cursor:pointer;color:#fff" onclick="openProfile(\''+nickEnc+'\')">'+eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')+'</div>'+'<div style="color:#f5c542;font-size:12px;margin-top:2px">💰 '+coins+'</div>'+(u.ban_reason?'<div style="font-size:11px;color:#ff6666;margin-top:2px">'+eh(u.ban_reason)+'</div>':'')+'</div>'+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">'+flatBtns+coinBtns+banBtns+admBtns+'</div></div>'}).join('')}
+async function afUsers(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('profiles').select('*').order('nick');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}usersAll=data||[];const bannedCount=usersAll.filter(u=>u.banned).length;const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);const o=hasAdmin();const isOwn=isOwner();let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'"><div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div></div><div class="ac">'+(showBanned?'<button class="afbtn gr" onclick="toggleBannedView()">👁 Скрыть</button>':'<button class="afbtn r" onclick="toggleBannedView()">👁 Показать ('+bannedCount+')</button>')+'</div></div>';if(!visible.length){b.innerHTML=top+'<div class="afe">Пусто</div>';return}b.innerHTML=top+visible.map(u=>{const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;const nickEnc=eh(u.nick);const coinBtns=isOwn?('<button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 100)">+100</button><button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 1000)">+1000</button><button class="of-ev-btn danger" onclick="admCoins(\''+nickEnc+'\', -100)">−100</button>'):'';const banBtns=o?(bn?'<button class="of-ev-btn on" onclick="unBan(\''+nickEnc+'\')">Разбан</button>':'<button class="of-ev-btn danger" onclick="banU(\''+nickEnc+'\')">Бан</button>'):'';const admBtns=isOwn?(ad?'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>'):'';const flatBtns=isOwn?('<button class="of-ev-btn" onclick="ownerSetFlat(\''+nickEnc+'\')">🏠 Заселить</button><button class="of-ev-btn danger" onclick="ownerKickUser(\''+nickEnc+'\')">🚪 Выселить</button>'):'';return '<div class="of-user-row">'+avH(u.nick,'sm')+'<div style="flex:1;min-width:140px;margin-left:4px">'+'<div class="nik" style="cursor:pointer;color:#fff" onclick="openProfile(\''+nickEnc+'\')">'+eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')+'</div>'+'<div style="color:#f5c542;font-size:12px;margin-top:2px">💰 '+coins+'</div>'+(u.ban_reason?'<div style="font-size:11px;color:#ff6666;margin-top:2px">'+eh(u.ban_reason)+'</div>':'')+'</div>'+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">'+flatBtns+coinBtns+banBtns+admBtns+'</div></div>'}).join('')}
 function toggleBannedView(){showBanned=!showBanned;afRend()}
 async function admCoins(nick,delta){if(!isOwner())return showToast('Только владелец','error');const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:nick,p_delta:delta});if(error)return showToast('Ошибка: '+error.message,'error');if(data&&data.ok===false)return showToast(data.error||'Ошибка','error');if(nick===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}afRend()}
 async function banU(n){if(!hasAdmin())return showToast('Только админам','error');if(n===me)return showToast('Себя нельзя','error');const r=prompt('Причина','нарушение');if(r===null)return;await sb.from('profiles').update({banned:true,ban_reason:r||''}).eq('nick',n);afRend()}
@@ -2211,8 +2191,7 @@ function playVoice(id,url,dur){
     if(vw)vw.classList.remove('playing');
     const bars=document.querySelectorAll('.voice-bar[data-id="'+id+'"] .wb');
     bars.forEach(b=>b.classList.remove('played'));
-    stopAllMedia();
-    return;
+    stopAllMedia();return;
   }
   try{
     stopAllMedia();
@@ -2263,6 +2242,21 @@ async function uploadAvaToStorage(file,prefix){const path='group_ava/'+prefix+'_
 /* ===== ПРИГЛАШЕНИЕ / МЕДИА ===== */
 async function invite(){if(!fmN)return;const inp=$('invI');if(!inp)return;const v=(inp.value||'').trim();if(!v)return;const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return showToast('Только хозяин','error');const mp=f.max_people??2;if(owners.length>=mp)return showToast('Мест нет','error');let nick=null;if(/^\d+$/.test(v)){const n=parseInt(v);const tg=flats[n];const tOwners=flatOwners(tg);if(!tOwners.length)return showToast('Квартира пуста','error');nick=de(tOwners[0])}else{nick=v}if(nick===me)return showToast('Себя нельзя','error');const enc=en(nick);if(owners.includes(enc))return showToast('Уже в квартире','error');const{data:p}=await sb.from('profiles').select('nick').eq('nick',nick).maybeSingle();if(!p)return showToast('Игрок не найден','error');const{data:ex}=await sb.from('room_invites').select('id').eq('from_nick',meEnc).eq('to_nick',enc).eq('house_id',curHouse).eq('flat_number',fmN).maybeSingle();if(ex)return showToast('Уже приглашён','error');const{error}=await sb.from('room_invites').insert({from_nick:meEnc,to_nick:enc,house_id:curHouse,flat_number:fmN});if(error)return showToast('❌ '+error.message,'error');inp.value='';showToast('📨 Приглашение отправлено','success')}
 async function saveM(){if(!fmN)return;const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Только жильцы','error');const mst=$('mst');mst.textContent='Сохранение...';try{let phUrl=phU||null;let musUpload=musU||null;if(musU&&musU.startsWith('data:')){const blob=await (await fetch(musU)).blob();const path='flat_music/'+meEnc+'/'+Date.now()+'.mp3';const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:true});if(!up.error){const{data:pub}=sb.storage.from('media').getPublicUrl(path);musUpload=pub?pub.publicUrl:null}}const x=parseInt($('phX').value)||50,y=parseInt($('phY').value)||50,z=parseInt($('phZ').value)||100;const rec={nick:meEnc,photo_url:phUrl,photo_x:x,photo_y:y,photo_zoom:z,music_url:musUpload,updated_at:new Date().toISOString()};const{error}=await sb.from('user_media').upsert(rec,{onConflict:'nick'});if(error){mst.textContent='❌ '+error.message;return}await loadPhotoCache();await loadHM();renderFlats();mst.textContent='✅ Сохранено';showToast('✅ Сохранено','success')}catch(e){mst.textContent='❌ '+e.message}}
+async function startMus(rid){
+  try{
+    const mm=rid.match(/^h(\d+)_flat(\d+)_room$/);
+    if(!mm)return null;
+    const hn=mm[1],fn=mm[2];
+    const{data:fl}=await sb.from('flats').select('owner_nicks').eq('house_id',hn).eq('number',fn).maybeSingle();
+    if(!fl)return null;
+    const owner=(fl.owner_nicks||[])[0];
+    if(!owner)return null;
+    const{data:um}=await sb.from('user_media').select('music_url').eq('nick',owner).maybeSingle();
+    const url=(um&&um.music_url)||null;
+    if(url){const a=$('bgA');if(a&&a.src!==url){a.src=url;a.loop=true;a.load()}}
+    return url;
+  }catch(e){return null}
+}
 async function stopMus(){try{const a=$('bgA');if(a){a.pause();a.removeAttribute('src');a.load()}const b=$('mbB');if(b)b.classList.remove('playing');musUrl=null}catch(e){}}
 function toggleMus(rid){const a=$('bgA');if(!a)return;if(a.paused){stopAllMedia();if(musUrl)a.play().catch(()=>{});const b=$('mbB');if(b)b.classList.add('playing')}else{a.pause();const b=$('mbB');if(b)b.classList.remove('playing')}}
 function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
@@ -2282,7 +2276,20 @@ function fmSw(t){
   $(m[t]).style.display='flex';
   $('svB').style.display=t==='media'?'block':'none';
   if(t==='work')renderWork();
-  if(t==='room'){rcId='h'+curHouse+'_flat'+fmN+'_room';clrCh($('rc'));loadRM();subRM();if(rcPt){clearInterval(rcPt);rcPt=null}rcPt=setInterval(loadRM,3000)}
+  if(t==='room'){
+    rcId='h'+curHouse+'_flat'+fmN+'_room';
+    clrCh($('rc'));
+    loadRM();subRM();
+    if(rcPt){clearInterval(rcPt);rcPt=null}
+    rcPt=setInterval(loadRM,3000);
+    /* ← ЗАГРУЗКА МУЗЫКИ */
+    startMus(rcId).then(url=>{
+      musUrl=url;
+      const b=$('mbB');
+      if(b&&url){b.style.display='flex';b.textContent='🎵 Включить'}
+      else if(b){b.style.display='none'}
+    }).catch(()=>{});
+  }
   else{if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}}
 }
 function closeFm(){if(workActive)stopWork(false);stopMus();if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;$('fm').classList.remove('open');fmN=null}
@@ -2326,19 +2333,17 @@ async function startRoomRec(){
       vCh=[];vRec=null;vS=0;
       if(vTimer){clearInterval(vTimer);vTimer=null}
       const b=$('rVB');if(b){b.classList.remove('rec');b.textContent='🎤'}
-      if(dur>=1){
-        try{
-          const path='voice/'+rcId+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.webm';
-          const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:false});
-          if(up.error){showToast('❌ '+up.error.message,'error');return}
-          const{data:pub}=sb.storage.from('media').getPublicUrl(path);
-          const url=pub&&pub.publicUrl;if(!url)return;
-          const{data:ins,error}=await sb.from('messages').insert({room_id:rcId,nick:meEnc,voice_url:url,voice_dur:Math.max(1,Math.round(dur)),user_id:curUser.id}).select().single();
-          if(error){showToast('❌ '+error.message,'error');return}
-          if(ins&&ins.id){vDur[ins.id]=Math.max(1,Math.round(dur));vWaveCache[ins.id]=Math.random()}
-          await loadRM();showToast('🎤','success');
-        }catch(e){showToast('❌ '+e.message,'error')}
-      }
+      if(dur>=1){try{
+        const path='voice/'+rcId+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.webm';
+        const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:false});
+        if(up.error){showToast('❌ '+up.error.message,'error');return}
+        const{data:pub}=sb.storage.from('media').getPublicUrl(path);
+        const url=pub&&pub.publicUrl;if(!url)return;
+        const{data:ins,error}=await sb.from('messages').insert({room_id:rcId,nick:meEnc,voice_url:url,voice_dur:Math.max(1,Math.round(dur)),user_id:curUser.id}).select().single();
+        if(error){showToast('❌ '+error.message,'error');return}
+        if(ins&&ins.id){vDur[ins.id]=Math.max(1,Math.round(dur));vWaveCache[ins.id]=Math.random()}
+        await loadRM();showToast('🎤','success');
+      }catch(e){showToast('❌ '+e.message,'error')}}
     };
     vRec.start();vS=0;
     const b=$('rVB');if(b){b.classList.add('rec');b.textContent='⏹'}
