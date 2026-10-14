@@ -1843,7 +1843,25 @@ async function setFrame(id){if(id!=='none'&&!myOwnedFrames.includes(id))return s
 function renderNeonPicker(){const cur=getNeonRGB();const cI=$('npColor');if(cI&&document.activeElement!==cI)cI.value=rgbToHex(cur[0],cur[1],cur[2]);const rI=$('npRgb');if(rI&&document.activeElement!==rI)rI.value=cur.join(', ');const box=$('npSaved');if(!box)return;const saved=getSavedNeons();if(!saved.length){box.innerHTML='<span style="color:#666678;font-size:12px">Пусто</span>';return}box.innerHTML=saved.map(key=>{const p=key.split(',').map(Number);const hex=rgbToHex(p[0],p[1],p[2]);return '<div class="np-chip" style="background:'+hex+'" onclick="applyNeonPreset(\''+key+'\')"><button class="np-x" onclick="event.stopPropagation();removeNeonPreset(\''+key+'\')">✕</button></div>'}).join('')}
 function applyNeonPreset(key){const p=key.split(',').map(Number);if(p.length>=3)setNeonRGB(p[0],p[1],p[2]);renderNeonPicker()}
 async function loadCoins(){try{const{data}=await sb.from('profiles').select('coins,active_frame,owned_frames,owned_items').eq('nick',me).maybeSingle();myCoins=(data&&data.coins)||0;myFrame=(data&&data.active_frame)||'none';myOwnedFrames=(data&&data.owned_frames)||['none'];myOwnedItems=(data&&data.owned_items)||[]}catch(e){myCoins=0;myFrame='none';myOwnedFrames=['none'];myOwnedItems=[]}updateCoinsUI()}
-function updateCoinsUI(){const b=$('myCoinsBadge');if(b)b.textContent='💰 '+myCoins;const d=$('dutyCoins');if(d)d.textContent=myCoins;const f=$('framesCoins');if(f)f.textContent=myCoins}
+let _coinsSyncTimer=null;
+function updateCoinsUI(){
+  const b=$('myCoinsBadge');if(b)b.textContent='💰 '+myCoins;
+  const d=$('dutyCoins');if(d)d.textContent=myCoins;
+  const f=$('framesCoins');if(f)f.textContent=myCoins;
+  // Автосинхронизация с сервером (debounce, чтобы не спамить)
+  if(_coinsSyncTimer)clearTimeout(_coinsSyncTimer);
+  _coinsSyncTimer=setTimeout(async()=>{
+    try{
+      const{data}=await sb.from('profiles').select('coins').eq('nick',me).maybeSingle();
+      if(data&&typeof data.coins==='number'&&data.coins!==myCoins){
+        myCoins=data.coins;
+        const b2=$('myCoinsBadge');if(b2)b2.textContent='💰 '+myCoins;
+        const d2=$('dutyCoins');if(d2)d2.textContent=myCoins;
+        const f2=$('framesCoins');if(f2)f2.textContent=myCoins;
+      }
+    }catch(e){}
+  },800);
+}
 async function addCoins(n){if(n>=0){console.warn('addCoins: положительные суммы запрещены, используй earn_* RPC');return}try{const{data,error}=await sb.rpc('add_coins',{p_delta:n});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||'Ошибка'),'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}}
 function withBonus(b){const bo=frameBonusPct(myFrame);return bo>0?Math.round(b*(1+bo/100)):b}
 function myFlat(){for(const n in flats)if(flatOwners(flats[n])[0]===meEnc)return Number(n);return null}
