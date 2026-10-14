@@ -1982,15 +1982,57 @@ function subRM(){if(rcCh)sb.removeChannel(rcCh);if(!rcId)return;rcCh=sb.channel(
 function sendRoomMsg(){const inp=$('rIn');if(!inp)return;const t=(inp.value||'').trim();if(!t||!rcId)return;inp.value='';sb.from('messages').insert({room_id:rcId,nick:meEnc,text:t,user_id:curUser.id}).select().then(r=>{if(r.error){showToast('❌ '+r.error.message,'error');inp.value=t;return null}return loadRM()}).catch(e=>showToast('❌ '+e.message,'error'))}
 async function startRoomRec(){if(vRec&&vRec.state==='recording')return;if(!rcId)return;try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});vCh=[];vStr=stream;const mime=window.MediaRecorder&&MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';vRec=new MediaRecorder(stream,{mimeType:mime});vRec.ondataavailable=e=>{if(e.data&&e.data.size>0)vCh.push(e.data)};vRec.onstop=async()=>{const dur=vS/10;if(vStr)vStr.getTracks().forEach(t=>t.stop());vStr=null;const blob=new Blob(vCh,{type:vRec.mimeType||'audio/webm'});vCh=[];vRec=null;vS=0;if(vTimer){clearInterval(vTimer);vTimer=null}const b=$('rVB');if(b){b.classList.remove('rec');b.textContent='🎤'}if(dur>=1){try{const path='voice/'+rcId+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.webm';const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:false});if(up.error){showToast('❌ '+up.error.message,'error');return}const{data:pub}=sb.storage.from('media').getPublicUrl(path);const url=pub&&pub.publicUrl;if(!url)return;const{data:ins,error}=await sb.from('messages').insert({room_id:rcId,nick:meEnc,voice_url:url,voice_dur:Math.max(1,Math.round(dur)),user_id:curUser.id}).select().single();if(error){showToast('❌ '+error.message,'error');return}if(ins&&ins.id){vDur[ins.id]=Math.max(1,Math.round(dur));vWaveCache[ins.id]=Math.random()}await loadRM();showToast('🎤','success')}catch(e){showToast('❌ '+e.message,'error')}}};vRec.start();vS=0;const b=$('rVB');if(b){b.classList.add('rec');b.textContent='⏹'}if(vTimer)clearInterval(vTimer);vTimer=setInterval(()=>{vS++;if(vS>=60)stopRec()},100)}catch(e){showToast('🎤 '+e.message,'error')}}
 let _callPc=null,_callId=null,_callFrom=null,_callTo=null,_callKind='audio',_callRole='caller',_callTimerInt=null,_callStartTs=0,_callLocalStream=null,_callRemoteStream=null,_callMiniMode=false,_callSubCh=null;
-const _ICE_CONFIG={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}]};
+const _ICE_CONFIG={iceServers:[
+  {urls:'stun:stun.l.google.com:19302'},
+  {urls:'stun:stun1.l.google.com:19302'},
+  {urls:'stun:stun.cloudflare.com:3478'},
+  {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+  {urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},
+  {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}
+]};
+let _remoteAudioEl=null;
 async function startCall(toNickEnc,kind){if(_callPc){showToast('Уже в звонке','error');return}if(!curUser)return;const toNick=de(toNickEnc);if(!toNick||toNick===me)return;_callKind=kind||'audio';_callRole='caller';_callTo=toNickEnc;_callFrom=meEnc;try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(kind==='video'?'камере':'микрофону'),'error');return}const{data,error}=await sb.from('calls').insert({from_nick:meEnc,to_nick:toNickEnc,status:'ringing',kind:_callKind}).select().single();if(error){showToast('❌ '+error.message,'error');_cleanupCallLocal();return}_callId=data.id;_callPc=new RTCPeerConnection(_ICE_CONFIG);_setupPc(_callPc);_callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));const offer=await _callPc.createOffer();await _callPc.setLocalDescription(offer);await sb.from('calls').update({sdp_offer:JSON.stringify(offer)}).eq('id',_callId);_callSub();_showCallScreen(toNick,'Звоним...');if(_callKind==='video')_showLocalVideo();showToast('📞 '+toNick,'success')}
-function _setupPc(pc){pc.onicecandidate=(e)=>{if(e.candidate){const cand=e.candidate.toJSON();sb.from('calls').select('ice_from,ice_to').eq('id',_callId).maybeSingle().then(({data})=>{if(!data)return;if(_callRole==='caller'){const arr=Array.isArray(data.ice_from)?data.ice_from:[];arr.push(cand);sb.from('calls').update({ice_from:arr}).eq('id',_callId)}else{const arr=Array.isArray(data.ice_to)?data.ice_to:[];arr.push(cand);sb.from('calls').update({ice_to:arr}).eq('id',_callId)}})}};pc.ontrack=(e)=>{_callRemoteStream=e.streams[0];const rv=$('callRemoteVideo');if(rv){rv.srcObject=_callRemoteStream}const au=new Audio();au.srcObject=_callRemoteStream;au.autoplay=true;au.play().catch(()=>{})};pc.onconnectionstatechange=()=>{if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){endCall(false)}}}
+function _setupPc(pc){
+  pc.onicecandidate=(e)=>{if(e.candidate){const cand=e.candidate.toJSON();sb.from('calls').select('ice_from,ice_to').eq('id',_callId).maybeSingle().then(({data})=>{if(!data)return;if(_callRole==='caller'){const arr=Array.isArray(data.ice_from)?data.ice_from:[];arr.push(cand);sb.from('calls').update({ice_from:arr}).eq('id',_callId)}else{const arr=Array.isArray(data.ice_to)?data.ice_to:[];arr.push(cand);sb.from('calls').update({ice_to:arr}).eq('id',_callId)}})}};
+
+  pc.ontrack=(e)=>{
+    _callRemoteStream=e.streams[0];
+    // 1) аудио — через <audio> в DOM
+    if(!_remoteAudioEl){
+      _remoteAudioEl=document.createElement('audio');
+      _remoteAudioEl.autoplay=true;
+      _remoteAudioEl.setAttribute('playsinline','');
+      document.body.appendChild(_remoteAudioEl);
+    }
+    _remoteAudioEl.srcObject=_callRemoteStream;
+    _remoteAudioEl.muted=false;
+    _remoteAudioEl.volume=1;
+    _remoteAudioEl.play().catch(err=>console.warn('audio play:',err));
+
+    // 2) видео — в элемент на экране
+    const rv=$('callRemoteVideo');
+    if(rv){
+      rv.srcObject=_callRemoteStream;
+      rv.muted=false;
+      rv.play().catch(()=>{});
+    }
+  };
+
+  pc.onconnectionstatechange=()=>{
+    console.log('PC state:',pc.connectionState,'ice:',pc.iceConnectionState);
+    if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){endCall(false)}
+  };
+
+  pc.oniceconnectionstatechange=()=>{
+    console.log('ICE state:',pc.iceConnectionState);
+  };
+}
 function _callSub(){if(_callSubCh)return;_callSubCh=sb.channel('call-'+_callId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'calls',filter:'id=eq.'+_callId},async p=>{if(!p.new)return;const r=p.new;if(_callRole==='caller'&&r.sdp_answer&&_callPc&&!_callPc.currentRemoteDescription){try{await _callPc.setRemoteDescription(JSON.parse(r.sdp_answer))}catch(e){}const iceTo=Array.isArray(r.ice_to)?r.ice_to:[];for(const c of iceTo){try{await _callPc.addIceCandidate(c)}catch(e){}}_startCallTimer();_hideRinging()}if(_callRole==='caller'&&Array.isArray(r.ice_to)){const applied=_callPc&&_callPc._appliedIceTo||0;const fresh=r.ice_to.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceTo=r.ice_to.length}if(_callRole==='callee'&&Array.isArray(r.ice_from)){const applied=_callPc&&_callPc._appliedIceFrom||0;const fresh=r.ice_from.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceFrom=r.ice_from.length}if(r.status==='ended'||r.status==='rejected'||r.status==='missed'){_endCallLocal();if(r.status==='rejected')showToast('📵 Отклонено','error');else if(r.status==='missed')showToast('📵 Не ответил','error')}}).subscribe()}
 function _showCallScreen(name,subtitle){const av=$('callAv');const url=photoCache[_callFrom===meEnc?_callTo:_callFrom];if(url){av.style.backgroundImage='url("'+url+'")';av.textContent='';av.classList.add('has-img')}else{const nick=_callFrom===meEnc?_callTo:_callFrom;av.textContent=firstL(de(nick));av.style.background='linear-gradient(135deg,'+nCol(de(nick))+','+shCol(nCol(de(nick)),-18)+')'}$('callName').textContent=de(name);$('callVideoName').textContent=de(name);$('callSubtitle').textContent=subtitle||'';$('callSubtitle').style.display=subtitle?'block':'none';$('callTimer').style.display='none';$('callVideoTimer').textContent='0:00';$('callMiniName').textContent=de(name);const sc=$('callScreen');sc.classList.toggle('video',_callKind==='video');sc.classList.add('on');const btn=$('callMuteBtn');if(btn)btn.classList.remove('on');const cbtn=$('callCamBtn');if(cbtn)cbtn.classList.toggle('on',_callKind==='video')}
 function _hideRinging(){$('callSubtitle').textContent='';$('callSubtitle').style.display='none'}
 function _showLocalVideo(){const v=$('callLocalVideo');if(v&&_callLocalStream){v.srcObject=_callLocalStream;v.muted=true;v.play().catch(()=>{})}}
 function _startCallTimer(){if(_callTimerInt)clearInterval(_callTimerInt);_callStartTs=Date.now();_callTimerInt=setInterval(()=>{const s=Math.floor((Date.now()-_callStartTs)/1000);const t=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');$('callTimer').textContent=t;$('callTimer').style.display='block';$('callVideoTimer').textContent=t;$('callMiniTime').textContent=t},500)}
-function _cleanupCallLocal(){try{if(_callLocalStream)_callLocalStream.getTracks().forEach(t=>t.stop())}catch(e){}_callLocalStream=null;try{if(_callPc)_callPc.close()}catch(e){}_callPc=null;try{if(_callSubCh)sb.removeChannel(_callSubCh)}catch(e){}_callSubCh=null;if(_callTimerInt){clearInterval(_callTimerInt);_callTimerInt=null}}
+function _cleanupCallLocal(){try{if(_callLocalStream)_callLocalStream.getTracks().forEach(t=>t.stop())}catch(e){}_callLocalStream=null;try{if(_callPc)_callPc.close()}catch(e){}_callPc=null;try{if(_callSubCh)sb.removeChannel(_callSubCh)}catch(e){}_callSubCh=null;if(_callTimerInt){clearInterval(_callTimerInt);_callTimerInt=null;try{if(_remoteAudioEl){_remoteAudioEl.srcObject=null;_remoteAudioEl.pause();_remoteAudioEl.remove();_remoteAudioEl=null}}catch(e){}}}
 function _endCallLocal(){_cleanupCallLocal();$('callScreen').classList.remove('on');$('callMini').classList.remove('on');const rv=$('callRemoteVideo');if(rv)rv.srcObject=null;const lv=$('callLocalVideo');if(lv)lv.srcObject=null;_callId=null;_callFrom=null;_callTo=null;_callMiniMode=false}
 async function endCall(notify){if(_callId&&notify!==false){try{await sb.from('calls').update({status:'ended',ended_at:new Date().toISOString()}).eq('id',_callId)}catch(e){}}_endCallLocal()}
 function toggleCallMute(){if(!_callLocalStream)return;const at=_callLocalStream.getAudioTracks();const any=at.some(t=>t.enabled);at.forEach(t=>t.enabled=!any);const b=$('callMuteBtn');if(b)b.classList.toggle('on',any)}
