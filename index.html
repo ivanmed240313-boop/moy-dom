@@ -1934,6 +1934,8 @@ async function clickFlat(n){
   if(lock)return;
   const f=flats[n];
   const owners=flatOwners(f);
+
+  // админ-режим
   if(adminMode&&owners.length){
     if(owners.includes(meEnc)){openFm(n);return}
     const ok=await askConfirm('Выселить?','Все будут выселены','Выселить',true);
@@ -1943,6 +1945,8 @@ async function clickFlat(n){
     finally{await reloadHouse();await loadMyRooms();lock=false}
     return;
   }
+
+  // пустая — заселяемся
   if(!owners.length){
     if(isHouseBlk()||isEntBlk(gloEnt(curHouse,Math.ceil(n/10))))return showToast('🚫 Закрыто','error');
     if(myAllFlats.length>0)return showToast('У тебя уже есть квартира','error');
@@ -1952,11 +1956,76 @@ async function clickFlat(n){
       if(error){showToast('❌ '+error.message,'error');return}
       if(data&&data.ok===false){showToast('❌ '+(data.error||''),'error');return}
     }finally{await reloadHouse();await loadMyRooms();lock=false}
-  }else if(owners.includes(meEnc)){
-    openFm(n);
-  }else{
-    openDm(owners[0]);
+    return;
   }
+
+  // я живу здесь — открываю свою квартиру
+  if(owners.includes(meEnc)){openFm(n);return}
+
+  // чужая квартира
+  if(owners.length===1){
+    // один жилец — сразу в личку
+    openDm(owners[0]);
+  }else{
+    // 2+ жильцов — показываем выбор
+    openOwnerPicker(n,owners);
+  }
+}
+function openOwnerPicker(flatNum,owners){
+  // если уже открыт — убираем
+  const old=document.getElementById('ownerPickM');
+  if(old)old.remove();
+
+  const gNum=(Number(curHouse)-1)*30+Number(flatNum);
+  const box=document.createElement('div');
+  box.id='ownerPickM';
+  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9700;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)';
+
+  const inner=document.createElement('div');
+  inner.style.cssText='background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.1);border-radius:22px;width:440px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7)';
+
+  // шапка
+  const head=document.createElement('div');
+  head.style.cssText='padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(90,171,255,.12),rgba(74,144,217,.04))';
+  head.innerHTML='<div style="font-size:16px;font-weight:800;color:#5aabff">🏠 Кв. '+gNum+' · кто здесь живёт</div>';
+  const closeBtn=document.createElement('button');
+  closeBtn.textContent='✕';
+  closeBtn.style.cssText='background:rgba(90,171,255,.1);border:1px solid rgba(90,171,255,.3);color:#5aabff;font-size:16px;width:30px;height:30px;border-radius:9px;cursor:pointer;font-weight:700;line-height:1';
+  closeBtn.onclick=()=>box.remove();
+  head.appendChild(closeBtn);
+
+  // список жильцов
+  const list=document.createElement('div');
+  list.style.cssText='padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px';
+
+  owners.forEach((enc,i)=>{
+    const nick=de(enc);
+    const online_=online.has(enc);
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:.15s';
+
+    row.innerHTML=
+      avOn(nick,'sm',online_)+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:14px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+eh(nick)+(i===0?' <span style="color:#f5c542;font-size:11px">👑</span>':'')+'</div>'+
+        '<div style="font-size:11px;color:'+(online_?'#6fdc6f':'#666678')+';margin-top:2px">'+(online_?'в сети':'не в сети')+'</div>'+
+      '</div>'+
+      '<span style="color:#5aabff;font-size:18px">💬</span>';
+
+    row.onmouseenter=()=>{row.style.background='rgba(90,171,255,.12)';row.style.borderColor='rgba(90,171,255,.4)'};
+    row.onmouseleave=()=>{row.style.background='rgba(255,255,255,.04)';row.style.borderColor='rgba(255,255,255,.08)'};
+    row.onclick=()=>{box.remove();openDm(enc);};
+
+    list.appendChild(row);
+  });
+
+  inner.appendChild(head);
+  inner.appendChild(list);
+  box.appendChild(inner);
+
+  box.onclick=(e)=>{if(e.target===box)box.remove()};
+
+  document.body.appendChild(box);
 }
 async function loadAllProfiles(){try{const{data}=await sb.from('profiles').select('nick');const{data:fl}=await sb.from('flats').select('house_id,number,owner_nicks');const fm={};(fl||[]).forEach(f=>{(f.owner_nicks||[]).forEach(o=>{fm[o]=(Number(f.house_id)-1)*30+Number(f.number)})});allProfiles=(data||[]).map(p=>({nick:p.nick,flat:fm[en(p.nick)]||null}))}catch(e){allProfiles=[]}}
 async function loadPhotoCache(){
