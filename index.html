@@ -2026,7 +2026,51 @@ async function postAnn(){const t=$('annInp').value.trim();if(!t)return;const hid
 async function delAnn(hid){const h=hid||Number(curHouse);const{data,error}=await sb.rpc('owner_announce',{p_house:h,p_text:''});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await loadHouses();if(afT==='house')afRend()}
 function showAnn(t){const b=$('annBanner');if(!b)return;if(!t){b.classList.remove('on');return}$('annText').textContent=t;b.classList.add('on')}
 async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
-function upFm(){const f=flats[fmN];if(!f)return closeFm();const owners=flatOwners(f);const isOwnerF=owners[0]===meEnc,mp=f.max_people??2,others=owners.filter(o=>o!==meEnc);const gnum=(Number(curHouse)-1)*30+Number(fmN);$('fmT').textContent='🏠 Кв '+gnum+(isOwnerF?' (хозяин)':' (сосед)');$('fmTR').style.display='block';$('fmTM').style.display=(isOwnerF&&mp>=2)?'block':'none';$('lvB').style.display='block';const inf=$('rmInfo');if(!others.length)inf.innerHTML='<div class="reme">Пока никого</div>';else inf.innerHTML=others.map(o=>'<div class="rmc">'+avH(de(o),'sm')+'<div style="flex:1;margin-left:10px">'+eh(de(o))+'</div>'+(isOwnerF?'<button onclick="kickR(\''+o+'\')">Выгнать</button>':'')+'</div>').join('')}
+function upFm(){
+  const f=flats[fmN];if(!f)return closeFm();
+  const owners=flatOwners(f);
+  const isOwnerF=owners[0]===meEnc;
+  const mp=f.max_people??2;
+  const others=owners.filter(o=>o!==meEnc);
+  const gnum=(Number(curHouse)-1)*30+Number(fmN);
+
+  $('fmT').textContent='🏠 Кв '+gnum+(isOwnerF?' (хозяин)':' (сосед)');
+  $('fmTR').style.display='block';
+  $('fmTM').style.display=(isOwnerF&&mp>=2)?'block':'none';
+  $('lvB').style.display='block';
+
+  const inf=$('rmInfo');
+  const list=[];
+  owners.forEach((o,i)=>{
+    const isMe=(o===meEnc);
+    const isChief=(i===0);
+    const nick=de(o);
+    const canPromote=!isMe&&!isChief&&isOwnerF; // хозяин может поднять соседа
+    const canKick=isOwnerF&&!isMe;
+    list.push(
+      '<div class="rmc">'+
+        avH(nick,'sm')+
+        '<div style="flex:1;margin-left:10px">'+
+          eh(nick)+(isMe?' (ты)':'')+
+          (isChief?' <span style="color:#f5c542;font-weight:800">👑</span>':'')+
+        '</div>'+
+        (canPromote?'<button onclick="promoteR(\''+o+'\')" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;margin-right:6px">👑 Сделать главным</button>':'')+
+        (canKick?'<button onclick="kickR(\''+o+'\')">Выгнать</button>':'')+
+      '</div>'
+    );
+  });
+  inf.innerHTML=list.join('')||'<div class="reme">Пока никого</div>';
+}
+
+async function promoteR(ownerHex){
+  if(!fmN)return;
+  const{data,error}=await sb.rpc('promote_flat_owner',{p_house:curHouse,p_flat:fmN,p_nick:ownerHex});
+  if(error)return showToast('❌ '+error.message,'error');
+  if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');
+  await reloadHouse();
+  upFm();
+  showToast('👑 Сменили хозяина','success');
+}
 function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');const m={media:'fmPM',room:'fmPR',manage:'fmPN',work:'fmPW'};$(m[t]).style.display='flex';$('svB').style.display=t==='media'?'block':'none';if(t==='work')renderWork();if(t==='room'){rcId='h'+curHouse+'_flat'+fmN+'_room';clrCh($('rc'));loadRM();subRM();loadRoomItem();if(rcPt){clearInterval(rcPt);rcPt=null}rcPt=setInterval(loadRM,3000);startMus(rcId).then(url=>{musUrl=url;showMusBtn(url,'🎵 Включить')}).catch(()=>{showMusBtn(null)})}else{if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}}}
 async function loadRoomItem(){try{const{data}=await sb.from('profiles').select('room_item_id').eq('nick',me).maybeSingle();const id=(data&&data.room_item_id)||null;const el=$('roomDecor');if(!el)return;if(!id){el.style.display='none';el.textContent='';el.title='';return}const it=ITEMS.find(x=>x.id===id);if(!it){el.style.display='none';return}el.textContent=it.icon;el.title=it.name;el.style.display='block'}catch(e){const el=$('roomDecor');if(el)el.style.display='none'}}
 async function setRoomItem(id){if(id && !(myOwnedItems||[]).includes(id)) return showToast('Не куплено','error');const{data,error}=await sb.rpc('set_room_item',{p_item_id:id||null});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');if(id)roomItemCache[meEnc]=id;else delete roomItemCache[meEnc];showToast(id?'✅ Поставлено в комнату':'🗑 Убрано','success');await loadRoomItem();renderFlats();if($('pf').classList.contains('open')) openProfile(null)}
