@@ -1974,18 +1974,23 @@ function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.togg
 async function loadRoomItem(){try{const{data}=await sb.from('profiles').select('room_item_id').eq('nick',me).maybeSingle();const id=(data&&data.room_item_id)||null;const el=$('roomDecor');if(!el)return;if(!id){el.style.display='none';el.textContent='';el.title='';return}const it=ITEMS.find(x=>x.id===id);if(!it){el.style.display='none';return}el.textContent=it.icon;el.title=it.name;el.style.display='block'}catch(e){const el=$('roomDecor');if(el)el.style.display='none'}}
 async function setRoomItem(id){if(id && !(myOwnedItems||[]).includes(id)) return showToast('Не куплено','error');const{data,error}=await sb.rpc('set_room_item',{p_item_id:id||null});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');if(id)roomItemCache[meEnc]=id;else delete roomItemCache[meEnc];showToast(id?'✅ Поставлено в комнату':'🗑 Убрано','success');await loadRoomItem();renderFlats();if($('pf').classList.contains('open')) openProfile(null)}
 function closeFm(){if(workActive)stopWork(false);stopMus();if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;$('fm').classList.remove('open');fmN=null}
-async function kickR(o){
-  const f=flats[fmN];
-  if(!f)return;
-  const owners=flatOwners(f);
-  if(owners[0]!==meEnc)return;
-  if(!o||o===meEnc)return;
-  const{data,error}=await sb.rpc('kick_from_flat',{p_house:curHouse,p_flat:fmN,p_nick:o});
-  console.log('kickR resp:',data,error);
-  if(error)return showToast('❌ '+error.message,'error');
-  if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');
-  await reloadHouse();
-  upFm();
+async function afEvict(houseId,n){
+  if(!hasAdmin())return;
+  const gNum=(houseId-1)*30+Number(n);
+  const ok=await askConfirm('Выселить?','Дом '+houseId+', кв. '+gNum,'Выселить',true);
+  if(!ok)return;
+  const{data,error}=await sb.rpc('owner_evict',{p_house:houseId,p_flat:n});
+  if(error){showToast('❌ '+error.message,'error');return}
+  if(data&&data.ok===false){showToast('❌ '+(data.error||''),'error');return}
+  // перечитываем
+  const{data:chk}=await sb.from('flats').select('owner_nicks')
+    .eq('house_id',houseId).eq('number',n).maybeSingle();
+  if(chk&&(chk.owner_nicks||[]).length>0){
+    showToast('⚠️ Ещё '+chk.owner_nicks.length+' жильцов — перезапусти','error');
+    await reloadHouse();await afRend();return;
+  }
+  await reloadHouse();await afRend();
+  showToast('🚪 Выселено','success');
 }
 async function leaveFlat(){const f=flats[fmN];if(!f)return;const{data,error}=await sb.rpc('leave_flat',{p_house:curHouse,p_flat:fmN});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');closeFm();await reloadHouse();await loadMyRooms()}
 async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;const hn=Number(m[1]),fn=Number(m[2]);if(hn!==Number(curHouse)){await switchHouse(hn)}const f=flats[fn];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Нет доступа','error');if($('modal').classList.contains('open'))await closeM();fmN=fn;$('fm').classList.add('open');upFm();fmSw('room')}
