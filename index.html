@@ -184,6 +184,21 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 .hbtn.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;border-color:transparent}
 .hbtn.blk{background:linear-gradient(135deg,#5a1a1a,#3a0a0a);border-color:rgba(211,47,47,.5);color:#ff8888}
 .hbtn.new{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;border-color:transparent}
+#houseNews{flex-shrink:0;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,.05);background:linear-gradient(180deg,rgba(20,20,28,.7),rgba(14,14,20,.4));display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.hn-top{display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase}
+.hn-top .title{color:#f5c542}
+.hn-top #hnSub{color:#666678;font-weight:600;text-transform:none;letter-spacing:.2px}
+.hn-strip{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.hn-strip::-webkit-scrollbar{display:none}
+.hn-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);font-size:12.5px;white-space:nowrap;flex-shrink:0;color:#c8c8d0}
+.hn-pill .ic{font-size:14px}
+.hn-pill b{color:#fff;font-weight:700}
+.hn-pill .t{color:#666678;font-size:11px;margin-left:4px}
+.hn-pill.join{border-color:rgba(76,175,80,.45);background:rgba(76,175,80,.08);color:#a5d66a}
+.hn-pill.leave{border-color:rgba(255,107,107,.45);background:rgba(255,107,107,.08);color:#ff9999}
+.hn-pill.top{border-color:rgba(245,197,66,.55);background:rgba(245,197,66,.1);color:#f5c542}
+.hn-pill.buy{border-color:rgba(160,107,255,.45);background:rgba(160,107,255,.08);color:#d0b0ff}
+@media(max-width:768px){#houseNews{padding:8px 12px}.hn-pill{font-size:11.5px;padding:5px 10px}}
 #house{flex:1;display:flex;gap:26px;justify-content:center;align-items:center;overflow:auto;padding:32px}
 .ewr{display:flex;flex-direction:column;gap:12px;align-items:stretch}
 .ent{display:flex;flex-direction:column-reverse;gap:7px}
@@ -1303,7 +1318,7 @@ body::before{display:none !important}
 <div id="userMenu"><button class="umBtn" onclick="toggleUserMenu()"><span id="myAv"></span><span id="myNick"></span><span class="umArrow">▾</span></button>
 <div class="umDropdown" id="umDropdown"><button onclick="openPfMine();closeUserMenu()">👤 <span>Мой профиль</span></button><button onclick="openGarden();closeUserMenu()">🌱 <span>Моя грядка</span></button><button onclick="openFrames();closeUserMenu()">🛒 <span>Магазин</span></button><button onclick="openDuty();closeUserMenu()">🎮 <span>Дежурство</span></button><button onclick="openJob();closeUserMenu()">💼 <span>Работа</span></button><button onclick="openGm();closeUserMenu()">👥 <span>Создать группу</span></button><button onclick="enableNotif();closeUserMenu()" id="notifB">🔔 <span>Уведомления</span></button><button id="soundBtn" onclick="toggleSound();closeUserMenu()">🔊 <span>Звук: вкл</span></button><button id="adminMItem" onclick="toggleAdmin();closeUserMenu()">⚙️ <span>Админка</span></button><button id="ownerMItem" onclick="openOwner();closeUserMenu()">👑 <span>OWNER панель</span></button><div class="umDiv"></div><button onclick="cycleSeason()" id="seasonBtn">🍂 <span>Сезон: осень</span></button><div class="umDiv"></div><button class="umExit" onclick="logout()">🚪 <span>Выйти</span></button></div></div></div>
 <div class="layout"><aside class="sb" id="sb"><div class="sb-h"><span>💬 Мои чаты</span><button class="add-btn" onclick="openDuty()" title="Дежурство" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);font-size:16px">🎮</button><button class="add-btn" onclick="openJob()" title="Работа" style="background:linear-gradient(135deg,#4caf50,#2e7d32);font-size:16px">💼</button><button class="add-btn" onclick="openFrames()" title="Магазин" style="background:linear-gradient(135deg,#a06bff,#6b4aff);font-size:20px">🛒</button><button class="add-btn" onclick="openGarden()" title="Грядка" style="background:linear-gradient(135deg,#2e7d32,#8bc34a);font-size:20px">🌱</button><button class="add-btn" onclick="openGm()">＋</button><button class="cs" id="cs">×</button></div><div id="dml"></div></aside>
-<main class="mn"><button class="mbtn" id="mbtn">☰</button><div id="adminB" onclick="openAdmin()">🔴 ADMIN</div><div id="hb"></div><div id="house"></div></main></div>
+<main class="mn"><button class="mbtn" id="mbtn">☰</button><div id="adminB" onclick="openAdmin()">🔴 ADMIN</div><div id="hb"></div><div id="houseNews"><div class="hn-top"><span class="title">📰 Газета дома</span><span id="hnSub"></span></div><div class="hn-strip" id="hnStrip"><div class="hn-pill">Загрузка…</div></div></div><div id="house"></div></main></div>
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
 <div id="afm"><div class="afb"><div class="afh"><h3>⚙️ Админ-панель</h3><button onclick="closeAdmin()">×</button></div><div class="aft"><div class="aftab act" data-t="flats" onclick="afSw('flats')">🏠 Квартиры</div><div class="aftab" data-t="ent" onclick="afSw('ent')">🏢 Подъезды</div><div class="aftab" data-t="house" onclick="afSw('house')">🏘 Дом</div><div class="aftab" data-t="users" onclick="afSw('users')">👥 Юзеры</div></div><div class="afbd" id="afB"></div></div></div>
@@ -1926,7 +1941,7 @@ async function loadFlats(){const{data}=await sb.from('flats').select('*').eq('ho
 async function loadHM(){const ns=[];Object.values(flats).forEach(f=>{flatOwners(f).forEach(o=>ns.push(o))});if(!ns.length){hm={};return}const{data}=await sb.from('user_media').select('*').in('nick',ns);hm={};(data||[]).forEach(m=>hm[m.nick]=m)}
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 function renderHouses(){const b=$('hb');b.innerHTML='';houses.forEach(h=>{const e=document.createElement('div');e.className='hbtn'+(h.id===curHouse?' act':'')+(h.blocked?' blk':'');e.textContent=h.blocked?'🚫 '+h.name:h.name;e.onclick=()=>switchHouse(h.id);magnetize(e);b.appendChild(e)})}
-async function switchHouse(i){curHouse=i;houseData=houses.find(h=>h.id===i)||null;renderHouses();await loadFlats();await loadHM();buildHouse();showAnn(houseData?.announcement||null)}
+async function switchHouse(i){curHouse=i;houseData=houses.find(h=>h.id===i)||null;renderHouses();await loadFlats();await loadHM();buildHouse();loadHouseNews();subHouseNews();showAnn(houseData?.announcement||null)}
 function buildHouse(){const h=$('house');h.innerHTML='';let n=1;for(let e=1;e<=3;e++){const w=document.createElement('div');w.className='ewr';const en=document.createElement('div');en.className='ent';for(let f=0;f<5;f++){const fl=document.createElement('div');fl.className='flr';for(let a=0;a<2;a++){const ft=document.createElement('div');ft.className='flat';ft.dataset.number=n;fl.appendChild(ft);magnetize(ft);n++}en.appendChild(fl)}const g=gloEnt(curHouse,e);const b=document.createElement('button');b.className='ebtn';b.dataset.global=g;b.textContent='🏢 Подъезд '+g;b.onclick=()=>openEntChat(g);magnetize(b);w.appendChild(en);w.appendChild(b);h.appendChild(w)}renderFlats()}
 function applyPh(el,m){if(!m||!m.photo_url){el.style.backgroundImage='';el.classList.remove('has-photo');return}el.style.backgroundImage='url("'+m.photo_url+'")';el.style.backgroundSize=(m.photo_zoom??100)+'% '+(m.photo_zoom??100)+'%';el.style.backgroundPosition=(m.photo_x??50)+'% '+(m.photo_y??50)+'%';el.classList.add('has-photo')}
 function renderFlats(){const myE=myEnt();const off=(Number(curHouse)-1)*30;document.querySelectorAll('.flat').forEach(el=>{const n=el.dataset.number,f=flats[n];el.classList.remove('mine','taken','has-photo','blk');FRAMES.forEach(f=>el.classList.remove('frame-'+f.id));el.style.backgroundImage='';el.querySelectorAll(':scope > .halo, :scope > .horn, :scope > .flat-item').forEach(x=>x.remove());if(isFlatBlk(Number(n)))el.classList.add('blk');const owners=flatOwners(f);const dn=off+Number(n);if(!owners.length)el.innerHTML='<div class="num">'+dn+'</div>';else{const meIn=owners.includes(meEnc);if(meIn)el.classList.add('mine');else el.classList.add('taken');const names=owners.map(de);let h='<div class="num">'+dn+'</div><div class="nick">'+(meIn&&owners[0]===meEnc?'ты':eh(names[0]))+'</div>';if(names[1])h+='<div class="nick2">'+eh(names[1])+'</div>';const riId=roomItemCache[owners[0]];if(riId){const it=ITEMS.find(x=>x.id===riId);if(it)h+='<span class="flat-item">'+it.icon+'</span>';}el.innerHTML=h;applyPh(el,hm[owners[0]]);const fr=getFrame(de(owners[0]));if(fr&&fr!=='none'){el.classList.add('frame-'+fr);decorateFrame(el,fr)}}el.onclick=()=>clickFlat(Number(n))});document.querySelectorAll('.ebtn').forEach(b=>{const g=Number(b.dataset.global),im=myE===g;b.classList.toggle('mine',im);b.classList.toggle('blk',isEntBlk(g));b.classList.toggle('oth',!adminMode&&!im)})}
@@ -2322,6 +2337,62 @@ async function start(){
   setTimeout(checkGifts,2000);
 }
 function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_changes',{event:'*',schema:'public',table:'houses'},async()=>{await loadHouses();renderHouses()}).subscribe()}
+let _hnCh=null;
+async function loadHouseNews(){
+  try{
+    const{data:ev}=await sb.from('house_events').select('*')
+      .eq('house_id',curHouse).order('created_at',{ascending:false}).limit(20);
+
+    // топ-3 по монетам среди жильцов этого дома
+    const res=[];
+    Object.values(flats).forEach(f=>flatOwners(f).forEach(o=>res.push(o)));
+    let top=[];
+    if(res.length){
+      const nicks=res.map(de);
+      const{data:pr}=await sb.from('profiles').select('nick,coins')
+        .in('nick',nicks).order('coins',{ascending:false}).limit(3);
+      top=pr||[];
+    }
+    renderHouseNews(ev||[],top);
+  }catch(e){console.warn('house news:',e)}
+}
+
+function renderHouseNews(events,top){
+  const strip=$('hnStrip');if(!strip)return;
+  const hd=houses.find(h=>Number(h.id)===Number(curHouse));
+  const sub=$('hnSub');
+  if(sub)sub.textContent=(hd?.name||('Дом №'+curHouse))+' · '+Object.values(flats).filter(f=>flatOwners(f).length).length+'/'+Object.values(flats).length+' занято';
+
+  const pills=[];
+  top.forEach((p,i)=>{
+    const medal=['🥇','🥈','🥉'][i]||'🏅';
+    pills.push('<div class="hn-pill top">'+medal+'<b>'+eh(p.nick)+'</b>'+(p.coins||0)+'💰</div>');
+  });
+
+  (events||[]).forEach(e=>{
+    const nick=e.nick_enc?de(e.nick_enc):'';
+    const t=sT(e.created_at);
+    const fl=e.flat_number?('Кв. '+e.flat_number):'';
+    if(e.kind==='join')
+      pills.push('<div class="hn-pill join"><span class="ic">🏠</span><b>'+eh(nick)+'</b> заселился · '+fl+'<span class="t">'+t+'</span></div>');
+    else if(e.kind==='leave')
+      pills.push('<div class="hn-pill leave"><span class="ic">🚪</span><b>'+eh(nick)+'</b> выселился · '+fl+'<span class="t">'+t+'</span></div>');
+    else if(e.kind==='buy_frame')
+      pills.push('<div class="hn-pill buy"><span class="ic">🖼️</span><b>'+eh(nick)+'</b> купил рамку<span class="t">'+t+'</span></div>');
+    else if(e.kind==='buy_item')
+      pills.push('<div class="hn-pill buy"><span class="ic">🎁</span><b>'+eh(nick)+'</b> купил предмет<span class="t">'+t+'</span></div>');
+  });
+
+  strip.innerHTML=pills.length?pills.join(''):'<div class="hn-pill">📰 Пока тихо</div>';
+}
+
+function subHouseNews(){
+  if(_hnCh){try{sb.removeChannel(_hnCh)}catch(e){}_hnCh=null}
+  _hnCh=sb.channel('hn-'+curHouse)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'house_events',filter:'house_id=eq.'+curHouse},
+        ()=>loadHouseNews())
+    .subscribe();
+}
 function subFlats(){if(fc)return;fc=sb.channel('flats-rt').on('postgres_changes',{event:'*',schema:'public',table:'flats'},async p=>{const r=p.new||p.old;if(!r||r.house_id!==curHouse)return;if(p.eventType==='DELETE')delete flats[r.number];else flats[r.number]=p.new;renderFlats()}).subscribe()}
 window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await sb.auth.getSession();if(session){curUser=session.user;await afterAuth()}});
 (function(){
