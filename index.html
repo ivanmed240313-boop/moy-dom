@@ -2075,16 +2075,31 @@ function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
 async function loadM(){
   const tk=++mTok,rid=curRoom;
   if(!rid)return;
+  
   const oneDayAgo=new Date(Date.now()-24*60*60*1000).toISOString();
   const{data,error}=await sb.from('messages')
     .select('*')
     .eq('room_id',rid)
-    .gte('created_at',oneDayAgo) // только за последние 24 часа
+    .gte('created_at',oneDayAgo)
     .order('created_at',{ascending:false})
     .limit(300);
+    
   if(tk!==mTok||rid!==curRoom)return;
   if(error)return;
-  msgC=(data||[]).reverse().filter(m=>!m.deleted_for_all);
+  
+  msgC=(data||[]).reverse().filter(m=>{
+    if(m.deleted_for_all) return false;
+    // Скрываем системные сообщения о заселении/выселении
+    if(m.text && (
+      m.text.includes('заселил') || 
+      m.text.includes('выселил') || 
+      m.text.includes('вошёл в чат') || 
+      m.text.includes('вышел из чата')
+    )) return false;
+    
+    return true;
+  });
+  
   await loadR(msgC);
   renderMs($('chat'),msgC);
 }
