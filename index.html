@@ -2370,11 +2370,17 @@ function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_change
 let _hnCh=null;
 async function loadHouseNews(){
   try{
-    const since=new Date(Date.now()-24*60*60*1000).toISOString();
-const{data:ev}=await sb.from('house_events').select('*')
-  .eq('house_id',curHouse)
-  .gte('created_at',since)
-  .order('created_at',{ascending:false}).limit(20);
+    // начало ТЕКУЩЕГО дня по МСК (UTC+3)
+    const now = new Date();
+    const mskOffset = 3*60*60*1000;
+    const mskNow = new Date(now.getTime() + mskOffset);
+    const mskMidnightUTC = Date.UTC(mskNow.getUTCFullYear(), mskNow.getUTCMonth(), mskNow.getUTCDate(), 0, 0, 0) - mskOffset;
+    const since = new Date(mskMidnightUTC).toISOString();
+
+    const{data:ev}=await sb.from('house_events').select('*')
+      .eq('house_id',curHouse)
+      .gte('created_at',since)
+      .order('created_at',{ascending:false}).limit(20);
 
     // топ-3 по монетам среди жильцов этого дома
     const res=[];
