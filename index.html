@@ -1293,6 +1293,24 @@ body::before{display:none !important}
 @media(prefers-reduced-motion:reduce){
 *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
 }
+* {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+}
+
+button, a, div, span, input, textarea {
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+    -webkit-focus-ring-color: transparent !important;
+}
+
+button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
+    user-select: none;
+    -webkit-user-select: none;
+}
+</style>  <--- ВОТ ПЕРЕД ЭТОЙ СТРОКОЙ ВСТАВЛЯЕШЬ
+
+<body>
 </style></head>
 <body>
 <canvas id="seasons"></canvas>
