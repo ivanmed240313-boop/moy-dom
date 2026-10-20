@@ -1830,8 +1830,89 @@ function jobWelderSeam(i){const body=$('jobBody');body.innerHTML='<div class="jo
 function jobWeldStop(){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskState.done=true;if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);const pos=_jobTaskState.getPos();const diff=Math.abs(pos-_jobTaskState.zoneCenter);let p=1-diff/_jobTaskState.zoneHalf;if(p<0)p=0;if(p>1)p=1;$('jobWeldResult').textContent=Math.round(p*100)+'%';const st=jobLoad()||jobDefault();if(!st.weldPrecisions)st.weldPrecisions=[];st.weldPrecisions[_jobTaskState.taskIdx]=p;st.tasksDone=Math.max(st.tasksDone,_jobTaskState.taskIdx+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(0,true,p);else openJob()},700)}
 function jobWelderMeasure(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">📏 Замер</div><div class="job-measure-track" id="jobMTrack"><div class="job-measure-zone" id="jobMZone"></div><div class="job-measure-needle" id="jobMNeedle"></div><div class="job-measure-value" id="jobMVal">0</div></div><button class="duty-start" onclick="jobMStop('+i+')">📏 Фикс</button><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:8px" onclick="openJob()">← Назад</button>';const tr=$('jobMTrack'),zn=$('jobMZone'),nd=$('jobMNeedle');const r=tr.getBoundingClientRect();const zw=Math.max(50,r.width*0.10),zl=(r.width-zw)/2;zn.style.left=zl+'px';zn.style.width=zw+'px';let pos=0,dir=1,speed=1.4;const step=()=>{if(!_jobTaskState||_jobTaskState.done)return;pos+=dir*speed;if(pos<=0){pos=0;dir=1}if(pos>=r.width){pos=r.width;dir=-1}nd.style.left=pos+'px';$('jobMVal').textContent=Math.round(pos/r.width*100);_jobTaskState.raf=requestAnimationFrame(step)};_jobTaskState={raf:null,done:false,getPos:()=>pos,zoneCenter:r.width/2,zoneHalf:zw/2};step()}
 function jobMStop(i){if(!_jobTaskState||_jobTaskState.done)return;_jobTaskState.done=true;if(_jobTaskState.raf)cancelAnimationFrame(_jobTaskState.raf);const pos=_jobTaskState.getPos();const diff=Math.abs(pos-_jobTaskState.zoneCenter);let p=1-diff/_jobTaskState.zoneHalf;if(p<0)p=0;if(p>1)p=1;const st=jobLoad()||jobDefault();if(!st.weldPrecisions)st.weldPrecisions=[];st.weldPrecisions[i]=p;st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,p);else openJob()},500)}
-function jobWelderCut(i){const body=$('jobBody');body.innerHTML='<div class="job-timer">✂️ Веди ЛКМ / пальцем</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:14px" onclick="openJob()">← Назад</button>';const field=$('jobField'),line=$('jobCutLine'),prog=$('jobCutProg');let progress=0,pressing=false,lastX=null,done=false;const updateProg=()=>{const pct=Math.min(100,Math.round(progress));prog.style.width=pct+'%';if(pct>=100){done=true;line.classList.add('job-cut-done');const st=jobLoad()||jobDefault();st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,1);else openJob()},500)}};const onDown=(x)=>{pressing=true;lastX=x};const onMove=(x)=>{if(!pressing)return;if(lastX!==null&&x>lastX){progress+=(x-lastX)*0.6;updateProg()}lastX=x};const onUp=()=>{pressing=false;lastX=null};field.addEventListener('mousedown',e=>onDown(e.clientX));field.addEventListener('mousemove',e=>onMove(e.clientX));window.addEventListener('mouseup',onUp);field.addEventListener('touchstart',e=>{e.preventDefault();onDown(e.touches[0].clientX)},{passive:false});field.addEventListener('touchmove',e=>{e.preventDefault();onMove(e.touches[0].clientX)},{passive:false});field.addEventListener('touchend',e=>{e.preventDefault();onUp()},{passive:false});field.addEventListener('touchcancel',onUp);_jobTaskState={done:false}}
-async function jobFinishTask(i,won,p){jobStopTask();if(!won)return;const st=jobLoad()||jobDefault();if(!st.job)return;st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,i+1));if(st.tasksDone>=JOB_TASKS_PER_DAY){const{data,error}=await sb.rpc('do_job',{p_job:st.job});if(error){showToast('❌ '+error.message,'error');openJob();return}if(data&&data.ok===false){showToast('❌ '+(data.error||'Ошибка'),'error');openJob();return}const applied=data.reward||0;st.completedToday=true;st.lastComplete=jobToday();st.finishedDays=(st.finishedDays||0)+1;st.weldPrecisions=[];jobSave(st);if(typeof data.coins==='number')myCoins=data.coins;else myCoins+=applied;updateCoinsUI();showToast('💰 +'+applied+' монет','success')}else jobSave(st);openJob()}
+function jobWelderCut(i){
+  const body=$('jobBody');
+  body.innerHTML='<div class="job-timer">✂️ Веди ЛКМ / пальцем</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:14px" onclick="openJob()">← Назад</button>';
+  const field=$('jobField'),line=$('jobCutLine'),prog=$('jobCutProg');
+  let progress=0,pressing=false,lastX=null,done=false;
+  const updateProg=()=>{
+    if(done) return; // ФИКС: защита от повторных срабатываний
+    const pct=Math.min(100,Math.round(progress));
+    prog.style.width=pct+'%';
+    if(pct>=100){
+      done=true;
+      line.classList.add('job-cut-done');
+      const st=jobLoad()||jobDefault();
+      st.tasksDone=Math.max(st.tasksDone,i+1);
+      jobSave(st);
+      setTimeout(()=>{
+        const s2=jobLoad()||jobDefault();
+        if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,1);
+        else openJob();
+      },500);
+    }
+  };
+  const onDown=(x)=>{pressing=true;lastX=x};
+  const onMove=(x)=>{
+    if(!pressing)return;
+    if(lastX!==null&&x>lastX){
+      progress+=(x-lastX)*0.6;
+      updateProg();
+    }
+    lastX=x;
+  };
+  const onUp=()=>{pressing=false;lastX=null};
+  field.addEventListener('mousedown',e=>onDown(e.clientX));
+  field.addEventListener('mousemove',e=>onMove(e.clientX));
+  window.addEventListener('mouseup',onUp);
+  field.addEventListener('touchstart',e=>{e.preventDefault();onDown(e.touches[0].clientX)},{passive:false});
+  field.addEventListener('touchmove',e=>{e.preventDefault();onMove(e.touches[0].clientX)},{passive:false});
+  field.addEventListener('touchend',e=>{e.preventDefault();onUp()},{passive:false});
+  field.addEventListener('touchcancel',onUp);
+  _jobTaskState={done:false};
+}
+let _jobFinishing = false;
+async function jobFinishTask(i,won,p){
+  if(_jobFinishing) return; // ФИКС: не даем запустить функцию второй раз
+  jobStopTask();
+  if(!won)return;
+  const st=jobLoad()||jobDefault();
+  if(!st.job)return;
+  if(st.completedToday){ openJob(); return; }
+  
+  _jobFinishing = true;
+  try {
+    st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,i+1));
+    if(st.tasksDone>=JOB_TASKS_PER_DAY){
+      const{data,error}=await sb.rpc('do_job',{p_job:st.job});
+      if(error){
+        showToast('❌ '+error.message,'error');
+        openJob();
+        return;
+      }
+      if(data&&data.ok===false){
+        showToast('❌ '+(data.error||'Ошибка'),'error');
+        openJob();
+        return;
+      }
+      const applied=data.reward||0;
+      st.completedToday=true;
+      st.lastComplete=jobToday();
+      st.finishedDays=(st.finishedDays||0)+1;
+      st.weldPrecisions=[];
+      jobSave(st);
+      if(typeof data.coins==='number')myCoins=data.coins;
+      else myCoins+=applied;
+      updateCoinsUI();
+      showToast('💰 +'+applied+' монет','success');
+    } else {
+      jobSave(st);
+    }
+  } finally {
+    _jobFinishing = false;
+    openJob();
+  }
+}
 async function getEntranceOccupants(houseId,le){try{const{data}=await sb.from('flats').select('number,owner_nicks').eq('house_id',houseId);const start=(le-1)*10+1,end=le*10;const arr=[];(data||[]).forEach(f=>{if(f.number>=start&&f.number<=end){const o=f.owner_nicks||[];if(o.length)arr.push({num:f.number,owner:o[0]})}});arr.sort((a,b)=>a.num-b.num);return arr.map(x=>x.owner)}catch(e){return[]}}
 async function getDutyForEntrance(houseId,le){const today=jobToday();try{const{data:ex}=await sb.from('duties').select('*').eq('house_id',houseId).eq('entrance',le).eq('date',today).maybeSingle();if(ex)return ex}catch(e){}const occupants=await getEntranceOccupants(houseId,le);if(!occupants.length)return null;let idx=0;try{const{data:last}=await sb.from('duties').select('*').eq('house_id',houseId).eq('entrance',le).eq('completed',true).order('date',{ascending:false}).limit(1);if(last&&last[0]){const i=occupants.indexOf(last[0].nick);if(i>=0)idx=(i+1)%occupants.length}}catch(e){}const nick=occupants[idx];try{const{data:created,error}=await sb.from('duties').insert({house_id:houseId,entrance:le,nick,date:today,completed:false}).select().single();if(error){const{data:retry}=await sb.from('duties').select('*').eq('house_id',houseId).eq('entrance',le).eq('date',today).maybeSingle();return retry}return created}catch(e){return null}}
 async function openDuty(){const myE=myEnt();if(myE===null)return showToast('Заселись','error');$('dutyInfo').innerHTML='Загрузка...';$('dutyM').classList.add('open');$('dutyGame').style.display='none';$('dutyMsg').textContent='';const today=jobToday();let doneTodayGlobal=false;try{const{data:dd}=await sb.from('duties').select('id').eq('nick',meEnc).eq('date',today).eq('completed',true).limit(1);doneTodayGlobal=!!(dd&&dd.length)}catch(e){}let info='',iAmDuty=false,myEnt2=0;try{for(let le=1;le<=3;le++){const d=await getDutyForEntrance(curHouse,le);const enc=d?d.nick:null;const nk=enc?de(enc):null;const isMe=(enc===meEnc);if(isMe){iAmDuty=true;myEnt2=le}info+='🏢 Подъезд '+gloEnt(curHouse,le)+' — '+(nk?(isMe?'👑 Ты':eh(nk)):'—')+(d&&d.completed?' ✅':'')+'<br>'}}catch(e){info='Ошибка загрузки'}const r=150;dutyIsDuty=iAmDuty;dutyGameReward=r;dutyLocalEntrance=myEnt2;$('dutyInfo').innerHTML=info+(iAmDuty?'<br>✅ Ты дежурный! '+r+'💰':'<br>Сегодня другие')+(doneTodayGlobal?'<br><span style="color:#8bc34a">✨ Смена на сегодня выполнена</span>':'');dutyGameActive=false;const btn=$('dutyStartBtn');if(doneTodayGlobal){btn.disabled=true;btn.textContent='⛔ Уже дежурил сегодня'}else if(!iAmDuty){btn.disabled=true;btn.textContent='🚫 Не твой день'}else{btn.disabled=false;btn.textContent='🧹 Убрать ('+r+'💰)'}}
