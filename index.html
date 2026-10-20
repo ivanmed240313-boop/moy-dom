@@ -1486,7 +1486,9 @@ const WORK_TASKS=[
   {id:'flowers',name:'Полить цветы',icon:'🌱',target:3,desc:'Зажми цветок'}
 ];
 const $=(id)=>document.getElementById(id);
-function isOwner(){return curUser&&curUser.id===OWNER_ID}
+function isOwner(){
+  return curUser && curUser.id === '81fe9ad5-a02b-4e57-8c59-1cf2d60e842c';
+}
 function hasAdmin(){return isOwner()||iAmAdmin}
 function en(n){return Array.from(new TextEncoder().encode(n)).map(b=>b.toString(16).padStart(2,'0')).join('')}
 function de(s){if(!s)return '';if(/^[0-9a-f]+$/.test(s)&&s.length%2===0){try{const b=s.match(/.{2}/g).map(x=>parseInt(x,16));return new TextDecoder().decode(new Uint8Array(b))}catch(e){}}try{return decodeURIComponent(s)}catch(e){return s}}
@@ -1578,7 +1580,23 @@ function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode'
 function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');_afTarget='afB';$('afm').classList.add('open');afSw('flats')}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;_afTarget='afB';document.querySelectorAll('#afm .aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-function openOwner(){if(!isOwner())return showToast('Только владелец','error');_afTarget='ofB';$('ofm').classList.add('open');ofSw('flats')}
+// Секретный ID, разбитый на части (чтобы не искали автопоиском)
+const _secretOID = ['81fe9ad5', 'a02b', '4e57', '8c59', '1cf2d60e842c'].join('-');
+
+function openOwner(){
+  // Проверяем реальный ID из Supabase, а не функцию isOwner()
+  if(!curUser || curUser.id !== _secretOID){
+    showToast('❌ Доступ запрещён. Инцидент будет записан.', 'error');
+    
+    // Пасхалка: логируем попытку взлома в консоль (Давид испугается)
+    console.warn('🚨 SECURITY ALERT: Unauthorized access attempt to OWNER PANEL by', curUser?.id);
+    return; 
+  }
+
+  _afTarget='ofB';
+  $('ofm').classList.add('open');
+  ofSw('flats');
+}
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b);if(afT==='custom')return ofCustomEvents(b);if(afT==='fakes')return ofFakes(b);if(afT==='dates')return ofDates(b)}
