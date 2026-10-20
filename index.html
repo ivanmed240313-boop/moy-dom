@@ -1584,15 +1584,28 @@ function afSw(t){afT=t;_afTarget='afB';document.querySelectorAll('#afm .aftab').
 const _secretOID = ['81fe9ad5', 'a02b', '4e57', '8c59', '1cf2d60e842c'].join('-');
 
 function openOwner(){
-  // Проверяем реальный ID из Supabase, а не функцию isOwner()
+  // Если это не ты — наказываем!
   if(!curUser || curUser.id !== _secretOID){
-    showToast('❌ Доступ запрещён. Инцидент будет записан.', 'error');
+    console.warn('🚨 SECURITY ALERT: Unauthorized access attempt by', curUser?.id);
     
-    // Пасхалка: логируем попытку взлома в консоль (Давид испугается)
-    console.warn('🚨 SECURITY ALERT: Unauthorized access attempt to OWNER PANEL by', curUser?.id);
+    // Отправляем страйк на сервер
+    sb.rpc('report_hack_attempt').then(r => {
+      if(r.error) return;
+      
+      const data = r.data;
+      if(data.banned) {
+        // Если это был 3-й страйк:
+        showToast('🚫 ВЫ ЗАБАНЕНЫ ЗА ВЗЛОМ!', 'error');
+        showBan(); // Мгновенно показываем экран бана
+      } else {
+        // Если 1-й или 2-й:
+        showToast('❌ Доступ запрещён. Страйк: ' + data.strikes + '/3', 'error');
+      }
+    });
     return; 
   }
 
+  // Если это ты — всё ок, открываем панель
   _afTarget='ofB';
   $('ofm').classList.add('open');
   ofSw('flats');
