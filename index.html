@@ -1308,8 +1308,6 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     user-select: none;
     -webkit-user-select: none;
 }
-
-<body>
 </style></head>
 <body>
 <canvas id="seasons"></canvas>
@@ -1486,7 +1484,9 @@ const WORK_TASKS=[
   {id:'flowers',name:'Полить цветы',icon:'🌱',target:3,desc:'Зажми цветок'}
 ];
 const $=(id)=>document.getElementById(id);
-function isOwner(){return curUser&&curUser.id===OWNER_ID}
+function isOwner(){
+  return curUser && curUser.id === '81fe9ad5-a02b-4e57-8c59-1cf2d60e842c';
+}
 function hasAdmin(){return isOwner()||iAmAdmin}
 function en(n){return Array.from(new TextEncoder().encode(n)).map(b=>b.toString(16).padStart(2,'0')).join('')}
 function de(s){if(!s)return '';if(/^[0-9a-f]+$/.test(s)&&s.length%2===0){try{const b=s.match(/.{2}/g).map(x=>parseInt(x,16));return new TextDecoder().decode(new Uint8Array(b))}catch(e){}}try{return decodeURIComponent(s)}catch(e){return s}}
@@ -1515,7 +1515,7 @@ function saveNeonPreset(r,g,b){const key=r+','+g+','+b;const arr=getSavedNeons()
 function removeNeonPreset(key){const arr=getSavedNeons().filter(x=>x!==key);try{localStorage.setItem(neonSavedKey(),JSON.stringify(arr))}catch(e){}renderFramesList()}
 function rgbToHex(r,g,b){return '#'+[r,g,b].map(x=>Math.max(0,Math.min(255,x)).toString(16).padStart(2,'0')).join('')}
 function hexToRgb(hex){hex=String(hex||'').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');if(hex.length!==6)return null;const n=parseInt(hex,16);if(isNaN(n))return null;return [(n>>16)&255,(n>>8)&255,n&255]}
-function applyNeonFromUI(){const c=$('npColor');const r=$('npRgb');const er=$('framesMsg');let rgb=null;if(r&&r.value.trim()){const parts=r.value.split(/[,\s:;]+/).map(x=>parseInt(x,10)).filter(x=>!isNaN(x));if(parts.length>=3)rgb=[parts[0],parts[1],parts[2]];else{const h=hexToRgb(r.value.trim());if(h)rgb=h}}if(!rgb&&c&&c.value){const h=hexToRgb(c.value);if(h)rgb=h}if(!rgb){if(er){er.style.color='#ff6b6b';er.textContent='Не понял цвет';setTimeout(()=>{er.textContent=''},2500)}return}setNeonRGB(rgb[0],rgb[1],rgb[2]);if(er){er.style.color='#8bc34a';er.textContent='✅ '+rgb.join(', ');setTimeout(()=>{er.textContent=''},1500)}}
+function applyNeonFromUI(){const c=$('npColor');const r=$('npRgb');const er=$('framesMsg');let rgb=null;if(r&&r.value.trim()){const parts=r.value.split(/[,\s:;]+/).map(x=>parseInt(x,10)).filter(x=>!isNaN(x));if(parts.length>=3)rgb=[parts[0],parts[1],parts[2]];else{const h=hexToRgb(r.value.trim());if(h)rgb=h}}if(!rgb&&c&&c.value){const h=hexToRgb(c.value);if(h)rgb=h}if(!rgb){if(er){er.style.color='#ff6b6b';er.textContent='Не понял цвет';setTimeout(()=>{er.textContent=''},2500)}return}setNeonRGB(rgb[0],rgb[1],rgb[2]);if(er){er.style.color='#8bc34a';er.textContent='✅ '+rgb.join(', ');setTimeout(()=>{er.textContent=''},1500)}}[...]
 function saveCurrentNeon(){const [r,g,b]=getNeonRGB();const ok=saveNeonPreset(r,g,b);const er=$('framesMsg');if(er){er.style.color=ok?'#8bc34a':'#ff8888';er.textContent=ok?'💾 Сохранено':'Уже есть';setTimeout(()=>{er.textContent=''},1500)}renderFramesList()}
 function pfFxClear(){const f=$('pfFx');if(f)f.innerHTML=''}
 function pfFxSpawn(frameId){const fx=$('pfFx');if(!fx)return;pfFxClear();if(!frameId||frameId==='none')return;if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;const add=(cls,style)=>{const i=document.createElement('i');i.className=cls;if(style)i.setAttribute('style',style);fx.appendChild(i)};const R=(a,b)=>a+Math.random()*(b-a);if(frameId==='fire'){for(let k=0;k<18;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.2)+'s')}else if(frameId==='ice'){for(let k=0;k<5;k++)add('fish'+(k%2?' rev':''),'top:'+R(30,80)+'%;--dy:'+R(-12,12)+'px;animation-duration:'+R(11,18)+'s')}else if(frameId==='cosmic'){for(let k=0;k<4;k++)add('shooting','top:'+R(-15,5)+'%;left:'+R(-15,20)+'%;animation-duration:'+R(3.5,6)+'s')}else if(frameId==='angelic'){for(let k=0;k<20;k++)add('spark','left:'+R(5,95)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(4.5,7.5)+'s')}else if(frameId==='devil'){for(let k=0;k<16;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(2.4,4.8)+'s')}else if(frameId==='vhs'){for(let k=0;k<24;k++){const rnd=Math.random();const cls=rnd<0.33?'static r':(rnd<0.66?'static c':'static');add(cls,'left:'+R(5,95)+'%;top:'+R(5,95)+'%;--dx:'+R(-40,40)+'px;--dy:'+R(-40,40)+'px;animation-duration:'+R(0.5,1.4)+'s')}}else if(frameId==='sakura'){for(let k=0;k<22;k++)add('petal','left:'+R(2,98)+'%;--dx:'+R(-40,40)+'px;animation-duration:'+R(6,10)+'s')}else if(frameId==='aqua'){for(let k=0;k<24;k++)add('bubble'+(Math.random()<0.25?' big':''),'left:'+R(2,98)+'%;--dx:'+R(-20,20)+'px;animation-duration:'+R(3.5,7)+'s')}else if(frameId==='storm'){for(let k=0;k<30;k++)add('rain','left:'+R(0,100)+'%;--dx:'+R(-40,-15)+'px;animation-duration:'+R(0.6,1.2)+'s')}else if(frameId==='galaxy'){for(let k=0;k<20;k++)add('swirl','left:50%;top:50%;animation-duration:'+R(5,10)+'s')}else if(frameId==='dragon'){for(let k=0;k<22;k++)add('dember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.5)+'s')}}
@@ -1575,14 +1575,60 @@ function upAdminTog(){const ow=isOwner();const o=hasAdmin();const b=$('adminTog'
 function toggleAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(adminMode)exitAdmin();else enterAdmin()}
 function enterAdmin(){if(!hasAdmin())return showToast('Только админам','error');adminMode=true;document.body.classList.add('admin-mode');$('adminB').classList.add('on');$('ap').classList.add('on');upAdminTog();renderFlats()}
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');$('adminB').classList.remove('on');$('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
-function openAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(!adminMode)return showToast('Включи админ-режим','error');_afTarget='afB';$('afm').classList.add('open');afSw('flats')}
+
+// === ИСПРАВЛЕНО: fallback если RPC check_my_admin_status нет в БД ===
+async function openAdmin(){
+  // Локальная проверка (всегда работает)
+  if(!hasAdmin()) return showToast('⛔ Доступ запрещён','error');
+  // Пытаемся серверный check (если RPC есть)
+  let serverOk = true;
+  try{
+    const { data: isRealAdmin, error } = await sb.rpc('check_my_admin_status');
+    if(!error && isRealAdmin === false){
+      // Сервер явно сказал НЕТ
+      try{
+        const r = await sb.rpc('report_hack_attempt');
+        if(!r.error && r.data){
+          if(r.data.banned){ showToast('🚫 ВЫ ЗАБАНЕНЫ ЗА ВЗЛОМ!','error'); showBan(); return; }
+          showToast('❌ Доступ запрещён. Страйк: ' + r.data.strikes + '/3','error');
+        } else { showToast('❌ Доступ запрещён','error'); }
+      }catch(e){ showToast('❌ Доступ запрещён','error'); }
+      return;
+    }
+    // Если error — RPC нет, значит доверяем локальной проверке (не блокируем)
+  }catch(e){ /* RPC отсутствует — игнорируем, работаем локально */ }
+
+  if(!adminMode) return showToast('Включи админ-режим','error');
+  _afTarget='afB';
+  $('afm').classList.add('open');
+  afSw('flats');
+}
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;_afTarget='afB';document.querySelectorAll('#afm .aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-function openOwner(){if(!isOwner())return showToast('Только владелец','error');_afTarget='ofB';$('ofm').classList.add('open');ofSw('flats')}
+const _secretOID = ['81fe9ad5', 'a02b', '4e57', '8c59', '1cf2d60e842c'].join('-');
+
+// === ИСПРАВЛЕНО: openOwner — try/catch вокруг report_hack_attempt ===
+function openOwner(){
+  if(!curUser || curUser.id !== _secretOID){
+    console.warn('🚨 SECURITY ALERT: Unauthorized access attempt by', curUser?.id);
+    try{
+      sb.rpc('report_hack_attempt').then(r => {
+        if(r.error) return;
+        const data = r.data;
+        if(data && data.banned){ showToast('🚫 ВЫ ЗАБАНЕНЫ ЗА ВЗЛОМ!','error'); showBan(); }
+        else if(data){ showToast('❌ Доступ запрещён. Страйк: ' + data.strikes + '/3','error'); }
+      }).catch(()=>{});
+    }catch(e){}
+    return;
+  }
+  _afTarget='ofB';
+  $('ofm').classList.add('open');
+  ofSw('flats');
+}
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b);if(afT==='custom')return ofCustomEvents(b);if(afT==='fakes')return ofFakes(b);if(afT==='dates')return ofDates(b)}
-const APP_VERSION='3.5.0';
+const APP_VERSION='3.5.3';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
@@ -1849,8 +1895,81 @@ function clearWorkHandlers(){if(workGameHandlers&&workGameHandlers.extraCleanup)
 function startWork(id){const task=WORK_TASKS.find(t=>t.id===id);if(!task||workActive||workCdLeft(id)>0)return;workTaskId=id;workActive=true;workCaught=0;workStart=Date.now();$('workTasks').style.display='none';$('workGame').style.display='block';const target=task.target||8;$('workTotal').textContent=target;$('workScore').textContent='0';$('workTime').textContent='15.0';const f=$('workField');f.innerHTML='';f.className='work-field '+id;if(id==='dishes')initDishesGame(f,target);else if(id==='vacuum')initVacuumGame(f,target);else initFlowersGame(f,target);if(workTimer)clearInterval(workTimer);workTimer=setInterval(()=>{const left=Math.max(0,15-(Date.now()-workStart)/1000);$('workTime').textContent=left.toFixed(1);if(left<=0)stopWork(true)},80)}
 function initDishesGame(field,target){for(let i=0;i<target;i++){const d=1+Math.floor(Math.random()*3);const p=document.createElement('div');p.className='plate d'+d;p.style.left=(10+Math.random()*(field.clientWidth-70))+'px';p.style.top=(10+Math.random()*(field.clientHeight-70))+'px';p.dataset.dirt=d;p.onclick=()=>{if(!workActive)return;let x=parseInt(p.dataset.dirt)-1;p.dataset.dirt=x;p.classList.remove('d1','d2','d3');if(x>0)p.classList.add('d'+x);else{p.classList.add('clean-mark');p.textContent='✨';p.style.pointerEvents='none';workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}};field.appendChild(p)}}
 function initVacuumGame(field,target){const dirts=[];for(let i=0;i<target;i++){const s=32+Math.random()*20;const el=document.createElement('div');el.className='vac-dirt';el.style.width=s+'px';el.style.height=s*0.7+'px';el.style.left=(Math.random()*(field.clientWidth-s-8)+4)+'px';el.style.top=(Math.random()*(field.clientHeight-s*0.7-8)+4)+'px';field.appendChild(el);dirts.push({el,x:parseFloat(el.style.left)+s/2,y:parseFloat(el.style.top)+s*0.35,hp:2,alive:true})}const cur=document.createElement('div');cur.className='vac-cursor';field.appendChild(cur);const onMove=(e)=>{if(!workActive)return;const r=field.getBoundingClientRect();const cx=e.clientX-r.left,cy=e.clientY-r.top;cur.classList.add('on');cur.style.left=cx+'px';cur.style.top=cy+'px';for(const d of dirts){if(!d.alive)continue;const dx=d.x-cx,dy=d.y-cy;const dist=Math.sqrt(dx*dx+dy*dy);if(dist<60){d.hp-=0.5;if(d.hp<=0){d.alive=false;d.el.classList.add('cleaned');workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}}}};field.addEventListener('mousemove',onMove);workGameHandlers={field,onMove,extraCleanup:()=>field.removeEventListener('mousemove',onMove)}}
-function initFlowersGame(field,target){const r=field.getBoundingClientRect();for(let i=0;i<target;i++){const w=90;const el=document.createElement('div');el.className='flower';el.style.left=(r.width/2+(i-(target-1)/2)*150-w/2)+'px';el.style.top=(r.height/2-40)+'px';el.style.width=w+'px';el.innerHTML='<div class="flower-icon" style="font-size:64px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';field.appendChild(el)}}
-async function stopWork(t){if(!workActive)return;workActive=false;if(workTimer)clearInterval(workTimer);$('workGame').style.display='none';clearWorkHandlers();$('workField').innerHTML='';$('workField').className='work-field';const task=WORK_TASKS.find(x=>x.id===workTaskId);const target=task.target||8;if(workCaught>=target){const{data,error}=await sb.rpc('earn_coins',{p_reason:'mini_work'});if(error){$('workMsg').style.color='#ff8888';$('workMsg').textContent='❌ '+error.message}else if(data&&data.ok===false){$('workMsg').style.color='#ff8888';$('workMsg').textContent='⏳ '+data.error}else{workCdSet(workTaskId);const r=(data&&data.reward)||5;if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=r;updateCoinsUI();$('workMsg').style.color='#8bc34a';$('workMsg').textContent='✨ +'+r+'💰'}}else{$('workMsg').style.color='#ff8888';$('workMsg').textContent='Сделано '+workCaught+'/'+target}workTaskId=null;renderWork()}
+
+// === ИСПРАВЛЕНО: initFlowersGame — добавлен обработчик полива (зажатие/клик) ===
+function initFlowersGame(field,target){
+  const r=field.getBoundingClientRect();
+  for(let i=0;i<target;i++){
+    const w=90;
+    const el=document.createElement('div');
+    el.className='flower';
+    el.style.left=(r.width/2+(i-(target-1)/2)*150-w/2)+'px';
+    el.style.top=(r.height/2-40)+'px';
+    el.style.width=w+'px';
+    el.innerHTML='<div class="flower-icon" style="font-size:64px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';
+    field.appendChild(el);
+    const fill=el.querySelector('.flower-fill');
+    const icon=el.querySelector('.flower-icon');
+    let prog=0,watering=false,tick=null,doneFlower=false;
+    const startW=()=>{
+      if(!workActive||doneFlower)return;
+      watering=true;
+      if(tick)clearInterval(tick);
+      tick=setInterval(()=>{
+        if(!workActive||!watering||doneFlower)return;
+        prog=Math.min(100,prog+8);
+        fill.style.width=prog+'%';
+        if(prog>=100){
+          doneFlower=true;
+          watering=false;
+          clearInterval(tick);
+          el.classList.add('watered','full');
+          icon.textContent='🌸';
+          workCaught++;
+          $('workScore').textContent=workCaught;
+          if(workCaught>=target)stopWork(true);
+        }
+      },60);
+    };
+    const stopW=()=>{watering=false;if(tick){clearInterval(tick);tick=null}};
+    el.addEventListener('mousedown',startW);
+    el.addEventListener('mouseup',stopW);
+    el.addEventListener('mouseleave',stopW);
+    el.addEventListener('touchstart',e=>{e.preventDefault();startW()},{passive:false});
+    el.addEventListener('touchend',e=>{e.preventDefault();stopW()},{passive:false});
+    el.addEventListener('touchcancel',stopW);
+  }
+}
+async function stopWork(t){
+  if(!workActive)return;
+  workActive=false;
+  if(workTimer){clearInterval(workTimer);workTimer=null}
+  $('workGame').style.display='none';
+  clearWorkHandlers();
+  $('workField').innerHTML='';
+  $('workField').className='work-field';
+  const task=WORK_TASKS.find(x=>x.id===workTaskId);
+  // ИСПРАВЛЕНО: null-safe
+  const target=(task&&task.target)||8;
+  if(workCaught>=target){
+    const{data,error}=await sb.rpc('earn_coins',{p_reason:'mini_work'});
+    if(error){$('workMsg').style.color='#ff8888';$('workMsg').textContent='❌ '+error.message}
+    else if(data&&data.ok===false){$('workMsg').style.color='#ff8888';$('workMsg').textContent='⏳ '+data.error}
+    else{
+      if(workTaskId)workCdSet(workTaskId);
+      const rew=(data&&data.reward)||5;
+      if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=rew;
+      updateCoinsUI();
+      $('workMsg').style.color='#8bc34a';
+      $('workMsg').textContent='✨ +'+rew+'💰';
+    }
+  }else{
+    $('workMsg').style.color='#ff8888';
+    $('workMsg').textContent='Сделано '+workCaught+'/'+target;
+  }
+  workTaskId=null;
+  renderWork();
+}
 const SEEDS=[
   {id:'carrot',name:'Морковь',rarity:'common',price:5,grow:30,sell:10,icon:'🥕'},{id:'potato',name:'Картошка',rarity:'common',price:8,grow:45,sell:16,icon:'🥔'},{id:'wheat',name:'Пшеница',rarity:'common',price:10,grow:60,sell:20,icon:'🌾'},{id:'tomato',name:'Помидор',rarity:'common',price:12,grow:75,sell:25,icon:'🍅'},{id:'cucumber',name:'Огурец',rarity:'common',price:15,grow:90,sell:30,icon:'🥒'},{id:'onion',name:'Лук',rarity:'common',price:18,grow:100,sell:36,icon:'🧅'},{id:'cabbage',name:'Капуста',rarity:'common',price:22,grow:110,sell:44,icon:'🥬'},{id:'garlic',name:'Чеснок',rarity:'common',price:26,grow:120,sell:52,icon:'🧄'},
   {id:'strawberry',name:'Клубника',rarity:'uncommon',price:40,grow:140,sell:90,icon:'🍓'},{id:'pumpkin',name:'Тыква',rarity:'uncommon',price:55,grow:160,sell:120,icon:'🎃'},{id:'watermelon',name:'Арбуз',rarity:'uncommon',price:70,grow:180,sell:155,icon:'🍉'},{id:'grape',name:'Виноград',rarity:'uncommon',price:85,grow:200,sell:190,icon:'🍇'},{id:'pepper',name:'Перчик',rarity:'uncommon',price:100,grow:220,sell:225,icon:'🌶️'},{id:'blueberry',name:'Голубика',rarity:'uncommon',price:120,grow:240,sell:270,icon:'🫐'},{id:'mango',name:'Манго',rarity:'uncommon',price:140,grow:260,sell:320,icon:'🥭'},
@@ -1900,6 +2019,7 @@ async function openVisitGarden(nick){if(!nick)return;if(nick===me)return openGar
 function renderVisitGarden(){if(!_visitGarden)return;const b=$('visitBeds');const now=Date.now();b.innerHTML=_visitGarden.beds.map((bed,i)=>{if(!bed)return '<div class="gbed empty guest"><div class="gbed-icon">🌾</div><div class="gbed-label">Пусто</div></div>';const s=SEEDS.find(x=>x.id===bed.seed);if(!s)return '<div class="gbed empty guest"><div class="gbed-icon">?</div></div>';const tot=bed.growMs||s.grow*1000;const pct=Math.min(100,(now-bed.plantedAt)/tot*100);const ready=pct>=100;return '<div class="gbed guest '+(ready?'ready':'grow')+'"><div class="gbed-icon">'+(ready?s.icon:'🌱')+'</div><div class="gbed-label">'+s.name+'</div><div class="gbed-bar"><div class="gbed-fill" style="width:'+pct+'%"></div></div><div class="gbed-time">'+(ready?'✅':Math.ceil((tot-(now-bed.plantedAt))/1000)+'с')+'</div></div>'}).join('')}
 if(!window._gardenVisitTick)window._gardenVisitTick=setInterval(()=>{if($('gardenM')?.classList.contains('open')&&$('gardenVisit')?.style.display==='block'&&_visitGarden)renderVisitGarden()},800)
 async function openProfile(nick){closeUserMenu();pfCurrent=nick||null;const target=nick||me;const isMine=(!nick||nick===me);const av=$('pfAv');av.classList.remove('has-img');FRAMES.forEach(f=>av.classList.remove('frame-'+f.id));av.style.backgroundImage='';av.style.background='';try{const{data:um}=await sb.from('user_media').select('photo_url').eq('nick',en(target)).maybeSingle();if(um&&um.photo_url){av.style.backgroundImage='url("'+um.photo_url+'")';av.classList.add('has-img');av.textContent=''}else throw 0}catch(e){av.textContent=firstL(target);av.style.background='linear-gradient(135deg,'+nCol(target)+','+shCol(nCol(target),-18)+')'}const fr=getFrame(target);if(fr&&fr!=='none')av.classList.add('frame-'+fr);decorateFrame(av,fr);const pfEmb=$('pf').querySelector('.emb');if(pfEmb){const allBg=FRAMES.map(f=>'fr-bg-'+f.id);allBg.push('fr-bg-rainbow-anim');pfEmb.classList.remove(...allBg);if(fr&&fr!=='none')pfEmb.classList.add('fr-bg-'+fr)}pfFxSpawn(fr);$('pfNick').textContent=target;const isOnline=online.has(en(target));$('pfOnline').style.display=(!isMine&&isOnline)?'inline':'none';let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',target).maybeSingle();p=r.data}catch(e){}if(p&&p.status)$('pfStatus').textContent=((p.status_emoji||'')+' '+p.status).trim();else $('pfStatus').textContent=isMine?'Нажми «Редактировать»':'';$('pfBio').textContent=(p&&p.bio)?p.bio:(isMine?'Расскажи о себе':'');
+
 const pfItemsEl=$('pfItems');
 if(pfItemsEl){
   const items=(p&&p.owned_items)||[];
@@ -1967,7 +2087,6 @@ async function clickFlat(n){
   const f=flats[n];
   const owners=flatOwners(f);
 
-  // админ-режим
   if(adminMode&&owners.length){
     if(owners.includes(meEnc)){openFm(n);return}
     const ok=await askConfirm('Выселить?','Все будут выселены','Выселить',true);
@@ -1978,7 +2097,6 @@ async function clickFlat(n){
     return;
   }
 
-  // пустая — заселяемся
   if(!owners.length){
     if(isHouseBlk()||isEntBlk(gloEnt(curHouse,Math.ceil(n/10))))return showToast('🚫 Закрыто','error');
     if(myAllFlats.length>0)return showToast('У тебя уже есть квартира','error');
@@ -1991,20 +2109,15 @@ async function clickFlat(n){
     return;
   }
 
-  // я живу здесь — открываю свою квартиру
   if(owners.includes(meEnc)){openFm(n);return}
 
-  // чужая квартира
   if(owners.length===1){
-    // один жилец — сразу в личку
     openDm(owners[0]);
   }else{
-    // 2+ жильцов — показываем выбор
     openOwnerPicker(n,owners);
   }
 }
 function openOwnerPicker(flatNum,owners){
-  // если уже открыт — убираем
   const old=document.getElementById('ownerPickM');
   if(old)old.remove();
 
@@ -2016,7 +2129,6 @@ function openOwnerPicker(flatNum,owners){
   const inner=document.createElement('div');
   inner.style.cssText='background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.1);border-radius:22px;width:440px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7)';
 
-  // шапка
   const head=document.createElement('div');
   head.style.cssText='padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(90,171,255,.12),rgba(74,144,217,.04))';
   head.innerHTML='<div style="font-size:16px;font-weight:800;color:#5aabff">🏠 Кв. '+gNum+' · кто здесь живёт</div>';
@@ -2026,7 +2138,6 @@ function openOwnerPicker(flatNum,owners){
   closeBtn.onclick=()=>box.remove();
   head.appendChild(closeBtn);
 
-  // список жильцов
   const list=document.createElement('div');
   list.style.cssText='padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px';
 
@@ -2106,7 +2217,6 @@ async function loadM(){
   
   msgC=(data||[]).reverse().filter(m=>{
     if(m.deleted_for_all) return false;
-    // Скрываем системные сообщения о заселении/выселении
     if(m.text && (
       m.text.includes('заселил') || 
       m.text.includes('выселил') || 
@@ -2201,7 +2311,7 @@ function upFm(){
     const isMe=(o===meEnc);
     const isChief=(i===0);
     const nick=de(o);
-    const canPromote=!isMe&&!isChief&&isOwnerF; // хозяин может поднять соседа
+    const canPromote=!isMe&&!isChief&&isOwnerF;
     const canKick=isOwnerF&&!isMe;
     list.push(
       '<div class="rmc">'+
@@ -2265,7 +2375,6 @@ function _setupPc(pc){
 
   pc.ontrack=(e)=>{
     _callRemoteStream=e.streams[0];
-    // 1) аудио — через <audio> в DOM
     if(!_remoteAudioEl){
       _remoteAudioEl=document.createElement('audio');
       _remoteAudioEl.autoplay=true;
@@ -2277,7 +2386,6 @@ function _setupPc(pc){
     _remoteAudioEl.volume=1;
     _remoteAudioEl.play().catch(err=>console.warn('audio play:',err));
 
-    // 2) видео — в элемент на экране
     const rv=$('callRemoteVideo');
     if(rv){
       rv.srcObject=_callRemoteStream;
@@ -2387,7 +2495,6 @@ function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_change
 let _hnCh=null;
 async function loadHouseNews(){
   try{
-    // начало ТЕКУЩЕГО дня по МСК (UTC+3)
     const now = new Date();
     const mskOffset = 3*60*60*1000;
     const mskNow = new Date(now.getTime() + mskOffset);
@@ -2399,7 +2506,6 @@ async function loadHouseNews(){
       .gte('created_at',since)
       .order('created_at',{ascending:false}).limit(20);
 
-    // топ-3 по монетам среди жильцов этого дома
     const res=[];
     Object.values(flats).forEach(f=>flatOwners(f).forEach(o=>res.push(o)));
     let top=[];
