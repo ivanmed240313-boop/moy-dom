@@ -1557,20 +1557,24 @@ function upAdminTog(){const ow=isOwner();const o=hasAdmin();const b=$('adminTog'
 function toggleAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(adminMode)exitAdmin();else enterAdmin()}
 function enterAdmin(){if(!hasAdmin())return showToast('Только админам','error');adminMode=true;document.body.classList.add('admin-mode');$('adminB').classList.add('on');$('ap').classList.add('on');upAdminTog();renderFlats()}
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');$('adminB').classList.remove('on');$('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
+function triggerHackStrike(){
+  if(isBanned) return;
+  console.warn('🚨 SECURITY ALERT: Unauthorized access attempt by', curUser?.id);
+  sb.rpc('report_hack_attempt').then(r => {
+    if(r.error) return;
+    const data = r.data;
+    if(data && data.banned) {
+      showToast('🚫 ВЫ ЗАБАНЕНЫ И ОБНУЛЕНЫ ЗА ВЗЛОМ!', 'error');
+      showBan();
+    } else if (data) {
+      showToast('❌ Доступ запрещён. Страйк: ' + data.strikes + '/3', 'error');
+    }
+  });
+}
 async function openAdmin(){
   const { data: isRealAdmin, error } = await sb.rpc('check_my_admin_status');
   if(error || !isRealAdmin){
-    console.warn('🚨 SECURITY ALERT: Unauthorized access attempt to ADMIN PANEL by', curUser?.id);
-    sb.rpc('report_hack_attempt').then(r => {
-      if(r.error) return;
-      const data = r.data;
-      if(data.banned) {
-        showToast('🚫 ВЫ ЗАБАНЕНЫ И ОБНУЛЕНЫ ЗА ВЗЛОМ!', 'error');
-        showBan();
-      } else {
-        showToast('❌ Доступ запрещён. Страйк: ' + data.strikes + '/3', 'error');
-      }
-    });
+    triggerHackStrike();
     return;
   }
   if(!adminMode) return showToast('Включи админ-режим','error');
@@ -1583,17 +1587,7 @@ function afSw(t){afT=t;_afTarget='afB';document.querySelectorAll('#afm .aftab').
 const _secretOID = ['81fe9ad5', 'a02b', '4e57', '8c59', '1cf2d60e842c'].join('-');
 function openOwner(){
   if(!curUser || curUser.id !== _secretOID){
-    console.warn('🚨 SECURITY ALERT: Unauthorized access attempt by', curUser?.id);
-    sb.rpc('report_hack_attempt').then(r => {
-      if(r.error) return;
-      const data = r.data;
-      if(data.banned) {
-        showToast('🚫 ВЫ ЗАБАНЕНЫ И ОБНУЛЕНЫ ЗА ВЗЛОМ!', 'error');
-        showBan();
-      } else {
-        showToast('❌ Доступ запрещён. Страйк: ' + data.strikes + '/3', 'error');
-      }
-    });
+    triggerHackStrike();
     return; 
   }
   _afTarget='ofB';
