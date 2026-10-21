@@ -1634,42 +1634,68 @@ async function openOwner(){
   $('ofm').classList.add('open');
   ofSw('flats');
 }
-function closeOwner(){$('ofm').classList.remove('open')}
-function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
+function closeOwner(){
+  if(typeof _logsAutoUpdate !== 'undefined' && _logsAutoUpdate) clearInterval(_logsAutoUpdate);
+  $('ofm').classList.remove('open');
+}
+function ofSw(t){
+  if(typeof _logsAutoUpdate !== 'undefined' && _logsAutoUpdate) {
+    clearInterval(_logsAutoUpdate);
+    _logsAutoUpdate = null;
+  }
+  afT=t;
+  _afTarget='ofB';
+  document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));
+  ofRend();
+}
 async function ofRend(){   const b=$('ofB');if(!b)return;   if(afT==='flats')return afFlats(b);   if(afT==='ent')return afEnt(b);   if(afT==='house')return afHouse(b);   if(afT==='users')return afUsers(b);   if(afT==='give')return ofGive(b);   if(afT==='events')return ofEvents(b);   if(afT==='custom')return ofCustomEvents(b);   if(afT==='fakes')return ofFakes(b);   if(afT==='dates')return ofDates(b);   if(afT==='logs')return ofLogs(b); }
+let _logsAutoUpdate = null;
+
 async function ofLogs(b) {
   if(!isOwner()){ b.innerHTML='<div class="afe">Только владелец</div>'; return; }
-  b.innerHTML = '<div class="afe">Загрузка логов...</div>';
   
-  const { data, error } = await sb.rpc('owner_get_hack_logs');
-  
-  if(error){ b.innerHTML='<div class="afe">Ошибка: '+error.message+'</div>'; return; }
-  if(!data || !data.length){ b.innerHTML='<div class="afe">Пока нет попыток взлома. Тишина...</div>'; return; }
-  
-  let html = '<div class="of-hint">📜 <b>Журнал взломов.</b> Показаны последние 100 попыток.</div>';
-  
-  html += data.map(l => {
-    const d = new Date(l.created_at);
-    const p = n => String(n).padStart(2, '0');
-    const timeStr = `${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(-2)};${p(d.getHours())}:${p(d.getMinutes())}`;
+  if(_logsAutoUpdate) clearInterval(_logsAutoUpdate);
+
+  async function renderLogs() {
+    // Если вкладка закрыта или сменилась - выключаем таймер
+    if(afT !== 'logs' || !$('ofm').classList.contains('open')) {
+      if(_logsAutoUpdate) clearInterval(_logsAutoUpdate);
+      return;
+    }
+
+    const { data, error } = await sb.rpc('owner_get_hack_logs');
     
-    const isBan = l.verdict.includes('БАН');
-    const color = isBan ? '#ff4444' : '#ffaa00';
-    const bg = isBan ? 'rgba(255,0,0,0.1)' : 'rgba(255,170,0,0.1)';
+    if(error){ b.innerHTML='<div class="afe">Ошибка: '+error.message+'</div>'; return; }
+    if(!data || !data.length){ b.innerHTML='<div class="afe">Пока нет попыток взлома. Тишина...</div>'; return; }
     
-    return `<div class="of-user-row" style="border-color:${color}; background:${bg}">
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;color:#fff;line-height:1.4">
-          <b style="color:${color}">${timeStr}</b> · Пользователь <b style="color:#a06bff">${eh(l.nick)}</b> попытался сделать: <b style="color:#5aabff">${eh(l.action)}</b>
+    let html = '<div class="of-hint">📜 <b>Журнал взломов (Авто-обновление).</b> Показаны последние 100 попыток.</div>';
+    
+    html += data.map(l => {
+      const d = new Date(l.created_at);
+      const p = n => String(n).padStart(2, '0');
+      const timeStr = `${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(-2)};${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+      
+      const isBan = l.verdict.includes('БАН');
+      const color = isBan ? '#ff4444' : '#ffaa00';
+      const bg = isBan ? 'rgba(255,0,0,0.1)' : 'rgba(255,170,0,0.1)';
+      
+      return `<div class="of-user-row" style="border-color:${color}; background:${bg}">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;color:#fff;line-height:1.4">
+            <b style="color:${color}">${timeStr}</b> · Пользователь <b style="color:#a06bff">${eh(l.nick)}</b> попытался сделать: <b style="color:#5aabff">${eh(l.action)}</b>
+          </div>
+          <div style="font-size:12px;color:${color};margin-top:4px;font-weight:700">
+            ⚖️ Приговор: ${eh(l.verdict)}
+          </div>
         </div>
-        <div style="font-size:12px;color:${color};margin-top:4px;font-weight:700">
-          ⚖️ Приговор: ${eh(l.verdict)}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  
-  b.innerHTML = html;
+      </div>`;
+    }).join('');
+    
+    b.innerHTML = html;
+  }
+
+  await renderLogs();
+  _logsAutoUpdate = setInterval(renderLogs, 3000); // Обновляем каждые 3 секунды
 }
 const APP_VERSION='3.6.7';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
@@ -2838,69 +2864,58 @@ function setupUI(){
 }
 /* ====== ХАК-ЗАЩИТА: авто-обёртки ====== */
 (function(){
-  // Обёртка для owner-функций
   function wrapOwner(name){
     const orig = window[name];
     if(typeof orig !== 'function') return;
     window[name] = async function(){
-      if(!(await guardOwner())) return;
+      if(!(await guardOwner(name))) return; // Передаем имя напрямую
       return orig.apply(this, arguments);
     };
   }
-  // Обёртка для admin-функций
   function wrapAdmin(name){
     const orig = window[name];
     if(typeof orig !== 'function') return;
     window[name] = async function(){
-      if(!(await guardAdmin())) return;
+      if(!(await guardAdmin(name))) return; // Передаем имя напрямую
       return orig.apply(this, arguments);
     };
   }
-  // Обёртка для синхронных (проверка + страйк)
   function wrapAdminSync(name){
     const orig = window[name];
     if(typeof orig !== 'function') return;
     window[name] = function(){
-      if(!hasAdmin()){ triggerHackStrike(); return; }
+      if(!hasAdmin()){ triggerHackStrike(name); return; }
       return orig.apply(this, arguments);
     };
   }
 
-  // OWNER-функции
   ['openChiefPicker', 'quickCreateHouse', 'setEvOv', 'createCustomEvent',
    'toggleCustomEvent', 'testCustomEvent', 'deleteCustomEvent',
    'createFake', 'deleteFake', 'switchToFake'].forEach(wrapAdmin);
 
-  // ADMIN-функции
   ['postAnn', 'delAnn'].forEach(wrapAdmin);
-
-  // Синхронные admin
   ['odtAdd', 'odtDel', 'odtToggle'].forEach(wrapAdminSync);
 
-  // openOwner — заменяем целиком
   window.openOwner = async function(){
-    if(!(await guardOwner())) return;
+    if(!(await guardOwner('openOwner'))) return;
     _afTarget='ofB';
     $('ofm').classList.add('open');
     ofSw('flats');
   };
 
-  // clickFlat — защита выселения в admin-mode
   const origClickFlat = window.clickFlat;
   if(typeof origClickFlat === 'function'){
     window.clickFlat = async function(n){
       const f = flats[n];
       const owners = flatOwners(f);
       if(adminMode && owners.length && !owners.includes(meEnc)){
-        if(!(await guardAdmin())) return;
+        if(!(await guardAdmin('clickFlat (выселение)'))) return;
       }
       return origClickFlat.call(this, n);
     };
   }
-
   console.log('✅ Все админ-функции обёрнуты защитой');
 })();
-/* ====== конец ====== */
 async function start(){
   meEnc=en(me);
   restoreFakeSession();
