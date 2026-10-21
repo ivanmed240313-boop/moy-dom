@@ -772,9 +772,39 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fr-btn.fr-set{background:linear-gradient(135deg,#5aabff,#4a90d9);color:#fff}
 .fr-active{font-size:11px;color:#8bc34a;font-weight:800;padding:7px 0}
 .fr-bonus{display:inline-block;font-size:10px;color:#8bc34a;background:rgba(76,175,80,.15);padding:2px 6px;border-radius:8px;margin-top:2px;font-weight:700}
-#verBadge {     position: fixed;     left: 15px;     bottom: 15px;     z-index: 99999;     font-size: 12px;     font-weight: 800;     color: #f5c542; /* Золотой текст */     background: rgba(20, 20, 28, 0.95);     border: 1px solid rgba(245, 197, 66, 0.4); /* Золотая рамка */     border-radius: 12px;     padding: 8px 14px;     font-family: 'Courier New', monospace;     pointer-events: auto;     cursor: pointer;     backdrop-filter: blur(10px);     letter-spacing: 0.5px;     user-select: none;     box-shadow: 0 4px 15px rgba(0,0,0,0.6); /* Тень для объема */     transition: all 0.2s ease; } #verBadge:hover {     color: #000;     background: #f5c542;     border-color: #f5c542;     transform: translateY(-2px); /* Легкий прыжок при наведении */ }
-#verBadge:hover{color:#f5c542;border-color:rgba(245,197,66,.4)}
-#verBadge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#4caf50;margin-right:6px;vertical-align:middle;box-shadow:0 0 6px #4caf50;animation:pulse 2s infinite}
+
+/* ИСПРАВЛЕННЫЙ БЕЙДЖ ВЕРСИИ */
+#verBadge {
+    position: fixed !important;
+    left: 15px !important;
+    bottom: 15px !important;
+    z-index: 2147483647 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: rgba(20, 20, 28, 0.95) !important;
+    border: 1px solid rgba(245, 197, 66, 0.6) !important;
+    border-radius: 12px !important;
+    padding: 8px 14px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.9) !important;
+    transition: all 0.2s ease;
+}
+#verBadge:hover {
+    background: #f5c542 !important;
+    border-color: #f5c542 !important;
+    transform: translateY(-2px);
+}
+#verBadge:hover span {
+    color: #000 !important;
+}
+#verText {
+    color: #f5c542;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: 800;
+}
+
 #cfm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);align-items:center;justify-content:center;z-index:9700;backdrop-filter:blur(4px);padding:20px}
 #cfm.open{display:flex;animation:fadeIn .15s}
 .cfm-box{background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.08);border-radius:20px;width:400px;max-width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
@@ -1337,6 +1367,14 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 }
 </style></head>
 <body>
+<!-- БЕЙДЖ ВЕРСИИ ВЫНЕСЕН В САМОЕ НАЧАЛО, ЧТОБЫ ЕГО НИКТО НЕ МОГ СКРЫТЬ -->
+<div id="verBadge" onclick="alert('Дом — версия: ' + document.getElementById('verText').innerText)">
+    <div style="display:flex; align-items:center;">
+        <div style="width:8px; height:8px; border-radius:50%; background:#4caf50; margin-right:10px;"></div>
+        <span id="verText">v...</span>
+    </div>
+</div>
+
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -1427,12 +1465,6 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <canvas id="fireworksCv"></canvas>
 <div id="giveM"><div class="give-box"><div class="give-h"><h3 id="giveTitle">🎁 Выдать предмет</h3><button onclick="closeGive()">×</button></div><div class="give-b"><div style="font-size:12px;color:#a0a0b8;margin-bottom:12px">Игрок: <b id="giveNick" style="color:#f5c542">—</b></div><div class="give-tabs"><div class="give-tab act" data-t="frame" onclick="giveSw('frame')">🖼️ Рамка</div><div class="give-tab" data-t="seed" onclick="giveSw('seed')">🌱 Семя</div><div class="give-tab" data-t="fert" onclick="giveSw('fert')">💧 Удобрение</div><div class="give-tab" data-t="coins" onclick="giveSw('coins')">💰 Монеты</div></div><div id="giveBody"></div><div class="give-msg" id="giveMsg"></div></div></div></div>
 <div id="flatPickerM"><div class="fp-box"><div class="fp-h"><h3 id="fpTitle">🏠 Куда заселить</h3><button onclick="closeFlatPicker()">✕</button></div><div class="fp-body" id="fpBody"></div></div></div>
-<div id="verBadge" style="position:fixed !important; left:15px !important; bottom:80px !important; z-index:2147483647 !important; display:block !important; background:rgba(20, 20, 28, 0.95) !important; border:1px solid rgba(245, 197, 66, 0.6) !important; border-radius:12px !important; padding:8px 14px !important; cursor:pointer !important; box-shadow:0 4px 20px rgba(0,0,0,0.9) !important;" onclick="alert('Дом — версия: ' + document.getElementById('verText').innerText)">
-    <div style="display:flex; align-items:center;">
-        <div style="width:8px; height:8px; border-radius:50%; background:#4caf50; margin-right:10px;"></div>
-        <span id="verText" style="color:#f5c542; font-family:'Courier New', monospace; font-size:13px; font-weight:800;">v...</span>
-    </div>
-</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* === auto-inject CSS for flat-item === */
@@ -1707,8 +1739,39 @@ async function ofLogs(b) {
   await renderLogs();
   _logsAutoUpdate = setInterval(renderLogs, 3000); // Обновляем каждые 3 секунды
 }
-const APP_VERSION='3.7.0';
-(function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
+
+/* ====== ИСПРАВЛЕННЫЙ РЕНДЕР ВЕРСИИ ====== */
+const APP_VERSION='3.7.1';
+(function(){
+  function fmt(d){
+    const p=n=>String(n).padStart(2,'0');
+    return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())
+  }
+  function render(){
+    const el=document.getElementById('verText');
+    if(!el) return;
+    let stamp = '—';
+    try {
+      const lm=new Date(document.lastModified);
+      if(!isNaN(lm.getTime())) stamp = fmt(lm);
+    } catch(e){}
+    
+    el.textContent='v'+APP_VERSION+' · '+stamp;
+    
+    const b=document.getElementById('verBadge');
+    if(b){
+      b.onclick=function(){
+        alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))
+      }
+    }
+  }
+  
+  // Запускаем 3 раза для надежности
+  render();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', render);
+  setTimeout(render, 1000);
+})();
+
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
 function giveLoadUser(){const nick=$('giveNickField')?.value.trim();if(!nick)return showToast('Введи ник','error');if(!allProfiles.find(p=>p.nick===nick))return showToast('Игрок не найден','error');giveTarget=nick;renderGiveInline()}
