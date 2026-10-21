@@ -2123,34 +2123,43 @@ async function loadHM(){const ns=[];Object.values(flats).forEach(f=>{flatOwners(
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 function renderHouses(){const b=$('hb');b.innerHTML='';houses.forEach(h=>{const e=document.createElement('div');e.className='hbtn'+(h.id===curHouse?' act':'')+(h.blocked?' blk':'');e.textContent=h.blocked?'🚫 '+h.name:h.name;e.onclick=()=>switchHouse(h.id);magnetize(e);b.appendChild(e)})}
 async function switchHouse(i){
-  if(i===curHouse && houses.length>0) return; // Не перезагружаем тот же дом
+  if(i===curHouse && houses.length>0) return;
   
-  // Определяем направление (если новый ID больше — едем вправо, иначе влево)
   const direction = (Number(i) > Number(curHouse)) ? 'next' : 'prev';
   const inner = $('houseInner');
   
-  // 1. Анимация УХОДА старого дома
-  if(inner){
-    inner.style.animation = direction === 'next' ? 'houseSlideOutLeft 0.3s ease-in forwards' : 'houseSlideOutRight 0.3s ease-in forwards';
-    await new Promise(r => setTimeout(r, 250)); // Ждем полсекунды
-  }
+  // Затемняем экран для плавности
+  if(inner) inner.style.opacity = '0.3';
   
-  // 2. Меняем данные и строим новый дом
-  curHouse=i;
-  houseData=houses.find(h=>h.id===i)||null;
-  renderHouses();
+  // Меняем данные
+  curHouse = i;
+  houseData = houses.find(h=>h.id===i)||null;
+  
+  // Грузим данные
   await loadFlats();
   await loadHM();
+  
+  // Убираем затемнение
+  if(inner) inner.style.opacity = '1';
+  
+  // Анимация ухода
+  if(inner){
+    inner.style.animation = direction === 'next' ? 'houseSlideOutLeft 0.2s ease-in forwards' : 'houseSlideOutRight 0.2s ease-in forwards';
+    await new Promise(r => setTimeout(r, 180)); // Ждем чуть-чуть
+  }
+  
+  // Строим новый дом
+  renderHouses();
   buildHouse();
   loadHouseNews();
   subHouseNews();
   showAnn(houseData?.announcement||null);
   
-  // 3. Анимация ПРИХОДА нового дома
+  // Анимация прихода
   const newInner = $('houseInner');
   if(newInner){
-    newInner.style.animation = direction === 'next' ? 'houseSlideInRight 0.3s ease-out forwards' : 'houseSlideInLeft 0.3s ease-out forwards';
-    setTimeout(() => { newInner.style.animation = ''; }, 300); // Очищаем стили после завершения
+    newInner.style.animation = direction === 'next' ? 'houseSlideInRight 0.2s ease-out forwards' : 'houseSlideInLeft 0.2s ease-out forwards';
+    setTimeout(() => { newInner.style.animation = ''; }, 200);
   }
 }
 function buildHouse(){
