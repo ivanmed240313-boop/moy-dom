@@ -1557,18 +1557,40 @@ function upAdminTog(){const ow=isOwner();const o=hasAdmin();const b=$('adminTog'
 function toggleAdmin(){if(!hasAdmin())return showToast('Только админам','error');if(adminMode)exitAdmin();else enterAdmin()}
 function enterAdmin(){if(!hasAdmin())return showToast('Только админам','error');adminMode=true;document.body.classList.add('admin-mode');$('adminB').classList.add('on');$('ap').classList.add('on');upAdminTog();renderFlats()}
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');$('adminB').classList.remove('on');$('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
-function triggerHackStrike(){
-  if(isBanned) return;
-  console.warn('🚨 SECURITY ALERT: Unauthorized access attempt by', curUser?.id);
-  sb.rpc('report_hack_attempt').then(r => {
-    if(r.error) return;
-    const data = r.data;
-    if(data && data.banned) {
+function triggerHackStrike(actionName) {
+  if (isBanned) return;
+  actionName = actionName || 'Неизвестное действие';
+  
+  console.warn('🚨 ВЗЛОМ! Функция:', actionName);
+  
+  // Делаем запрос к базе
+  sb.rpc('report_hack_attempt', { p_action: actionName }).then(response => {
+    
+    // ПРИНУДИТЕЛЬНО ВЫВОДИМ ОТВЕТ В КОНСОЛЬ
+    console.log('🔴 ПОЛНЫЙ ОТВЕТ БАЗЫ:', JSON.stringify(response));
+    
+    if (response.error) {
+      console.error('❌ Ошибка базы:', response.error);
+      return;
+    }
+    
+    const data = response.data;
+    if (!data) {
+      console.error('❌ База вернула пустоту!');
+      return;
+    }
+
+    // Если база сказала, что это бан
+    if (data.banned) {
       showToast('🚫 ВЫ ЗАБАНЕНЫ И ОБНУЛЕНЫ ЗА ВЗЛОМ!', 'error');
       showBan();
-    } else if (data) {
+    } 
+    // Если просто страйк
+    else {
       showToast('❌ Доступ запрещён. Страйк: ' + data.strikes + '/3', 'error');
     }
+  }).catch(err => {
+    console.error('❌ Критическая ошибка сети:', err);
   });
 }
 async function guardAdmin(){
