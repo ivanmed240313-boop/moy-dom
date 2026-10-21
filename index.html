@@ -192,7 +192,7 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 #banO.on{display:flex}
 #banO h1{color:#ff4444;font-size:44px;margin-bottom:20px;font-weight:900}
 #banO p{color:#aa8888;font-size:16px;max-width:420px}
-#banO textarea:focus { border-color: #5aabff !important; } #banO button:hover { opacity: 0.85; } #banO > button { margin-top: 20px; background: transparent !important; border: 1px solid rgba(255,255,255,0.2) !important; color: #aaa !important; padding: 10px 24px !important; border-radius: 12px !important; cursor: pointer; font-weight: normal !important; }
+#banO button{margin-top:30px;padding:14px 32px;border-radius:12px;border:none;background:rgba(255,255,255,.08);color:#e8e8f0;cursor:pointer;font-weight:700}
 #hb{display:flex;gap:10px;padding:18px 20px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.04);flex-shrink:0;scrollbar-width:none;background:rgba(15,15,22,.5)}
 #hb::-webkit-scrollbar{display:none}
 .hbtn{padding:10px 20px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:#a0a0b8;cursor:pointer;font-size:14px;white-space:nowrap;flex-shrink:0;font-weight:700}
@@ -772,39 +772,9 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .fr-btn.fr-set{background:linear-gradient(135deg,#5aabff,#4a90d9);color:#fff}
 .fr-active{font-size:11px;color:#8bc34a;font-weight:800;padding:7px 0}
 .fr-bonus{display:inline-block;font-size:10px;color:#8bc34a;background:rgba(76,175,80,.15);padding:2px 6px;border-radius:8px;margin-top:2px;font-weight:700}
-
-/* ФИКС БЕЙДЖА ВЕРСИИ */
-#verBadge {
-    position: fixed !important;
-    left: 15px !important;
-    bottom: 80px !important;
-    z-index: 2147483647 !important;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    background: rgba(20, 20, 28, 0.95) !important;
-    border: 1px solid rgba(245, 197, 66, 0.6) !important;
-    border-radius: 12px !important;
-    padding: 8px 14px !important;
-    cursor: pointer !important;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.9) !important;
-    transition: all 0.2s ease;
-}
-#verBadge:hover {
-    background: #f5c542 !important;
-    border-color: #f5c542 !important;
-    transform: translateY(-2px);
-}
-#verBadge:hover span {
-    color: #000 !important;
-}
-#verText {
-    color: #f5c542;
-    font-family: 'Courier New', monospace;
-    font-size: 13px;
-    font-weight: 800;
-}
-
+#verBadge{position:fixed;left:10px;bottom:10px;z-index:9999;font-size:11px;font-weight:700;color:#666678;background:rgba(10,10,16,.75);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:5px 10px;font-family:'Courier New',monospace;pointer-events:auto;cursor:pointer;backdrop-filter:blur(6px);letter-spacing:.4px;user-select:none;transition:color .2s,border-color .2s}
+#verBadge:hover{color:#f5c542;border-color:rgba(245,197,66,.4)}
+#verBadge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#4caf50;margin-right:6px;vertical-align:middle;box-shadow:0 0 6px #4caf50;animation:pulse 2s infinite}
 #cfm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);align-items:center;justify-content:center;z-index:9700;backdrop-filter:blur(4px);padding:20px}
 #cfm.open{display:flex;animation:fadeIn .15s}
 .cfm-box{background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.08);border-radius:20px;width:400px;max-width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
@@ -1277,7 +1247,7 @@ body.fireworks-bg .hbtn:hover,body.fireworks-bg .ebtn:hover,body.fireworks-bg .f
 #ap{bottom:12px;right:12px;left:12px;padding:14px 16px;min-width:0;border-radius:16px}
 #ap .h{font-size:11.5px}
 #ap .ob{padding:11px;font-size:13px}
-#verBadge{font-size:10px;padding:5px 10px;left:10px;bottom:10px;max-width:calc(100vw - 130px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-shadow:0 4px 10px rgba(0,0,0,0.8)}
+#verBadge{font-size:10px;padding:4px 8px;left:8px;bottom:8px;max-width:calc(100vw - 130px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #pv{padding:10px}
 .cr video{width:200px;height:200px}
 .cr .tm{font-size:20px}
@@ -1351,30 +1321,8 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     user-select: none;
     -webkit-user-select: none;
 }
-@media (max-width: 768px) {
-  * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; text-shadow: none !important; }
-  .flat, .msg, .emb, .mbox, .ofb, .afb, .gmb { box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important; animation-duration: 0.15s !important; }
-  html, body, #app, .layout { height: 100dvh !important; max-height: 100dvh !important; }
-  #modal, .mbox, #fm { height: 100dvh !important; max-height: 100dvh !important; border-radius: 0 !important; }
-  .emb, .mbox, .ofb, .afb, .gmb, .fp-box, .give-box, .cfm-box { max-height: 92dvh !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch; width: calc(100vw - 20px) !important; max-width: 100% !important; }
-  .ofbd, .afbd { padding-bottom: 80px !important; }
-  #house { overflow-x: auto !important; overflow-y: hidden !important; justify-content: flex-start !important; padding: 10px !important; -webkit-overflow-scrolling: touch; }
-  #houseInner { padding: 0 20px; }
-  .ir button, .hbtn, .oftab, .aftab, .afbtn, .call-btn { min-height: 44px !important; min-width: 44px !important; }
-  .ir { padding-bottom: env(safe-area-inset-bottom, 12px) !important; }
-  #chat { padding-bottom: 20px !important; }
-  body { overflow-x: hidden !important; }
-}
 </style></head>
 <body>
-<!-- БЕЙДЖ ВЕРСИИ В САМОМ НАЧАЛЕ -->
-<div id="verBadge" onclick="alert('Дом — версия: ' + document.getElementById('verText').innerText)">
-    <div style="display:flex; align-items:center;">
-        <div style="width:8px; height:8px; border-radius:50%; background:#4caf50; margin-right:10px;"></div>
-        <span id="verText">v3.7.1</span>
-    </div>
-</div>
-
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -1387,19 +1335,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div id="gm"><div class="gmb"><div class="gmh"><h3>👥 Новая группа</h3><button onclick="closeGm()">×</button></div><div class="gmbd"><div class="gm-ava-wrap"><label class="gm-ava" id="gmAva" for="gmAvaIn"><input type="file" id="gmAvaIn" accept="image/*"><span id="gmAvaEmoji">👥</span></label></div><label class="gm-lbl">Название</label><input id="gmName" class="gm-inp" maxlength="40" placeholder="Название..." autocomplete="off"><label class="gm-lbl">Участники</label><div class="inp-rel"><input id="gmMem" class="gm-inp" placeholder="nick1, nick2..." autocomplete="off"><div class="sug-box" id="gmSug"></div></div><div class="gm-mem-list" id="gmMemList"></div><div class="gm-err" id="gmErr"></div></div><div class="gm-ma"><button class="cn" onclick="closeGm()">Отмена</button><button class="cr-btn" id="gmCreate" onclick="createGroup()">Создать</button></div></div></div>
 <div id="gsm"><div class="gmb"><div class="gmh"><h3>⚙️ Настройки группы</h3><button onclick="closeGsm()">×</button></div><div class="gmbd"><div class="gm-ava-wrap"><label class="gm-ava" id="gsmAva" for="gsmAvaIn"><input type="file" id="gsmAvaIn" accept="image/*"><span id="gsmAvaEmoji">👥</span></label></div><label class="gm-lbl">Название</label><input id="gsmName" class="gm-inp" maxlength="40"><label class="gm-lbl">Участники</label><div class="inp-rel"><input id="gsmAddMem" class="gm-inp" placeholder="nick1, nick2..."><div class="sug-box" id="gsmSug"></div></div><div class="gm-mem-list" id="gsmMemList"></div><div class="gm-err" id="gsmErr"></div></div><div class="gm-ma"><button class="cn" onclick="closeGsm()">Закрыть</button><button class="cr-btn" onclick="saveGroupSettings()">Сохранить</button></div></div></div>
 <div id="cr" class="cr"><video id="crV" autoplay muted playsinline></video><div class="tm" id="crT">0:00</div><div class="hh">Запись кружка...</div><button class="sb" id="crS">⏹ Остановить</button></div>
-<div id="banO">
-  <h1>🚫 Ты забанен</h1>
-  <p id="banR" style="color:#ff6b6b;font-size:16px;font-weight:bold;margin-bottom:10px;"></p>
-  <p style="font-size:13px;color:#888;max-width:420px;text-align:center;line-height:1.5;">Вход в аккаунт заблокирован. Если вы считаете, что это ошибка — опишите ситуацию ниже.</p>
-  
-  <div id="appealBox" style="margin-top:20px; display:flex; flex-direction:column; gap:10px; width:100%; max-width:400px;">
-    <textarea id="appealMsg" placeholder="Опиши причину для разбана..." style="width:100%; min-height:80px; padding:12px; border-radius:12px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; font-family:inherit; resize:vertical; outline:none;"></textarea>
-    <button onclick="submitAppeal()" id="appealBtn" style="background:linear-gradient(135deg,#5aabff,#4a90d9); color:#fff; border:none; padding:14px; border-radius:12px; font-weight:800; cursor:pointer; font-size:14px;">📩 Связаться с Администрацией</button>
-    <div id="appealStatus" style="font-size:13px; color:#8bc34a; font-weight:bold; min-height:18px; text-align:center;"></div>
-  </div>
-  
-  <button onclick="logout()" style="margin-top:15px;">Выйти из аккаунта</button>
-</div>
+<div id="banO"><h1>🚫 Ты забанен</h1><p id="banR" style="color:#ff6b6b;font-size:16px;font-weight:bold;margin-bottom:10px;"></p><p style="font-size:13px;color:#888;">Вход в аккаунт заблокирован. Если вы считаете, что это ошибка — свяжитесь с администрацией.</p><button onclick="logout()">Выйти</button></div>
 <div id="auth"><h1>🏠 Дом</h1><button class="gbtn" id="gBtn"><svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 18.9 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.4-5.1l-6.2-5.2C29.2 35.3 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>Продолжить с Google</button><div class="divd">или по email</div><div class="afrm" id="emS"><input id="emI" type="email" placeholder="email" autocomplete="email"><button id="sendC">Получить код</button><div class="aerr" id="aerr1"></div></div><div class="afrm" id="codS" style="display:none"><p class="hint">Код отправлен на<br><b id="emSh"></b></p><input id="codI" class="cinput" type="text" maxlength="6" placeholder="000000" inputmode="numeric"><button id="vCode">Войти</button><button id="resend" class="lbtn">Отправить заново</button><button id="backEm" class="lbtn">← Изменить email</button><div class="aerr" id="aerr2"></div></div></div>
 <div id="nickScr"><h2>Как тебя зовут?</h2><p>Это твой ник в доме. Потом не поменять.</p><div class="nfrm"><input id="nickIn" type="text" placeholder="Придумай ник" maxlength="20"><button id="nickB">Продолжить</button><div class="nerr" id="nickE"></div></div><button class="switch-acc" onclick="switchAcc()">Войти под другим аккаунтом</button></div>
 <div id="app">
@@ -1414,7 +1350,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
 <div id="afm"><div class="afb"><div class="afh"><h3>⚙️ Админ-панель</h3><button onclick="closeAdmin()">×</button></div><div class="aft"><div class="aftab act" data-t="flats" onclick="afSw('flats')">🏠 Квартиры</div><div class="aftab" data-t="ent" onclick="afSw('ent')">🏢 Подъезды</div><div class="aftab" data-t="house" onclick="afSw('house')">🏘 Дом</div><div class="aftab" data-t="users" onclick="afSw('users')">👥 Юзеры</div></div><div class="afbd" id="afB"></div></div></div>
-<div id="ofm"><div class="ofb"><div class="ofh"><h3><span class="crown">👑</span>OWNER ПАНЕЛЬ<span class="badge">v3.7.1</span></h3><button onclick="closeOwner()">✕</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')"><span class="ic">🏠</span>Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')"><span class="ic">🏢</span>Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')"><span class="ic">🏘</span>Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')"><span class="ic">👥</span>Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')"><span class="ic">🎁</span>Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')"><span class="ic">🎄</span>Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')"><span class="ic">🎭</span>Фейки</div><div class="oftab" data-t="dates" onclick="ofSw('dates')"><span class="ic">📅</span>Даты</div><div class="oftab" data-t="logs" onclick="ofSw('logs')"><span class="ic">📜</span>Логи взломов</div><div class="oftab" data-t="appeals" onclick="ofSw('appeals')"><span class="ic">📩</span>Обратная связь</div></div><div class="ofbd" id="ofB"></div></div>
+<div id="ofm"><div class="ofb"><div class="ofh"><h3><span class="crown">👑</span>OWNER ПАНЕЛЬ<span class="badge">v3.1.0</span></h3><button onclick="closeOwner()">✕</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')"><span class="ic">🏠</span>Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')"><span class="ic">🏢</span>Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')"><span class="ic">🏘</span>Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')"><span class="ic">👥</span>Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')"><span class="ic">🎁</span>Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')"><span class="ic">🎄</span>Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')"><span class="ic">🎭</span>Фейки</div><div class="oftab" data-t="dates" onclick="ofSw('dates')"><span class="ic">📅</span>Даты</div><div class="oftab" data-t="logs" onclick="ofSw('logs')"><span class="ic">📜</span>Логи взломов</div></div><div class="ofbd" id="ofB"></div></div></div>
 <div id="fm"><div class="fmb"><h3 id="fmT">🏠 Квартира</h3><div class="fmt"><div class="fmtab act" data-t="media" onclick="fmSw('media')">📷 Медиа</div><div class="fmtab" data-t="room" id="fmTR" onclick="fmSw('room')" style="display:none">💬 Комната</div><div class="fmtab" data-t="manage" id="fmTM" onclick="fmSw('manage')" style="display:none">👥 Сосед</div><div class="fmtab" data-t="work" onclick="fmSw('work')">💼 Работа</div></div>
 <div class="fmp" id="fmPM"><div class="ms"><label>📷 Квадратное фото</label><div class="sp" id="sp"><div class="pi" id="pi"></div><span id="pe">нет фото</span></div><div class="file-row"><label class="file-btn" id="phBtn"><span>📁</span> <span>Выбрать файл</span><input type="file" id="phI" accept="image/*"></label><span class="file-name" id="phName">Файл не выбран</span></div><div class="sliders" id="slidersWrap" style="display:none;margin-top:12px"><div class="sr"><span class="ic">↔</span><input type="range" id="phX" min="0" max="100" value="50"><span class="vl" id="vX">50</span></div><div class="sr"><span class="ic">↕</span><input type="range" id="phY" min="0" max="100" value="50"><span class="vl" id="vY">50</span></div><div class="sr"><span class="ic">🔍</span><input type="range" id="phZ" min="50" max="300" value="100"><span class="vl" id="vZ">100%</span></div></div></div><div class="ms"><label>🎵 Музыка</label><div class="file-row"><label class="file-btn" id="musBtn"><span>🎵</span> <span>Выбрать файл</span><input type="file" id="musI" accept="audio/*"></label><span class="file-name" id="musName">Файл не выбран</span></div><div id="musC" style="font-size:12px;color:#666678;margin-top:8px"></div></div><div class="fms" id="mst"></div></div>
 <div class="fmp" id="fmPR" style="display:none"><div id="rc"></div><div id="roomDecor" style="display:none" title=""></div><div class="ir"><input id="rIn" placeholder="Сообщение..." maxlength="500"><button id="rPB" class="ib">📎</button><button id="rVB" class="ib vb">🎤</button><button id="rSB">→</button></div></div>
@@ -1426,15 +1362,9 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <audio id="bgA" loop preload="auto"></audio>
 <div id="cfm"><div class="cfm-box"><h3 class="cfm-title" id="cfmTitle">Подтвердите действие</h3><div class="cfm-text" id="cfmText"></div><div class="cfm-actions"><button class="cfm-cancel" id="cfmCancel">Отмена</button><button class="cfm-ok" id="cfmOk">OK</button></div></div></div>
 <div id="sendCoinsM"><div class="sc-box"><h3>💰 Отправить монеты</h3><div class="sc-row"><span>Кому:</span><b id="scNick">—</b></div><div class="sc-row"><span>У него сейчас:</span><b id="scToCoins">0</b></div><div class="sc-row"><span>У тебя:</span><b id="scMyCoins">0</b></div><div class="sc-amt-wrap"><label class="sc-lbl">Сумма</label><input class="sc-inp" id="scAmt" type="number" min="1" max="1000000" placeholder="0" inputmode="numeric"><div class="sc-quick"><button type="button" onclick="scQuick(0.25)">25%</button><button type="button" onclick="scQuick(0.5)">50%</button><button type="button" onclick="scQuick(1)">Всё</button></div></div><div class="sc-err" id="scErr"></div><div class="sc-acts"><button class="cn" onclick="closeSendCoins()">Отмена</button><button class="go" id="scSendBtn" onclick="doSendCoins()">Отправить</button></div></div></div>
-
-<!-- ГРЯДКА -->
 <div id="gardenM" class="em" style="z-index:670"><div class="emb" style="width:640px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title" id="gardenTitle">🌱 Моя грядка</div><button class="pf-close" onclick="closeGarden()">✕</button></div><div class="duty-body" style="overflow-y:auto">
 <div id="gardenMain">
-<div class="garden-toolbar">
-  <button type="button" style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;padding:12px;border:none;border-radius:12px;cursor:pointer;font-weight:800;font-family:inherit;z-index:10;position:relative" onclick="var el=document.getElementById('seedShopM');el.classList.add('open');el.style.cssText='display:flex!important;position:fixed!important;inset:0!important;z-index:999999!important;background:rgba(0,0,0,0.92)!important;align-items:center!important;justify-content:center!important;padding:20px!important;';setTimeout(function(){try{renderSeedShop()}catch(e){console.error('Err:',e)}},50);">🛒 Семена</button>
-  <button type="button" style="background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff;padding:12px;border:none;border-radius:12px;cursor:pointer;font-weight:800;font-family:inherit;z-index:10;position:relative" onclick="var el=document.getElementById('fertShopM');el.classList.add('open');el.style.cssText='display:flex!important;position:fixed!important;inset:0!important;z-index:999999!important;background:rgba(0,0,0,0.92)!important;align-items:center!important;justify-content:center!important;padding:20px!important;';setTimeout(function(){try{renderFertShop()}catch(e){console.error('Err:',e)}},50);">💧 Удобрения</button>
-  <button type="button" style="background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff;padding:12px;border:none;border-radius:12px;cursor:pointer;font-weight:800;font-family:inherit;z-index:10;position:relative" onclick="var el=document.getElementById('invM');el.classList.add('open');el.style.cssText='display:flex!important;position:fixed!important;inset:0!important;z-index:999999!important;background:rgba(0,0,0,0.92)!important;align-items:center!important;justify-content:center!important;padding:20px!important;';setTimeout(function(){try{renderInv()}catch(e){console.error('Err:',e)}},50);">🎒 Инвентарь</button>
-</div>
+<div class="garden-toolbar"><button style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff" onclick="openSeedShop()">🛒 Семена</button><button style="background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff" onclick="openFertShop()">💧 Удобрения</button><button style="background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff" onclick="openInv()">🎒 Инвентарь</button></div>
 <div class="visit-input-row"><input id="visitInp" placeholder="Ник для визита..." maxlength="20" autocomplete="off"><button onclick="doVisit()">👀 Посмотреть</button></div>
 <div class="garden-beds" id="gardenBeds"></div>
 <div class="duty-msg" id="gardenMsg"></div>
@@ -1446,10 +1376,9 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div class="duty-msg" id="visitMsg"></div>
 </div>
 </div></div></div>
-
-<div id="seedShopM" class="em" style="z-index:680"><div class="emb" style="width:560px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title">🛒 Магазин семян</div><button class="pf-close" onclick="document.getElementById('seedShopM').classList.remove('open')">✕</button></div><div class="duty-body" style="overflow-y:auto"><div class="garden-stock-timer" id="seedStockTimer">⏱ Обновление через 00:00</div><div id="seedStockList"></div><div class="duty-msg" id="seedShopMsg"></div></div></div></div>
-<div id="fertShopM" class="em" style="z-index:680"><div class="emb" style="width:500px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">💧 Магазин удобрений</div><button class="pf-close" onclick="document.getElementById('fertShopM').classList.remove('open')">✕</button></div><div class="duty-body"><div class="garden-stock-timer" id="fertStockTimer">⏱ Обновление через 00:00</div><div id="fertStockList"></div><div class="duty-msg" id="fertShopMsg"></div></div></div></div>
-<div id="invM" class="em" style="z-index:690"><div class="emb" style="width:520px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title">🎒 Инвентарь</div><button class="pf-close" onclick="document.getElementById('invM').classList.remove('open')">✕</button></div><div class="duty-body" style="overflow-y:auto"><div style="font-size:13px;color:#a0a0b8;margin-bottom:10px;font-weight:700">🌱 Семена:</div><div class="inv-grid" id="invSeeds"></div><div style="font-size:13px;color:#a0a0b8;margin:16px 0 10px;font-weight:700">💧 Удобрения:</div><div class="inv-grid" id="invFerts"></div><div class="duty-msg" id="invMsg"></div></div></div></div>
+<div id="seedShopM" class="em" style="z-index:680"><div class="emb" style="width:560px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title">🛒 Магазин семян</div><button class="pf-close" onclick="closeSeedShop()">✕</button></div><div class="duty-body" style="overflow-y:auto"><div class="garden-stock-timer" id="seedStockTimer">⏱ Обновление через 00:00</div><div id="seedStockList"></div><div class="duty-msg" id="seedShopMsg"></div></div></div></div>
+<div id="fertShopM" class="em" style="z-index:680"><div class="emb" style="width:500px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">💧 Магазин удобрений</div><button class="pf-close" onclick="closeFertShop()">✕</button></div><div class="duty-body"><div class="garden-stock-timer" id="fertStockTimer">⏱ Обновление через 00:00</div><div id="fertStockList"></div><div class="duty-msg" id="fertShopMsg"></div></div></div></div>
+<div id="invM" class="em" style="z-index:690"><div class="emb" style="width:520px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title">🎒 Инвентарь</div><button class="pf-close" onclick="closeInv()">✕</button></div><div class="duty-body" style="overflow-y:auto"><div style="font-size:13px;color:#a0a0b8;margin-bottom:10px;font-weight:700">🌱 Семена:</div><div class="inv-grid" id="invSeeds"></div><div style="font-size:13px;color:#a0a0b8;margin:16px 0 10px;font-weight:700">💧 Удобрения:</div><div class="inv-grid" id="invFerts"></div><div class="duty-msg" id="invMsg"></div></div></div></div>
 <div id="giftM" class="em" style="z-index:700"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800" id="giftTitle">🎁 Подарить семя</h3><label class="gm-lbl">Кому (ник)</label><input id="giftNickInp" class="gm-inp" maxlength="20" placeholder="Ник получателя" autocomplete="off"><label class="gm-lbl">Количество</label><input id="giftQtyInp" class="gm-inp" type="number" min="1" value="1" inputmode="numeric"><div class="gm-err" id="giftErr"></div><div class="ema"><button class="cn" onclick="closeGift()">Отмена</button><button class="sv" onclick="sendGift()">🎁 Подарить</button></div></div></div>
 <div id="roomInviteM" class="em" style="z-index:750"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800">👥 Приглашение в комнату</h3><div id="riText" style="font-size:14px;color:#c8c8d0;line-height:1.65;margin-bottom:18px"></div><div class="ema"><button class="cn" onclick="declineInvite()">Отклонить</button><button class="sv" onclick="acceptInvite()">✅ Согласиться</button></div></div></div>
 <div id="dtsStar" title="Памятные даты" onclick="openDtsPanel()"><svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%"><g fill="#e60000" stroke="#8b0000" stroke-width="0.15"><rect x="4" y="0" width="1" height="2"/><rect x="4" y="7" width="1" height="2"/><rect x="0" y="4" width="2" height="1"/><rect x="7" y="4" width="2" height="1"/><rect x="1" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/><rect x="2" y="2" width="5" height="5"/><rect x="3" y="3" width="3" height="3" fill="#ff3333"/><rect x="4" y="4" width="1" height="1" fill="#ffcc00"/></g></svg></div>
@@ -1472,6 +1401,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <canvas id="fireworksCv"></canvas>
 <div id="giveM"><div class="give-box"><div class="give-h"><h3 id="giveTitle">🎁 Выдать предмет</h3><button onclick="closeGive()">×</button></div><div class="give-b"><div style="font-size:12px;color:#a0a0b8;margin-bottom:12px">Игрок: <b id="giveNick" style="color:#f5c542">—</b></div><div class="give-tabs"><div class="give-tab act" data-t="frame" onclick="giveSw('frame')">🖼️ Рамка</div><div class="give-tab" data-t="seed" onclick="giveSw('seed')">🌱 Семя</div><div class="give-tab" data-t="fert" onclick="giveSw('fert')">💧 Удобрение</div><div class="give-tab" data-t="coins" onclick="giveSw('coins')">💰 Монеты</div></div><div id="giveBody"></div><div class="give-msg" id="giveMsg"></div></div></div></div>
 <div id="flatPickerM"><div class="fp-box"><div class="fp-h"><h3 id="fpTitle">🏠 Куда заселить</h3><button onclick="closeFlatPicker()">✕</button></div><div class="fp-body" id="fpBody"></div></div></div>
+<div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* === auto-inject CSS for flat-item === */
@@ -1682,12 +1612,10 @@ async function openOwner(){
   ofSw('flats');
 }
 function closeOwner(){
-  if(typeof _appealsAutoUpdate !== 'undefined' && _appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
   if(typeof _logsAutoUpdate !== 'undefined' && _logsAutoUpdate) clearInterval(_logsAutoUpdate);
   $('ofm').classList.remove('open');
 }
 function ofSw(t){
-  if(typeof _appealsAutoUpdate !== 'undefined' && _appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
   if(typeof _logsAutoUpdate !== 'undefined' && _logsAutoUpdate) {
     clearInterval(_logsAutoUpdate);
     _logsAutoUpdate = null;
@@ -1697,7 +1625,7 @@ function ofSw(t){
   document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));
   ofRend();
 }
-async function ofRend(){   const b=$('ofB');if(!b)return;   if(afT==='flats')return afFlats(b);   if(afT==='ent')return afEnt(b);   if(afT==='house')return afHouse(b);   if(afT==='users')return afUsers(b);   if(afT==='give')return ofGive(b);   if(afT==='events')return ofEvents(b);   if(afT==='custom')return ofCustomEvents(b);   if(afT==='fakes')return ofFakes(b);   if(afT==='dates')return ofDates(b);   if(afT==='logs')return ofLogs(b);   if(afT==='appeals')return ofAppeals(b); }
+async function ofRend(){   const b=$('ofB');if(!b)return;   if(afT==='flats')return afFlats(b);   if(afT==='ent')return afEnt(b);   if(afT==='house')return afHouse(b);   if(afT==='users')return afUsers(b);   if(afT==='give')return ofGive(b);   if(afT==='events')return ofEvents(b);   if(afT==='custom')return ofCustomEvents(b);   if(afT==='fakes')return ofFakes(b);   if(afT==='dates')return ofDates(b);   if(afT==='logs')return ofLogs(b); }
 let _logsAutoUpdate = null;
 
 async function ofLogs(b) {
@@ -1746,24 +1674,8 @@ async function ofLogs(b) {
   await renderLogs();
   _logsAutoUpdate = setInterval(renderLogs, 3000); // Обновляем каждые 3 секунды
 }
-
-/* ====== ФИКС ВЕРСИИ БЕЙДЖА (Запуск 3 раза) ====== */
-const APP_VERSION='3.7.1';  // ← тут поставь свой номер
-(function(){
-  function render(){
-    const el=document.getElementById('verText');
-    if(!el) return;
-    el.textContent='v'+APP_VERSION;
-    const b=document.getElementById('verBadge');
-    if(b){
-      b.onclick=function(){
-        alert('Дом — версия сайта\n\nВерсия: '+APP_VERSION+'\nСейчас: '+new Date().toLocaleString('ru-RU'))
-      }
-    }
-  }
-  render();
-})();
-
+const APP_VERSION='3.7.0';
+(function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
 function giveLoadUser(){const nick=$('giveNickField')?.value.trim();if(!nick)return showToast('Введи ник','error');if(!allProfiles.find(p=>p.nick===nick))return showToast('Игрок не найден','error');giveTarget=nick;renderGiveInline()}
@@ -2747,80 +2659,7 @@ function closeAnn(){$('annM').classList.remove('open')}
 async function postAnn(){const t=$('annInp').value.trim();if(!t)return;const hid=_annHouseId||Number(curHouse);const{data,error}=await sb.rpc('owner_announce',{p_house:hid,p_text:t});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');closeAnn();await loadHouses();if(hid===Number(curHouse))showAnn(t);if(afT==='house')afRend()}
 async function delAnn(hid){const h=hid||Number(curHouse);const{data,error}=await sb.rpc('owner_announce',{p_house:h,p_text:''});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await loadHouses();if(afT==='house')afRend()}
 function showAnn(t){const b=$('annBanner');if(!b)return;if(!t){b.classList.remove('on');return}$('annText').textContent=t;b.classList.add('on')}
-async function openFm(n){document.body.style.overflow='hidden';const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
-async function submitAppeal() {
-  const msg = $('appealMsg').value.trim();
-  const st = $('appealStatus');
-  const btn = $('appealBtn');
-  
-  if (!msg) { st.style.color = '#ff6b6b'; st.textContent = 'Напиши причину...'; return; }
-  
-  btn.disabled = true; btn.textContent = 'Отправка...'; st.textContent = '';
-  
-  const { data, error } = await sb.rpc('submit_appeal', { p_message: msg });
-  
-  if (error || (data && data.ok === false)) {
-    st.style.color = '#ff6b6b'; st.textContent = error ? error.message : data.error;
-    btn.disabled = false; btn.textContent = '📩 Связаться с Администрацией';
-    return;
-  }
-  st.style.color = '#8bc34a'; st.textContent = '✅ Запрос отправлен! Ожидайте.';
-  btn.textContent = 'Отправлено';
-}
-let _appealsAutoUpdate = null;
-
-async function ofAppeals(b) {
-  if(!isOwner()){ b.innerHTML='<div class="afe">Только владелец</div>'; return; }
-  if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
-
-  async function renderAppeals() {
-    if(afT !== 'appeals' || !$('ofm').classList.contains('open')) {
-      if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
-      return;
-    }
-
-    const { data, error } = await sb.rpc('owner_get_appeals');
-    if(error){ b.innerHTML='<div class="afe">Ошибка: '+error.message+'</div>'; return; }
-    if(!data || !data.length){ b.innerHTML='<div class="afe">Нет новых запросов на разбан.</div>'; return; }
-    
-    let html = '<div class="of-hint">📩 <b>Обратная связь.</b> Запросы от забаненных пользователей.</div>';
-    
-    html += data.map(l => {
-      const d = new Date(l.created_at);
-      const p = n => String(n).padStart(2, '0');
-      const timeStr = `${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(-2)};${p(d.getHours())}:${p(d.getMinutes())}`;
-      
-      return `<div class="of-user-row" style="border-color:#ffaa00; background:rgba(255,170,0,0.05); flex-direction:column; align-items:flex-start; gap:10px;">
-        <div style="width:100%; display:flex; justify-content:space-between;">
-          <b style="color:#a06bff; font-size:14px;">${eh(l.nick)}</b>
-          <span style="color:#888; font-size:11px;">${timeStr}</span>
-        </div>
-        <div style="font-size:13px; color:#ddd; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; width:100%; white-space:pre-wrap;">${eh(l.message)}</div>
-        <div style="display:flex; gap:8px; width:100%; margin-top:5px;">
-          <button class="afbtn g" style="flex:1" onclick="resolveAppeal(${l.id}, 'unban', this)">✅ Разбанить</button>
-          <button class="afbtn r" style="flex:1" onclick="resolveAppeal(${l.id}, 'keep', this)">🚫 Оставить (Бан)</button>
-        </div>
-      </div>`;
-    }).join('');
-    
-    b.innerHTML = html;
-  }
-
-  await renderAppeals();
-  _appealsAutoUpdate = setInterval(renderAppeals, 3000);
-}
-
-async function resolveAppeal(id, action, btn) {
-  btn.disabled = true; btn.textContent = '...';
-  const { data, error } = await sb.rpc('owner_resolve_appeal', { p_id: id, p_action: action });
-  
-  if(error || (data && data.ok === false)) {
-    showToast('Ошибка: ' + (error ? error.message : data.error), 'error');
-    btn.disabled = false; btn.textContent = action === 'unban' ? '✅ Разбанить' : '🚫 Оставить (Бан)';
-    return;
-  }
-  showToast(action === 'unban' ? '✅ Пользователь разбанен' : '🚫 Запрос отклонён', 'success');
-}
+async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
 function upFm(){
   const f=flats[fmN];if(!f)return closeFm();
   const owners=flatOwners(f);
@@ -2869,7 +2708,7 @@ async function promoteR(ownerHex){
 function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');const m={media:'fmPM',room:'fmPR',manage:'fmPN',work:'fmPW'};$(m[t]).style.display='flex';$('svB').style.display=t==='media'?'block':'none';if(t==='work')renderWork();if(t==='room'){rcId='h'+curHouse+'_flat'+fmN+'_room';clrCh($('rc'));loadRM();subRM();loadRoomItem();if(rcPt){clearInterval(rcPt);rcPt=null}rcPt=setInterval(loadRM,3000);startMus(rcId).then(url=>{musUrl=url;showMusBtn(url,'🎵 Включить')}).catch(()=>{showMusBtn(null)})}else{if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}}}
 async function loadRoomItem(){try{const{data}=await sb.from('profiles').select('room_item_id').eq('nick',me).maybeSingle();const id=(data&&data.room_item_id)||null;const el=$('roomDecor');if(!el)return;if(!id){el.style.display='none';el.textContent='';el.title='';return}const it=ITEMS.find(x=>x.id===id);if(!it){el.style.display='none';return}el.textContent=it.icon;el.title=it.name;el.style.display='block'}catch(e){const el=$('roomDecor');if(el)el.style.display='none'}}
 async function setRoomItem(id){if(id && !(myOwnedItems||[]).includes(id)) return showToast('Не куплено','error');const{data,error}=await sb.rpc('set_room_item',{p_item_id:id||null});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');if(id)roomItemCache[meEnc]=id;else delete roomItemCache[meEnc];showToast(id?'✅ Поставлено в комнату':'🗑 Убрано','success');await loadRoomItem();renderFlats();if($('pf').classList.contains('open')) openProfile(null)}
-function closeFm(){document.body.style.overflow='';if(workActive)stopWork(false);stopMus();if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;$('fm').classList.remove('open');fmN=null}
+function closeFm(){if(workActive)stopWork(false);stopMus();if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;$('fm').classList.remove('open');fmN=null}
 async function kickR(o){
   const f=flats[fmN];if(!f)return;
   const owners=flatOwners(f);
