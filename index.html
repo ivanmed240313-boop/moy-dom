@@ -1428,7 +1428,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div id="sendCoinsM"><div class="sc-box"><h3>💰 Отправить монеты</h3><div class="sc-row"><span>Кому:</span><b id="scNick">—</b></div><div class="sc-row"><span>У него сейчас:</span><b id="scToCoins">0</b></div><div class="sc-row"><span>У тебя:</span><b id="scMyCoins">0</b></div><div class="sc-amt-wrap"><label class="sc-lbl">Сумма</label><input class="sc-inp" id="scAmt" type="number" min="1" max="1000000" placeholder="0" inputmode="numeric"><div class="sc-quick"><button type="button" onclick="scQuick(0.25)">25%</button><button type="button" onclick="scQuick(0.5)">50%</button><button type="button" onclick="scQuick(1)">Всё</button></div></div><div class="sc-err" id="scErr"></div><div class="sc-acts"><button class="cn" onclick="closeSendCoins()">Отмена</button><button class="go" id="scSendBtn" onclick="doSendCoins()">Отправить</button></div></div></div>
 <div id="gardenM" class="em" style="z-index:670"><div class="emb" style="width:640px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title" id="gardenTitle">🌱 Моя грядка</div><button class="pf-close" onclick="closeGarden()">✕</button></div><div class="duty-body" style="overflow-y:auto">
 <div id="gardenMain">
-<div class="garden-toolbar"><button style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff" onclick="openSeedShop()">🛒 Семена</button><button style="background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff" onclick="openFertShop()">💧 Удобрения</button><button style="background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff" onclick="openInv()">🎒 Инвентарь</button></div>
+<div class="garden-toolbar">   <button type="button" class="gt-btn" data-gt="seed" style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;padding:12px 16px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;pointer-events:auto;position:relative;z-index:5">🛒 Семена</button>   <button type="button" class="gt-btn" data-gt="fert" style="background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff;padding:12px 16px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;pointer-events:auto;position:relative;z-index:5">💧 Удобрения</button>   <button type="button" class="gt-btn" data-gt="inv" style="background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff;padding:12px 16px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;font-weight:800;font-size:14px;pointer-events:auto;position:relative;z-index:5">🎒 Инвентарь</button> </div>
 <div class="visit-input-row"><input id="visitInp" placeholder="Ник для визита..." maxlength="20" autocomplete="off"><button onclick="doVisit()">👀 Посмотреть</button></div>
 <div class="garden-beds" id="gardenBeds"></div>
 <div class="duty-msg" id="gardenMsg"></div>
@@ -3194,6 +3194,114 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
   setInterval(checkUpdate, 30000);
   document.addEventListener('visibilitychange', function(){if(!document.hidden) checkUpdate();});
   window.addEventListener('focus', checkUpdate);
+})();
+</script>
+<script>
+/* ====== ПЕРЕЗАПИСЬ ФУНКЦИЙ ГРЯДКИ (не удаляет старое, просто замещает) ====== */
+(function(){
+  'use strict';
+  
+  window.openGarden = function(){
+    console.log('🌱 openGarden → новая версия');
+    try{ closeUserMenu(); }catch(e){}
+    if(typeof me === 'undefined' || !me){ showToast('Перелогинься','error'); return; }
+    const el = document.getElementById('gardenM');
+    if(!el){ console.error('❌ #gardenM не найден'); return; }
+    el.classList.add('open');
+    el.style.display = 'flex';
+    el.style.zIndex = '670';
+    try{ if(typeof backToMyGarden === 'function') backToMyGarden(); }catch(e){ console.error(e); }
+    try{ if(typeof renderMyGarden === 'function') renderMyGarden(); }catch(e){ console.error(e); }
+    if(window._gardenTick) clearInterval(window._gardenTick);
+    window._gardenTick = setInterval(function(){
+      const gm = document.getElementById('gardenM');
+      if(gm && gm.classList.contains('open')){
+        try{ renderMyGarden(); }catch(e){}
+      } else {
+        clearInterval(window._gardenTick);
+        window._gardenTick = null;
+      }
+    }, 800);
+  };
+  
+  window.closeGarden = function(){
+    const el = document.getElementById('gardenM');
+    if(el) el.classList.remove('open');
+    if(window._gardenTick){ clearInterval(window._gardenTick); window._gardenTick = null; }
+  };
+  
+  window.openSeedShop = function(){
+    console.log('🛒 openSeedShop → новая версия');
+    const el = document.getElementById('seedShopM');
+    if(!el){ console.error('❌ #seedShopM не найден в HTML!'); showToast('Модалка семян не найдена','error'); return; }
+    el.classList.add('open');
+    el.style.display = 'flex';
+    el.style.zIndex = '99999';
+    try{ if(typeof renderSeedShop === 'function') renderSeedShop(); }catch(e){ console.error(e); }
+    if(window._seedTick) clearInterval(window._seedTick);
+    window._seedTick = setInterval(function(){
+      const ss = document.getElementById('seedShopM');
+      if(ss && ss.classList.contains('open')){
+        try{ renderSeedShop(); }catch(e){}
+      } else {
+        clearInterval(window._seedTick);
+        window._seedTick = null;
+      }
+    }, 1000);
+  };
+  
+  window.closeSeedShop = function(){
+    const el = document.getElementById('seedShopM');
+    if(el) el.classList.remove('open');
+    if(window._seedTick){ clearInterval(window._seedTick); window._seedTick = null; }
+  };
+  
+  window.openFertShop = function(){
+    console.log('💧 openFertShop → новая версия');
+    const el = document.getElementById('fertShopM');
+    if(!el){ console.error('❌ #fertShopM не найден'); showToast('Модалка удобрений не найдена','error'); return; }
+    el.classList.add('open');
+    el.style.display = 'flex';
+    el.style.zIndex = '99999';
+    try{ if(typeof renderFertShop === 'function') renderFertShop(); }catch(e){ console.error(e); }
+  };
+  
+  window.closeFertShop = function(){
+    const el = document.getElementById('fertShopM');
+    if(el) el.classList.remove('open');
+  };
+  
+  window.openInv = function(){
+    console.log('🎒 openInv → новая версия');
+    const el = document.getElementById('invM');
+    if(!el){ console.error('❌ #invM не найден'); showToast('Модалка инвентаря не найдена','error'); return; }
+    el.classList.add('open');
+    el.style.display = 'flex';
+    el.style.zIndex = '99999';
+    try{ if(typeof renderInv === 'function') renderInv(); }catch(e){ console.error(e); }
+  };
+  
+  window.closeInv = function(){
+    const el = document.getElementById('invM');
+    if(el) el.classList.remove('open');
+    if(typeof _invMode !== 'undefined') _invMode = 'view';
+    if(typeof _plantBedIdx !== 'undefined') _plantBedIdx = null;
+  };
+  
+  // Резервный обработчик: если onclick не сработал — сработает этот
+  document.addEventListener('click', function(e){
+    const btn = e.target.closest('.gt-btn');
+    if(!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const a = btn.dataset.gt;
+    console.log('👆 Резервный клик по кнопке:', a);
+    if(a === 'seed') window.openSeedShop();
+    else if(a === 'fert') window.openFertShop();
+    else if(a === 'inv') window.openInv();
+  });
+  
+  console.log('✅ Функции грядки обновлены (старые не тронуты)');
 })();
 </script>
 </body>
