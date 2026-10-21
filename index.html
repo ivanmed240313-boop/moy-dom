@@ -93,6 +93,11 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 @keyframes acceptPulse{0%,100%{box-shadow:0 6px 24px rgba(0,0,0,.5),0 0 0 0 rgba(76,175,80,.6)}50%{box-shadow:0 6px 24px rgba(0,0,0,.5),0 0 0 18px rgba(76,175,80,0)}}
 @keyframes callMiniIn{from{opacity:0;transform:translateX(-50%) translateY(-14px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @keyframes roomItemFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+@keyframes houseSlideOutLeft { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(-100%); opacity: 0; } }
+@keyframes houseSlideInRight { 0% { transform: translateX(100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+@keyframes houseSlideOutRight { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
+@keyframes houseSlideInLeft { 0% { transform: translateX(-100%); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+#houseInner { display: flex; gap: 26px; justify-content: center; align-items: center; width: 100%; }
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(245,197,66,.15);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(245,197,66,.3)}
 #seasons{position:fixed;inset:0;z-index:-1;pointer-events:none;display:block;background:transparent}
@@ -2137,8 +2142,73 @@ async function loadFlats(){const{data}=await sb.from('flats').select('*').eq('ho
 async function loadHM(){const ns=[];Object.values(flats).forEach(f=>{flatOwners(f).forEach(o=>ns.push(o))});if(!ns.length){hm={};return}const{data}=await sb.from('user_media').select('*').in('nick',ns);hm={};(data||[]).forEach(m=>hm[m.nick]=m)}
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 function renderHouses(){const b=$('hb');b.innerHTML='';houses.forEach(h=>{const e=document.createElement('div');e.className='hbtn'+(h.id===curHouse?' act':'')+(h.blocked?' blk':'');e.textContent=h.blocked?'🚫 '+h.name:h.name;e.onclick=()=>switchHouse(h.id);magnetize(e);b.appendChild(e)})}
-async function switchHouse(i){curHouse=i;houseData=houses.find(h=>h.id===i)||null;renderHouses();await loadFlats();await loadHM();buildHouse();loadHouseNews();subHouseNews();showAnn(houseData?.announcement||null)}
-function buildHouse(){const h=$('house');h.innerHTML='';let n=1;for(let e=1;e<=3;e++){const w=document.createElement('div');w.className='ewr';const en=document.createElement('div');en.className='ent';for(let f=0;f<5;f++){const fl=document.createElement('div');fl.className='flr';for(let a=0;a<2;a++){const ft=document.createElement('div');ft.className='flat';ft.dataset.number=n;fl.appendChild(ft);magnetize(ft);n++}en.appendChild(fl)}const g=gloEnt(curHouse,e);const b=document.createElement('button');b.className='ebtn';b.dataset.global=g;b.textContent='🏢 Подъезд '+g;b.onclick=()=>openEntChat(g);magnetize(b);w.appendChild(en);w.appendChild(b);h.appendChild(w)}renderFlats()}
+async function switchHouse(i){
+  if(i===curHouse && houses.length>0) return; // Не перезагружаем тот же дом
+  
+  // Определяем направление (если новый ID больше — едем вправо, иначе влево)
+  const direction = (Number(i) > Number(curHouse)) ? 'next' : 'prev';
+  const inner = $('houseInner');
+  
+  // 1. Анимация УХОДА старого дома
+  if(inner){
+    inner.style.animation = direction === 'next' ? 'houseSlideOutLeft 0.3s ease-in forwards' : 'houseSlideOutRight 0.3s ease-in forwards';
+    await new Promise(r => setTimeout(r, 250)); // Ждем полсекунды
+  }
+  
+  // 2. Меняем данные и строим новый дом
+  curHouse=i;
+  houseData=houses.find(h=>h.id===i)||null;
+  renderHouses();
+  await loadFlats();
+  await loadHM();
+  buildHouse();
+  loadHouseNews();
+  subHouseNews();
+  showAnn(houseData?.announcement||null);
+  
+  // 3. Анимация ПРИХОДА нового дома
+  const newInner = $('houseInner');
+  if(newInner){
+    newInner.style.animation = direction === 'next' ? 'houseSlideInRight 0.3s ease-out forwards' : 'houseSlideInLeft 0.3s ease-out forwards';
+    setTimeout(() => { newInner.style.animation = ''; }, 300); // Очищаем стили после завершения
+  }
+}
+function buildHouse(){
+  const h=$('house');
+  h.innerHTML='<div id="houseInner"></div>'; // Создаем обертку для анимации
+  const inner=$('houseInner');
+  let n=1;
+  for(let e=1;e<=3;e++){
+    const w=document.createElement('div');
+    w.className='ewr';
+    const en=document.createElement('div');
+    en.className='ent';
+    for(let f=0;f<5;f++){
+      const fl=document.createElement('div');
+      fl.className='flr';
+      for(let a=0;a<2;a++){
+        const ft=document.createElement('div');
+        ft.className='flat';
+        ft.dataset.number=n;
+        fl.appendChild(ft);
+        magnetize(ft);
+        n++;
+      }
+      en.appendChild(fl);
+    }
+    const g=gloEnt(curHouse,e);
+    const b=document.createElement('button');
+    b.className='ebtn';
+    b.dataset.global=g;
+    b.textContent='🏢 Подъезд '+g;
+    b.onclick=()=>openEntChat(g);
+    magnetize(b);
+    w.appendChild(en);
+    w.appendChild(b);
+    inner.appendChild(w); // Добавляем в обертку
+  }
+  renderFlats();
+}
 function applyPh(el,m){if(!m||!m.photo_url){el.style.backgroundImage='';el.classList.remove('has-photo');return}el.style.backgroundImage='url("'+m.photo_url+'")';el.style.backgroundSize=(m.photo_zoom??100)+'% '+(m.photo_zoom??100)+'%';el.style.backgroundPosition=(m.photo_x??50)+'% '+(m.photo_y??50)+'%';el.classList.add('has-photo')}
 function renderFlats(){const myE=myEnt();const off=(Number(curHouse)-1)*30;document.querySelectorAll('.flat').forEach(el=>{const n=el.dataset.number,f=flats[n];el.classList.remove('mine','taken','has-photo','blk');FRAMES.forEach(f=>el.classList.remove('frame-'+f.id));el.style.backgroundImage='';el.querySelectorAll(':scope > .halo, :scope > .horn, :scope > .flat-item').forEach(x=>x.remove());if(isFlatBlk(Number(n)))el.classList.add('blk');const owners=flatOwners(f);const dn=off+Number(n);if(!owners.length)el.innerHTML='<div class="num">'+dn+'</div>';else{const meIn=owners.includes(meEnc);if(meIn)el.classList.add('mine');else el.classList.add('taken');const names=owners.map(de);let h='<div class="num">'+dn+'</div><div class="nick">'+(meIn&&owners[0]===meEnc?'ты':eh(names[0]))+'</div>';if(names[1])h+='<div class="nick2">'+eh(names[1])+'</div>';const riId=roomItemCache[owners[0]];if(riId){const it=ITEMS.find(x=>x.id===riId);if(it)h+='<span class="flat-item">'+it.icon+'</span>';}el.innerHTML=h;applyPh(el,hm[owners[0]]);const fr=getFrame(de(owners[0]));if(fr&&fr!=='none'){el.classList.add('frame-'+fr);decorateFrame(el,fr)}}el.onclick=()=>clickFlat(Number(n))});document.querySelectorAll('.ebtn').forEach(b=>{const g=Number(b.dataset.global),im=myE===g;b.classList.toggle('mine',im);b.classList.toggle('blk',isEntBlk(g));b.classList.toggle('oth',!adminMode&&!im)})}
 async function clickFlat(n){
