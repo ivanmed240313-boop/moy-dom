@@ -2001,7 +2001,59 @@ function renderWork(){const wrap=$('workTasks');if(!wrap)return;if(workActive){w
 function clearWorkHandlers(){if(workGameHandlers&&workGameHandlers.extraCleanup)workGameHandlers.extraCleanup();workGameHandlers=null}
 function startWork(id){const task=WORK_TASKS.find(t=>t.id===id);if(!task||workActive||workCdLeft(id)>0)return;workTaskId=id;workActive=true;workCaught=0;workStart=Date.now();$('workTasks').style.display='none';$('workGame').style.display='block';const target=task.target||8;$('workTotal').textContent=target;$('workScore').textContent='0';$('workTime').textContent='15.0';const f=$('workField');f.innerHTML='';f.className='work-field '+id;if(id==='dishes')initDishesGame(f,target);else if(id==='vacuum')initVacuumGame(f,target);else initFlowersGame(f,target);if(workTimer)clearInterval(workTimer);workTimer=setInterval(()=>{const left=Math.max(0,15-(Date.now()-workStart)/1000);$('workTime').textContent=left.toFixed(1);if(left<=0)stopWork(true)},80)}
 function initDishesGame(field,target){for(let i=0;i<target;i++){const d=1+Math.floor(Math.random()*3);const p=document.createElement('div');p.className='plate d'+d;p.style.left=(10+Math.random()*(field.clientWidth-70))+'px';p.style.top=(10+Math.random()*(field.clientHeight-70))+'px';p.dataset.dirt=d;p.onclick=()=>{if(!workActive)return;let x=parseInt(p.dataset.dirt)-1;p.dataset.dirt=x;p.classList.remove('d1','d2','d3');if(x>0)p.classList.add('d'+x);else{p.classList.add('clean-mark');p.textContent='✨';p.style.pointerEvents='none';workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}};field.appendChild(p)}}
-function initVacuumGame(field,target){const dirts=[];for(let i=0;i<target;i++){const s=32+Math.random()*20;const el=document.createElement('div');el.className='vac-dirt';el.style.width=s+'px';el.style.height=s*0.7+'px';el.style.left=(Math.random()*(field.clientWidth-s-8)+4)+'px';el.style.top=(Math.random()*(field.clientHeight-s*0.7-8)+4)+'px';field.appendChild(el);dirts.push({el,x:parseFloat(el.style.left)+s/2,y:parseFloat(el.style.top)+s*0.35,hp:2,alive:true})}const cur=document.createElement('div');cur.className='vac-cursor';field.appendChild(cur);const onMove=(e)=>{if(!workActive)return;const r=field.getBoundingClientRect();const cx=e.clientX-r.left,cy=e.clientY-r.top;cur.classList.add('on');cur.style.left=cx+'px';cur.style.top=cy+'px';for(const d of dirts){if(!d.alive)continue;const dx=d.x-cx,dy=d.y-cy;const dist=Math.sqrt(dx*dx+dy*dy);if(dist<60){d.hp-=0.5;if(d.hp<=0){d.alive=false;d.el.classList.add('cleaned');workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}}}};field.addEventListener('mousemove',onMove);workGameHandlers={field,onMove,extraCleanup:()=>field.removeEventListener('mousemove',onMove)}}
+function initVacuumGame(field, target) {
+  const dirts = [];
+  for (let i = 0; i < target; i++) {
+    const s = 32 + Math.random() * 20;
+    const el = document.createElement('div');
+    el.className = 'vac-dirt';
+    el.style.width = s + 'px';
+    el.style.height = s * 0.7 + 'px';
+    el.style.left = (Math.random() * (field.clientWidth - s - 8) + 4) + 'px';
+    el.style.top = (Math.random() * (field.clientHeight - s * 0.7 - 8) + 4) + 'px';
+    field.appendChild(el);
+    dirts.push({ el: el, x: parseFloat(el.style.left) + s / 2, y: parseFloat(el.style.top) + s * 0.35, hp: 2, alive: true });
+  }
+  const cur = document.createElement('div');
+  cur.className = 'vac-cursor';
+  field.appendChild(cur);
+  
+  const onMove = (e) => {
+    if (!workActive) return;
+    const r = field.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+    cur.classList.add('on');
+    cur.style.left = cx + 'px';
+    cur.style.top = cy + 'px';
+    for (const d of dirts) {
+      if (!d.alive) continue;
+      const dx = d.x - cx, dy = d.y - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 60) {
+        d.hp -= 0.5;
+        if (d.hp <= 0) {
+          d.alive = false;
+          d.el.classList.add('cleaned');
+          workCaught++;
+          $('workScore').textContent = workCaught;
+          if (workCaught >= target) stopWork(true);
+        }
+      }
+    }
+  };
+  
+  field.addEventListener('mousemove', onMove);
+  field.addEventListener('touchmove', onMove, { passive: false });
+  workGameHandlers = { 
+    field: field, 
+    onMove: onMove, 
+    extraCleanup: () => {
+      field.removeEventListener('mousemove', onMove);
+      field.removeEventListener('touchmove', onMove);
+    } 
+  };
+}
 
 function initFlowersGame(field,target){const r=field.getBoundingClientRect();const spacing=Math.min(130,r.width/(target+0.5));const startX=(r.width-(target-1)*spacing)/2;for(let i=0;i<target;i++){const w=80;const el=document.createElement('div');el.className='flower';el.style.left=(startX+i*spacing-w/2)+'px';el.style.top=(r.height/2-40)+'px';el.style.width=w+'px';el.innerHTML='<div class="flower-icon" style="font-size:56px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';field.appendChild(el);const fill=el.querySelector('.flower-fill');const icon=el.querySelector('.flower-icon');let prog=0,watering=false,tick=null,doneFlower=false;const startW=()=>{if(!workActive||doneFlower)return;watering=true;if(tick)clearInterval(tick);tick=setInterval(()=>{if(!workActive||!watering||doneFlower)return;prog=Math.min(100,prog+8);fill.style.width=prog+'%';if(prog>=100){doneFlower=true;watering=false;clearInterval(tick);el.classList.add('watered','full');icon.textContent='🌸';workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}},60)};const stopW=()=>{watering=false;if(tick){clearInterval(tick);tick=null}};el.addEventListener('mousedown',startW);el.addEventListener('mouseup',stopW);el.addEventListener('mouseleave',stopW);el.addEventListener('touchstart',e=>{e.preventDefault();startW()},{passive:false});el.addEventListener('touchend',e=>{e.preventDefault();stopW()},{passive:false});el.addEventListener('touchcancel',stopW)}}
     const stopW=()=>{watering=false;if(tick){clearInterval(tick);tick=null}};
@@ -2088,7 +2140,7 @@ async function setFrame(id){if(id!=='none'&&!myOwnedFrames.includes(id))return s
 function renderNeonPicker(){const cur=getNeonRGB();const cI=$('npColor');if(cI&&document.activeElement!==cI)cI.value=rgbToHex(cur[0],cur[1],cur[2]);const rI=$('npRgb');if(rI&&document.activeElement!==rI)rI.value=cur.join(', ');const box=$('npSaved');if(!box)return;const saved=getSavedNeons();if(!saved.length){box.innerHTML='<span style="color:#666678;font-size:12px">Пусто</span>';return}box.innerHTML=saved.map(key=>{const p=key.split(',').map(Number);const hex=rgbToHex(p[0],p[1],p[2]);return '<div class="np-chip" style="background:'+hex+'" onclick="applyNeonPreset(\''+key+'\')"><button class="np-x" onclick="event.stopPropagation();removeNeonPreset(\''+key+'\')">✕</button></div>'}).join('')}
 function applyNeonPreset(key){const p=key.split(',').map(Number);if(p.length>=3)setNeonRGB(p[0],p[1],p[2]);renderNeonPicker()}
 async function loadCoins(){try{const{data}=await sb.from('profiles').select('coins,active_frame,owned_frames,owned_items,room_item_id').eq('nick',me).maybeSingle();myCoins=(data&&data.coins)||0;myFrame=(data&&data.active_frame)||'none';myOwnedFrames=(data&&data.owned_frames)||['none'];myOwnedItems=(data&&data.owned_items)||[];if(data&&data.room_item_id)roomItemCache[meEnc]=data.room_item_id}catch(e){myCoins=0;myFrame='none';myOwnedFrames=['none'];myOwnedItems=[]}updateCoinsUI()}
-let _coinsSyncTimer=null;
+var _coinsSyncTimer=null;
 function updateCoinsUI(){
   const b=$('myCoinsBadge');if(b)b.textContent='💰 '+myCoins;
   const d=$('dutyCoins');if(d)d.textContent=myCoins;
