@@ -1559,34 +1559,15 @@ function enterAdmin(){if(!hasAdmin())return showToast('Только админа
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');$('adminB').classList.remove('on');$('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
 function triggerHackStrike(actionName) {
   if (isBanned) return;
-  
-  // Если имя функции не передали, вытаскиваем его из стека вызовов
-  if (!actionName || actionName === 'Неизвестное действие') {
-    try {
-      const stack = new Error().stack.split('\n');
-      for (let line of stack) {
-        const match = line.match(/at\s+([a-zA-Z0-9_$]+)\s+\(/);
-        // Пропускаем системные функции и обёртки
-        if (match && !['triggerHackStrike', 'guardOwner', 'guardAdmin', 'anonymous', 'eval', 'Promise'].includes(match[1])) {
-          actionName = match[1]; // Нашли название функции!
-          break;
-        }
-      }
-    } catch (e) {}
-  }
-  
   actionName = actionName || 'Неизвестное действие';
   
   console.warn('🚨 ВЗЛОМ! Вызвана функция:', actionName);
   
   sb.rpc('report_hack_attempt', { p_action: actionName }).then(response => {
-    console.log('🔴 ПОЛНЫЙ ОТВЕТ БАЗЫ:', JSON.stringify(response));
-    
     if (response.error) {
       console.error('❌ Ошибка базы:', response.error);
       return;
     }
-    
     const data = response.data;
     if (!data) return;
 
@@ -1600,26 +1581,22 @@ function triggerHackStrike(actionName) {
     console.error('❌ Критическая ошибка сети:', err);
   });
 }
-async function guardAdmin(){
-  if(!hasAdmin()){ triggerHackStrike(); return false; }
-  const { data, error } = await sb.rpc('check_my_admin_status');
-  if(error || !data){ triggerHackStrike(); return false; }
+async function guardAdmin(actionName) {
+  if(!hasAdmin()){ triggerHackStrike(actionName || 'Панель админа'); return false; }
+  let data = null, error = null;
+  try { ({ data, error } = await sb.rpc('check_my_admin_status')); } catch(e){ error = e; }
+  if(error === null && data === false){ triggerHackStrike(actionName || 'Панель админа'); return false; }
   return true;
 }
-async function guardOwner(){
-  if(!isOwner()){ triggerHackStrike(); return false; }
+async function guardOwner(actionName) {
+  if(!isOwner()){ triggerHackStrike(actionName || 'Панель OWNER'); return false; }
   let data = null, error = null;
-  try { ({ data, error } = await sb.rpc('check_my_owner_status')); }
-  catch(e){ error = e; }
-  if(error === null && data === false){ triggerHackStrike(); return false; }
+  try { ({ data, error } = await sb.rpc('check_my_owner_status')); } catch(e){ error = e; }
+  if(error === null && data === false){ triggerHackStrike(actionName || 'Панель OWNER'); return false; }
   return true;
 }
 async function openAdmin(){
-  const { data: isRealAdmin, error } = await sb.rpc('check_my_admin_status');
-  if(error || !isRealAdmin){
-    triggerHackStrike();
-    return;
-  }
+  if(!(await guardAdmin('openAdmin'))) return;
   if(!adminMode) return showToast('Включи админ-режим','error');
   _afTarget='afB';
   $('afm').classList.add('open');
@@ -1697,7 +1674,7 @@ async function ofLogs(b) {
   await renderLogs();
   _logsAutoUpdate = setInterval(renderLogs, 3000); // Обновляем каждые 3 секунды
 }
-const APP_VERSION='3.6.7';
+const APP_VERSION='3.7.0';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
