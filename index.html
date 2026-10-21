@@ -154,6 +154,19 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 .custom-pill{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:22px;background:linear-gradient(135deg,rgba(160,107,255,.95),rgba(107,74,255,.95));color:#fff;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(107,74,255,.45),0 0 0 1px rgba(255,255,255,.15);pointer-events:auto;animation:giftPulse 3s ease-in-out infinite}
 .custom-pill .ic{font-size:16px}
 @media(max-width:768px){#customPills{top:62px;gap:6px}.custom-pill{padding:6px 12px;font-size:12px}}
+/* Фикс для вкладок в квартире на телефоне */
+.fmt { display: flex; gap: 6px; margin-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.06); padding-bottom: 12px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.fmt::-webkit-scrollbar { display: none; }
+.fmtab { flex-shrink: 0; }
+.fma { display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
+.fma button { flex: 1; min-width: 80px; text-align: center; }
+
+@media(max-width: 768px) {
+  .fmb { width: 100%; max-width: 100vw; padding: 16px; border-radius: 20px; }
+  .fma { flex-direction: column; gap: 8px; }
+  .fma button { width: 100%; padding: 14px; }
+  #houseInner { gap: 10px; }
+}
 .layout{display:flex;height:100vh}
 .sb{width:320px;background:linear-gradient(180deg,rgba(20,20,26,.92),rgba(14,14,20,.96));border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
 .sb-h{padding:14px 18px;font-size:15px;font-weight:800;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-shrink:0}
@@ -1990,40 +2003,7 @@ function startWork(id){const task=WORK_TASKS.find(t=>t.id===id);if(!task||workAc
 function initDishesGame(field,target){for(let i=0;i<target;i++){const d=1+Math.floor(Math.random()*3);const p=document.createElement('div');p.className='plate d'+d;p.style.left=(10+Math.random()*(field.clientWidth-70))+'px';p.style.top=(10+Math.random()*(field.clientHeight-70))+'px';p.dataset.dirt=d;p.onclick=()=>{if(!workActive)return;let x=parseInt(p.dataset.dirt)-1;p.dataset.dirt=x;p.classList.remove('d1','d2','d3');if(x>0)p.classList.add('d'+x);else{p.classList.add('clean-mark');p.textContent='✨';p.style.pointerEvents='none';workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}};field.appendChild(p)}}
 function initVacuumGame(field,target){const dirts=[];for(let i=0;i<target;i++){const s=32+Math.random()*20;const el=document.createElement('div');el.className='vac-dirt';el.style.width=s+'px';el.style.height=s*0.7+'px';el.style.left=(Math.random()*(field.clientWidth-s-8)+4)+'px';el.style.top=(Math.random()*(field.clientHeight-s*0.7-8)+4)+'px';field.appendChild(el);dirts.push({el,x:parseFloat(el.style.left)+s/2,y:parseFloat(el.style.top)+s*0.35,hp:2,alive:true})}const cur=document.createElement('div');cur.className='vac-cursor';field.appendChild(cur);const onMove=(e)=>{if(!workActive)return;const r=field.getBoundingClientRect();const cx=e.clientX-r.left,cy=e.clientY-r.top;cur.classList.add('on');cur.style.left=cx+'px';cur.style.top=cy+'px';for(const d of dirts){if(!d.alive)continue;const dx=d.x-cx,dy=d.y-cy;const dist=Math.sqrt(dx*dx+dy*dy);if(dist<60){d.hp-=0.5;if(d.hp<=0){d.alive=false;d.el.classList.add('cleaned');workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}}}};field.addEventListener('mousemove',onMove);workGameHandlers={field,onMove,extraCleanup:()=>field.removeEventListener('mousemove',onMove)}}
 
-function initFlowersGame(field,target){
-  const r=field.getBoundingClientRect();
-  for(let i=0;i<target;i++){
-    const w=90;
-    const el=document.createElement('div');
-    el.className='flower';
-    el.style.left=(r.width/2+(i-(target-1)/2)*150-w/2)+'px';
-    el.style.top=(r.height/2-40)+'px';
-    el.style.width=w+'px';
-    el.innerHTML='<div class="flower-icon" style="font-size:64px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';
-    field.appendChild(el);
-    const fill=el.querySelector('.flower-fill');
-    const icon=el.querySelector('.flower-icon');
-    let prog=0,watering=false,tick=null,doneFlower=false;
-    const startW=()=>{
-      if(!workActive||doneFlower)return;
-      watering=true;
-      if(tick)clearInterval(tick);
-      tick=setInterval(()=>{
-        if(!workActive||!watering||doneFlower)return;
-        prog=Math.min(100,prog+8);
-        fill.style.width=prog+'%';
-        if(prog>=100){
-          doneFlower=true;
-          watering=false;
-          clearInterval(tick);
-          el.classList.add('watered','full');
-          icon.textContent='🌸';
-          workCaught++;
-          $('workScore').textContent=workCaught;
-          if(workCaught>=target)stopWork(true);
-        }
-      },60);
-    };
+function initFlowersGame(field,target){const r=field.getBoundingClientRect();const spacing=Math.min(130,r.width/(target+0.5));const startX=(r.width-(target-1)*spacing)/2;for(let i=0;i<target;i++){const w=80;const el=document.createElement('div');el.className='flower';el.style.left=(startX+i*spacing-w/2)+'px';el.style.top=(r.height/2-40)+'px';el.style.width=w+'px';el.innerHTML='<div class="flower-icon" style="font-size:56px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';field.appendChild(el);const fill=el.querySelector('.flower-fill');const icon=el.querySelector('.flower-icon');let prog=0,watering=false,tick=null,doneFlower=false;const startW=()=>{if(!workActive||doneFlower)return;watering=true;if(tick)clearInterval(tick);tick=setInterval(()=>{if(!workActive||!watering||doneFlower)return;prog=Math.min(100,prog+8);fill.style.width=prog+'%';if(prog>=100){doneFlower=true;watering=false;clearInterval(tick);el.classList.add('watered','full');icon.textContent='🌸';workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}},60)};const stopW=()=>{watering=false;if(tick){clearInterval(tick);tick=null}};el.addEventListener('mousedown',startW);el.addEventListener('mouseup',stopW);el.addEventListener('mouseleave',stopW);el.addEventListener('touchstart',e=>{e.preventDefault();startW()},{passive:false});el.addEventListener('touchend',e=>{e.preventDefault();stopW()},{passive:false});el.addEventListener('touchcancel',stopW)}}
     const stopW=()=>{watering=false;if(tick){clearInterval(tick);tick=null}};
     el.addEventListener('mousedown',startW);
     el.addEventListener('mouseup',stopW);
