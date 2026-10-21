@@ -154,13 +154,11 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 .custom-pill{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:22px;background:linear-gradient(135deg,rgba(160,107,255,.95),rgba(107,74,255,.95));color:#fff;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(107,74,255,.45),0 0 0 1px rgba(255,255,255,.15);pointer-events:auto;animation:giftPulse 3s ease-in-out infinite}
 .custom-pill .ic{font-size:16px}
 @media(max-width:768px){#customPills{top:62px;gap:6px}.custom-pill{padding:6px 12px;font-size:12px}}
-/* Фикс для вкладок в квартире на телефоне */
 .fmt { display: flex; gap: 6px; margin-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,.06); padding-bottom: 12px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .fmt::-webkit-scrollbar { display: none; }
 .fmtab { flex-shrink: 0; }
 .fma { display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; }
 .fma button { flex: 1; min-width: 80px; text-align: center; }
-
 @media(max-width: 768px) {
   .fmb { width: 100%; max-width: 100vw; padding: 16px; border-radius: 20px; }
   .fma { flex-direction: column; gap: 8px; }
@@ -358,7 +356,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #fm.open{display:flex}
 .fmb{background:linear-gradient(180deg,#1a1a22,#14141c);padding:24px;border-radius:24px;width:520px;max-width:100%;max-height:95vh;border:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;overflow-y:auto}
 .fmb h3{margin:0 0 18px;font-size:19px;font-weight:800}
-.fmt{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:12px;overflow-x:auto}
 .fmtab{padding:9px 16px;border-radius:12px;background:rgba(255,255,255,.04);cursor:pointer;font-size:13px;color:#a0a0b8;font-weight:600;white-space:nowrap}
 .fmtab.act{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
 .fmp{display:flex;flex-direction:column}
@@ -389,8 +386,6 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .rmc .rt{font-size:11px;color:#8888a0;margin-top:3px}
 .rmc button{padding:8px 14px;border-radius:10px;border:none;background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;cursor:pointer;font-size:12px;font-weight:700}
 .reme{color:#55556a;font-size:13px;text-align:center;padding:30px}
-.fma{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap}
-.fma button{padding:12px 20px;border-radius:14px;border:none;cursor:pointer;font-weight:700;font-size:14px}
 .fma .sv{background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000}
 .fma .cn{background:rgba(255,255,255,.06);color:#c8c8d0}
 .fma .lv{background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff;margin-right:auto}
@@ -1386,53 +1381,24 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div id="invM" class="em" style="z-index:690"><div class="emb" style="width:520px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title">🎒 Инвентарь</div><button class="pf-close" onclick="closeInv()">✕</button></div><div class="duty-body" style="overflow-y:auto"><div style="font-size:13px;color:#a0a0b8;margin-bottom:10px;font-weight:700">🌱 Семена:</div><div class="inv-grid" id="invSeeds"></div><div style="font-size:13px;color:#a0a0b8;margin:16px 0 10px;font-weight:700">💧 Удобрения:</div><div class="inv-grid" id="invFerts"></div><div class="duty-msg" id="invMsg"></div></div></div></div>
 <div id="giftM" class="em" style="z-index:700"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800" id="giftTitle">🎁 Подарить семя</h3><label class="gm-lbl">Кому (ник)</label><input id="giftNickInp" class="gm-inp" maxlength="20" placeholder="Ник получателя" autocomplete="off"><label class="gm-lbl">Количество</label><input id="giftQtyInp" class="gm-inp" type="number" min="1" value="1" inputmode="numeric"><div class="gm-err" id="giftErr"></div><div class="ema"><button class="cn" onclick="closeGift()">Отмена</button><button class="sv" onclick="sendGift()">🎁 Подарить</button></div></div></div>
 <div id="roomInviteM" class="em" style="z-index:750"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800">👥 Приглашение в комнату</h3><div id="riText" style="font-size:14px;color:#c8c8d0;line-height:1.65;margin-bottom:18px"></div><div class="ema"><button class="cn" onclick="declineInvite()">Отклонить</button><button class="sv" onclick="acceptInvite()">✅ Согласиться</button></div></div></div>
-
-<div id="dtsStar" title="Памятные даты" onclick="openDtsPanel()">
-  <svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%">
-    <g fill="#e60000" stroke="#8b0000" stroke-width="0.15">
-      <rect x="4" y="0" width="1" height="2"/><rect x="4" y="7" width="1" height="2"/><rect x="0" y="4" width="2" height="1"/><rect x="7" y="4" width="2" height="1"/>
-      <rect x="1" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/>
-      <rect x="2" y="2" width="5" height="5"/><rect x="3" y="3" width="3" height="3" fill="#ff3333"/><rect x="4" y="4" width="1" height="1" fill="#ffcc00"/>
-    </g>
-  </svg>
-</div>
-
-<div id="utHeart" title="Deltarune · Undertale" onclick="openUTArticle()">
-  <svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%">
-    <g fill="#ff0000">
-      <rect x="1" y="0" width="2" height="1"/><rect x="6" y="0" width="2" height="1"/><rect x="0" y="1" width="4" height="1"/><rect x="5" y="1" width="4" height="1"/>
-      <rect x="0" y="2" width="9" height="3"/><rect x="1" y="5" width="7" height="1"/><rect x="2" y="6" width="5" height="1"/><rect x="3" y="7" width="3" height="1"/><rect x="4" y="8" width="1" height="1"/>
-    </g>
-  </svg>
-</div>
-
+<div id="dtsStar" title="Памятные даты" onclick="openDtsPanel()"><svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%"><g fill="#e60000" stroke="#8b0000" stroke-width="0.15"><rect x="4" y="0" width="1" height="2"/><rect x="4" y="7" width="1" height="2"/><rect x="0" y="4" width="2" height="1"/><rect x="7" y="4" width="2" height="1"/><rect x="1" y="1" width="1" height="1"/><rect x="7" y="1" width="1" height="1"/><rect x="1" y="7" width="1" height="1"/><rect x="7" y="7" width="1" height="1"/><rect x="2" y="2" width="5" height="5"/><rect x="3" y="3" width="3" height="3" fill="#ff3333"/><rect x="4" y="4" width="1" height="1" fill="#ffcc00"/></g></svg></div>
+<div id="utHeart" title="Deltarune · Undertale" onclick="openUTArticle()"><svg width="46" height="46" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="display:block;width:100%;height:100%"><g fill="#ff0000"><rect x="1" y="0" width="2" height="1"/><rect x="6" y="0" width="2" height="1"/><rect x="0" y="1" width="4" height="1"/><rect x="5" y="1" width="4" height="1"/><rect x="0" y="2" width="9" height="3"/><rect x="1" y="5" width="7" height="1"/><rect x="2" y="6" width="5" height="1"/><rect x="3" y="7" width="3" height="1"/><rect x="4" y="8" width="1" height="1"/></g></svg></div>
 <div id="gameIcons"></div>
-
 <div id="dtsPanel" class="em" style="z-index:760" onclick="if(event.target.id==='dtsPanel')closeDtsPanel()"><div class="emb"><div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)"><div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">★ Памятные даты</div><button class="pf-close" onclick="closeDtsPanel()">✕</button></div><div class="dts-list" id="dtsList"></div></div></div>
 <div id="dtsArticle" class="em" style="z-index:770" onclick="if(event.target.id==='dtsArticle')closeDtsArticle()"><div class="emb"><div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)"><div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="dtsArtTitleBar">★ Статья</div><button class="pf-close" onclick="closeDtsArticle()">✕</button></div><div class="dts-art-hero"><img id="dtsArtImg" src="" alt=""><div class="dts-art-date" id="dtsArtDate"></div><div class="dts-art-h" id="dtsArtHead"></div></div><div class="dts-art-body" id="dtsArtBody"></div></div></div>
 <div id="utArticle" class="em" style="z-index:760" onclick="if(event.target.id==='utArticle')closeUTArticle()"><div class="emb" style="width:640px;max-width:92vw;max-height:88vh;padding:0;overflow:hidden;display:flex;flex-direction:column"><div class="duty-head" style="background:linear-gradient(135deg,rgba(211,47,47,.18),rgba(120,0,0,.08));border-bottom-color:rgba(211,47,47,.25)"><div class="duty-title" style="background:linear-gradient(135deg,#ff3333,#ff0066);-webkit-background-clip:text;-webkit-text-fill-color:transparent">❤ Deltarune · Undertale</div><button class="pf-close" onclick="closeUTArticle()">✕</button></div><div class="duty-body" style="overflow-y:auto;font-size:14.5px;line-height:1.75;color:#d8d8e0"><h4 style="margin:6px 0 8px;font-size:16px;color:#ff5566;font-weight:800">🎮 Undertale</h4><p style="margin:0 0 14px"><b style="color:#fff">Undertale</b> — инди-RPG <b style="color:#ff8888">2015 года</b> от <b style="color:#fff">Тоби Фокса</b>.</p><div style="padding:14px 18px;background:rgba(255,60,60,.06);border-left:3px solid #ff3333;border-radius:10px;font-style:italic;color:#e8c8c8"><div style="margin-bottom:8px">* «Ты полон решимости.»</div><div>* «Должно быть, ты новенький. Привет. Я — Санс.»</div></div></div></div></div>
-
 <div id="callScreen"><div class="call-bg"></div><div class="call-video-wrap"><video id="callRemoteVideo" class="call-remote-video" autoplay playsinline></video><video id="callLocalVideo" class="call-local-video" autoplay playsinline muted></video><div class="call-video-overlay"><div class="call-name" id="callVideoName">—</div><div class="call-timer" id="callVideoTimer">0:00</div></div></div><div class="call-stage" id="callStage"><div class="call-av" id="callAv">?</div><div class="call-name" id="callName">—</div><div class="call-subtitle" id="callSubtitle">вызов...</div><div class="call-timer" id="callTimer" style="display:none">0:00</div></div><div class="call-actions" id="callActions"><div class="call-btn-wrap"><button class="call-btn mute" id="callMuteBtn" title="Микрофон">🎤</button><div class="call-btn-lbl">микро</div></div><div class="call-btn-wrap"><button class="call-btn cam" id="callCamBtn" title="Камера">📹</button><div class="call-btn-lbl">камера</div></div><div class="call-btn-wrap"><button class="call-btn end" id="callEndBtn" title="Завершить">✕</button><div class="call-btn-lbl">завершить</div></div></div></div>
 <div id="callMini" onclick="expandCallScreen()"><span class="call-mini-dot"></span><span class="call-mini-name" id="callMiniName">—</span><span class="call-mini-time" id="callMiniTime">0:00</span></div>
 <div id="callIncoming" class="em" style="z-index:9960"><div class="emb" style="width:360px;padding:24px;text-align:center"><div style="font-size:52px;margin-bottom:8px">📞</div><div style="font-size:20px;font-weight:900;color:#fff;margin-bottom:6px" id="callIncName">—</div><div style="font-size:13px;color:#a0a0b8;margin-bottom:22px" id="callIncSubtitle">входящий звонок</div><div style="display:flex;gap:14px;justify-content:center"><button id="callIncReject" style="width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg,#ff3333,#b71c1c);color:#fff;font-size:26px;cursor:pointer">✕</button><button id="callIncAccept" style="width:64px;height:64px;border-radius:50%;border:none;background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff;font-size:26px;cursor:pointer;animation:acceptPulse 1.4s ease-in-out infinite">📞</button></div></div></div>
-
 <div id="xmasTree" aria-hidden="true"><svg viewBox="0 0 140 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="xTrunk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b5a2b"/><stop offset="1" stop-color="#3a2210"/></linearGradient><linearGradient id="xT1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2eb878"/><stop offset="1" stop-color="#0a4020"/></linearGradient><linearGradient id="xT2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#33c988"/><stop offset="1" stop-color="#0c4a24"/></linearGradient><linearGradient id="xT3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ddc98"/><stop offset="1" stop-color="#0e5529"/></linearGradient><radialGradient id="xStarG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fffbe0"/><stop offset="0.5" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff9d00"/></radialGradient><filter id="xGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect x="60" y="170" width="20" height="22" rx="2" fill="url(#xTrunk)"/><polygon points="70,88 15,170 125,170" fill="url(#xT1)" stroke="#0a4020" stroke-width="1.2"/><polygon points="70,55 30,128 110,128" fill="url(#xT2)" stroke="#0a4020" stroke-width="1.2"/><polygon points="70,22 42,85 98,85" fill="url(#xT3)" stroke="#0a4020" stroke-width="1.2"/><g transform="translate(70,20)"><g><polygon points="0,-15 4,-4 16,-4 6,3 10,15 0,8 -10,15 -6,3 -16,-4 -4,-4" fill="url(#xStarG)" stroke="#ff9900" stroke-width="1" filter="url(#xGlow)"/><animateTransform attributeName="transform" type="scale" values="1;1.15;1" dur="2s" repeatCount="indefinite"/></g></g></svg></div>
-
 <div id="easterDecor" aria-hidden="true"><svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="eCake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5deb3"/><stop offset="1" stop-color="#d2a679"/></linearGradient><linearGradient id="eGlaze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e8e0d0"/></linearGradient></defs><g transform="translate(60,80)"><rect x="0" y="80" width="60" height="70" rx="4" fill="url(#eCake)"/><path d="M 0 80 Q 30 60 60 80 L 60 95 L 0 95 Z" fill="url(#eGlaze)"/><circle cx="15" cy="70" r="4" fill="#ff6b9d"/><circle cx="30" cy="65" r="4" fill="#6bc4ff"/><circle cx="45" cy="70" r="4" fill="#8bc34a"/></g></svg></div>
-
 <div id="maslenitsaDecor" aria-hidden="true"><svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="msSun" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#fff8c0"/><stop offset="0.55" stop-color="#ffd43b"/><stop offset="1" stop-color="#ff9d00"/></radialGradient></defs><g transform="translate(90,55)"><circle r="24" fill="url(#msSun)"/></g><g transform="translate(90,155)"><ellipse cx="0" cy="0" rx="52" ry="16" fill="#a97836"/><ellipse cx="0" cy="-6" rx="52" ry="16" fill="#f7d08a"/><ellipse cx="0" cy="-22" rx="52" ry="16" fill="#f7d08a"/><ellipse cx="0" cy="-38" rx="52" ry="16" fill="#e8b86c"/><ellipse cx="0" cy="-48" rx="52" ry="16" fill="#f7d08a"/></g></svg></div>
-
 <div id="knowledgeDecor" aria-hidden="true"><svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg"><g><path d="M 90 45 Q 65 30 45 35 L 45 65 Q 65 60 90 75 Q 115 60 135 65 L 135 35 Q 115 30 90 45 Z" fill="#f5c542" stroke="#b8860b"/></g><g transform="translate(90,150)"><rect x="-55" y="-15" width="110" height="60" rx="4" fill="#5a8fd0"/><rect x="-45" y="-25" width="90" height="50" rx="4" fill="#d0a85a"/></g></svg></div>
-
 <div id="teacherDecor" aria-hidden="true"><svg viewBox="0 0 180 220" xmlns="http://www.w3.org/2000/svg"><g><ellipse cx="90" cy="55" rx="20" ry="12" fill="#fff8c0" opacity="0.55"/><text x="90" y="68" text-anchor="middle" font-size="42" font-weight="900" fill="#f5c542">А</text></g><g transform="translate(90,150)"><rect x="-60" y="-10" width="120" height="55" rx="4" fill="#3a7a4a"/><rect x="-50" y="-30" width="100" height="45" rx="3" fill="#f5e6c0"/></g></svg></div>
-
 <div id="memorial911" title="9/11" onclick="openMemorial('911')"><svg viewBox="0 0 40 64" xmlns="http://www.w3.org/2000/svg"><rect x="11" y="4" width="7" height="56" fill="#a8b8d0"/><rect x="22" y="4" width="7" height="56" fill="#a8b8d0"/></svg></div>
 <div id="memorialCrocus" title="Крокус" onclick="openMemorial('crocus')"><svg viewBox="0 0 40 64" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="22" width="12" height="38" fill="#e8dfc5" rx="1"/><path d="M 20 6 Q 14 12 16 20 Q 18 15 20 20 Q 22 15 24 20 Q 26 12 20 6 Z" fill="#ffcc66"/></svg></div>
-
 <div id="memorialModal" onclick="if(event.target.id==='memorialModal')closeMemorial()"><div class="mem-box"><div class="mem-candle" id="memIcon">🕯️</div><h2 class="mem-title" id="memTitle"></h2><div class="mem-date" id="memDate"></div><div class="mem-text" id="memText"></div><div class="mem-sign">🕯️ ЛЮБИМ · ПОМНИМ · СКОРБИМ</div><button class="mem-close" onclick="closeMemorial()">Закрыть</button></div></div>
-
 <canvas id="fireworksCv"></canvas>
-
 <div id="giveM"><div class="give-box"><div class="give-h"><h3 id="giveTitle">🎁 Выдать предмет</h3><button onclick="closeGive()">×</button></div><div class="give-b"><div style="font-size:12px;color:#a0a0b8;margin-bottom:12px">Игрок: <b id="giveNick" style="color:#f5c542">—</b></div><div class="give-tabs"><div class="give-tab act" data-t="frame" onclick="giveSw('frame')">🖼️ Рамка</div><div class="give-tab" data-t="seed" onclick="giveSw('seed')">🌱 Семя</div><div class="give-tab" data-t="fert" onclick="giveSw('fert')">💧 Удобрение</div><div class="give-tab" data-t="coins" onclick="giveSw('coins')">💰 Монеты</div></div><div id="giveBody"></div><div class="give-msg" id="giveMsg"></div></div></div></div>
 <div id="flatPickerM"><div class="fp-box"><div class="fp-h"><h3 id="fpTitle">🏠 Куда заселить</h3><button onclick="closeFlatPicker()">✕</button></div><div class="fp-body" id="fpBody"></div></div></div>
 <div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
@@ -1592,28 +1558,21 @@ function toggleAdmin(){if(!hasAdmin())return showToast('Только админ�
 function enterAdmin(){if(!hasAdmin())return showToast('Только админам','error');adminMode=true;document.body.classList.add('admin-mode');$('adminB').classList.add('on');$('ap').classList.add('on');upAdminTog();renderFlats()}
 function exitAdmin(){adminMode=false;document.body.classList.remove('admin-mode');$('adminB').classList.remove('on');$('ap').classList.remove('on');upAdminTog();closeAdmin();renderFlats()}
 async function openAdmin(){
-  // 1. Стучимся в базу и спрашиваем: "Он реально админ?"
   const { data: isRealAdmin, error } = await sb.rpc('check_my_admin_status');
-
-  // 2. Если база говорит НЕТ (или ошибка) — значит это взлом
   if(error || !isRealAdmin){
     console.warn('🚨 SECURITY ALERT: Unauthorized access attempt to ADMIN PANEL by', curUser?.id);
-    
-    // Отправляем страйк на сервер
     sb.rpc('report_hack_attempt').then(r => {
       if(r.error) return;
       const data = r.data;
       if(data.banned) {
         showToast('🚫 ВЫ ЗАБАНЕНЫ И ОБНУЛЕНЫ ЗА ВЗЛОМ!', 'error');
-        showBan(); // Мгновенный бан
+        showBan();
       } else {
         showToast('❌ Доступ запрещён. Страйк: ' + data.strikes + '/3', 'error');
       }
     });
-    return; // Не пускаем!
+    return;
   }
-
-  // 3. Если реальный админ — проверяем режим и пускаем
   if(!adminMode) return showToast('Включи админ-режим','error');
   _afTarget='afB';
   $('afm').classList.add('open');
@@ -1621,32 +1580,22 @@ async function openAdmin(){
 }
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;_afTarget='afB';document.querySelectorAll('#afm .aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
-// Секретный ID, разбитый на части (чтобы не искали автопоиском)
 const _secretOID = ['81fe9ad5', 'a02b', '4e57', '8c59', '1cf2d60e842c'].join('-');
-
 function openOwner(){
-  // Если это не ты — наказываем!
   if(!curUser || curUser.id !== _secretOID){
     console.warn('🚨 SECURITY ALERT: Unauthorized access attempt by', curUser?.id);
-    
-    // Отправляем страйк на сервер
     sb.rpc('report_hack_attempt').then(r => {
       if(r.error) return;
-      
       const data = r.data;
       if(data.banned) {
-        // Если это был 3-й страйк:
         showToast('🚫 ВЫ ЗАБАНЕНЫ И ОБНУЛЕНЫ ЗА ВЗЛОМ!', 'error');
-        showBan(); // Мгновенно показываем экран бана
+        showBan();
       } else {
-        // Если 1-й или 2-й:
         showToast('❌ Доступ запрещён. Страйк: ' + data.strikes + '/3', 'error');
       }
     });
     return; 
   }
-
-  // Если это ты — всё ок, открываем панель
   _afTarget='ofB';
   $('ofm').classList.add('open');
   ofSw('flats');
@@ -1654,7 +1603,7 @@ function openOwner(){
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b);if(afT==='custom')return ofCustomEvents(b);if(afT==='fakes')return ofFakes(b);if(afT==='dates')return ofDates(b)}
-const APP_VERSION='3.6.5';
+const APP_VERSION='3.6.6';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
@@ -1910,7 +1859,7 @@ function jobWelderCut(i){
   const field=$('jobField'),line=$('jobCutLine'),prog=$('jobCutProg');
   let progress=0,pressing=false,lastX=null,done=false;
   const updateProg=()=>{
-    if(done) return; // ФИКС: защита от повторных срабатываний
+    if(done) return;
     const pct=Math.min(100,Math.round(progress));
     prog.style.width=pct+'%';
     if(pct>=100){
@@ -1947,7 +1896,7 @@ function jobWelderCut(i){
 }
 let _jobFinishing = false;
 async function jobFinishTask(i,won,p){
-  if(_jobFinishing) return; // ФИКС: не даем запустить функцию второй раз
+  if(_jobFinishing) return;
   jobStopTask();
   if(!won)return;
   const st=jobLoad()||jobDefault();
@@ -2058,7 +2007,7 @@ function initVacuumGame(field, target) {
   const dirts = [];
   for (let i = 0; i < target; i++) {
     const s = 32 + Math.random() * 20;
-    const el = document.createElement('div'); // <-- ВОТ ОНА
+    const el = document.createElement('div');
     el.className = 'vac-dirt';
     el.style.width = s + 'px';
     el.style.height = s * 0.7 + 'px';
@@ -2115,7 +2064,7 @@ function initFlowersGame(field, target) {
 
   for (let i = 0; i < target; i++) {
     const w = 80;
-    const el = document.createElement('div'); // <-- ВОТ ОНА
+    const el = document.createElement('div');
     el.className = 'flower';
     el.style.left = (startX + i * spacing - w / 2) + 'px';
     el.style.top = (r.height / 2 - 40) + 'px';
@@ -2165,71 +2114,40 @@ function initFlowersGame(field, target) {
   }
 }
 
-function initDishesGame(field,target){for(let i=0;i<target;i++){const d=1+Math.floor(Math.random()*3);const p=document.createElement('div');p.className='plate d'+d;p.style.left=(10+Math.random()*(field.clientWidth-70))+'px';p.style.top=(10+Math.random()*(field.clientHeight-70))+'px';p.dataset.dirt=d;p.onclick=()=>{if(!workActive)return;let x=parseInt(p.dataset.dirt)-1;p.dataset.dirt=x;p.classList.remove('d1','d2','d3');if(x>0)p.classList.add('d'+x);else{p.classList.add('clean-mark');p.textContent='✨';p.style.pointerEvents='none';workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}};field.appendChild(p)}}
-function initVacuumGame(field, target) {
-  const dirts = [];
-  for (let i = 0; i < target; i++) {
-    const s = 32 + Math.random() * 20;
-    const el = document.createElement('div');
-    el.className = 'vac-dirt';
-    el.style.width = s + 'px';
-    el.style.height = s * 0.7 + 'px';
-    el.style.left = (Math.random() * (field.clientWidth - s - 8) + 4) + 'px';
-    el.style.top = (Math.random() * (field.clientHeight - s * 0.7 - 8) + 4) + 'px';
-    field.appendChild(el);
-    dirts.push({ el: el, x: parseFloat(el.style.left) + s / 2, y: parseFloat(el.style.top) + s * 0.35, hp: 2, alive: true });
-  }
-  const cur = document.createElement('div');
-  cur.className = 'vac-cursor';
-  field.appendChild(cur);
-  
-  const onMove = (e) => {
-    if (!workActive) return;
-    const r = field.getBoundingClientRect();
-    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
-    const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
-    cur.classList.add('on');
-    cur.style.left = cx + 'px';
-    cur.style.top = cy + 'px';
-    for (const d of dirts) {
-      if (!d.alive) continue;
-      const dx = d.x - cx, dy = d.y - cy;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 60) {
-        d.hp -= 0.5;
-        if (d.hp <= 0) {
-          d.alive = false;
-          d.el.classList.add('cleaned');
-          workCaught++;
-          $('workScore').textContent = workCaught;
-          if (workCaught >= target) stopWork(true);
-        }
-      }
+async function stopWork(t){
+  if(!workActive)return;
+  workActive=false;
+  if(workTimer)clearInterval(workTimer);
+  $('workGame').style.display='none';
+  clearWorkHandlers();
+  $('workField').innerHTML='';
+  $('workField').className='work-field';
+  const task=WORK_TASKS.find(x=>x.id===workTaskId);
+  const target=(task&&task.target)||8;
+  if(workCaught>=target){
+    const{data,error}=await sb.rpc('earn_coins',{p_reason:'mini_work'});
+    if(error){
+      $('workMsg').style.color='#ff8888';
+      $('workMsg').textContent='❌ '+error.message;
+    }else if(data&&data.ok===false){
+      $('workMsg').style.color='#ff8888';
+      $('workMsg').textContent='⏳ '+data.error;
+    }else{
+      if(workTaskId)workCdSet(workTaskId);
+      const r=(data&&data.reward)||5;
+      if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=r;
+      updateCoinsUI();
+      $('workMsg').style.color='#8bc34a';
+      $('workMsg').textContent='✨ +'+r+'💰';
     }
-  };
-  
-  field.addEventListener('mousemove', onMove);
-  field.addEventListener('touchmove', onMove, { passive: false });
-  workGameHandlers = { 
-    field: field, 
-    onMove: onMove, 
-    extraCleanup: () => {
-      field.removeEventListener('mousemove', onMove);
-      field.removeEventListener('touchmove', onMove);
-    } 
-  };
+  }else{
+    $('workMsg').style.color='#ff8888';
+    $('workMsg').textContent='Сделано '+workCaught+'/'+target;
+  }
+  workTaskId=null;
+  renderWork();
 }
 
-function initFlowersGame(field,target){const r=field.getBoundingClientRect();const spacing=Math.min(130,r.width/(target+0.5));const startX=(r.width-(target-1)*spacing)/2;for(let i=0;i<target;i++){const w=80;const el=document.createElement('div');el.className='flower';el.style.left=(startX+i*spacing-w/2)+'px';el.style.top=(r.height/2-40)+'px';el.style.width=w+'px';el.innerHTML='<div class="flower-icon" style="font-size:56px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';field.appendChild(el);const fill=el.querySelector('.flower-fill');const icon=el.querySelector('.flower-icon');let prog=0,watering=false,tick=null,doneFlower=false;const startW=()=>{if(!workActive||doneFlower)return;watering=true;if(tick)clearInterval(tick);tick=setInterval(()=>{if(!workActive||!watering||doneFlower)return;prog=Math.min(100,prog+8);fill.style.width=prog+'%';if(prog>=100){doneFlower=true;watering=false;clearInterval(tick);el.classList.add('watered','full');icon.textContent='🌸';workCaught++;$('workScore').textContent=workCaught;if(workCaught>=target)stopWork(true)}},60)};const stopW=()=>{watering=false;if(tick){clearInterval(tick);tick=null}};el.addEventListener('mousedown',startW);el.addEventListener('mouseup',stopW);el.addEventListener('mouseleave',stopW);el.addEventListener('touchstart',e=>{e.preventDefault();startW()},{passive:false});el.addEventListener('touchend',e=>{e.preventDefault();stopW()},{passive:false});el.addEventListener('touchcancel',stopW)}}
-    const stopW=()=>{watering=false;if(tick){clearInterval(tick);tick=null}};
-    el.addEventListener('mousedown',startW);
-    el.addEventListener('mouseup',stopW);
-    el.addEventListener('mouseleave',stopW);
-    el.addEventListener('touchstart',e=>{e.preventDefault();startW()},{passive:false});
-    el.addEventListener('touchend',e=>{e.preventDefault();stopW()},{passive:false});
-    el.addEventListener('touchcancel',stopW);
-
-async function stopWork(t){if(!workActive)return;workActive=false;if(workTimer)clearInterval(workTimer);$('workGame').style.display='none';clearWorkHandlers();$('workField').innerHTML='';$('workField').className='work-field';const task=WORK_TASKS.find(x=>x.id===workTaskId);const target=(task&&task.target)||8;if(workCaught>=target){const{data,error}=await sb.rpc('earn_coins',{p_reason:'mini_work'});if(error){$('workMsg').style.color='#ff8888';$('workMsg').textContent='❌ '+error.message}else if(data&&data.ok===false){$('workMsg').style.color='#ff8888';$('workMsg').textContent='⏳ '+data.error}else{workCdSet(workTaskId);const r=(data&&data.reward)||5;if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=r;updateCoinsUI();$('workMsg').style.color='#8bc34a';$('workMsg').textContent='✨ +'+r+'💰'}}else{$('workMsg').style.color='#ff8888';$('workMsg').textContent='Сделано '+workCaught+'/'+target}workTaskId=null;renderWork()}
 const SEEDS=[
   {id:'carrot',name:'Морковь',rarity:'common',price:5,grow:30,sell:10,icon:'🥕'},{id:'potato',name:'Картошка',rarity:'common',price:8,grow:45,sell:16,icon:'🥔'},{id:'wheat',name:'Пшеница',rarity:'common',price:10,grow:60,sell:20,icon:'🌾'},{id:'tomato',name:'Помидор',rarity:'common',price:12,grow:75,sell:25,icon:'🍅'},{id:'cucumber',name:'Огурец',rarity:'common',price:15,grow:90,sell:30,icon:'🥒'},{id:'onion',name:'Лук',rarity:'common',price:18,grow:100,sell:36,icon:'🧅'},{id:'cabbage',name:'Капуста',rarity:'common',price:22,grow:110,sell:44,icon:'🥬'},{id:'garlic',name:'Чеснок',rarity:'common',price:26,grow:120,sell:52,icon:'🧄'},
   {id:'strawberry',name:'Клубника',rarity:'uncommon',price:40,grow:140,sell:90,icon:'🍓'},{id:'pumpkin',name:'Тыква',rarity:'uncommon',price:55,grow:160,sell:120,icon:'🎃'},{id:'watermelon',name:'Арбуз',rarity:'uncommon',price:70,grow:180,sell:155,icon:'🍉'},{id:'grape',name:'Виноград',rarity:'uncommon',price:85,grow:200,sell:190,icon:'🍇'},{id:'pepper',name:'Перчик',rarity:'uncommon',price:100,grow:220,sell:225,icon:'🌶️'},{id:'blueberry',name:'Голубика',rarity:'uncommon',price:120,grow:240,sell:270,icon:'🫐'},{id:'mango',name:'Манго',rarity:'uncommon',price:140,grow:260,sell:320,icon:'🥭'},
