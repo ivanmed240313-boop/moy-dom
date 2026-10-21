@@ -1321,6 +1321,20 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     user-select: none;
     -webkit-user-select: none;
 }
+@media (max-width: 768px) {
+  * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; text-shadow: none !important; }
+  .flat, .msg, .emb, .mbox, .ofb, .afb, .gmb { box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important; animation-duration: 0.15s !important; }
+  html, body, #app, .layout { height: 100dvh !important; max-height: 100dvh !important; }
+  #modal, .mbox, #fm { height: 100dvh !important; max-height: 100dvh !important; border-radius: 0 !important; }
+  .emb, .mbox, .ofb, .afb, .gmb, .fp-box, .give-box, .cfm-box { max-height: 92dvh !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch; width: calc(100vw - 20px) !important; max-width: 100% !important; }
+  .ofbd, .afbd { padding-bottom: 80px !important; }
+  #house { overflow-x: auto !important; overflow-y: hidden !important; justify-content: flex-start !important; padding: 10px !important; -webkit-overflow-scrolling: touch; }
+  #houseInner { padding: 0 20px; }
+  .ir button, .hbtn, .oftab, .aftab, .afbtn, .call-btn { min-height: 44px !important; min-width: 44px !important; }
+  .ir { padding-bottom: env(safe-area-inset-bottom, 12px) !important; }
+  #chat { padding-bottom: 20px !important; }
+  body { overflow-x: hidden !important; }
+}
 </style></head>
 <body>
 <canvas id="seasons"></canvas>
@@ -2673,7 +2687,7 @@ function closeAnn(){$('annM').classList.remove('open')}
 async function postAnn(){const t=$('annInp').value.trim();if(!t)return;const hid=_annHouseId||Number(curHouse);const{data,error}=await sb.rpc('owner_announce',{p_house:hid,p_text:t});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');closeAnn();await loadHouses();if(hid===Number(curHouse))showAnn(t);if(afT==='house')afRend()}
 async function delAnn(hid){const h=hid||Number(curHouse);const{data,error}=await sb.rpc('owner_announce',{p_house:h,p_text:''});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await loadHouses();if(afT==='house')afRend()}
 function showAnn(t){const b=$('annBanner');if(!b)return;if(!t){b.classList.remove('on');return}$('annText').textContent=t;b.classList.add('on')}
-async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
+async function openFm(n){document.body.style.overflow='hidden';const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
 async function submitAppeal() {
   const msg = $('appealMsg').value.trim();
   const st = $('appealStatus');
@@ -2795,7 +2809,7 @@ async function promoteR(ownerHex){
 function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');const m={media:'fmPM',room:'fmPR',manage:'fmPN',work:'fmPW'};$(m[t]).style.display='flex';$('svB').style.display=t==='media'?'block':'none';if(t==='work')renderWork();if(t==='room'){rcId='h'+curHouse+'_flat'+fmN+'_room';clrCh($('rc'));loadRM();subRM();loadRoomItem();if(rcPt){clearInterval(rcPt);rcPt=null}rcPt=setInterval(loadRM,3000);startMus(rcId).then(url=>{musUrl=url;showMusBtn(url,'🎵 Включить')}).catch(()=>{showMusBtn(null)})}else{if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}}}
 async function loadRoomItem(){try{const{data}=await sb.from('profiles').select('room_item_id').eq('nick',me).maybeSingle();const id=(data&&data.room_item_id)||null;const el=$('roomDecor');if(!el)return;if(!id){el.style.display='none';el.textContent='';el.title='';return}const it=ITEMS.find(x=>x.id===id);if(!it){el.style.display='none';return}el.textContent=it.icon;el.title=it.name;el.style.display='block'}catch(e){const el=$('roomDecor');if(el)el.style.display='none'}}
 async function setRoomItem(id){if(id && !(myOwnedItems||[]).includes(id)) return showToast('Не куплено','error');const{data,error}=await sb.rpc('set_room_item',{p_item_id:id||null});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');if(id)roomItemCache[meEnc]=id;else delete roomItemCache[meEnc];showToast(id?'✅ Поставлено в комнату':'🗑 Убрано','success');await loadRoomItem();renderFlats();if($('pf').classList.contains('open')) openProfile(null)}
-function closeFm(){if(workActive)stopWork(false);stopMus();if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;$('fm').classList.remove('open');fmN=null}
+function closeFm(){document.body.style.overflow='';if(workActive)stopWork(false);stopMus();if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;$('fm').classList.remove('open');fmN=null}
 async function kickR(o){
   const f=flats[fmN];if(!f)return;
   const owners=flatOwners(f);
