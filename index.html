@@ -2011,7 +2011,6 @@ function initFlowersGame(field,target){const r=field.getBoundingClientRect();con
     el.addEventListener('touchstart',e=>{e.preventDefault();startW()},{passive:false});
     el.addEventListener('touchend',e=>{e.preventDefault();stopW()},{passive:false});
     el.addEventListener('touchcancel',stopW);
-  }
 }
 
 async function stopWork(t){if(!workActive)return;workActive=false;if(workTimer)clearInterval(workTimer);$('workGame').style.display='none';clearWorkHandlers();$('workField').innerHTML='';$('workField').className='work-field';const task=WORK_TASKS.find(x=>x.id===workTaskId);const target=(task&&task.target)||8;if(workCaught>=target){const{data,error}=await sb.rpc('earn_coins',{p_reason:'mini_work'});if(error){$('workMsg').style.color='#ff8888';$('workMsg').textContent='❌ '+error.message}else if(data&&data.ok===false){$('workMsg').style.color='#ff8888';$('workMsg').textContent='⏳ '+data.error}else{workCdSet(workTaskId);const r=(data&&data.reward)||5;if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=r;updateCoinsUI();$('workMsg').style.color='#8bc34a';$('workMsg').textContent='✨ +'+r+'💰'}}else{$('workMsg').style.color='#ff8888';$('workMsg').textContent='Сделано '+workCaught+'/'+target}workTaskId=null;renderWork()}
