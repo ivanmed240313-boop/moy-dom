@@ -1571,6 +1571,19 @@ function triggerHackStrike(){
     }
   });
 }
+async function guardAdmin(){
+  if(!hasAdmin()){ triggerHackStrike(); return false; }
+  const { data, error } = await sb.rpc('check_my_admin_status');
+  if(error || !data){ triggerHackStrike(); return false; }
+  return true;
+}
+async function guardOwner(){
+  if(!isOwner()){ triggerHackStrike(); return false; }
+  // серверное подтверждение (см. SQL внизу)
+  const { data, error } = await sb.rpc('check_my_owner_status').catch(() => ({ data: null, error: true }));
+  if(error === null && data === false){ triggerHackStrike(); return false; }
+  return true;
+}
 async function openAdmin(){
   const { data: isRealAdmin, error } = await sb.rpc('check_my_admin_status');
   if(error || !isRealAdmin){
@@ -1606,14 +1619,19 @@ function renderGiveInline(){const body=$('giveBodyInline');if(!body||!giveTarget
 function giveTabSet(t){giveTab=t;renderGiveInline()}
 function renderGiveList(){const list=$('giveBodyList');if(!list)return;if(giveTab==='frame')list.innerHTML='<div class="give-list">'+FRAMES.filter(f=>f.id!=='none').map(f=>'<div class="give-item" onclick="doGiveFrame(\''+f.id+'\')"><div class="gi">'+(iconsFor(f.id)||'🖼️')+'</div><div class="gn">'+eh(f.name)+'</div><div class="gp">'+f.price+'💰</div></div>').join('')+'</div>';else if(giveTab==='seed')list.innerHTML='<div class="give-list">'+SEEDS.map(s=>'<div class="give-item" onclick="doGiveSeed(\''+s.id+'\')"><div class="gi">'+s.icon+'</div><div class="gn">'+eh(s.name)+'</div><div class="gp">'+s.price+'💰</div></div>').join('')+'</div>';else if(giveTab==='fert')list.innerHTML='<div class="give-list">'+FERTS.map(f=>'<div class="give-item" onclick="doGiveFert(\''+f.id+'\')"><div class="gi">💧</div><div class="gn">'+eh(f.name)+'</div><div class="gp">×'+f.mult+'</div></div>').join('')+'</div>';else if(giveTab==='coins')list.innerHTML='<div class="give-list">'+'<div class="give-item" onclick="doGiveCoins(100)"><div class="gi">💰</div><div class="gn">+100 монет</div></div>'+'<div class="give-item" onclick="doGiveCoins(1000)"><div class="gi">💰</div><div class="gn">+1000 монет</div></div>'+'<div class="give-item" onclick="doGiveCoins(10000)"><div class="gi">💎</div><div class="gn">+10000 монет</div></div>'+'<div class="give-item" onclick="doGiveCoins(-100)"><div class="gi">💸</div><div class="gn">−100 монет</div></div>'+'<div class="give-item" onclick="doGiveCoins(-1000)"><div class="gi">💸</div><div class="gn">−1000 монет</div></div>'+'</div>'+'<div class="give-confirm" style="margin-top:12px">'+'<span style="font-size:13px;color:#c8c8d0">Своя сумма:</span>'+'<input id="giveCoinAmt" type="number" placeholder="500" style="width:110px;text-align:center;font-family:inherit" inputmode="numeric">'+'<button onclick="doGiveCoins(parseInt(document.getElementById(\'giveCoinAmt\').value)||0)">💰 Начислить</button>'+'<button style="background:linear-gradient(135deg,#d32f2f,#b71c1c);color:#fff" onclick="doGiveCoins(-(parseInt(document.getElementById(\'giveCoinAmt\').value)||0))">💸 Списать</button>'+'</div>'}
 function iconsFor(id){var icons={devil:'😈',angelic:'😇',rainbow:'🌈',legendary:'⭐',cosmic:'🌌',diamond:'💎',fire:'🔥',ice:'❄️',neon:'🎨',gold:'👑',silver:'🥈',bronze:'🥉',emerald:'💚',sapphire:'💙',ruby:'❤️',vhs:'📼',sakura:'🌸',aqua:'🌊',storm:'⚡',galaxy:'🌌',dragon:'🐉',gardener:'🌾'};return icons[id]||'🖼️'}
-async function doGiveFrame(id){if(!giveTarget)return showToast('Введи ник','error');const msg=$('giveMsgInline');const{data,error}=await sb.rpc('owner_give_frame',{p_nick:giveTarget,p_frame_id:id});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(data&&data.ok===false){if(msg)msg.textContent='❌ '+(data.error||'');return showToast('❌','error')}if(msg)msg.textContent='✅ Выдана: '+id;showToast('🎁 '+id,'success')}
-async function doGiveSeed(id){if(!giveTarget)return showToast('Введи ник','error');const msg=$('giveMsgInline');const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();if(e0||!p){if(msg)msg.textContent='❌ Не найден';return showToast('❌','error')}const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(msg)msg.textContent='✅ Выдано: '+id;showToast('🎁 '+id,'success');if(giveTarget===me)setTimeout(checkGifts,300)}
-async function doGiveFert(id){if(!giveTarget)return showToast('Введи ник','error');const msg=$('giveMsgInline');const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();if(e0||!p){if(msg)msg.textContent='❌ Не найден';return showToast('❌','error')}const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(msg)msg.textContent='✅ Выдано: '+id;showToast('🎁 '+id,'success');if(giveTarget===me)setTimeout(checkGifts,300)}
-async function doGiveCoins(delta){if(!giveTarget)return showToast('Введи ник','error');if(!delta||isNaN(delta))return showToast('Некорректная сумма','error');const msg=$('giveMsgInline');const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:giveTarget,p_delta:delta});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(data&&data.ok===false){if(msg)msg.textContent='❌ '+(data.error||'');return showToast('❌','error')}if(giveTarget===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}if(msg)msg.textContent='✅ '+(delta>0?'+':'')+delta+' → '+(data.coins!=null?data.coins:'—');showToast('💰 '+(delta>0?'+':'')+delta,'success')}
+async function doGiveFrame(id){  if(!(await guardOwner())) return;
+  if(!giveTarget) return showToast('Введи ник','error');if(!giveTarget)return showToast('Введи ник','error');const msg=$('giveMsgInline');const{data,error}=await sb.rpc('owner_give_frame',{p_nick:giveTarget,p_frame_id:id});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(data&&data.ok===false){if(msg)msg.textContent='❌ '+(data.error||'');return showToast('❌','error')}if(msg)msg.textContent='✅ Выдана: '+id;showToast('🎁 '+id,'success')}
+async function doGiveSeed(id){  if(!(await guardOwner())) return;
+  if(!giveTarget) return showToast('Введи ник','error');if(!giveTarget)return showToast('Введи ник','error');const msg=$('giveMsgInline');const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();if(e0||!p){if(msg)msg.textContent='❌ Не найден';return showToast('❌','error')}const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(msg)msg.textContent='✅ Выдано: '+id;showToast('🎁 '+id,'success');if(giveTarget===me)setTimeout(checkGifts,300)}
+async function doGiveFert(id){  if(!(await guardOwner())) return;
+  if(!giveTarget) return showToast('Введи ник','error');if(!giveTarget)return showToast('Введи ник','error');const msg=$('giveMsgInline');const{data:p,error:e0}=await sb.from('profiles').select('nick').eq('nick',giveTarget).maybeSingle();if(e0||!p){if(msg)msg.textContent='❌ Не найден';return showToast('❌','error')}const{error}=await sb.from('garden_gifts').insert({from_nick:en(me),to_nick:en(giveTarget),seed_id:id,qty:1,claimed:false});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(msg)msg.textContent='✅ Выдано: '+id;showToast('🎁 '+id,'success');if(giveTarget===me)setTimeout(checkGifts,300)}
+async function doGiveCoins(delta){  if(!(await guardOwner())) return;
+  if(!giveTarget) return showToast('Введи ник','error');if(!giveTarget)return showToast('Введи ник','error');if(!delta||isNaN(delta))return showToast('Некорректная сумма','error');const msg=$('giveMsgInline');const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:giveTarget,p_delta:delta});if(error){if(msg)msg.textContent='❌ '+error.message;return showToast('❌','error')}if(data&&data.ok===false){if(msg)msg.textContent='❌ '+(data.error||'');return showToast('❌','error')}if(giveTarget===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}if(msg)msg.textContent='✅ '+(delta>0?'+':'')+delta+' → '+(data.coins!=null?data.coins:'—');showToast('💰 '+(delta>0?'+':'')+delta,'success')}
 function closeFlatPicker(){$('flatPickerM').classList.remove('open');fpTargetNick=null}
-async function ownerSetFlat(nick){if(!isOwner())return;fpTargetNick=nick;$('fpTitle').textContent='🏠 Куда заселить: '+nick;$('fpBody').innerHTML='<div class="afe">Загрузка...</div>';$('flatPickerM').classList.add('open');await renderFlatPicker()}
+async function ownerSetFlat(nick){if(!(await guardOwner())) return;if(!isOwner())return;fpTargetNick=nick;$('fpTitle').textContent='🏠 Куда заселить: '+nick;$('fpBody').innerHTML='<div class="afe">Загрузка...</div>';$('flatPickerM').classList.add('open');await renderFlatPicker()}
 async function renderFlatPicker(){if(!fpTargetNick)return;const{data:hs}=await sb.from('houses').select('*').order('id');const{data:fl}=await sb.from('flats').select('*');const allHouses=hs||[];const allFlats=fl||[];const enc=en(fpTargetNick);let curH=0,curF=0;for(const f of allFlats){if((f.owner_nicks||[]).includes(enc)){curH=f.house_id;curF=f.number;break}}const byHouse={};allFlats.forEach(f=>{if(!byHouse[f.house_id])byHouse[f.house_id]=[];byHouse[f.house_id].push(f)});let html='';for(const h of allHouses){const flats=(byHouse[h.id]||[]).sort((a,b)=>a.number-b.number);if(!flats.length)continue;const isMyHouse=curH===h.id;html+='<div class="fp-house"><div class="fp-house-title">🏘 '+eh(h.name||('Дом №'+h.id))+(isMyHouse?' <span style="color:#a06bff;font-size:11px">← он здесь (Кв. '+curF+')</span>':'')+'</div><div class="fp-grid">';for(const f of flats){const owners=flatOwners(f);const mp=f.max_people??2;const iAmHere=owners.includes(enc);const isFull=owners.length>=mp;const ownersNames=owners.map(de).join(', ');const cls='fp-flat'+(iAmHere?' mine':(isFull?' full':''));const click=iAmHere||isFull?'':'onclick="pickFlatToMove('+h.id+','+f.number+')"';html+='<div class="'+cls+'" '+click+'><span class="fnum">№'+f.number+'</span><span class="fwho">'+(owners.length?eh(ownersNames):'свободно')+'</span><span class="fwho">'+owners.length+'/'+mp+'</span></div>'}html+='</div></div>'}if(!html)html='<div class="afe">Нет домов</div>';$('fpBody').innerHTML=html}
 async function pickFlatToMove(hid,fn){
+  if(!(await guardOwner())) return;
   if(!fpTargetNick)return;
   const nick=fpTargetNick;
   const{data,error}=await sb.rpc('owner_move_to_flat',{p_nick:nick,p_house:hid,p_flat:fn});
@@ -1625,6 +1643,7 @@ async function pickFlatToMove(hid,fn){
   showToast('✅ '+nick+' → Дом '+hid+', Кв. '+fn,'success');
 }
 async function ownerKickUser(nick){
+  if(!(await guardOwner())) return;
   if(!isOwner())return;
   const ok=await askConfirm('Выселить?','Убрать '+nick+' из всех квартир.','Выселить',true);
   if(!ok)return;
@@ -1776,17 +1795,39 @@ async function autoCheckNewHouse(){}
 async function afUsers(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('profiles').select('*').order('nick');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}usersAll=data||[];const bannedCount=usersAll.filter(u=>u.banned).length;const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);const o=hasAdmin();const isOwn=isOwner();let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'"><div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div></div><div class="ac">'+(showBanned?'<button class="afbtn gr" onclick="toggleBannedView()">👁 Скрыть</button>':'<button class="afbtn r" onclick="toggleBannedView()">👁 Показать ('+bannedCount+')</button>')+'</div></div>';if(!visible.length){b.innerHTML=top+'<div class="afe">Пусто</div>';return}b.innerHTML=top+visible.map(u=>{const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;const nickEnc=eh(u.nick);const coinBtns=isOwn?('<button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 100)">+100</button><button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 1000)">+1000</button><button class="of-ev-btn danger" onclick="admCoins(\''+nickEnc+'\', -100)">−100</button>'):'';const banBtns=o?(bn?'<button class="of-ev-btn on" onclick="unBan(\''+nickEnc+'\')">Разбан</button>':'<button class="of-ev-btn danger" onclick="banU(\''+nickEnc+'\')">Бан</button>'):'';const admBtns=isOwn?(ad?'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>'):'';const flatBtns=isOwn?('<button class="of-ev-btn" onclick="ownerSetFlat(\''+nickEnc+'\')">🏠 Заселить</button><button class="of-ev-btn danger" onclick="ownerKickUser(\''+nickEnc+'\')">🚪 Выселить</button>'):'';return '<div class="of-user-row">'+avH(u.nick,'sm')+'<div style="flex:1;min-width:140px;margin-left:4px">'+'<div class="nik" style="cursor:pointer;color:#fff" onclick="openProfile(\''+nickEnc+'\')">'+eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')+'</div>'+'<div style="color:#f5c542;font-size:12px;margin-top:2px">💰 '+coins+'</div>'+(u.ban_reason?'<div style="font-size:11px;color:#ff6666;margin-top:2px">'+eh(u.ban_reason)+'</div>':'')+'</div>'+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">'+flatBtns+coinBtns+banBtns+admBtns+'</div></div>'}).join('')}
 function toggleBannedView(){showBanned=!showBanned;afRend()}
 async function admCoins(nick,delta){
-  if(!isOwner()){ triggerHackStrike(); return; }
+  if(!(await guardOwner())) return;
   const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:nick,p_delta:delta});
-  if(error)return showToast('Ошибка: '+error.message,'error');
-  if(data&&data.ok===false)return showToast(data.error||'Ошибка','error');
-  if(nick===me&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}
+  if(error) return showToast('Ошибка: '+error.message,'error');
+  if(data&&data.ok===false) return showToast(data.error||'Ошибка','error');
+  if(nick===me && typeof data.coins==='number'){ myCoins=data.coins; updateCoinsUI(); }
   afRend();
 }
-async function banU(n){if(!hasAdmin())return showToast('Только админам','error');if(n===me)return showToast('Себя нельзя','error');const r=prompt('Причина','нарушение');if(r===null)return;const{data,error}=await sb.rpc('admin_ban',{p_nick:n,p_reason:r||''});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');afRend()}
-async function unBan(n){if(!hasAdmin())return;const{data,error}=await sb.rpc('admin_unban',{p_nick:n});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');afRend()}
-async function togAdm(n,m){if(!isOwner())return;const{data,error}=await sb.rpc('owner_set_admin',{p_nick:n,p_val:m});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');afRend()}
+async function banU(n){
+  if(!(await guardAdmin())) return;
+  if(n===me) return showToast('Себя нельзя','error');
+  const r=prompt('Причина','нарушение');
+  if(r===null)return;
+  const{data,error}=await sb.rpc('admin_ban',{p_nick:n,p_reason:r||''});
+  if(error) return showToast('❌ '+error.message,'error');
+  if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');
+  afRend();
+}
+async function unBan(n){
+  if(!(await guardAdmin())) return;
+  const{data,error}=await sb.rpc('admin_unban',{p_nick:n});
+  if(error) return showToast('❌ '+error.message,'error');
+  if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');
+  afRend();
+}
+async function togAdm(n,m){
+  if(!(await guardOwner())) return;
+  const{data,error}=await sb.rpc('owner_set_admin',{p_nick:n,p_val:m});
+  if(error) return showToast('❌ '+error.message,'error');
+  if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');
+  afRend();
+}
 async function afEvict(houseId,n){
+  if(!(await guardAdmin())) return;
   if(!hasAdmin())return;
   const gNum=(houseId-1)*30+Number(n);
   const ok=await askConfirm('Выселить?','Дом '+houseId+', кв. '+gNum,'Выселить',true);
@@ -1822,9 +1863,9 @@ async function openChiefPicker(houseId, number){
   await afRend();
   showToast('👑 Теперь главный: '+de(chosen),'success');
 }
-async function afMax(houseId,n){if(!hasAdmin())return;const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const cur=f.max_people??2;const val=prompt('Мест (1-9999)',String(cur));if(val===null)return;const nx=Math.max(1,Math.min(9999,parseInt(val)||2));const{data,error}=await sb.rpc('admin_set_max',{p_house:houseId,p_flat:n,p_max:nx});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse();await afRend()}
-async function afTogEnt(g,bl){if(!hasAdmin())return;const{data,error}=await sb.rpc('owner_toggle_entrance',{p_house:curHouse,p_ent:g,p_blocked:bl});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse();afRend()}
-async function afTogHouse(hid,bl){if(!hasAdmin())return;const{data,error}=await sb.rpc('owner_toggle_house',{p_id:hid,p_blocked:bl});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await loadHouses();renderHouses();await afRend()}
+async function afMax(houseId,n){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const cur=f.max_people??2;const val=prompt('Мест (1-9999)',String(cur));if(val===null)return;const nx=Math.max(1,Math.min(9999,parseInt(val)||2));const{data,error}=await sb.rpc('admin_set_max',{p_house:houseId,p_flat:n,p_max:nx});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse();await afRend()}
+async function afTogEnt(g,bl){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data,error}=await sb.rpc('owner_toggle_entrance',{p_house:curHouse,p_ent:g,p_blocked:bl});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse();afRend()}
+async function afTogHouse(hid,bl){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data,error}=await sb.rpc('owner_toggle_house',{p_id:hid,p_blocked:bl});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await loadHouses();renderHouses();await afRend()}
 const JOBS={teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,tasks:['Проверить контрольные','Решить примеры','Проверить диктант'],types:['check','math','dictation']},police:{id:'police',name:'Полицейский',icon:'👮',reward:750,tasks:['Патруль','Скорость','Документы'],types:['patrol','radar','docs']},welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,tasks:['Шов','Замер','Резка'],types:['seam','measure','cut']}};
 const JOB_TASKS_PER_DAY=3,JOB_BAN_DAYS=30,JOB_MAX_MISSED=3,JOB_STATE_VERSION=3;
 function jobKey(){return 'job_'+meEnc}
