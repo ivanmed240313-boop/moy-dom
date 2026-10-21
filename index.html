@@ -1603,7 +1603,7 @@ function openOwner(){
 function closeOwner(){$('ofm').classList.remove('open')}
 function ofSw(t){afT=t;_afTarget='ofB';document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));ofRend()}
 async function ofRend(){const b=$('ofB');if(!b)return;if(afT==='flats')return afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return afHouse(b);if(afT==='users')return afUsers(b);if(afT==='give')return ofGive(b);if(afT==='events')return ofEvents(b);if(afT==='custom')return ofCustomEvents(b);if(afT==='fakes')return ofFakes(b);if(afT==='dates')return ofDates(b)}
-const APP_VERSION='3.6.6';
+const APP_VERSION='3.6.7';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
@@ -2256,10 +2256,10 @@ async function loadHM(){const ns=[];Object.values(flats).forEach(f=>{flatOwners(
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 function renderHouses(){const b=$('hb');b.innerHTML='';houses.forEach(h=>{const e=document.createElement('div');e.className='hbtn'+(h.id===curHouse?' act':'')+(h.blocked?' blk':'');e.textContent=h.blocked?'🚫 '+h.name:h.name;e.onclick=()=>switchHouse(h.id);magnetize(e);b.appendChild(e)})}
 async function switchHouse(i){
-  if(i===curHouse && houses.length>0) return;
-  
-  const direction = (Number(i) > Number(curHouse)) ? 'next' : 'prev';
   const inner = $('houseInner');
+  if(i===curHouse && houses.length>0 && inner) return; // Если уже отрисован, не перезагружаем
+
+  const direction = (Number(i) > Number(curHouse)) ? 'next' : 'prev';
   
   // Затемняем экран для плавности
   if(inner) inner.style.opacity = '0.3';
@@ -2275,10 +2275,10 @@ async function switchHouse(i){
   // Убираем затемнение
   if(inner) inner.style.opacity = '1';
   
-  // Анимация ухода
+  // Анимация ухода (если дом уже был на экране)
   if(inner){
     inner.style.animation = direction === 'next' ? 'houseSlideOutLeft 0.2s ease-in forwards' : 'houseSlideOutRight 0.2s ease-in forwards';
-    await new Promise(r => setTimeout(r, 180)); // Ждем чуть-чуть
+    await new Promise(r => setTimeout(r, 180));
   }
   
   // Строим новый дом
@@ -2741,7 +2741,7 @@ async function start(){
   subProf();subGP();subGroups();subRoomInvites();subCalls();
   await loadAllProfiles();await loadPhotoCache();await loadCoins();await loadMyRooms();await loadEvOverrides();await loadCustomEvents();subCustomEvents();jobCheckDay();
   await loadHouses();if(!houses.length&&isOwner()){const c=await sb.rpc('owner_create_house',{p_name:'Дом №1'});if(c.data&&c.data.ok){await loadHouses()}}
-  curHouse=houses[0]?.id;renderHouses();if(curHouse)await switchHouse(curHouse);
+  if(houses.length > 0) {   curHouse = null;   renderHouses();   await switchHouse(houses[0].id); } else {   renderHouses(); }
   subHouses();subFlats();await loadGroups();await loadDMs();renderDMs();subGlob();
   setupUI();updateSeasonBtn();
   setInterval(()=>{if(curHouse)loadHouses()},30000);
