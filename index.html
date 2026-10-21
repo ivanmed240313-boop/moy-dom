@@ -2058,7 +2058,7 @@ function initVacuumGame(field, target) {
   const dirts = [];
   for (let i = 0; i < target; i++) {
     const s = 32 + Math.random() * 20;
-    const el = document.createElement('div');
+    const el = document.createElement('div'); // <-- ВОТ ОНА
     el.className = 'vac-dirt';
     el.style.width = s + 'px';
     el.style.height = s * 0.7 + 'px';
@@ -2115,7 +2115,7 @@ function initFlowersGame(field, target) {
 
   for (let i = 0; i < target; i++) {
     const w = 80;
-    const el = document.createElement('div');
+    const el = document.createElement('div'); // <-- ВОТ ОНА
     el.className = 'flower';
     el.style.left = (startX + i * spacing - w / 2) + 'px';
     el.style.top = (r.height / 2 - 40) + 'px';
