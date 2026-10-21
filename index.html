@@ -1624,10 +1624,12 @@ async function openOwner(){
   ofSw('flats');
 }
 function closeOwner(){
+  if(typeof _appealsAutoUpdate !== 'undefined' && _appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
   if(typeof _logsAutoUpdate !== 'undefined' && _logsAutoUpdate) clearInterval(_logsAutoUpdate);
   $('ofm').classList.remove('open');
 }
 function ofSw(t){
+  if(typeof _appealsAutoUpdate !== 'undefined' && _appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
   if(typeof _logsAutoUpdate !== 'undefined' && _logsAutoUpdate) {
     clearInterval(_logsAutoUpdate);
     _logsAutoUpdate = null;
@@ -1637,7 +1639,7 @@ function ofSw(t){
   document.querySelectorAll('#ofm .oftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));
   ofRend();
 }
-async function ofRend(){   const b=$('ofB');if(!b)return;   if(afT==='flats')return afFlats(b);   if(afT==='ent')return afEnt(b);   if(afT==='house')return afHouse(b);   if(afT==='users')return afUsers(b);   if(afT==='give')return ofGive(b);   if(afT==='events')return ofEvents(b);   if(afT==='custom')return ofCustomEvents(b);   if(afT==='fakes')return ofFakes(b);   if(afT==='dates')return ofDates(b);   if(afT==='logs')return ofLogs(b); }
+async function ofRend(){   if(afT==='appeals')return ofAppeals(b);  const b=$('ofB');if(!b)return;   if(afT==='flats')return afFlats(b);   if(afT==='ent')return afEnt(b);   if(afT==='house')return afHouse(b);   if(afT==='users')return afUsers(b);   if(afT==='give')return ofGive(b);   if(afT==='events')return ofEvents(b);   if(afT==='custom')return ofCustomEvents(b);   if(afT==='fakes')return ofFakes(b);   if(afT==='dates')return ofDates(b);   if(afT==='logs')return ofLogs(b); }
 let _logsAutoUpdate = null;
 
 async function ofLogs(b) {
@@ -2672,6 +2674,79 @@ async function postAnn(){const t=$('annInp').value.trim();if(!t)return;const hid
 async function delAnn(hid){const h=hid||Number(curHouse);const{data,error}=await sb.rpc('owner_announce',{p_house:h,p_text:''});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await loadHouses();if(afT==='house')afRend()}
 function showAnn(t){const b=$('annBanner');if(!b)return;if(!t){b.classList.remove('on');return}$('annText').textContent=t;b.classList.add('on')}
 async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
+async function submitAppeal() {
+  const msg = $('appealMsg').value.trim();
+  const st = $('appealStatus');
+  const btn = $('appealBtn');
+  
+  if (!msg) { st.style.color = '#ff6b6b'; st.textContent = 'Напиши причину...'; return; }
+  
+  btn.disabled = true; btn.textContent = 'Отправка...'; st.textContent = '';
+  
+  const { data, error } = await sb.rpc('submit_appeal', { p_message: msg });
+  
+  if (error || (data && data.ok === false)) {
+    st.style.color = '#ff6b6b'; st.textContent = error ? error.message : data.error;
+    btn.disabled = false; btn.textContent = '📩 Связаться с Администрацией';
+    return;
+  }
+  st.style.color = '#8bc34a'; st.textContent = '✅ Запрос отправлен! Ожидайте.';
+  btn.textContent = 'Отправлено';
+}
+let _appealsAutoUpdate = null;
+
+async function ofAppeals(b) {
+  if(!isOwner()){ b.innerHTML='<div class="afe">Только владелец</div>'; return; }
+  if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
+
+  async function renderAppeals() {
+    if(afT !== 'appeals' || !$('ofm').classList.contains('open')) {
+      if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
+      return;
+    }
+
+    const { data, error } = await sb.rpc('owner_get_appeals');
+    if(error){ b.innerHTML='<div class="afe">Ошибка: '+error.message+'</div>'; return; }
+    if(!data || !data.length){ b.innerHTML='<div class="afe">Нет новых запросов на разбан.</div>'; return; }
+    
+    let html = '<div class="of-hint">📩 <b>Обратная связь.</b> Запросы от забаненных пользователей.</div>';
+    
+    html += data.map(l => {
+      const d = new Date(l.created_at);
+      const p = n => String(n).padStart(2, '0');
+      const timeStr = `${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(-2)};${p(d.getHours())}:${p(d.getMinutes())}`;
+      
+      return `<div class="of-user-row" style="border-color:#ffaa00; background:rgba(255,170,0,0.05); flex-direction:column; align-items:flex-start; gap:10px;">
+        <div style="width:100%; display:flex; justify-content:space-between;">
+          <b style="color:#a06bff; font-size:14px;">${eh(l.nick)}</b>
+          <span style="color:#888; font-size:11px;">${timeStr}</span>
+        </div>
+        <div style="font-size:13px; color:#ddd; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; width:100%; white-space:pre-wrap;">${eh(l.message)}</div>
+        <div style="display:flex; gap:8px; width:100%; margin-top:5px;">
+          <button class="afbtn g" style="flex:1" onclick="resolveAppeal(${l.id}, 'unban', this)">✅ Разбанить</button>
+          <button class="afbtn r" style="flex:1" onclick="resolveAppeal(${l.id}, 'keep', this)">🚫 Оставить (Бан)</button>
+        </div>
+      </div>`;
+    }).join('');
+    
+    b.innerHTML = html;
+  }
+
+  await renderAppeals();
+  _appealsAutoUpdate = setInterval(renderAppeals, 3000);
+}
+
+async function resolveAppeal(id, action, btn) {
+  btn.disabled = true; btn.textContent = '...';
+  const { data, error } = await sb.rpc('owner_resolve_appeal', { p_id: id, p_action: action });
+  
+  if(error || (data && data.ok === false)) {
+    showToast('Ошибка: ' + (error ? error.message : data.error), 'error');
+    btn.disabled = false; btn.textContent = action === 'unban' ? '✅ Разбанить' : '🚫 Оставить (Бан)';
+    return;
+  }
+  showToast(action === 'unban' ? '✅ Пользователь разбанен' : '🚫 Запрос отклонён', 'success');
+}
 function upFm(){
   const f=flats[fmN];if(!f)return closeFm();
   const owners=flatOwners(f);
