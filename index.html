@@ -1579,8 +1579,9 @@ async function guardAdmin(){
 }
 async function guardOwner(){
   if(!isOwner()){ triggerHackStrike(); return false; }
-  // серверное подтверждение (см. SQL внизу)
-  const { data, error } = await sb.rpc('check_my_owner_status').catch(() => ({ data: null, error: true }));
+  let data = null, error = null;
+  try { ({ data, error } = await sb.rpc('check_my_owner_status')); }
+  catch(e){ error = e; }
   if(error === null && data === false){ triggerHackStrike(); return false; }
   return true;
 }
@@ -1598,11 +1599,8 @@ async function openAdmin(){
 function closeAdmin(){$('afm').classList.remove('open')}
 function afSw(t){afT=t;_afTarget='afB';document.querySelectorAll('#afm .aftab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));afRend()}
 const _secretOID = ['81fe9ad5', 'a02b', '4e57', '8c59', '1cf2d60e842c'].join('-');
-function openOwner(){
-  if(!curUser || curUser.id !== _secretOID){
-    triggerHackStrike();
-    return; 
-  }
+async function openOwner(){
+  if(!(await guardOwner())) return;
   _afTarget='ofB';
   $('ofm').classList.add('open');
   ofSw('flats');
@@ -1840,6 +1838,7 @@ async function afEvict(houseId,n){
   showToast('🚪 Выселено','success');
 }
 async function openChiefPicker(houseId, number){
+  if(!(await guardAdmin())) return;
   if(!hasAdmin())return;
   const{data:f}=await sb.from('flats').select('owner_nicks').eq('house_id',houseId).eq('number',number).maybeSingle();
   if(!f||!Array.isArray(f.owner_nicks)||f.owner_nicks.length<2){
@@ -2774,6 +2773,71 @@ function setupUI(){
   const incAcc=$('callIncAccept');if(incAcc)incAcc.onclick=acceptCall;
   const incRej=$('callIncReject');if(incRej)incRej.onclick=rejectCall;
 }
+/* ====== ХАК-ЗАЩИТА: авто-обёртки ====== */
+(function(){
+  // Обёртка для owner-функций
+  function wrapOwner(name){
+    const orig = window[name];
+    if(typeof orig !== 'function') return;
+    window[name] = async function(){
+      if(!(await guardOwner())) return;
+      return orig.apply(this, arguments);
+    };
+  }
+  // Обёртка для admin-функций
+  function wrapAdmin(name){
+    const orig = window[name];
+    if(typeof orig !== 'function') return;
+    window[name] = async function(){
+      if(!(await guardAdmin())) return;
+      return orig.apply(this, arguments);
+    };
+  }
+  // Обёртка для синхронных (проверка + страйк)
+  function wrapAdminSync(name){
+    const orig = window[name];
+    if(typeof orig !== 'function') return;
+    window[name] = function(){
+      if(!hasAdmin()){ triggerHackStrike(); return; }
+      return orig.apply(this, arguments);
+    };
+  }
+
+  // OWNER-функции
+  ['openChiefPicker', 'quickCreateHouse', 'setEvOv', 'createCustomEvent',
+   'toggleCustomEvent', 'testCustomEvent', 'deleteCustomEvent',
+   'createFake', 'deleteFake', 'switchToFake'].forEach(wrapAdmin);
+
+  // ADMIN-функции
+  ['postAnn', 'delAnn'].forEach(wrapAdmin);
+
+  // Синхронные admin
+  ['odtAdd', 'odtDel', 'odtToggle'].forEach(wrapAdminSync);
+
+  // openOwner — заменяем целиком
+  window.openOwner = async function(){
+    if(!(await guardOwner())) return;
+    _afTarget='ofB';
+    $('ofm').classList.add('open');
+    ofSw('flats');
+  };
+
+  // clickFlat — защита выселения в admin-mode
+  const origClickFlat = window.clickFlat;
+  if(typeof origClickFlat === 'function'){
+    window.clickFlat = async function(n){
+      const f = flats[n];
+      const owners = flatOwners(f);
+      if(adminMode && owners.length && !owners.includes(meEnc)){
+        if(!(await guardAdmin())) return;
+      }
+      return origClickFlat.call(this, n);
+    };
+  }
+
+  console.log('✅ Все админ-функции обёрнуты защитой');
+})();
+/* ====== конец ====== */
 async function start(){
   meEnc=en(me);
   restoreFakeSession();
