@@ -3470,7 +3470,6 @@ function runBootSequence(isFirstTime) {
     
     const isLoggedIn = !!curUser;
     
-    // 👇👇👇 ТВОИ СТРОКИ (остались без изменений) 👇👇👇
     const CONFIG_FIRST_RUN = [
       "Подключение к серверам ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
       "Синхронизация аккаунта ... <span style='color:#d32f2f;font-weight:bold'>[X]</span>"
@@ -3486,21 +3485,16 @@ function runBootSequence(isFirstTime) {
       "Проверки защиты ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
       "Подготовка завершена, запуск ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>"
     ];
-    // 👆👆👆 КОНЕЦ НАСТРОЙКИ 👆👆👆
 
     let lines = [];
 
-    // 👇 ИСПРАВЛЕННАЯ ЛОГИКА 👇
-    // Если чел не авторизован (и это первый запуск) -> показываем первый блок с крестиком
     if (!isReboot && !isLoggedIn) {
       lines = [
         "Запуск HomeOS...",
         ...CONFIG_FIRST_RUN,
         "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>"
       ];
-    } 
-    // Во всех остальных случаях (после логина ИЛИ если ты просто обновил страницу, уже будучи в аккаунте) -> показываем твои 8 строк с галочками
-    else {
+    } else {
       lines = [
         isReboot ? "Переподключение..." : "Запуск HomeOS...",
         ...CONFIG_REBOOT,
@@ -3528,7 +3522,8 @@ function runBootSequence(isFirstTime) {
       }
     }, 300);
   }
-  
+}
+
 document.addEventListener('DOMContentLoaded', initRetroBoot);
 </script>
 </body>
