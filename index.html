@@ -1582,7 +1582,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 .phone-setup {
   display: none;
   position: absolute;
-  top: 22vh;
+  top: 20vh; /* Чуть подняли, так как экран стал больше */
   transform: rotateX(10deg);
   cursor: pointer; 
   flex-direction: column; 
@@ -1602,7 +1602,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 }
 .phone-body {
   width: 190px;
-  height: 330px;
+  height: 360px;
   background: #2a2a2a;
   border-radius: 24px;
   padding: 20px 14px;
@@ -1614,36 +1614,49 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 }
 .phone-speaker {
   width: 40px; height: 6px;
-  background: #111; border-radius: 3px; margin-bottom: 12px;
+  background: #111; border-radius: 3px; margin-bottom: 10px;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
 }
 .phone-screen {
-  width: 100%; height: 130px;
+  width: 100%; height: 170px; /* УВЕЛИЧИЛИ ЭКРАН */
   background: #0a0a0a; border-radius: 4px;
   border: 4px solid #555; position: relative;
   overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,1);
 }
 .phone-screen.on {
-  background: #9acd32; /* Зеленоватый экран */
+  background: #9acd32;
   box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 0 15px rgba(154,205,50,0.4);
 }
 .phone-screen.flash { animation: phoneFlash 0.4s ease-out forwards; }
 @keyframes phoneFlash { 0% { background: #fff; } 100% { background: #9acd32; } }
 .phone-buttons {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 8px; margin-top: 20px; width: 100%; padding: 0 10px;
+  gap: 6px; margin-top: 15px; width: 100%; padding: 0 5px;
 }
 .phone-btn {
-  background: #444; color: #aaa; border-radius: 8px;
-  text-align: center; padding: 8px 0; font-size: 14px;
+  background: #444; color: #aaa; border-radius: 6px;
+  text-align: center; padding: 4px 0; font-size: 11px; /* УМЕНЬШИЛИ КНОПКИ */
   font-family: inherit; font-weight: bold;
-  box-shadow: 0 4px 0 #222, inset 0 1px 2px rgba(255,255,255,0.2);
+  box-shadow: 0 3px 0 #222, inset 0 1px 2px rgba(255,255,255,0.2);
   user-select: none;
 }
+/* ЦЕНТРАЛЬНАЯ КРУГЛАЯ КНОПКА */
+.phone-center-btn {
+  background: #444; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 0 #222, inset 0 1px 2px rgba(255,255,255,0.2);
+  width: 26px; height: 26px; margin: 0 auto;
+}
+.phone-center-btn .inner-circle {
+  width: 12px; height: 12px; background: #222; border-radius: 50%;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+}
 
+/* СКРЫВАЕМ МЫШКУ И КРУЖКУ НА ТЕЛЕФОНЕ */
 @media (max-width: 768px) {
   .pc-setup { display: none !important; }
   .phone-setup { display: flex !important; }
+  .lite-mug, .lite-mouse { display: none !important; } /* Убрали лишнее */
 }
 @media (min-width: 769px) {
   .pc-setup { display: flex !important; }
@@ -1687,7 +1700,9 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
       </div>
       <div class="phone-buttons">
         <div class="phone-btn">1</div><div class="phone-btn">2</div><div class="phone-btn">3</div>
-        <div class="phone-btn">4</div><div class="phone-btn">5</div><div class="phone-btn">6</div>
+        <div class="phone-btn">4</div>
+        <div class="phone-center-btn"><div class="inner-circle"></div></div>
+        <div class="phone-btn">6</div>
         <div class="phone-btn">7</div><div class="phone-btn">8</div><div class="phone-btn">9</div>
         <div class="phone-btn">*</div><div class="phone-btn">0</div><div class="phone-btn">#</div>
       </div>
@@ -3499,32 +3514,46 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
 </script>
 <script>
 /* ============================================================
-   🔥 ОПТИМИЗИРОВАННАЯ ЗАСТАВКА (ИСПРАВЛЕНА ОШИБКА)
+   🔥 ФИНАЛЬНАЯ ЗАСТАВКА (VHS, РАЗМЫТИЕ, ПЛАВНЫЙ ЗУМ)
    ============================================================ */
 
 (function() {
   const style = document.createElement('style');
   style.innerHTML = `
+    /* Оверлей с искажением и VHS-полосами */
     #warpOverlay {
       position: fixed; inset: 0; z-index: 9999999;
       pointer-events: none; opacity: 0;
       transition: opacity 0.5s ease;
-      background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.8) 60%, #000 100%);
+      background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.85) 60%, #000 100%);
+      box-shadow: inset 0 0 150px rgba(255, 0, 60, 0.5), inset 0 0 250px rgba(0, 255, 255, 0.3);
     }
     #warpOverlay.active {
       opacity: 1;
-      animation: warpPulse 2s ease-in forwards;
+      animation: warpPulse 2.5s ease-in forwards;
     }
-    @keyframes warpPulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); opacity: 0; } }
+    /* Бегущие полосы VHS */
+    #warpOverlay::before {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,255,255,0.08) 2px, rgba(255,255,255,0.08) 4px);
+      animation: vhsScroll 1s linear infinite;
+    }
+    @keyframes vhsScroll { 0% { background-position: 0 0; } 100% { background-position: 0 20px; } }
+    @keyframes warpPulse {
+      0% { transform: scale(1); }
+      50% { filter: blur(2px) contrast(150%); }
+      100% { transform: scale(1.1); filter: blur(10px) contrast(200%); opacity: 0; }
+    }
 
+    /* Сама заставка: плавное засасывание с размытием */
     #retroBootScreen.warping {
-      animation: warpSuck 2s cubic-bezier(0.6, 0, 0.3, 1) forwards !important;
+      animation: warpSuck 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
       pointer-events: none;
     }
     @keyframes warpSuck {
-      0% { transform: scale(1) rotate(0deg); opacity: 1; }
-      50% { transform: scale(2) rotate(2deg); opacity: 0.8; }
-      100% { transform: scale(8) rotate(10deg); opacity: 0; }
+      0% { transform: scale(1) rotate(0deg); filter: blur(0px); opacity: 1; }
+      40% { filter: blur(5px); } /* Начинаем размывать */
+      100% { transform: scale(10) rotate(15deg); filter: blur(30px); opacity: 0; }
     }
   `;
   document.head.appendChild(style);
@@ -3538,7 +3567,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Переменная переименована, чтобы не конфликтовать с основным кодом
 window._retroAudioCtx = null;
 
 function getAudioCtx() {
@@ -3625,7 +3653,7 @@ function runBootSequence(isFirstTime) {
     deviceScreen.classList.add('on');
     
     bootText.style.animation = 'none';
-    bootText.style.color = '#000000'; // ЧЕРНЫЙ ТЕКСТ
+    bootText.style.color = '#000000'; 
     bootText.style.fontSize = isMobile ? '10px' : '12px';
     bootText.style.textAlign = 'left';
     bootText.style.padding = isMobile ? '6px' : '15px';
@@ -3715,8 +3743,11 @@ function runBootSequence(isFirstTime) {
     function triggerWarp() {
       const warp = document.getElementById('warpOverlay');
       if (warp) warp.classList.add('active');
+      
+      // Даем CSS-анимации плавно запуститься
       screen.classList.add('warping');
       
+      // Ждем 2500 мс (столько же, сколько длится анимация), чтобы она не обрубалась!
       setTimeout(() => {
         screen.classList.add('hidden');
         screen.classList.remove('warping');
@@ -3726,7 +3757,7 @@ function runBootSequence(isFirstTime) {
           if (!isLoggedIn) sessionStorage.setItem('booted_before_login', 'true');
           else sessionStorage.removeItem('booted_before_login');
         }
-      }, 2000); 
+      }, 2500); 
     }
 
     typeNextLine();
