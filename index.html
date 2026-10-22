@@ -1393,10 +1393,109 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 @keyframes crtFlash { 0% { background: #fff; box-shadow: 0 0 100px #fff, inset 0 0 50px #fff; } 100% { background: #ffcc00; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 40px rgba(255,204,0,0.6); } }
 
 .pc-setup.zoom-in { transform: translateZ(600px) rotateX(0deg) rotateY(0deg); opacity: 0; transition: transform 1.2s cubic-bezier(0.6, 0, 0.8, 1), opacity 1s ease-in; }
+/* --- 3D ДЕРЕВЯННЫЙ СТОЛ --- */
+.pc-desk {
+  position: absolute;
+  width: 1000px;
+  height: 800px;
+  background-color: #5c3a21;
+  background-image: 
+    repeating-linear-gradient(90deg, transparent 0, transparent 38px, rgba(0,0,0,0.15) 38px, rgba(0,0,0,0.15) 40px),
+    repeating-linear-gradient(0deg, transparent 0, transparent 98px, rgba(0,0,0,0.1) 98px, rgba(0,0,0,0.1) 100px);
+  transform: rotateX(90deg) translateZ(-150px) translateY(250px);
+  border-radius: 24px;
+  box-shadow: 0 50px 150px rgba(0,0,0,0.9), inset 0 0 100px rgba(0,0,0,0.6);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- 3D МЫШКА --- */
+.pc-mouse {
+  position: absolute;
+  width: 46px;
+  height: 70px;
+  background: #e8e3d5;
+  border-radius: 23px 23px 15px 15px;
+  border: 2px solid #c9c4b5;
+  transform: rotateX(90deg) translateZ(-120px) translateX(210px) translateY(100px);
+  box-shadow: 0 15px 25px rgba(0,0,0,0.5), inset 0 4px 8px rgba(255,255,255,0.6);
+  z-index: 3;
+  cursor: pointer;
+}
+.pc-mouse::after {
+  content: '';
+  position: absolute;
+  top: 12px; left: 50%;
+  transform: translateX(-50%);
+  width: 8px; height: 16px;
+  background: #555;
+  border-radius: 4px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* --- 3D КРУЖКА С КОФЕ --- */
+.pc-mug {
+  position: absolute;
+  width: 60px;
+  height: 75px;
+  transform: rotateX(90deg) translateZ(-120px) translateX(-220px) translateY(100px);
+  z-index: 3;
+}
+.pc-mug-body {
+  width: 100%; height: 100%;
+  background: #ffffff;
+  border-radius: 6px 6px 20px 20px;
+  border: 2px solid #e0e0e0;
+  position: relative;
+  box-shadow: inset -8px 0 15px rgba(0,0,0,0.1), inset 8px 0 15px rgba(255,255,255,1), 0 15px 25px rgba(0,0,0,0.5);
+}
+.pc-mug-handle {
+  position: absolute;
+  right: -22px; top: 18px;
+  width: 28px; height: 35px;
+  border: 7px solid #ffffff;
+  border-left: none;
+  border-radius: 0 20px 20px 0;
+  box-shadow: 4px 0 8px rgba(0,0,0,0.15);
+}
+.pc-mug-coffee {
+  position: absolute;
+  top: 4px; left: 4px; right: 4px; height: 12px;
+  background: radial-gradient(ellipse at center, #3a1c0b, #1f0e04);
+  border-radius: 50%;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+}
+
+/* --- ПАР НАД КРУЖКОЙ --- */
+.pc-steam {
+  position: absolute;
+  bottom: 95%; left: 50%;
+  transform: translateX(-50%) rotateX(-90deg);
+  width: 40px; height: 80px;
+  pointer-events: none;
+}
+.steam1, .steam2, .steam3 {
+  position: absolute;
+  bottom: 0;
+  width: 12px; height: 12px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  filter: blur(5px);
+  animation: steamRise 2.5s infinite ease-out;
+}
+.steam1 { left: 4px; animation-delay: 0s; }
+.steam2 { left: 14px; animation-delay: 0.8s; }
+.steam3 { left: 24px; animation-delay: 1.6s; }
+@keyframes steamRise {
+  0% { transform: translateY(0) scale(1); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translateY(-70px) scale(4); opacity: 0; }
+}
 </style></head>
 <body>
 <div id="retroBootScreen">
   <div class="pc-setup" id="pcSetup">
+    <div class="pc-desk"></div>
     <div class="pc-monitor">
       <div class="pc-screen" id="pcScreen">
         <div class="crt-overlay"></div>
