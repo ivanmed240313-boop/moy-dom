@@ -1578,6 +1578,77 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
   box-shadow: 0px 30px 35px rgba(0,0,0,0.8), inset 0 5px 12px rgba(255,255,255,1);
   transform: rotateX(15deg);
 }
+/* --- СТИЛИ ДЛЯ ТЕЛЕФОНА --- */
+.phone-setup {
+  display: none;
+  position: absolute;
+  top: 22vh;
+  transform: rotateX(10deg);
+  cursor: pointer; 
+  flex-direction: column; 
+  align-items: center;
+  z-index: 2;
+}
+.phone-setup::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 10%; right: 10%;
+  height: 20px;
+  background: rgba(0,0,0,0.8);
+  filter: blur(12px);
+  border-radius: 50%;
+  z-index: -1;
+}
+.phone-body {
+  width: 190px;
+  height: 330px;
+  background: #2a2a2a;
+  border-radius: 24px;
+  padding: 20px 14px;
+  border: 4px solid #444;
+  box-shadow: inset -5px -5px 15px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.phone-speaker {
+  width: 40px; height: 6px;
+  background: #111; border-radius: 3px; margin-bottom: 12px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
+}
+.phone-screen {
+  width: 100%; height: 130px;
+  background: #0a0a0a; border-radius: 4px;
+  border: 4px solid #555; position: relative;
+  overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,1);
+}
+.phone-screen.on {
+  background: #9acd32; /* Зеленоватый экран */
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 0 15px rgba(154,205,50,0.4);
+}
+.phone-screen.flash { animation: phoneFlash 0.4s ease-out forwards; }
+@keyframes phoneFlash { 0% { background: #fff; } 100% { background: #9acd32; } }
+.phone-buttons {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; margin-top: 20px; width: 100%; padding: 0 10px;
+}
+.phone-btn {
+  background: #444; color: #aaa; border-radius: 8px;
+  text-align: center; padding: 8px 0; font-size: 14px;
+  font-family: inherit; font-weight: bold;
+  box-shadow: 0 4px 0 #222, inset 0 1px 2px rgba(255,255,255,0.2);
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .pc-setup { display: none !important; }
+  .phone-setup { display: flex !important; }
+}
+@media (min-width: 769px) {
+  .pc-setup { display: flex !important; }
+  .phone-setup { display: none !important; }
+}
 </style>
 </head>
 <body>
@@ -1589,11 +1660,11 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
   <!-- ДЕРЕВЯННЫЙ 3D-СТОЛ -->
   <div class="lite-desk"></div>
 
-  <!-- КОМПЬЮТЕР (монитор + база + клавиатура) -->
+  <!-- КОМПЬЮТЕР (для ПК) -->
   <div class="pc-setup" id="pcSetup">
     <div class="pc-monitor">
       <div class="pc-screen" id="pcScreen">
-        <div class="boot-text" id="bootText">▶ Нажми, чтобы включить</div>
+        <div class="boot-text" id="bootText">▶ Нажми</div>
         <div class="crt-overlay"></div>
       </div>
     </div>
@@ -1606,16 +1677,30 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     </div>
   </div>
 
-  <!-- КРУЖКА КОФЕ (слева) -->
+  <!-- ТЕЛЕФОН (для мобилок) -->
+  <div class="phone-setup" id="phoneSetup">
+    <div class="phone-body">
+      <div class="phone-speaker"></div>
+      <div class="phone-screen" id="phoneScreen">
+        <div class="boot-text" id="phoneBootText">▶ Нажми</div>
+        <div class="crt-overlay"></div>
+      </div>
+      <div class="phone-buttons">
+        <div class="phone-btn">1</div><div class="phone-btn">2</div><div class="phone-btn">3</div>
+        <div class="phone-btn">4</div><div class="phone-btn">5</div><div class="phone-btn">6</div>
+        <div class="phone-btn">7</div><div class="phone-btn">8</div><div class="phone-btn">9</div>
+        <div class="phone-btn">*</div><div class="phone-btn">0</div><div class="phone-btn">#</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- КРУЖКА КОФЕ И МЫШКА -->
   <div class="lite-mug">
     <div class="lite-handle"></div>
     <div class="lite-steam"></div>
   </div>
-
-  <!-- МЫШКА (справа) -->
   <div class="lite-mouse"></div>
 </div>
-
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -3415,10 +3500,9 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
 <script>
 <script>
 /* ============================================================
-   🔥 ОПТИМИЗИРОВАННАЯ ЗАСТАВКА (ТЕЛЕФОН/ПК, ЧЕРНЫЙ ТЕКСТ)
+   🔥 ОПТИМИЗИРОВАННАЯ ЗАСТАВКА (ЗАЩИТА ОТ ОШИБОК)
    ============================================================ */
 
-// 1. CSS-анимации для эффекта засасывания (без тяжелого blur)
 (function() {
   const style = document.createElement('style');
   style.innerHTML = `
@@ -3432,10 +3516,7 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
       opacity: 1;
       animation: warpPulse 2s ease-in forwards;
     }
-    @keyframes warpPulse {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.05); opacity: 0; }
-    }
+    @keyframes warpPulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); opacity: 0; } }
 
     #retroBootScreen.warping {
       animation: warpSuck 2s cubic-bezier(0.6, 0, 0.3, 1) forwards !important;
@@ -3461,7 +3542,6 @@ document.addEventListener('DOMContentLoaded', () => {
 let isReBooting = false;
 let _audioCtx = null;
 
-// Инициализация AudioContext один раз (предотвращает фризы)
 function getAudioCtx() {
   if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if(_audioCtx.state === 'suspended') _audioCtx.resume();
@@ -3471,26 +3551,22 @@ function getAudioCtx() {
 function playBeep() {
   try {
     const ctx = getAudioCtx();
-    const osc = ctx.createOscillator(); 
-    const gain = ctx.createGain();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
     osc.type = 'square'; osc.frequency.value = 880;
     gain.gain.setValueAtTime(0.05, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.15);
-    osc.connect(gain); gain.connect(ctx.destination); 
-    osc.start(); osc.stop(ctx.currentTime + 0.15);
+    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.15);
   } catch(e) {}
 }
 
 function playTypeSound() {
   try {
     const ctx = getAudioCtx();
-    const osc = ctx.createOscillator(); 
-    const gain = ctx.createGain();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
     osc.type = 'triangle'; osc.frequency.value = 1200 + Math.random() * 200; 
     gain.gain.setValueAtTime(0.02, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.03);
-    osc.connect(gain); gain.connect(ctx.destination); 
-    osc.start(); osc.stop(ctx.currentTime + 0.03);
+    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.03);
   } catch(e) {}
 }
 
@@ -3500,18 +3576,32 @@ function initRetroBoot() {
 
 function runBootSequence(isFirstTime) {
   const screen = document.getElementById('retroBootScreen');
-  
-  // Определяем: телефон или ПК?
+  if(!screen) {
+    console.error('Заставка #retroBootScreen не найдена в HTML!');
+    return;
+  }
+
   const isMobile = window.innerWidth <= 768;
-  const deviceSetup = document.getElementById(isMobile ? 'phoneSetup' : 'pcSetup');
-  const deviceScreen = document.getElementById(isMobile ? 'phoneScreen' : 'pcScreen');
-  const bootText = document.getElementById(isMobile ? 'phoneBootText' : 'bootText');
   
+  // Умный поиск элементов (если телефона нет в HTML, он возьмет ПК)
+  let deviceSetup = document.getElementById('phoneSetup');
+  let deviceScreen = document.getElementById('phoneScreen');
+  let bootText = document.getElementById('phoneBootText');
+  
+  if (!isMobile || !deviceSetup || !deviceScreen || !bootText) {
+    deviceSetup = document.getElementById('pcSetup');
+    deviceScreen = document.getElementById('pcScreen');
+    bootText = document.getElementById('bootText');
+  }
+
+  if (!deviceSetup || !deviceScreen || !bootText) {
+    console.error('Элементы монитора не найдены!');
+    return;
+  }
+
   const desk = document.querySelector('.lite-desk');
   const mug = document.querySelector('.lite-mug');
   const mouse = document.querySelector('.lite-mouse');
-
-  if(!screen || !deviceSetup || !deviceScreen || !bootText) return;
 
   screen.classList.remove('hidden');
   screen.classList.remove('warping');
@@ -3543,7 +3633,7 @@ function runBootSequence(isFirstTime) {
     deviceScreen.classList.add('on');
     
     bootText.style.animation = 'none';
-    bootText.style.color = '#000000'; // 👈 ЧЕРНЫЙ ТЕКСТ
+    bootText.style.color = '#000000'; // ЧЕРНЫЙ ТЕКСТ
     bootText.style.fontSize = isMobile ? '10px' : '12px';
     bootText.style.textAlign = 'left';
     bootText.style.padding = isMobile ? '6px' : '15px';
@@ -3576,18 +3666,13 @@ function runBootSequence(isFirstTime) {
       lines = [isReboot ? "Переподключение..." : "Запуск HomeOS...", ...CONFIG_REBOOT, "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>"];
     }
     
-    // --- ОПТИМИЗИРОВАННАЯ ПЕЧАТЬ (БЕЗ ЛАГОВ) ---
     let lineIdx = 0;
-    
     function typeNextLine() {
       if (lineIdx >= lines.length) {
         setTimeout(triggerWarp, 1200);
         return;
       }
-
-      if(lineIdx > 0) {
-         bootText.appendChild(document.createElement('br'));
-      }
+      if(lineIdx > 0) bootText.appendChild(document.createElement('br'));
       
       const htmlStr = lines[lineIdx];
       let i = 0;
@@ -3629,11 +3714,7 @@ function runBootSequence(isFirstTime) {
 
         currentTextNode.data += htmlStr[i];
         i++;
-        
-        if (i % 10 === 0) {
-          bootText.scrollTop = bootText.scrollHeight;
-        }
-
+        if (i % 10 === 0) bootText.scrollTop = bootText.scrollHeight;
         setTimeout(step, 15);
       }
       step();
