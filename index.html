@@ -3284,6 +3284,24 @@ async function start(){
   meEnc=en(me);
   restoreFakeSession();
   $('auth').style.display='none';$('nickScr').style.display='none';$('app').style.display='block';
+
+  // 👇 БЛОК ДЛЯ ПЕРЕЗАПУСКА ЗАСТАВКИ ПОСЛЕ ЛОГИНА 👇
+  if (sessionStorage.getItem('booted_before_login') === 'true' && !isReBooting) {
+    isReBooting = true;
+    sessionStorage.removeItem('booted_before_login');
+    
+    const screen = document.getElementById('retroBootScreen');
+    const pcSetup = document.getElementById('pcSetup');
+    
+    if(screen) screen.classList.remove('hidden');
+    if(pcSetup) pcSetup.classList.add('zoom-in'); // Сразу ставим зум внутрь (как будто мы всё ещё в мониторе)
+    
+    setTimeout(() => {
+      runBootSequence(false); // Запускаем выезд из монитора и печать текста с галочкой
+    }, 100); 
+  }
+  // 👆 КОНЕЦ БЛОКА 👆
+
   $('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');
   applyNeonCSS();upAdminTog();updateSoundBtn();
   subProf();subGP();subGroups();subRoomInvites();subCalls();
@@ -3396,9 +3414,15 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
 </script>
 <script>
 /* ============================================================
-   🔥 ИСПРАВЛЕННЫЙ initRetroBoot — клик по ЛЮБОМУ месту заставки
+   🔥 УМНАЯ ЗАСТАВКА С ПЕРЕЗАГРУЗКОЙ
    ============================================================ */
+let isReBooting = false;
+
 function initRetroBoot() {
+  runBootSequence(true);
+}
+
+function runBootSequence(isFirstTime) {
   const screen = document.getElementById('retroBootScreen');
   const pcSetup = document.getElementById('pcSetup');
   const pcScreen = document.getElementById('pcScreen');
@@ -3407,19 +3431,29 @@ function initRetroBoot() {
   const desk = document.querySelector('.lite-desk');
   const mug = document.querySelector('.lite-mug');
   const mouse = document.querySelector('.lite-mouse');
-  
-  let booted = false;
 
   if(!screen) return;
 
-  // ⬇️ ИСПРАВЛЕНИЕ: слушаем клик по всему экрану заставки (screen),
-  // а не только по компьютеру (pcSetup). Так клик по столу, кружке
-  // или мышке тоже запускает загрузку.
-  screen.addEventListener('click', () => {
-    if (booted) return;
-    booted = true;
+  screen.classList.remove('hidden');
 
-    // Плавно скрываем стол, кружку и мышку
+  if (isFirstTime) {
+    // Первый заход: ждем клика
+    screen.onclick = () => {
+      screen.onclick = null;
+      startBoot(false);
+    };
+  } else {
+    // Возврат после логина: выезжаем из монитора
+    setTimeout(() => {
+      pcSetup.classList.remove('zoom-in');
+      setTimeout(() => {
+        startBoot(true);
+      }, 1500); // Ждём, пока камера отъедет
+    }, 100);
+  }
+
+  function startBoot(isReboot) {
+    // Прячем стол и вещи
     [desk, mug, mouse].forEach(el => {
       if(el) {
         el.style.transition = 'opacity 0.8s ease-in';
@@ -3432,20 +3466,33 @@ function initRetroBoot() {
     
     bootText.style.animation = 'none';
     bootText.style.color = '#000';
-    bootText.style.fontSize = '14px';
+    bootText.style.fontSize = '12px';
     bootText.style.textAlign = 'left';
-    bootText.style.padding = '20px';
-    bootText.textContent = '';  // очищаем "Нажми, чтобы включить"
+    bootText.style.padding = '15px';
+    bootText.textContent = '';
     
-    let lines = [
-      "Запуск HomeOS...",
-      "Подключение ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Загрузка данных ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Синхронизация ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "<span style='color:#d32f2f;font-weight:bold'>Добро пожаловать!</span>"
-    ];
+    const isLoggedIn = !!curUser;
+    let lines = [];
+
+    if (!isReboot) {
+      // ПЕРВАЯ ЗАГРУЗКА
+      lines = [
+        "Запуск HomeOS...",
+        "Подключение к серверам ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+        "Синхронизация аккаунта ... " + (isLoggedIn ? "<span style='color:#2e7d32;font-weight:bold'>[OK]</span>" : "<span style='color:#d32f2f;font-weight:bold'>[X]</span>"),
+        isLoggedIn ? "<span style='color:#2e7d32;font-weight:bold'>Успешный вход.</span>" : "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>"
+      ];
+    } else {
+      // ПЕРЕЗАГРУЗКА ПОСЛЕ РЕГИСТРАЦИИ
+      lines = [
+        "Переподключение...",
+        "Синхронизация аккаунта ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+        "Загрузка профиля ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+        "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>"
+      ];
+    }
+    
     let i = 0;
-    
     const typeLine = setInterval(() => {
       if (i < lines.length) {
         bootText.innerHTML += lines[i] + "<br>";
@@ -3456,11 +3503,16 @@ function initRetroBoot() {
           pcSetup.classList.add('zoom-in');
           setTimeout(() => {
             screen.classList.add('hidden');
+            // Запоминаем, что чел зашёл без аккаунта (для OAuth перезагрузок)
+            if (!isReboot) {
+              if (!isLoggedIn) sessionStorage.setItem('booted_before_login', 'true');
+              else sessionStorage.removeItem('booted_before_login');
+            }
           }, 1000);
-        }, 500);
+        }, 1200); // Пауза, чтобы прочитать [X] или [OK]
       }
-    }, 350);
-  });
+    }, 300);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initRetroBoot);
