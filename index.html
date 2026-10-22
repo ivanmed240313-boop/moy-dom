@@ -3353,6 +3353,12 @@ function initRetroBoot() {
   const pcSetup = document.getElementById('pcSetup');
   const pcScreen = document.getElementById('pcScreen');
   const bootText = document.getElementById('bootText');
+  
+  // Находим наши новые элементы
+  const desk = document.querySelector('.lite-desk');
+  const mug = document.querySelector('.lite-mug');
+  const mouse = document.querySelector('.lite-mouse');
+  
   let booted = false;
 
   if(!screen) return;
@@ -3360,6 +3366,14 @@ function initRetroBoot() {
   pcSetup.addEventListener('click', () => {
     if (booted) return;
     booted = true;
+
+    // Плавно скрываем стол, кружку и мышку
+    [desk, mug, mouse].forEach(el => {
+      if(el) {
+        el.style.transition = 'opacity 0.8s ease-in';
+        el.style.opacity = '0';
+      }
+    });
 
     pcScreen.classList.add('flash');
     pcScreen.classList.add('on');
@@ -3398,6 +3412,5 @@ function initRetroBoot() {
 }
 
 document.addEventListener('DOMContentLoaded', initRetroBoot);
-</script>
 </body>
 </html>
