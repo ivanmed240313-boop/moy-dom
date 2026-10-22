@@ -1449,11 +1449,6 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div class="umDropdown" id="umDropdown"><button onclick="openPfMine();closeUserMenu()">👤 <span>Мой профиль</span></button><button onclick="openGarden();closeUserMenu()">🌱 <span>Моя грядка</span></button><button onclick="openFrames();closeUserMenu()">🛒 <span>Магазин</span></button><button onclick="openDuty();closeUserMenu()">🎮 <span>Дежурство</span></button><button onclick="openJob();closeUserMenu()">💼 <span>Работа</span></button><button onclick="openGm();closeUserMenu()">👥 <span>Создать группу</span></button><button onclick="enableNotif();closeUserMenu()" id="notifB">🔔 <span>Уведомления</span></button><button id="soundBtn" onclick="toggleSound();closeUserMenu()">🔊 <span>Звук: вкл</span></button><button id="adminMItem" onclick="toggleAdmin();closeUserMenu()">⚙️ <span>Админка</span></button><button id="ownerMItem" onclick="openOwner();closeUserMenu()">👑 <span>OWNER панель</span></button><div class="umDiv"></div><button onclick="cycleSeason()" id="seasonBtn">🍂 <span>Сезон: осень</span></button><div class="umDiv"></div><button class="umExit" onclick="logout()">🚪 <span>Выйти</span></button></div></div></div>
 <div class="layout"><aside class="sb" id="sb"><div class="sb-h"><span>💬 Мои чаты</span><button class="add-btn" onclick="openDuty()" title="Дежурство" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);font-size:16px">🎮</button><button class="add-btn" onclick="openJob()" title="Работа" style="background:linear-gradient(135deg,#4caf50,#2e7d32);font-size:16px">💼</button><button class="add-btn" onclick="openFrames()" title="Магазин" style="background:linear-gradient(135deg,#a06bff,#6b4aff);font-size:20px">🛒</button><button class="add-btn" onclick="openGarden()" title="Грядка" style="background:linear-gradient(135deg,#2e7d32,#8bc34a);font-size:20px">🌱</button><button class="add-btn" onclick="openGm()">＋</button><button class="cs" id="cs">×</button></div><div id="dml"></div></aside>
 <main class="mn"><button class="mbtn" id="mbtn">☰</button><div id="adminB" onclick="openAdmin()">🔴 ADMIN</div><div id="hb"></div><div id="houseNews"><div class="hn-top"><span class="title">📰 Газета дома</span><span id="hnSub"></span></div><div class="hn-strip" id="hnStrip"><div class="hn-pill">Загрузка…</div></div></div><div id="house"></div>
-<div id="houseZoomCtl">
-  <button onclick="houseZoom(-1)">−</button>
-  <button onclick="houseZoom(0)">100%</button>
-  <button onclick="houseZoom(1)">+</button>
-</div>
 </main></div>
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
@@ -1570,7 +1565,6 @@ let giveTarget=null,giveTab='frame';
 let _fireworksActive=false,_fireworksRaf=null,_fireworksTimer=null;
 let curInvite=null,roomInvCh=null;
 let fpTargetNick=null;
-let _houseZoom = (parseFloat(localStorage.getItem('houseZoom')) || 1);
 const WORK_TASKS=[
   {id:'dishes',name:'Намыть посуду',icon:'🍽️',target:8,desc:'Кликай по тарелкам'},
   {id:'vacuum',name:'Пропылесосить',icon:'🧹',target:8,desc:'Води мышкой по полу'},
@@ -2473,19 +2467,6 @@ async function loadFlats(){const{data}=await sb.from('flats').select('*').eq('ho
 async function loadHM(){const ns=[];Object.values(flats).forEach(f=>{flatOwners(f).forEach(o=>ns.push(o))});if(!ns.length){hm={};return}const{data}=await sb.from('user_media').select('*').in('nick',ns);hm={};(data||[]).forEach(m=>hm[m.nick]=m)}
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 function renderHouses(){const b=$('hb');b.innerHTML='';houses.forEach(h=>{const e=document.createElement('div');e.className='hbtn'+(h.id===curHouse?' act':'')+(h.blocked?' blk':'');e.textContent=h.blocked?'🚫 '+h.name:h.name;e.onclick=()=>switchHouse(h.id);magnetize(e);b.appendChild(e)})}
-function applyHouseZoom(){
-  const el = $('houseInner');
-  if(el) el.style.zoom = _houseZoom;
-  const btns = $('houseZoomCtl') ? $('houseZoomCtl').querySelectorAll('button') : null;
-  if(btns && btns[1]) btns[1].textContent = Math.round(_houseZoom*100) + '%';
-}
-function houseZoom(dir){
-  if(dir === 0) _houseZoom = 1;
-  else _houseZoom = Math.max(0.5, Math.min(1.8, _houseZoom + dir*0.1));
-  _houseZoom = Math.round(_houseZoom*100)/100;
-  localStorage.setItem('houseZoom', _houseZoom);
-  applyHouseZoom();
-}
 async function switchHouse(i){
   const inner = $('houseInner');
   if(i===curHouse && houses.length>0 && inner) return;
