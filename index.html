@@ -3463,7 +3463,7 @@ function runBootSequence(isFirstTime) {
   if (isFirstTime) {
     screen.onclick = () => {
       screen.onclick = null;
-      playBeep(); // Пищим при клике!
+      playBeep();
       startBoot(false);
     };
   } else {
@@ -3487,15 +3487,17 @@ function runBootSequence(isFirstTime) {
     pcScreen.classList.add('on');
     
     bootText.style.animation = 'none';
-    bootText.style.color = '#ffb000'; // 👈 Янтарный текст!
+    bootText.style.color = '#ffb000'; 
     bootText.style.fontSize = '12px';
     bootText.style.textAlign = 'left';
     bootText.style.padding = '15px';
+    bootText.style.overflowY = 'hidden'; // Скрываем скроллбар, но оставляем прокрутку
+    bootText.style.wordBreak = 'break-word'; // Чтобы длинные слова переносились
     bootText.textContent = '';
     
     const isLoggedIn = !!curUser;
     
-    // 👇👇👇 ТЕКСТ ЗАГРУЗКИ (МЕНЯЙ СТРОЧКИ ЗДЕСЬ) 👇👇👇
+    // 👇 ТЕКСТ ЗАГРУЗКИ 👇
     const CONFIG_FIRST_RUN = [
       "Проверка целостности стен... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
       "Синхронизация аккаунта... <span style='color:#d32f2f;font-weight:bold'>[X]</span>"
@@ -3511,32 +3513,68 @@ function runBootSequence(isFirstTime) {
       "Обнаружено соседей: 4 <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
       "Подготовка завершена... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>"
     ];
-    // 👆👆👆 КОНЕЦ ТЕКСТА 👆👆👆
+    // 👆 КОНЕЦ ТЕКСТА 👆
 
     let lines = [];
 
     if (!isReboot && !isLoggedIn) {
-      lines = [
-        "Запуск HomeOS...",
-        ...CONFIG_FIRST_RUN,
-        "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>"
-      ];
+      lines = ["Запуск HomeOS...", ...CONFIG_FIRST_RUN, "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>"];
     } else {
-      lines = [
-        isReboot ? "Переподключение..." : "Запуск HomeOS...",
-        ...CONFIG_REBOOT,
-        "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>"
-      ];
+      lines = [isReboot ? "Переподключение..." : "Запуск HomeOS...", ...CONFIG_REBOOT, "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>"];
     }
     
-    let i = 0;
-    const typeLine = setInterval(() => {
-      if (i < lines.length) {
-        bootText.innerHTML += lines[i] + "<br>";
-        playTypeSound(); // Щелкаем при появлении строки!
+    // --- ЛОГИКА ПЕЧАТНОЙ МАШИНКИ И ПРОКРУТКИ ---
+    let lineIdx = 0;
+    let currentHTML = '';
+
+    function typeHTML(htmlStr, callback) {
+      let i = 0;
+      
+      function step() {
+        if (i >= htmlStr.length) {
+          if (callback) callback();
+          return;
+        }
+        
+        // Если встретили HTML-тег (span со стилями) — добавляем его мгновенно
+        if (htmlStr[i] === '<') {
+          let end = htmlStr.indexOf('>', i);
+          if (end !== -1) {
+            currentHTML += htmlStr.substring(i, end + 1);
+            i = end + 1;
+            bootText.innerHTML = currentHTML;
+            step();
+            return;
+          }
+        }
+        
+        // Добавляем по одной букве
+        currentHTML += htmlStr[i];
+        bootText.innerHTML = currentHTML;
+        
+        // АВТОСКРОЛЛ ВНИЗ (чтобы текст не обрезался)
+        bootText.scrollTop = bootText.scrollHeight;
+        
         i++;
+        
+        // Скорость печати (15мс = быстро и красиво)
+        setTimeout(step, 15);
+      }
+      step();
+    }
+
+    function typeNextLine() {
+      if (lineIdx < lines.length) {
+        typeHTML(lines[lineIdx], () => {
+          currentHTML += "<br>";
+          bootText.innerHTML = currentHTML;
+          bootText.scrollTop = bootText.scrollHeight; // Скроллим после переноса
+          playTypeSound(); // Пищим в конце строки
+          lineIdx++;
+          typeNextLine();
+        });
       } else {
-        clearInterval(typeLine);
+        // Всё напечаталось
         setTimeout(() => {
           pcSetup.classList.add('zoom-in');
           setTimeout(() => {
@@ -3546,9 +3584,12 @@ function runBootSequence(isFirstTime) {
               else sessionStorage.removeItem('booted_before_login');
             }
           }, 1000);
-        }, 1200); 
+        }, 1500); 
       }
-    }, 300);
+    }
+
+    // Запускаем печать!
+    typeNextLine();
   }
 }
 
