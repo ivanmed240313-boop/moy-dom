@@ -2763,19 +2763,15 @@ function toggleMus(rid){const a=$('bgA');if(!a)return;if(a.paused){stopAllMedia(
 function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
 function closePV(){$('pv').classList.remove('open')}
 function magnetize(btn){
+  if(window.matchMedia&&window.matchMedia('(hover:none)').matches)return;
   if(btn.classList&&btn.classList.contains('frame-vhs'))return;
-  if(window.matchMedia&&window.matchMedia('(hover:none)').matches){
-    btn.addEventListener('touchmove',e=>{
-      const t=e.touches[0];if(!t)return;
-      const r=btn.getBoundingClientRect();
-      const cx=r.left+r.width/2,cy=r.top+r.height/2;
-      const dx=(t.clientX-cx)/(r.width/2),dy=(t.clientY-cy)/(r.height/2);
-      btn.style.transform='perspective(500px) rotateX('+(-dy*14)+'deg) rotateY('+(dx*14)+'deg) scale(1.06)';
-    },{passive:true});
-    btn.addEventListener('touchend',()=>btn.style.transform='');
-    btn.addEventListener('touchcancel',()=>btn.style.transform='');
-    return;
-  }
+  btn.addEventListener('mousemove',e=>{
+    const r=btn.getBoundingClientRect();
+    const cx=r.left+r.width/2,cy=r.top+r.height/2;
+    const dx=(e.clientX-cx)/(r.width/2),dy=(e.clientY-cy)/(r.height/2);
+    btn.style.transform='perspective(500px) rotateX('+(-dy*14)+'deg) rotateY('+(dx*14)+'deg) scale(1.06)'
+  });
+  btn.addEventListener('mouseleave',()=>btn.style.transform='')
 }
 function openAnn(hid){_annHouseId=Number(hid);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||''}
 function closeAnn(){$('annM').classList.remove('open')}
