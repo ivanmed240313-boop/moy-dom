@@ -1321,8 +1321,57 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     user-select: none;
     -webkit-user-select: none;
 }
+#retroBootScreen {
+  position: fixed; inset: 0; z-index: 999999;
+  background: radial-gradient(circle at center, #2a2520 0%, #0a0a10 100%);
+  display: flex; align-items: center; justify-content: center;
+  perspective: 1000px; overflow: hidden; transition: opacity 0.5s ease;
+}
+#retroBootScreen.hidden { opacity: 0; pointer-events: none; }
+.pc-setup {
+  position: relative; transform-style: preserve-3d;
+  transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+  cursor: pointer; display: flex; flex-direction: column; align-items: center;
+  animation: pcIdle 4s ease-in-out infinite alternate;
+}
+@keyframes pcIdle { 0% { transform: rotateX(10deg) rotateY(-5deg); } 100% { transform: rotateX(15deg) rotateY(5deg); } }
+.pc-monitor { width: 320px; height: 260px; background: #d1cbb8; border-radius: 15px; padding: 25px 20px 20px; border: 4px solid #b8b2a1; box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), 0 20px 40px rgba(0,0,0,0.6); position: relative; z-index: 2; }
+.pc-screen { width: 100%; height: 100%; background: #000; border-radius: 10px; border: 6px solid #111; position: relative; overflow: hidden; box-shadow: inset 0 0 40px rgba(0,0,0,1); transition: box-shadow 0.2s; }
+.pc-screen.on { background: #ffcc00; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 30px #ffcc00; }
+.boot-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #4a4a4a; font-family: 'Courier New', monospace; font-weight: 900; font-size: 16px; text-align: center; padding: 20px; z-index: 10; user-select: none; animation: blinkText 1.5s infinite; }
+@keyframes blinkText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.crt-overlay { position: absolute; inset: 0; z-index: 8; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 4px, 6px 100%; opacity: 0; transition: opacity 0.5s; }
+.pc-screen.on .crt-overlay { opacity: 1; }
+.pc-logo { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); font-size: 10px; color: #a09a89; font-weight: 800; letter-spacing: 2px; }
+.pc-base { width: 360px; height: 100px; background: #d1cbb8; border-radius: 5px 5px 15px 15px; margin-top: -15px; border: 4px solid #b8b2a1; border-top: none; box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 10px 10px rgba(0,0,0,0.1); position: relative; z-index: 1; display: flex; justify-content: flex-start; padding: 20px; }
+.floppy-slot { width: 120px; height: 15px; background: #111; border-radius: 3px; border: 2px solid #888; box-shadow: inset 0 2px 5px #000; }
+.power-btn { position: absolute; right: 30px; top: 30px; width: 30px; height: 30px; border-radius: 50%; background: #555; border: 3px solid #333; box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.5); }
+.pc-keyboard { width: 380px; height: 120px; background: #e3dfd1; border-radius: 10px; margin-top: 20px; transform: rotateX(60deg) translateZ(-30px); border: 3px solid #b8b2a1; box-shadow: 0 10px 20px rgba(0,0,0,0.8); display: flex; padding: 10px; }
+.keyboard-keys { width: 100%; height: 100%; border-radius: 5px; background: repeating-linear-gradient(90deg, #c9c5b6 0, #c9c5b6 18px, transparent 18px, transparent 20px), repeating-linear-gradient(0deg, #c9c5b6 0, #c9c5b6 18px, transparent 18px, transparent 20px); box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); }
+.pc-screen.flash { animation: crtFlash 0.4s ease-out forwards; }
+@keyframes crtFlash { 0% { background: #fff; box-shadow: 0 0 100px #fff, inset 0 0 50px #fff; } 100% { background: #ffcc00; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 30px #ffcc00; } }
+.pc-setup.zoom-in { transform: translateZ(600px) rotateX(0deg) rotateY(0deg); opacity: 0; transition: transform 1.2s cubic-bezier(0.6, 0, 0.8, 1), opacity 1s ease-in; }
 </style></head>
 <body>
+<div id="retroBootScreen">
+  <div class="pc-setup" id="pcSetup">
+    <div class="pc-monitor">
+      <div class="pc-screen" id="pcScreen">
+        <div class="crt-overlay"></div>
+        <div class="boot-text" id="bootText">Нажми, чтобы включить</div>
+        <div class="screen-glitch"></div>
+      </div>
+      <div class="pc-logo">JAX-OS v3.7.1</div>
+    </div>
+    <div class="pc-base">
+      <div class="floppy-slot"></div>
+      <div class="power-btn" id="powerBtn"></div>
+    </div>
+    <div class="pc-keyboard">
+      <div class="keyboard-keys"></div>
+    </div>
+  </div>
+</div>
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -1688,7 +1737,7 @@ async function ofLogs(b) {
   await renderLogs();
   _logsAutoUpdate = setInterval(renderLogs, 3000); // Обновляем каждые 3 секунды
 }
-const APP_VERSION='3.7.0';
+const APP_VERSION='3.7.2';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
@@ -3113,6 +3162,58 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
   document.addEventListener('visibilitychange', function(){if(!document.hidden) checkUpdate();});
   window.addEventListener('focus', checkUpdate);
 })();
+</script>
+<script>
+function initRetroBoot() {
+  const screen = document.getElementById('retroBootScreen');
+  const pcSetup = document.getElementById('pcSetup');
+  const pcScreen = document.getElementById('pcScreen');
+  const bootText = document.getElementById('bootText');
+  let booted = false;
+
+  if(!screen) return;
+
+  pcSetup.addEventListener('click', () => {
+    if (booted) return;
+    booted = true;
+
+    pcScreen.classList.add('flash');
+    pcScreen.classList.add('on');
+    
+    bootText.style.animation = 'none';
+    bootText.style.color = '#000';
+    bootText.style.fontSize = '14px';
+    bootText.style.textAlign = 'left';
+    bootText.style.padding = '20px';
+    
+    let lines = [
+      "JAX-OS v3.7.1",
+      "Loading Kernel...",
+      "Connecting to Supabase...",
+      "Loading user data...",
+      "Access Granted.",
+      "Zooming in..."
+    ];
+    let i = 0;
+    
+    const typeLine = setInterval(() => {
+      if (i < lines.length) {
+        bootText.innerHTML += lines[i] + "<br>";
+        i++;
+      } else {
+        clearInterval(typeLine);
+        setTimeout(() => {
+          pcSetup.classList.add('zoom-in');
+          setTimeout(() => {
+            screen.classList.add('hidden');
+          }, 1000);
+        }, 500);
+      }
+    }, 350);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initRetroBoot);
 </script>
 </body>
 </html>
