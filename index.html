@@ -3437,23 +3437,20 @@ function runBootSequence(isFirstTime) {
   screen.classList.remove('hidden');
 
   if (isFirstTime) {
-    // Первый заход: ждем клика
     screen.onclick = () => {
       screen.onclick = null;
       startBoot(false);
     };
   } else {
-    // Возврат после логина: выезжаем из монитора
     setTimeout(() => {
       pcSetup.classList.remove('zoom-in');
       setTimeout(() => {
         startBoot(true);
-      }, 1500); // Ждём, пока камера отъедет
+      }, 1500); 
     }, 100);
   }
 
   function startBoot(isReboot) {
-    // Прячем стол и вещи
     [desk, mug, mouse].forEach(el => {
       if(el) {
         el.style.transition = 'opacity 0.8s ease-in';
@@ -3472,23 +3469,43 @@ function runBootSequence(isFirstTime) {
     bootText.textContent = '';
     
     const isLoggedIn = !!curUser;
+    
+    // 👇👇👇 НАСТРОЙКА ПРОМЕЖУТОЧНЫХ СТРОК 👇👇👇
+    // Здесь можешь менять текст, добавлять свои строки или удалять их.
+    // Используй <span style='color:#2e7d32;font-weight:bold'>[OK]</span> для зеленых галочек.
+    
+    // Строки для первого входа (когда чел еще без аккаунта)
+    const CONFIG_FIRST_RUN = [
+      "Подключение к серверам ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Синхронизация аккаунта ... " + (isLoggedIn ? "<span style='color:#2e7d32;font-weight:bold'>[OK]</span>" : "<span style='color:#d32f2f;font-weight:bold'>[X]</span>")
+    ];
+
+    // Строки для перезагрузки (когда аккаунт уже есть)
+    const CONFIG_REBOOT = [
+      "Синхронизация аккаунта ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Загрузка профиля ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Проверка чатов ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Загрузка интерфейса ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Загрузка домов ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Фиксация текста ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Проверки защиты ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Подготовка завершена, запуск ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+    ];
+    // 👆👆👆 КОНЕЦ НАСТРОЙКИ 👆👆👆
+
     let lines = [];
 
     if (!isReboot) {
-      // ПЕРВАЯ ЗАГРУЗКА
       lines = [
-        "Запуск HomeOS...",
-        "Подключение к серверам ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-        "Синхронизация аккаунта ... " + (isLoggedIn ? "<span style='color:#2e7d32;font-weight:bold'>[OK]</span>" : "<span style='color:#d32f2f;font-weight:bold'>[X]</span>"),
-        isLoggedIn ? "<span style='color:#2e7d32;font-weight:bold'>Успешный вход.</span>" : "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>"
+        "Запуск HomeOS...",               // ПЕРВАЯ СТРОКА (не менять)
+        ...CONFIG_FIRST_RUN,              // СРЕДНИЕ СТРОКИ
+        isLoggedIn ? "<span style='color:#2e7d32;font-weight:bold'>Успешный вход.</span>" : "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>" // ПОСЛЕДНЯЯ (не менять)
       ];
     } else {
-      // ПЕРЕЗАГРУЗКА ПОСЛЕ РЕГИСТРАЦИИ
       lines = [
-        "Переподключение...",
-        "Синхронизация аккаунта ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-        "Загрузка профиля ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-        "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>"
+        "Переподключение...",             // ПЕРВАЯ СТРОКА (не менять)
+        ...CONFIG_REBOOT,                 // СРЕДНИЕ СТРОКИ
+        "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>" // ПОСЛЕДНЯЯ (не менять)
       ];
     }
     
@@ -3503,13 +3520,12 @@ function runBootSequence(isFirstTime) {
           pcSetup.classList.add('zoom-in');
           setTimeout(() => {
             screen.classList.add('hidden');
-            // Запоминаем, что чел зашёл без аккаунта (для OAuth перезагрузок)
             if (!isReboot) {
               if (!isLoggedIn) sessionStorage.setItem('booted_before_login', 'true');
               else sessionStorage.removeItem('booted_before_login');
             }
           }, 1000);
-        }, 1200); // Пауза, чтобы прочитать [X] или [OK]
+        }, 1200); 
       }
     }, 300);
   }
