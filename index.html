@@ -1334,7 +1334,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
   position: relative; transform-style: preserve-3d;
   transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1);
   cursor: pointer; display: flex; flex-direction: column; align-items: center;
-  transform: rotateX(10deg) rotateY(-5deg); 
+    transform: rotateX(12deg) rotateY(0deg);  
 }
 
 .pc-monitor { 
@@ -2535,7 +2535,6 @@ function buildHouse(){
     inner.appendChild(w);
   }
   renderFlats();
-  applyHouseZoom();
 }
 function applyPh(el,m){if(!m||!m.photo_url){el.style.backgroundImage='';el.classList.remove('has-photo');return}el.style.backgroundImage='url("'+m.photo_url+'")';el.style.backgroundSize=(m.photo_zoom??100)+'% '+(m.photo_zoom??100)+'%';el.style.backgroundPosition=(m.photo_x??50)+'% '+(m.photo_y??50)+'%';el.classList.add('has-photo')}
 function renderFlats(){const myE=myEnt();const off=(Number(curHouse)-1)*30;document.querySelectorAll('.flat').forEach(el=>{const n=el.dataset.number,f=flats[n];el.classList.remove('mine','taken','has-photo','blk');FRAMES.forEach(f=>el.classList.remove('frame-'+f.id));el.style.backgroundImage='';el.querySelectorAll(':scope > .halo, :scope > .horn, :scope > .flat-item').forEach(x=>x.remove());if(isFlatBlk(Number(n)))el.classList.add('blk');const owners=flatOwners(f);const dn=off+Number(n);if(!owners.length)el.innerHTML='<div class="num">'+dn+'</div>';else{const meIn=owners.includes(meEnc);if(meIn)el.classList.add('mine');else el.classList.add('taken');const names=owners.map(de);let h='<div class="num">'+dn+'</div><div class="nick">'+(meIn&&owners[0]===meEnc?'ты':eh(names[0]))+'</div>';if(names[1])h+='<div class="nick2">'+eh(names[1])+'</div>';const riId=roomItemCache[owners[0]];if(riId){const it=ITEMS.find(x=>x.id===riId);if(it)h+='<span class="flat-item">'+it.icon+'</span>';}el.innerHTML=h;applyPh(el,hm[owners[0]]);const fr=getFrame(de(owners[0]));if(fr&&fr!=='none'){el.classList.add('frame-'+fr);decorateFrame(el,fr)}}el.onclick=()=>clickFlat(Number(n))});document.querySelectorAll('.ebtn').forEach(b=>{const g=Number(b.dataset.global),im=myE===g;b.classList.toggle('mine',im);b.classList.toggle('blk',isEntBlk(g));b.classList.toggle('oth',!adminMode&&!im)})}
