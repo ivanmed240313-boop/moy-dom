@@ -3470,17 +3470,12 @@ function runBootSequence(isFirstTime) {
     
     const isLoggedIn = !!curUser;
     
-    // 👇👇👇 НАСТРОЙКА ПРОМЕЖУТОЧНЫХ СТРОК 👇👇👇
-    // Здесь можешь менять текст, добавлять свои строки или удалять их.
-    // Используй <span style='color:#2e7d32;font-weight:bold'>[OK]</span> для зеленых галочек.
-    
-    // Строки для первого входа (когда чел еще без аккаунта)
+    // 👇👇👇 ТВОИ СТРОКИ (остались без изменений) 👇👇👇
     const CONFIG_FIRST_RUN = [
       "Подключение к серверам ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Синхронизация аккаунта ... " + (isLoggedIn ? "<span style='color:#2e7d32;font-weight:bold'>[OK]</span>" : "<span style='color:#d32f2f;font-weight:bold'>[X]</span>")
+      "Синхронизация аккаунта ... <span style='color:#d32f2f;font-weight:bold'>[X]</span>"
     ];
 
-    // Строки для перезагрузки (когда аккаунт уже есть)
     const CONFIG_REBOOT = [
       "Синхронизация аккаунта ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
       "Загрузка профиля ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
@@ -3495,17 +3490,21 @@ function runBootSequence(isFirstTime) {
 
     let lines = [];
 
-    if (!isReboot) {
+    // 👇 ИСПРАВЛЕННАЯ ЛОГИКА 👇
+    // Если чел не авторизован (и это первый запуск) -> показываем первый блок с крестиком
+    if (!isReboot && !isLoggedIn) {
       lines = [
-        "Запуск HomeOS...",               // ПЕРВАЯ СТРОКА (не менять)
-        ...CONFIG_FIRST_RUN,              // СРЕДНИЕ СТРОКИ
-        isLoggedIn ? "<span style='color:#2e7d32;font-weight:bold'>Успешный вход.</span>" : "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>" // ПОСЛЕДНЯЯ (не менять)
+        "Запуск HomeOS...",
+        ...CONFIG_FIRST_RUN,
+        "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>"
       ];
-    } else {
+    } 
+    // Во всех остальных случаях (после логина ИЛИ если ты просто обновил страницу, уже будучи в аккаунте) -> показываем твои 8 строк с галочками
+    else {
       lines = [
-        "Переподключение...",             // ПЕРВАЯ СТРОКА (не менять)
-        ...CONFIG_REBOOT,                 // СРЕДНИЕ СТРОКИ
-        "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>" // ПОСЛЕДНЯЯ (не менять)
+        isReboot ? "Переподключение..." : "Запуск HomeOS...",
+        ...CONFIG_REBOOT,
+        "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>"
       ];
     }
     
@@ -3529,8 +3528,7 @@ function runBootSequence(isFirstTime) {
       }
     }, 300);
   }
-}
-
+  
 document.addEventListener('DOMContentLoaded', initRetroBoot);
 </script>
 </body>
