@@ -3499,7 +3499,7 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
 </script>
 <script>
 /* ============================================================
-   🔥 ОПТИМИЗИРОВАННАЯ ЗАСТАВКА (ЗАЩИТА ОТ ОШИБОК)
+   🔥 ОПТИМИЗИРОВАННАЯ ЗАСТАВКА (ИСПРАВЛЕНА ОШИБКА)
    ============================================================ */
 
 (function() {
@@ -3538,13 +3538,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-let isReBooting = false;
-let _audioCtx = null;
+// Переменная переименована, чтобы не конфликтовать с основным кодом
+window._retroAudioCtx = null;
 
 function getAudioCtx() {
-  if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if(_audioCtx.state === 'suspended') _audioCtx.resume();
-  return _audioCtx;
+  if(!window._retroAudioCtx) window._retroAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(window._retroAudioCtx.state === 'suspended') window._retroAudioCtx.resume();
+  return window._retroAudioCtx;
 }
 
 function playBeep() {
@@ -3575,14 +3575,10 @@ function initRetroBoot() {
 
 function runBootSequence(isFirstTime) {
   const screen = document.getElementById('retroBootScreen');
-  if(!screen) {
-    console.error('Заставка #retroBootScreen не найдена в HTML!');
-    return;
-  }
+  if(!screen) return;
 
   const isMobile = window.innerWidth <= 768;
   
-  // Умный поиск элементов (если телефона нет в HTML, он возьмет ПК)
   let deviceSetup = document.getElementById('phoneSetup');
   let deviceScreen = document.getElementById('phoneScreen');
   let bootText = document.getElementById('phoneBootText');
@@ -3593,10 +3589,7 @@ function runBootSequence(isFirstTime) {
     bootText = document.getElementById('bootText');
   }
 
-  if (!deviceSetup || !deviceScreen || !bootText) {
-    console.error('Элементы монитора не найдены!');
-    return;
-  }
+  if (!deviceSetup || !deviceScreen || !bootText) return;
 
   const desk = document.querySelector('.lite-desk');
   const mug = document.querySelector('.lite-mug');
