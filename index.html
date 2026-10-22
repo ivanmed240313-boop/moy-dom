@@ -3413,58 +3413,43 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
 })();
 </script>
 <script>
+<script>
 /* ============================================================
-   🔥 МЕГА-ЗАСТАВКА: ВАРП-ЭФФЕКТ + ПОБУКВЕННАЯ ПЕЧАТЬ
+   🔥 ОПТИМИЗИРОВАННАЯ ЗАСТАВКА (ТЕЛЕФОН/ПК, ЧЕРНЫЙ ТЕКСТ)
    ============================================================ */
 
-// 1. Автоматически добавляем CSS-стили для эффекта
+// 1. CSS-анимации для эффекта засасывания (без тяжелого blur)
 (function() {
   const style = document.createElement('style');
   style.innerHTML = `
-    /* Оверлей с искажением */
     #warpOverlay {
       position: fixed; inset: 0; z-index: 9999999;
       pointer-events: none; opacity: 0;
       transition: opacity 0.5s ease;
-      background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.6) 60%, #000 100%);
-      box-shadow: inset 0 0 150px rgba(255, 0, 60, 0.5), inset 0 0 250px rgba(0, 255, 255, 0.3);
+      background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,0.8) 60%, #000 100%);
     }
     #warpOverlay.active {
       opacity: 1;
       animation: warpPulse 2s ease-in forwards;
     }
-    
-    /* Полосы VHS на оверлее */
-    #warpOverlay::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,255,255,0.05) 2px, rgba(255,255,255,0.05) 4px);
-      animation: vhsScroll 1s linear infinite;
-    }
-    @keyframes vhsScroll {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 20px; }
-    }
     @keyframes warpPulse {
-      0% { transform: scale(1); filter: blur(0px); }
-      50% { filter: blur(4px) contrast(150%); }
-      100% { transform: scale(1.1); filter: blur(10px) contrast(200%); opacity: 0; }
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); opacity: 0; }
     }
 
-    /* Сама заставка улетает вглубь */
     #retroBootScreen.warping {
       animation: warpSuck 2s cubic-bezier(0.6, 0, 0.3, 1) forwards !important;
       pointer-events: none;
     }
     @keyframes warpSuck {
-      0% { transform: scale(1) rotate(0deg); filter: blur(0px); }
-      50% { transform: scale(1.5) rotate(2deg); filter: blur(3px); }
-      100% { transform: scale(6) rotate(10deg); filter: blur(20px); opacity: 0; }
+      0% { transform: scale(1) rotate(0deg); opacity: 1; }
+      50% { transform: scale(2) rotate(2deg); opacity: 0.8; }
+      100% { transform: scale(8) rotate(10deg); opacity: 0; }
     }
   `;
   document.head.appendChild(style);
 })();
 
-// 2. Автоматически добавляем HTML-элемент для искажения
 document.addEventListener('DOMContentLoaded', () => {
   if (!document.getElementById('warpOverlay')) {
     const overlay = document.createElement('div');
@@ -3474,6 +3459,40 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let isReBooting = false;
+let _audioCtx = null;
+
+// Инициализация AudioContext один раз (предотвращает фризы)
+function getAudioCtx() {
+  if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(_audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+function playBeep() {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator(); 
+    const gain = ctx.createGain();
+    osc.type = 'square'; osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.15);
+    osc.connect(gain); gain.connect(ctx.destination); 
+    osc.start(); osc.stop(ctx.currentTime + 0.15);
+  } catch(e) {}
+}
+
+function playTypeSound() {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator(); 
+    const gain = ctx.createGain();
+    osc.type = 'triangle'; osc.frequency.value = 1200 + Math.random() * 200; 
+    gain.gain.setValueAtTime(0.02, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.03);
+    osc.connect(gain); gain.connect(ctx.destination); 
+    osc.start(); osc.stop(ctx.currentTime + 0.03);
+  } catch(e) {}
+}
 
 function initRetroBoot() {
   runBootSequence(true);
@@ -3481,41 +3500,21 @@ function initRetroBoot() {
 
 function runBootSequence(isFirstTime) {
   const screen = document.getElementById('retroBootScreen');
-  const pcSetup = document.getElementById('pcSetup');
-  const pcScreen = document.getElementById('pcScreen');
-  const bootText = document.getElementById('bootText');
+  
+  // Определяем: телефон или ПК?
+  const isMobile = window.innerWidth <= 768;
+  const deviceSetup = document.getElementById(isMobile ? 'phoneSetup' : 'pcSetup');
+  const deviceScreen = document.getElementById(isMobile ? 'phoneScreen' : 'pcScreen');
+  const bootText = document.getElementById(isMobile ? 'phoneBootText' : 'bootText');
   
   const desk = document.querySelector('.lite-desk');
   const mug = document.querySelector('.lite-mug');
   const mouse = document.querySelector('.lite-mouse');
 
-  if(!screen) return;
+  if(!screen || !deviceSetup || !deviceScreen || !bootText) return;
 
   screen.classList.remove('hidden');
-  screen.classList.remove('warping'); // Сброс эффекта
-
-  // Звуки
-  function playBeep() {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator(); const gain = ctx.createGain();
-      osc.type = 'square'; osc.frequency.value = 880;
-      gain.gain.setValueAtTime(0.05, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.15);
-      osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.15);
-    } catch(e) {}
-  }
-
-  function playTypeSound() {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator(); const gain = ctx.createGain();
-      osc.type = 'triangle'; osc.frequency.value = 1200 + Math.random() * 200; 
-      gain.gain.setValueAtTime(0.02, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.03);
-      osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.03);
-    } catch(e) {}
-  }
+  screen.classList.remove('warping');
 
   if (isFirstTime) {
     screen.onclick = () => {
@@ -3525,7 +3524,7 @@ function runBootSequence(isFirstTime) {
     };
   } else {
     setTimeout(() => {
-      pcSetup.classList.remove('zoom-in');
+      deviceSetup.classList.remove('zoom-in');
       setTimeout(() => {
         startBoot(true);
       }, 1500); 
@@ -3540,21 +3539,20 @@ function runBootSequence(isFirstTime) {
       }
     });
 
-    pcScreen.classList.add('flash');
-    pcScreen.classList.add('on');
+    deviceScreen.classList.add('flash');
+    deviceScreen.classList.add('on');
     
     bootText.style.animation = 'none';
-    bootText.style.color = '#ffb000'; // Янтарный цвет
-    bootText.style.fontSize = '12px';
+    bootText.style.color = '#000000'; // 👈 ЧЕРНЫЙ ТЕКСТ
+    bootText.style.fontSize = isMobile ? '10px' : '12px';
     bootText.style.textAlign = 'left';
-    bootText.style.padding = '15px';
+    bootText.style.padding = isMobile ? '6px' : '15px';
     bootText.style.overflowY = 'hidden';
     bootText.style.wordBreak = 'break-word';
     bootText.textContent = '';
     
     const isLoggedIn = !!curUser;
     
-    // 👇 ТЕКСТ ЗАГРУЗКИ 👇
     const CONFIG_FIRST_RUN = [
       "Проверка целостности стен... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
       "Синхронизация аккаунта... <span style='color:#d32f2f;font-weight:bold'>[X]</span>"
@@ -3570,96 +3568,149 @@ function runBootSequence(isFirstTime) {
       "Обнаружено соседей: 4 <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
       "Подготовка завершена... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>"
     ];
-    // 👆 КОНЕЦ ТЕКСТА 👆
 
     let lines = [];
-
-    // Логика выбора текста
     if (!isReboot && !isLoggedIn) {
       lines = ["Запуск HomeOS...", ...CONFIG_FIRST_RUN, "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>"];
     } else {
       lines = [isReboot ? "Переподключение..." : "Запуск HomeOS...", ...CONFIG_REBOOT, "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>"];
     }
     
-    // --- ЛОГИКА ПОБУКВЕННОЙ ПЕЧАТИ ---
+    // --- ОПТИМИЗИРОВАННАЯ ПЕЧАТЬ (БЕЗ ЛАГОВ) ---
     let lineIdx = 0;
-    let currentHTML = '';
+    
+    function typeNextLine() {
+      if (lineIdx >= lines.length) {
+        setTimeout(triggerWarp, 1200);
+        return;
+      }
 
-    function typeHTML(htmlStr, callback) {
-      let i = 0;
+      if(lineIdx > 0) {
+         bootText.appendChild(document.createElement('br'));
+      }
       
+      const htmlStr = lines[lineIdx];
+      let i = 0;
+      let activeContainer = bootText;
+      let currentTextNode = document.createTextNode('');
+      bootText.appendChild(currentTextNode);
+
       function step() {
         if (i >= htmlStr.length) {
-          if (callback) callback();
+          playTypeSound();
+          lineIdx++;
+          typeNextLine();
           return;
         }
-        
-        // Мгновенно добавляем HTML-теги, чтобы не печатались скобки
+
         if (htmlStr[i] === '<') {
           let end = htmlStr.indexOf('>', i);
           if (end !== -1) {
-            currentHTML += htmlStr.substring(i, end + 1);
+            const tag = htmlStr.substring(i, end + 1);
+            if (tag.startsWith('<span')) {
+               const tempDiv = document.createElement('div');
+               tempDiv.innerHTML = tag;
+               const newSpan = tempDiv.firstChild;
+               const spanTextNode = document.createTextNode('');
+               newSpan.appendChild(spanTextNode);
+               activeContainer.appendChild(newSpan);
+               activeContainer = newSpan;
+               currentTextNode = spanTextNode;
+            } else if (tag === '</span>') {
+               activeContainer = activeContainer.parentNode;
+               currentTextNode = document.createTextNode('');
+               activeContainer.appendChild(currentTextNode);
+            }
             i = end + 1;
-            bootText.innerHTML = currentHTML;
             step();
             return;
           }
         }
-        
-        // Печатаем букву
-        currentHTML += htmlStr[i];
-        bootText.innerHTML = currentHTML;
-        bootText.scrollTop = bootText.scrollHeight; // Автоскролл
+
+        currentTextNode.data += htmlStr[i];
         i++;
         
-        // Скорость печати (15мс)
+        if (i % 10 === 0) {
+          bootText.scrollTop = bootText.scrollHeight;
+        }
+
         setTimeout(step, 15);
       }
       step();
     }
 
-    function typeNextLine() {
-      if (lineIdx < lines.length) {
-        typeHTML(lines[lineIdx], () => {
-          currentHTML += "<br>";
-          bootText.innerHTML = currentHTML;
-          bootText.scrollTop = bootText.scrollHeight;
-          playTypeSound(); // Звук в конце строки
-          lineIdx++;
-          typeNextLine();
-        });
-      } else {
-        // ВСЁ НАПЕЧАТАЛОСЬ — ЗАПУСКАЕМ ЗАТЯГИВАНИЕ
-        setTimeout(() => {
-          const warp = document.getElementById('warpOverlay');
-          
-          // Включаем помехи
-          if (warp) warp.classList.add('active');
-          
-          // Запускаем анимацию всасывания
-          screen.classList.add('warping');
-          
-          setTimeout(() => {
-            screen.classList.add('hidden');
-            screen.classList.remove('warping');
-            if (warp) warp.classList.remove('active');
+    function triggerWarp() {
+      const warp = document.getElementById('warpOverlay');
+      if (warp) warp.classList.add('active');
+      screen.classList.add('warping');
+      
+      setTimeout(() => {
+        screen.classList.add('hidden');
+        screen.classList.remove('warping');
+        if (warp) warp.classList.remove('active');
 
-            if (!isReboot) {
-              if (!isLoggedIn) sessionStorage.setItem('booted_before_login', 'true');
-              else sessionStorage.removeItem('booted_before_login');
-            }
-          }, 2000); // Ждем 2 секунды, пока идет анимация
-          
-        }, 1200); 
-      }
+        if (!isReboot) {
+          if (!isLoggedIn) sessionStorage.setItem('booted_before_login', 'true');
+          else sessionStorage.removeItem('booted_before_login');
+        }
+      }, 2000); 
     }
 
-    // Запуск печати
     typeNextLine();
   }
 }
 
 document.addEventListener('DOMContentLoaded', initRetroBoot);
+</script>
+</body>
+</html>
+/* ============================================================
+   🔄 УМНОЕ АВТО-ОБНОВЛЕНИЕ САЙТА (БЕЗ ВЕРСИЙ)
+   ============================================================ */
+(function() {
+  // Запоминаем дату изменения файла, который сейчас открыт
+  const INITIAL_LAST_MODIFIED = new Date(document.lastModified).getTime();
+
+  async function checkForUpdates() {
+    try {
+      // Отправляем HEAD-запрос — сервер вернёт только заголовки, без самого файла
+      const response = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
+      
+      const serverLastModified = response.headers.get('last-modified');
+      
+      if (serverLastModified) {
+        const serverDate = new Date(serverLastModified).getTime();
+        
+        // Если сервер говорит, что файл обновился позже, чем тот, что сейчас открыт
+        // (добавляем 5 секунд погрешности на всякий случай)
+        if (serverDate > INITIAL_LAST_MODIFIED + 5000) {
+          
+          // Показываем плашку (если у тебя есть функция showToast)
+          if (typeof showToast === 'function') {
+            showToast('🔄 Вышло обновление! Перезагрузка...', 'success');
+          }
+          
+          // Ждём 3 секунды, чтобы человек прочитал, и перезагружаем страницу
+          setTimeout(() => {
+            const url = new URL(window.location.href);
+            url.searchParams.set('update', Date.now()); // Обходим кэш
+            window.location.href = url.toString();
+          }, 3000);
+        }
+      }
+    } catch (e) {
+      // Если нет интернета или сервер не отдал дату — просто молчим
+    }
+  }
+
+  // 1. Проверяем каждые 3 минуты (180000 мс)
+  setInterval(checkForUpdates, 180000);
+
+  // 2. А также проверяем, когда человек переключается обратно на вкладку
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) checkForUpdates();
+  });
+})();
 </script>
 </body>
 </html>
