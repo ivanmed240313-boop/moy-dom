@@ -1588,6 +1588,44 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
   border-radius: 5px;
   box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
 }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     🔥 ИСПРАВЛЕННАЯ ЗАСТАВКА (вставлена в самое начало body, z-index 999999)
+     ============================================================ -->
+<div id="retroBootScreen">
+  <!-- ДЕРЕВЯННЫЙ 3D-СТОЛ -->
+  <div class="lite-desk"></div>
+
+  <!-- КОМПЬЮТЕР (монитор + база + клавиатура) -->
+  <div class="pc-setup" id="pcSetup">
+    <div class="pc-monitor">
+      <div class="pc-screen" id="pcScreen">
+        <div class="boot-text" id="bootText">▶ Нажми, чтобы включить</div>
+        <div class="crt-overlay"></div>
+      </div>
+    </div>
+    <div class="pc-base">
+      <div class="floppy-slot"></div>
+      <div class="power-btn"></div>
+    </div>
+    <div class="pc-keyboard">
+      <div class="keyboard-keys"></div>
+    </div>
+  </div>
+
+  <!-- КРУЖКА КОФЕ (слева) -->
+  <div class="lite-mug">
+    <div class="lite-handle"></div>
+    <div class="lite-steam"></div>
+  </div>
+
+  <!-- МЫШКА (справа) -->
+  <div class="lite-mouse"></div>
+</div>
+
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -1914,7 +1952,6 @@ async function ofLogs(b) {
   if(_logsAutoUpdate) clearInterval(_logsAutoUpdate);
 
   async function renderLogs() {
-    // Если вкладка закрыта или сменилась - выключаем таймер
     if(afT !== 'logs' || !$('ofm').classList.contains('open')) {
       if(_logsAutoUpdate) clearInterval(_logsAutoUpdate);
       return;
@@ -1952,7 +1989,7 @@ async function ofLogs(b) {
   }
 
   await renderLogs();
-  _logsAutoUpdate = setInterval(renderLogs, 3000); // Обновляем каждые 3 секунды
+  _logsAutoUpdate = setInterval(renderLogs, 3000);
 }
 const APP_VERSION='3.7.2';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
@@ -3368,13 +3405,15 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
 })();
 </script>
 <script>
+/* ============================================================
+   🔥 ИСПРАВЛЕННЫЙ initRetroBoot — клик по ЛЮБОМУ месту заставки
+   ============================================================ */
 function initRetroBoot() {
   const screen = document.getElementById('retroBootScreen');
   const pcSetup = document.getElementById('pcSetup');
   const pcScreen = document.getElementById('pcScreen');
   const bootText = document.getElementById('bootText');
   
-  // Находим наши новые элементы
   const desk = document.querySelector('.lite-desk');
   const mug = document.querySelector('.lite-mug');
   const mouse = document.querySelector('.lite-mouse');
@@ -3383,7 +3422,10 @@ function initRetroBoot() {
 
   if(!screen) return;
 
-  pcSetup.addEventListener('click', () => {
+  // ⬇️ ИСПРАВЛЕНИЕ: слушаем клик по всему экрану заставки (screen),
+  // а не только по компьютеру (pcSetup). Так клик по столу, кружке
+  // или мышке тоже запускает загрузку.
+  screen.addEventListener('click', () => {
     if (booted) return;
     booted = true;
 
@@ -3403,6 +3445,7 @@ function initRetroBoot() {
     bootText.style.fontSize = '14px';
     bootText.style.textAlign = 'left';
     bootText.style.padding = '20px';
+    bootText.textContent = '';  // очищаем "Нажми, чтобы включить"
     
     let lines = [
       "System Booting...",
@@ -3432,5 +3475,6 @@ function initRetroBoot() {
 }
 
 document.addEventListener('DOMContentLoaded', initRetroBoot);
+</script>
 </body>
 </html>
