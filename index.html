@@ -1358,10 +1358,14 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 }
 
 .boot-text { 
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; 
-  color: #666; font-family: 'Courier New', monospace; font-weight: 900; font-size: 16px; 
-  text-align: center; padding: 20px; z-index: 10; user-select: none; 
+  position: absolute; inset: 0; 
+  display: block; /* убрали flex */
+  color: #666; font-family: 'Courier New', monospace; font-weight: 900; font-size: 12px; /* уменьшили шрифт, чтобы влезало */
+  text-align: left; /* выравнивание по левому краю */
+  padding: 15px; /* отступы от краев экрана */
+  z-index: 10; user-select: none; 
   animation: blinkText 1.5s infinite; 
+  line-height: 1.4; /* расстояние между строками */
 }
 @keyframes blinkText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
@@ -3434,14 +3438,12 @@ function initRetroBoot() {
     bootText.textContent = '';  // очищаем "Нажми, чтобы включить"
     
     let lines = [
-      "Запуск HomeOS v3.7.2...",
-      "Проверка монитора ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Проверка клавиатуры ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Подключение к серверам Supabase ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Загрузка профиля пользователя ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Синхронизация данных дома ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Установка соединения ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "<span style='color:#d32f2f;font-weight:bold'>Добро пожаловать в Дом!</span>"
+      "Запуск HomeOS...",
+      "Подключение ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Загрузка данных ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Синхронизация ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "<span style='color:#d32f2f;font-weight:bold'>Добро пожаловать!</span>",
+      "Вход в Систему"
     ];
     let i = 0;
     
