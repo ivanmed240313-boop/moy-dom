@@ -3436,9 +3436,34 @@ function runBootSequence(isFirstTime) {
 
   screen.classList.remove('hidden');
 
+  // Звук "Бип" при включении
+  function playBeep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type = 'square'; osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.05, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.15);
+      osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.15);
+    } catch(e) {}
+  }
+
+  // Звук клика при печати
+  function playTypeSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type = 'triangle'; osc.frequency.value = 1200 + Math.random() * 200; 
+      gain.gain.setValueAtTime(0.02, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.03);
+      osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.03);
+    } catch(e) {}
+  }
+
   if (isFirstTime) {
     screen.onclick = () => {
       screen.onclick = null;
+      playBeep(); // Пищим при клике!
       startBoot(false);
     };
   } else {
@@ -3462,7 +3487,7 @@ function runBootSequence(isFirstTime) {
     pcScreen.classList.add('on');
     
     bootText.style.animation = 'none';
-    bootText.style.color = '#000';
+    bootText.style.color = '#ffb000'; // 👈 Янтарный текст!
     bootText.style.fontSize = '12px';
     bootText.style.textAlign = 'left';
     bootText.style.padding = '15px';
@@ -3470,21 +3495,23 @@ function runBootSequence(isFirstTime) {
     
     const isLoggedIn = !!curUser;
     
+    // 👇👇👇 ТЕКСТ ЗАГРУЗКИ (МЕНЯЙ СТРОЧКИ ЗДЕСЬ) 👇👇👇
     const CONFIG_FIRST_RUN = [
-      "Подключение к серверам ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Синхронизация аккаунта ... <span style='color:#d32f2f;font-weight:bold'>[X]</span>"
+      "Проверка целостности стен... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Синхронизация аккаунта... <span style='color:#d32f2f;font-weight:bold'>[X]</span>"
     ];
 
     const CONFIG_REBOOT = [
-      "Синхронизация аккаунта ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Загрузка профиля ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Проверка чатов ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Загрузка интерфейса ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Загрузка домов ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Фиксация текста ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Проверки защиты ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Подготовка завершена, запуск ... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>"
+      "Проверка целостности стен... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Дешифровка ключей от квартир... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Подключение к районной сети... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Калибровка газонокосилки... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Синхронизация аккаунта... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Загрузка домов и соседей... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Обнаружено соседей: 4 <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
+      "Подготовка завершена... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>"
     ];
+    // 👆👆👆 КОНЕЦ ТЕКСТА 👆👆👆
 
     let lines = [];
 
@@ -3506,6 +3533,7 @@ function runBootSequence(isFirstTime) {
     const typeLine = setInterval(() => {
       if (i < lines.length) {
         bootText.innerHTML += lines[i] + "<br>";
+        playTypeSound(); // Щелкаем при появлении строки!
         i++;
       } else {
         clearInterval(typeLine);
