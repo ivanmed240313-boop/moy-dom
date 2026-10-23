@@ -1317,6 +1317,18 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     user-select: none;
     -webkit-user-select: none;
 }
+/* МАГИЯ ДЛЯ БРАУЗЕРА: Заставляет окна открываться моментально */
+#modal.open, .em.open, #ofm.open, #fm.open, #afm.open, #gardenM.open, #framesM.open, #dutyM.open, #jobM.open {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    z-index: 999999 !important;
+    animation: forcePaint 0.01s linear !important;
+}
+@keyframes forcePaint {
+    0% { transform: translateZ(0); opacity: 0.99; }
+    100% { transform: translateZ(0); opacity: 1; }
+}
 </style>
 </head>
 <body>
