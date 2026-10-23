@@ -3064,16 +3064,27 @@ async function runBootSequence(authorized){
     await _bootTypeLine(ln.t, ln.c, ln.s);
     await _bootSleep(ln.c === 'welcome' ? 400 : 150);
   }
+    // --- НАЧАЛО ОТРИСОВКИ ДОМИКА ---
   const ASCII_ART = [
-  "          ____           ",
-  "         /    \          ",
-  "       /        \        ",
-  "     /            \      ",
-  "     |  [] || []  |      ",
-  "     |_____||_____|      "
-];
-  
-  
+    "          ____           ",
+    "         /    \\          ",
+    "       /        \\        ",
+    "     /            \\      ",
+    "     |  [] || []  |      ",
+    "     |_____||_____|      "
+  ];
+
+  const asciiEl = document.getElementById('bootAscii');
+  if (asciiEl) {
+    asciiEl.textContent = '';
+    asciiEl.style.opacity = '1';
+    for (let i = 0; i < ASCII_ART.length; i++) {
+      asciiEl.textContent += ASCII_ART[i] + '\n';
+      await _bootSleep(150); // Пауза 150мс между строчками домика
+    }
+  }
+  // --- КОНЕЦ ОТРИСОВКИ ДОМИКА ---
+
   // Финальный звук запуска (Два тона)
   try {
     if(_audioCtx){
