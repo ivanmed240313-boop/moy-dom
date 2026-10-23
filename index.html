@@ -3065,5 +3065,49 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('focus', checkUpdate);
 })();
 </script>
+function forceShow(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    
+    // Добавляем класс открытия
+    el.classList.add('open');
+    
+    // ПРИНУДИТЕЛЬНО заставляем браузер перерисовать окно
+    el.style.display = 'none';
+    el.offsetHeight; // Вот эта строчка (чтение высоты) ЗАСТАВЛЯЕТ браузер пересчитать слои
+    el.style.display = 'flex'; 
+}
+<!-- ЖЕСТКИЙ ФИКС ОТРИСОВКИ ОКОН (ОТ ЛЕНИВОГО БРАУЗЕРА) -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Функция пинка для браузера
+    const forceRepaint = (el) => {
+        if (!el) return;
+        el.style.display = 'none';   // Мгновенно прячем
+        void el.offsetHeight;        // Читаем высоту (ЭТО СТРОКА ЗАСТАВЛЯЕТ БРАУЗЕР ПЕРЕРИСОВАТЬ)
+        el.style.display = 'flex';   // Показываем обратно
+    };
+
+    // "Стукач", который следит за добавлением класса open
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                const el = mutation.target;
+                if (el.classList.contains('open')) {
+                    forceRepaint(el);
+                }
+            }
+        });
+    });
+
+    // Находим все окна на сайте и начинаем за ними следить
+    const modals = document.querySelectorAll('.em, #modal, #fm, #afm, #ofm, #gardenM, #framesM, #dutyM, #jobM, #pf');
+    modals.forEach(m => {
+        observer.observe(m, { attributes: true, attributeFilter: ['class'] });
+        // Если какое-то окно уже открыто (например, при загрузке), пинаем его
+        if (m.classList.contains('open')) forceRepaint(m);
+    });
+});
+</script>
 </body>
 </html>
