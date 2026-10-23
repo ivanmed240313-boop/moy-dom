@@ -3265,5 +3265,51 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
 });
 </script>
+<!-- ЖЕСТКИЙ ФИКС ОТРИСОВКИ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Полностью отключаем тяжелый canvas с листьями (он душит браузер)
+    const cv = document.getElementById('seasons');
+    if (cv) cv.style.display = 'none';
+    for (let i = 1; i < 100000; i++) window.cancelAnimationFrame(i);
+
+    // 2. Сносим тяжелые стили, которые вешают видеокарту
+    const style = document.createElement('style');
+    style.textContent = `
+        * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; transform-style: flat !important; will-change: auto !important; }
+        body::before { display: none !important; }
+    `;
+    document.head.appendChild(style);
+
+    // 3. Наблюдатель: как только окну добавляют класс "open", мы силой заставляем его показаться
+    const forceShow = (el) => {
+        if (el && el.classList.contains('open')) {
+            el.style.setProperty('display', 'flex', 'important');
+            el.style.setProperty('position', 'fixed', 'important');
+            el.style.setProperty('top', '0', 'important');
+            el.style.setProperty('left', '0', 'important');
+            el.style.setProperty('width', '100vw', 'important');
+            el.style.setProperty('height', '100vh', 'important');
+            el.style.setProperty('z-index', '999999', 'important');
+            el.style.setProperty('opacity', '1', 'important');
+            el.style.setProperty('visibility', 'visible', 'important');
+        }
+    };
+
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                forceShow(mutation.target);
+            }
+        });
+    });
+
+    // Следим за всеми окнами (чат, грядка, магазин, профиль и т.д.)
+    document.querySelectorAll('.em, #modal, #fm, #afm, #ofm').forEach(m => {
+        observer.observe(m, { attributes: true, attributeFilter: ['class'] });
+        forceShow(m);
+    });
+});
+</script>
 </body>
 </html>
