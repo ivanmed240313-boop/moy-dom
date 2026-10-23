@@ -2890,10 +2890,11 @@ const BOOT_LINES_OK = [
   {t:'Калибровка жалюзей...', c:'ok', s:'[OK]'},
   {t:'Синхронизация аккаунта...', c:'ok', s:'[OK]'},
   {t:'Загрузка домов и соседей...', c:'ok', s:'[OK]'},
-  {t:'Обнаружено соседей: ?', c:'ok', s:'[OK]'},
+  {t:'Обнаружено соседей:', c:'ok', s:'[OK]'},
   {t:'Загрузка актуальной версии...', c:'ok', s:'[OK]'},
   {t:'Подготовка завершена...', c:'ok', s:'[OK]'},
   {t:'Добро пожаловать!', c:'welcome'}
+];
 ];
 const BOOT_LINES_NO = [
   {t:'Запуск HomeOS...', c:'dim'},
@@ -2941,6 +2942,48 @@ async function _bootTypeLine(text, className, suffix) {
 }
 
 async function runBootSequence(authorized){
+  // 1. Сначала узнаем количество соседей и версию (если юзер авторизован)
+  let neighborCountText = 'НЗ'; // По умолчанию "Не заселён"
+
+  if (authorized && curUser) {
+    try {
+      // Узнаём ник игрока
+      let userNick = me;
+      if (!userNick) {
+        const { data: p } = await sb.from('profiles').select('nick').eq('id', curUser.id).maybeSingle();
+        if (p) userNick = p.nick;
+      }
+
+      if (userNick) {
+        const encNick = en(userNick);
+        // Ищем, в каком доме живёт этот игрок
+        const { data: fl } = await sb.from('flats').select('house_id').contains('owner_nicks', [encNick]).limit(1).maybeSingle();
+        
+        if (fl && fl.house_id) {
+          // Считаем всех жителей этого дома
+          const { data: houseFlats } = await sb.from('flats').select('owner_nicks').eq('house_id', fl.house_id);
+          if (houseFlats) {
+            let total = 0;
+            houseFlats.forEach(f => {
+              if (Array.isArray(f.owner_nicks)) total += f.owner_nicks.length;
+            });
+            neighborCountText = total.toString();
+          }
+        }
+      }
+    } catch(e) {
+      console.error('Ошибка загрузки данных для заставки:', e);
+    }
+  }
+
+  // Подставляем реальные данные в строки
+  const idxNeighbors = BOOT_LINES_OK.findIndex(l => l.t.includes('Обнаружено соседей'));
+  if (idxNeighbors !== -1) BOOT_LINES_OK[idxNeighbors].t = `Обнаружено соседей: ${neighborCountText}`;
+
+  const idxVersion = BOOT_LINES_OK.findIndex(l => l.t.includes('Загрузка актуальной версии'));
+  if (idxVersion !== -1) BOOT_LINES_OK[idxVersion].t = `Загрузка актуальной версии v${APP_VERSION}...`;
+
+  // 2. Твоя старая логика отрисовки заставки
   const log = document.getElementById('bootLog');
   const hint = document.getElementById('bootHint');
   const bs = document.getElementById('bootScreen');
