@@ -1339,6 +1339,14 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 
 /* ФИКС: снимаем лишние GPU-слои с квартир */
 .flat { will-change: auto !important; transform-style: flat !important; }
+/* ФИКС СЛОЕВ */
+#modal.open, .em.open, #ofm.open, #fm.open, #afm.open { 
+    display: flex !important; 
+    z-index: 2147483647 !important; 
+    opacity: 1 !important; 
+    visibility: visible !important; 
+    pointer-events: auto !important;
+}
 </style></head>
 <body>
 <div id="bootScreen" role="button" tabindex="0" aria-label="Включить HomeOS">
