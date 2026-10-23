@@ -3244,5 +3244,26 @@ window.addEventListener('DOMContentLoaded', function(){
   bs.addEventListener('keydown', keyHandler);
 });
 </script>
+<!-- АВТО-ФИКС КНОПОК И ФОНА -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const style = document.createElement('style');
+    style.textContent = `
+        /* 1. Убираем тяжелое размытие, которое вешает модалки */
+        #modal, .em, #ofm, #fm, #afm, #cr, #cfm, #sendCoinsM, #memorialModal, #flatPickerM, #dtsPanel, #dtsArticle, #utArticle, #giveM, #callScreen, #callIncoming { 
+            backdrop-filter: none !important; 
+            -webkit-backdrop-filter: none !important; 
+        }
+        /* 2. Снимаем нагрузку с видеокарты (отключаем слои у квартир) */
+        .flat { will-change: auto !important; transform-style: flat !important; }
+        /* 3. Отключаем тяжелую фоновую анимацию, которая душит браузер */
+        body::before { animation: none !important; display: none !important; }
+        /* 4. Возвращаем листья на место (чтобы черный фон их не съедал) */
+        #seasons { z-index: 0 !important; }
+        #app { z-index: 1 !important; }
+    `;
+    document.head.appendChild(style);
+});
+</script>
 </body>
 </html>
