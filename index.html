@@ -1,4 +1,9 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Дом</title>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Дом</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="manifest" href="/moy-dom/manifest.json">
 <meta name="theme-color" content="#e5b73b">
@@ -1322,358 +1327,12 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     user-select: none;
     -webkit-user-select: none;
 }
-#retroBootScreen {
-  position: fixed; inset: 0; z-index: 999999;
-  background: radial-gradient(circle at center, #2a2520 0%, #0a0a10 100%);
-  display: flex; align-items: center; justify-content: center;
-  perspective: 1200px; overflow: hidden; transition: opacity 0.5s ease;
-}
-#retroBootScreen.hidden { opacity: 0; pointer-events: none; }
-
-.pc-setup {
-  position: relative; transform-style: preserve-3d;
-  transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1);
-  cursor: pointer; display: flex; flex-direction: column; align-items: center;
-    transform: rotateX(12deg) rotateY(0deg);  
-}
-
-.pc-monitor { 
-  width: 320px; height: 260px; 
-  background: #e8e3d5; 
-  border-radius: 15px; padding: 25px 20px 20px; 
-  border: 4px solid #c9c4b5; 
-  box-shadow: inset -5px -5px 15px rgba(0,0,0,0.1), inset 5px 5px 15px rgba(255,255,255,0.6), 0 20px 40px rgba(0,0,0,0.4); 
-  position: relative; z-index: 2; 
-}
-
-.pc-screen { 
-  width: 100%; height: 100%; background: #0a0a0a; border-radius: 10px; 
-  border: 6px solid #222; position: relative; overflow: hidden; 
-  box-shadow: inset 0 0 40px rgba(0,0,0,1), inset 0 0 10px rgba(255,255,255,0.1); 
-  transition: box-shadow 0.2s; 
-}
-.pc-screen.on { 
-  background: #ffcc00; 
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 40px rgba(255,204,0,0.6), inset 0 0 10px rgba(255,255,255,0.2); 
-}
-
-.boot-text { 
-  position: absolute; inset: 0; 
-  display: block; /* убрали flex */
-  color: #666; font-family: 'Courier New', monospace; font-weight: 900; font-size: 12px; /* уменьшили шрифт, чтобы влезало */
-  text-align: left; /* выравнивание по левому краю */
-  padding: 15px; /* отступы от краев экрана */
-  z-index: 10; user-select: none; 
-  animation: blinkText 1.5s infinite; 
-  line-height: 1.4; /* расстояние между строками */
-}
-@keyframes blinkText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-.crt-overlay { position: absolute; inset: 0; z-index: 8; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 4px, 6px 100%; opacity: 0; transition: opacity 0.5s; }
-.pc-screen.on .crt-overlay { opacity: 1; }
-
-.pc-base { 
-  width: 360px; height: 100px; background: #e8e3d5; 
-  border-radius: 5px 5px 15px 15px; margin-top: -15px; 
-  border: 4px solid #c9c4b5; border-top: none; 
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 10px 10px rgba(0,0,0,0.05); 
-  position: relative; z-index: 1; display: flex; justify-content: flex-start; padding: 20px; 
-}
-
-.floppy-slot { width: 120px; height: 15px; background: #222; border-radius: 3px; border: 2px solid #999; box-shadow: inset 0 2px 5px #000; }
-.power-btn { position: absolute; right: 30px; top: 30px; width: 30px; height: 30px; border-radius: 50%; background: #666; border: 3px solid #444; box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.5); }
-
-.pc-keyboard { 
-  width: 380px; height: 120px; background: #e8e3d5; border-radius: 10px; 
-  margin-top: 25px; 
-  transform: rotateX(70deg) translateZ(-20px) translateY(15px); 
-  border: 3px solid #c9c4b5; box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
-  display: flex; padding: 10px; 
-}
-
-.keyboard-keys { width: 100%; height: 100%; border-radius: 5px; background: repeating-linear-gradient(90deg, #d4cfc0 0, #d4cfc0 18px, transparent 18px, transparent 20px), repeating-linear-gradient(0deg, #d4cfc0 0, #d4cfc0 18px, transparent 18px, transparent 20px); box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); }
-
-.pc-screen.flash { animation: crtFlash 0.4s ease-out forwards; }
-@keyframes crtFlash { 0% { background: #fff; box-shadow: 0 0 100px #fff, inset 0 0 50px #fff; } 100% { background: #ffcc00; box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 0 40px rgba(255,204,0,0.6); } }
-
-.pc-setup.zoom-in { transform: translateZ(600px) rotateX(0deg) rotateY(0deg); opacity: 0; transition: transform 1.2s cubic-bezier(0.6, 0, 0.8, 1), opacity 1s ease-in; }
-/* --- 3D ДЕРЕВЯННЫЙ СТОЛ --- */
-.pc-desk {
-  position: absolute;
-  width: 1000px;
-  height: 800px;
-  background-color: #5c3a21;
-  background-image: 
-    repeating-linear-gradient(90deg, transparent 0, transparent 38px, rgba(0,0,0,0.15) 38px, rgba(0,0,0,0.15) 40px),
-    repeating-linear-gradient(0deg, transparent 0, transparent 98px, rgba(0,0,0,0.1) 98px, rgba(0,0,0,0.1) 100px);
-  transform: rotateX(90deg) translateZ(-150px) translateY(250px);
-  border-radius: 24px;
-  box-shadow: 0 50px 150px rgba(0,0,0,0.9), inset 0 0 100px rgba(0,0,0,0.6);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* --- 3D МЫШКА --- */
-.pc-mouse {
-  position: absolute;
-  width: 46px;
-  height: 70px;
-  background: #e8e3d5;
-  border-radius: 23px 23px 15px 15px;
-  border: 2px solid #c9c4b5;
-  transform: rotateX(90deg) translateZ(-120px) translateX(210px) translateY(100px);
-  box-shadow: 0 15px 25px rgba(0,0,0,0.5), inset 0 4px 8px rgba(255,255,255,0.6);
-  z-index: 3;
-  cursor: pointer;
-}
-.pc-mouse::after {
-  content: '';
-  position: absolute;
-  top: 12px; left: 50%;
-  transform: translateX(-50%);
-  width: 8px; height: 16px;
-  background: #555;
-  border-radius: 4px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
-}
-
-/* --- 3D КРУЖКА С КОФЕ --- */
-.pc-mug {
-  position: absolute;
-  width: 60px;
-  height: 75px;
-  transform: rotateX(90deg) translateZ(-120px) translateX(-220px) translateY(100px);
-  z-index: 3;
-}
-.pc-mug-body {
-  width: 100%; height: 100%;
-  background: #ffffff;
-  border-radius: 6px 6px 20px 20px;
-  border: 2px solid #e0e0e0;
-  position: relative;
-  box-shadow: inset -8px 0 15px rgba(0,0,0,0.1), inset 8px 0 15px rgba(255,255,255,1), 0 15px 25px rgba(0,0,0,0.5);
-}
-.pc-mug-handle {
-  position: absolute;
-  right: -22px; top: 18px;
-  width: 28px; height: 35px;
-  border: 7px solid #ffffff;
-  border-left: none;
-  border-radius: 0 20px 20px 0;
-  box-shadow: 4px 0 8px rgba(0,0,0,0.15);
-}
-.pc-mug-coffee {
-  position: absolute;
-  top: 4px; left: 4px; right: 4px; height: 12px;
-  background: radial-gradient(ellipse at center, #3a1c0b, #1f0e04);
-  border-radius: 50%;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
-}
-
-/* --- ПАР НАД КРУЖКОЙ --- */
-.pc-steam {
-  position: absolute;
-  bottom: 95%; left: 50%;
-  transform: translateX(-50%) rotateX(-90deg);
-  width: 40px; height: 80px;
-  pointer-events: none;
-}
-.steam1, .steam2, .steam3 {
-  position: absolute;
-  bottom: 0;
-  width: 12px; height: 12px;
-  background: rgba(255,255,255,0.6);
-  border-radius: 50%;
-  filter: blur(5px);
-  animation: steamRise 2.5s infinite ease-out;
-}
-.steam1 { left: 4px; animation-delay: 0s; }
-.steam2 { left: 14px; animation-delay: 0.8s; }
-.steam3 { left: 24px; animation-delay: 1.6s; }
-@keyframes steamRise {
-  0% { transform: translateY(0) scale(1); opacity: 0; }
-  20% { opacity: 0.8; }
-  100% { transform: translateY(-70px) scale(4); opacity: 0; }
-}
-/* --- 3D ДЕРЕВЯННЫЙ СТОЛ --- */
-.lite-desk {
-  position: absolute;
-  top: 45vh; /* Опускаем линию горизонта вниз */
-  left: 50%;
-  width: 300vw;
-  height: 150vh;
-  transform: translateX(-50%) rotateX(75deg);
-  transform-origin: top center; /* Теперь стол растет вниз от горизонта */
-  background-color: #3e2723;
-  background-image: 
-    repeating-linear-gradient(90deg, transparent 0, transparent 98px, rgba(0,0,0,0.3) 98px, rgba(0,0,0,0.3) 100px),
-    repeating-linear-gradient(0deg, transparent 0, transparent 48px, rgba(0,0,0,0.2) 48px, rgba(0,0,0,0.2) 50px);
-  box-shadow: inset 0 100px 150px rgba(0,0,0,0.9), 0 -10px 30px rgba(0,0,0,0.5);
-  z-index: 0;
-}
-
-/* --- КОМПЬЮТЕР --- */
-.pc-setup {
-  position: absolute;
-  top: 18vh; /* Поднимаем компьютер, чтобы он стоял на столе */
-  transform: rotateX(15deg);
-  cursor: pointer; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center;
-  z-index: 2;
-}
-
-/* Реалистичная тень под компьютером, чтобы он не висел */
-.pc-setup::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 5%;
-  right: 5%;
-  height: 20px;
-  background: rgba(0,0,0,0.8);
-  filter: blur(12px);
-  border-radius: 50%;
-  z-index: -1;
-}
-
-/* --- КЛАВИАТУРА --- */
-.pc-keyboard { 
-  width: 380px; height: 120px; 
-  background: #e8e3d5; border-radius: 10px; 
-  margin-top: 25px; 
-  /* Делаем угол более пологим, чтобы она лежала на столе, а не смотрела в камеру */
-  transform: rotateX(55deg) translateY(10px); 
-  transform-origin: top center;
-  border: 3px solid #c9c4b5; box-shadow: 0 15px 30px rgba(0,0,0,0.5); 
-  display: flex; padding: 10px; 
-}
-
-/* --- КРУЖКА КОФЕ --- */
-.lite-mug {
-  position: absolute;
-  top: 55vh; /* Ставим на стол */
-  left: 32vw; /* Придвигаем ближе к центру */
-  width: 60px;
-  height: 75px;
-  background: linear-gradient(180deg, #ffffff, #e0e0e0);
-  border-radius: 6px 6px 20px 20px;
-  z-index: 3;
-  /* Направленная тень, падающая на стол */
-  box-shadow: 0px 30px 35px rgba(0,0,0,0.8), inset -8px 0 15px rgba(0,0,0,0.15);
-  transform: rotateX(15deg); /* Такой же наклон, как у монитора */
-}
-
-/* --- МЫШКА --- */
-.lite-mouse {
-  position: absolute;
-  top: 57vh; /* Чуть ниже, так как она меньше */
-  right: 32vw;
-  width: 50px;
-  height: 75px;
-  background: linear-gradient(180deg, #f5f5f5, #c0c0c0);
-  border-radius: 25px 25px 15px 15px;
-  z-index: 3;
-  box-shadow: 0px 30px 35px rgba(0,0,0,0.8), inset 0 5px 12px rgba(255,255,255,1);
-  transform: rotateX(15deg);
-}
-/* --- СТИЛИ ДЛЯ ТЕЛЕФОНА --- */
-.phone-setup {
-  display: none;
-  position: absolute;
-  top: 20vh; /* Чуть подняли, так как экран стал больше */
-  transform: rotateX(10deg);
-  cursor: pointer; 
-  flex-direction: column; 
-  align-items: center;
-  z-index: 2;
-}
-.phone-setup::after {
-  content: '';
-  position: absolute;
-  bottom: -15px;
-  left: 10%; right: 10%;
-  height: 20px;
-  background: rgba(0,0,0,0.8);
-  filter: blur(12px);
-  border-radius: 50%;
-  z-index: -1;
-}
-.phone-body {
-  width: 190px;
-  height: 360px;
-  background: #2a2a2a;
-  border-radius: 24px;
-  padding: 20px 14px;
-  border: 4px solid #444;
-  box-shadow: inset -5px -5px 15px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.6);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.phone-speaker {
-  width: 40px; height: 6px;
-  background: #111; border-radius: 3px; margin-bottom: 10px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
-}
-.phone-screen {
-  width: 100%; height: 170px; /* УВЕЛИЧИЛИ ЭКРАН */
-  background: #0a0a0a; border-radius: 4px;
-  border: 4px solid #555; position: relative;
-  overflow: hidden; box-shadow: inset 0 0 20px rgba(0,0,0,1);
-}
-.phone-screen.on {
-  background: #9acd32;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 0 15px rgba(154,205,50,0.4);
-}
-.phone-screen.flash { animation: phoneFlash 0.4s ease-out forwards; }
-@keyframes phoneFlash { 0% { background: #fff; } 100% { background: #9acd32; } }
-.phone-buttons {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 6px; margin-top: 15px; width: 100%; padding: 0 5px;
-}
-.phone-btn {
-  background: #444; color: #aaa; border-radius: 6px;
-  text-align: center; padding: 4px 0; font-size: 11px; /* УМЕНЬШИЛИ КНОПКИ */
-  font-family: inherit; font-weight: bold;
-  box-shadow: 0 3px 0 #222, inset 0 1px 2px rgba(255,255,255,0.2);
-  user-select: none;
-}
-/* ЦЕНТРАЛЬНАЯ КРУГЛАЯ КНОПКА */
-.phone-center-btn {
-  background: #444; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 3px 0 #222, inset 0 1px 2px rgba(255,255,255,0.2);
-  width: 26px; height: 26px; margin: 0 auto;
-}
-.phone-center-btn .inner-circle {
-  width: 12px; height: 12px; background: #222; border-radius: 50%;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.8);
-}
-
-/* СКРЫВАЕМ МЫШКУ И КРУЖКУ НА ТЕЛЕФОНЕ */
-@media (max-width: 768px) {
-  .pc-setup { display: none !important; }
-  .phone-setup { display: flex !important; }
-  .lite-mug, .lite-mouse { display: none !important; } /* Убрали лишнее */
-}
-@media (min-width: 769px) {
-  .pc-setup { display: flex !important; }
-  .phone-setup { display: none !important; }
-}
 </style>
 </head>
 <body>
 
-<!-- ============================================================
-     🔥 ИСПРАВЛЕННАЯ ЗАСТАВКА (вставлена в самое начало body, z-index 999999)
-     ============================================================ -->
 <div id="retroBootScreen">
-  <!-- ДЕРЕВЯННЫЙ 3D-СТОЛ -->
   <div class="lite-desk"></div>
-
-  <!-- КОМПЬЮТЕР (для ПК) -->
   <div class="pc-setup" id="pcSetup">
     <div class="pc-monitor">
       <div class="pc-screen" id="pcScreen">
@@ -1690,7 +1349,6 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     </div>
   </div>
 
-  <!-- ТЕЛЕФОН (для мобилок) -->
   <div class="phone-setup" id="phoneSetup">
     <div class="phone-body">
       <div class="phone-speaker"></div>
@@ -1709,13 +1367,13 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     </div>
   </div>
 
-  <!-- КРУЖКА КОФЕ И МЫШКА -->
   <div class="lite-mug">
     <div class="lite-handle"></div>
     <div class="lite-steam"></div>
   </div>
   <div class="lite-mouse"></div>
 </div>
+
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -1808,6 +1466,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div id="giveM"><div class="give-box"><div class="give-h"><h3 id="giveTitle">🎁 Выдать предмет</h3><button onclick="closeGive()">×</button></div><div class="give-b"><div style="font-size:12px;color:#a0a0b8;margin-bottom:12px">Игрок: <b id="giveNick" style="color:#f5c542">—</b></div><div class="give-tabs"><div class="give-tab act" data-t="frame" onclick="giveSw('frame')">🖼️ Рамка</div><div class="give-tab" data-t="seed" onclick="giveSw('seed')">🌱 Семя</div><div class="give-tab" data-t="fert" onclick="giveSw('fert')">💧 Удобрение</div><div class="give-tab" data-t="coins" onclick="giveSw('coins')">💰 Монеты</div></div><div id="giveBody"></div><div class="give-msg" id="giveMsg"></div></div></div></div>
 <div id="flatPickerM"><div class="fp-box"><div class="fp-h"><h3 id="fpTitle">🏠 Куда заселить</h3><button onclick="closeFlatPicker()">✕</button></div><div class="fp-body" id="fpBody"></div></div></div>
 <div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* === auto-inject CSS for flat-item === */
@@ -1815,7 +1474,6 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 
 const SU='https://uuhgpnjpulrazluiqreb.supabase.co',SK='sb_publishable_ILu45TXTH7rb4QkpbIs58g_9qDnyzMp';
 const OWNER_ID='81fe9ad5-a02b-4e57-8c59-1cf2d60e842c';
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 const sb=window.supabase.createClient(SU,SK);
 const QR=['❤️','👍','😂','🔥','😮','😢','🙏','💯'];
 const EL=('😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🥸 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🫡 🤫 😶 😐 😑 😬 🙄 😯 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 ❤️ 🧡 💛 💚 💙 💜 🖤 🤍 🤎 💔 💕 💞 💓 💗 💖 💘 💝 💟 👍 👎 👌 ✌️ 🤞 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ ✋ 🤚 🖐️ 🖖 👋 🤝 🙏 ✊ 👊 🤛 🤜 💪 🔥 💯 ✨ ⭐ 🌟 💫 ⚡ 💥 🎉 🎊 🎁 🎈 🏆 🥇 🥈 🥉 🎯 🎮 ⚽ 🏀 🍕 🍔 🍟 🍿 🍩 🍪 🎂 🍰 🍫 ☕ 🍵 🍺 🍻 🥂 🥤 🍎 🍌 🍇 🍓 🍑 🍉 🌹 🌷 🌻 🌺 🌸 🌼 💐 🌴 🌲 🌳 🌵 🍀 🌈 ☀️ 🌙 ☁️ ⛅ 🌧️ ⛈️ ❄️ ☃️ 💧 🌊 🎵 🎶 🎤 🎧 🎸 🎹 🎺 🥁 🎬 📸 📷 💻 🖥️ ⌨️ 🖱️ 💡 🔦 📱 ☎️ 📞 🚀 ✈️ 🚗 🚕 🏠 🏡 🏘️ 🏢 🏰').split(' ');
@@ -3045,10 +2703,7 @@ function toggleMus(rid){const a=$('bgA');if(!a)return;if(a.paused){stopAllMedia(
 function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
 function closePV(){$('pv').classList.remove('open')}
 function magnetize(btn){
-  // Исключение для глитч-рамки
   if(btn.classList&&btn.classList.contains('frame-vhs'))return;
-  
-  // Для телефонов (наклон по пальцу)
   if(window.matchMedia&&window.matchMedia('(hover:none)').matches){
     btn.addEventListener('touchmove',e=>{
       const t=e.touches[0];if(!t)return;
@@ -3061,8 +2716,6 @@ function magnetize(btn){
     btn.addEventListener('touchcancel',()=>btn.style.transform='');
     return;
   }
-  
-  // Для ПК (наклон по мышке)
   btn.addEventListener('mousemove',e=>{
     const r=btn.getBoundingClientRect();
     const cx=r.left+r.width/2,cy=r.top+r.height/2;
@@ -3081,13 +2734,9 @@ async function submitAppeal() {
   const msg = $('appealMsg').value.trim();
   const st = $('appealStatus');
   const btn = $('appealBtn');
-  
   if (!msg) { st.style.color = '#ff6b6b'; st.textContent = 'Напиши причину...'; return; }
-  
   btn.disabled = true; btn.textContent = 'Отправка...'; st.textContent = '';
-  
   const { data, error } = await sb.rpc('submit_appeal', { p_message: msg });
-  
   if (error || (data && data.ok === false)) {
     st.style.color = '#ff6b6b'; st.textContent = error ? error.message : data.error;
     btn.disabled = false; btn.textContent = '📩 Связаться с Администрацией';
@@ -3101,24 +2750,19 @@ let _appealsAutoUpdate = null;
 async function ofAppeals(b) {
   if(!isOwner()){ b.innerHTML='<div class="afe">Только владелец</div>'; return; }
   if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
-
   async function renderAppeals() {
     if(afT !== 'appeals' || !$('ofm').classList.contains('open')) {
       if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
       return;
     }
-
     const { data, error } = await sb.rpc('owner_get_appeals');
     if(error){ b.innerHTML='<div class="afe">Ошибка: '+error.message+'</div>'; return; }
     if(!data || !data.length){ b.innerHTML='<div class="afe">Нет новых запросов на разбан.</div>'; return; }
-    
     let html = '<div class="of-hint">📩 <b>Обратная связь.</b> Запросы от забаненных пользователей.</div>';
-    
     html += data.map(l => {
       const d = new Date(l.created_at);
       const p = n => String(n).padStart(2, '0');
       const timeStr = `${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(-2)};${p(d.getHours())}:${p(d.getMinutes())}`;
-      
       return `<div class="of-user-row" style="border-color:#ffaa00; background:rgba(255,170,0,0.05); flex-direction:column; align-items:flex-start; gap:10px;">
         <div style="width:100%; display:flex; justify-content:space-between;">
           <b style="color:#a06bff; font-size:14px;">${eh(l.nick)}</b>
@@ -3131,10 +2775,8 @@ async function ofAppeals(b) {
         </div>
       </div>`;
     }).join('');
-    
     b.innerHTML = html;
   }
-
   await renderAppeals();
   _appealsAutoUpdate = setInterval(renderAppeals, 3000);
 }
@@ -3142,7 +2784,6 @@ async function ofAppeals(b) {
 async function resolveAppeal(id, action, btn) {
   btn.disabled = true; btn.textContent = '...';
   const { data, error } = await sb.rpc('owner_resolve_appeal', { p_id: id, p_action: action });
-  
   if(error || (data && data.ok === false)) {
     showToast('Ошибка: ' + (error ? error.message : data.error), 'error');
     btn.disabled = false; btn.textContent = action === 'unban' ? '✅ Разбанить' : '🚫 Оставить (Бан)';
@@ -3157,12 +2798,10 @@ function upFm(){
   const mp=f.max_people??2;
   const others=owners.filter(o=>o!==meEnc);
   const gnum=(Number(curHouse)-1)*30+Number(fmN);
-
   $('fmT').textContent='🏠 Кв '+gnum+(isOwnerF?' (хозяин)':' (сосед)');
   $('fmTR').style.display='block';
   $('fmTM').style.display=(isOwnerF&&mp>=2)?'block':'none';
   $('lvB').style.display='block';
-
   const inf=$('rmInfo');
   const list=[];
   owners.forEach((o,i)=>{
@@ -3397,10 +3036,10 @@ async function start(){
     const pcSetup = document.getElementById('pcSetup');
     
     if(screen) screen.classList.remove('hidden');
-    if(pcSetup) pcSetup.classList.add('zoom-in'); // Сразу ставим зум внутрь (как будто мы всё ещё в мониторе)
+    if(pcSetup) pcSetup.classList.add('zoom-in'); 
     
     setTimeout(() => {
-      runBootSequence(false); // Запускаем выезд из монитора и печать текста с галочкой
+      runBootSequence(false); 
     }, 100); 
   }
   // 👆 КОНЕЦ БЛОКА 👆
