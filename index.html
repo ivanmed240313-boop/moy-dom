@@ -1,16 +1,9 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Дом</title>
-<link rel="icon" type="image/png" href="favicon.png">
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>Дом</title><link rel="icon" type="image/png" href="favicon.png"><style>
 <link rel="manifest" href="/moy-dom/manifest.json">
 <meta name="theme-color" content="#e5b73b">
 <link rel="apple-touch-icon" href="/moy-dom/icon-512.png">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Дом Онлайн">
-<style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:#0a0a10}html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
 :root{--neon-rgb:0,229,255}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:transparent !important;color:#e8e8f0;-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
@@ -1282,6 +1275,7 @@ body::before{display:none !important}
 .msg{animation:none !important}
 .ntf{animation:none !important}
 .avw .ondot{animation:none !important}
+.flat{transition:border-color .15s !important;transform-style:flat !important}
 }
 @media(max-width:400px){
 #myCoinsBadge{padding:0 9px;font-size:12px;height:40px}
@@ -1327,53 +1321,8 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     user-select: none;
     -webkit-user-select: none;
 }
-</style>
-</head>
+</style></head>
 <body>
-
-<div id="retroBootScreen">
-  <div class="lite-desk"></div>
-  <div class="pc-setup" id="pcSetup">
-    <div class="pc-monitor">
-      <div class="pc-screen" id="pcScreen">
-        <div class="boot-text" id="bootText">▶ Нажми</div>
-        <div class="crt-overlay"></div>
-      </div>
-    </div>
-    <div class="pc-base">
-      <div class="floppy-slot"></div>
-      <div class="power-btn"></div>
-    </div>
-    <div class="pc-keyboard">
-      <div class="keyboard-keys"></div>
-    </div>
-  </div>
-
-  <div class="phone-setup" id="phoneSetup">
-    <div class="phone-body">
-      <div class="phone-speaker"></div>
-      <div class="phone-screen" id="phoneScreen">
-        <div class="boot-text" id="phoneBootText">▶ Нажми</div>
-        <div class="crt-overlay"></div>
-      </div>
-      <div class="phone-buttons">
-        <div class="phone-btn">1</div><div class="phone-btn">2</div><div class="phone-btn">3</div>
-        <div class="phone-btn">4</div>
-        <div class="phone-center-btn"><div class="inner-circle"></div></div>
-        <div class="phone-btn">6</div>
-        <div class="phone-btn">7</div><div class="phone-btn">8</div><div class="phone-btn">9</div>
-        <div class="phone-btn">*</div><div class="phone-btn">0</div><div class="phone-btn">#</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="lite-mug">
-    <div class="lite-handle"></div>
-    <div class="lite-steam"></div>
-  </div>
-  <div class="lite-mouse"></div>
-</div>
-
 <canvas id="seasons"></canvas>
 <div id="pv" onclick="closePV()"><img id="pvi" src=""></div>
 <div id="ctxMenu"><div class="emojis" id="ctxEmojis"></div><div id="ctxActions"></div></div>
@@ -1409,12 +1358,11 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div id="userMenu"><button class="umBtn" onclick="toggleUserMenu()"><span id="myAv"></span><span id="myNick"></span><span class="umArrow">▾</span></button>
 <div class="umDropdown" id="umDropdown"><button onclick="openPfMine();closeUserMenu()">👤 <span>Мой профиль</span></button><button onclick="openGarden();closeUserMenu()">🌱 <span>Моя грядка</span></button><button onclick="openFrames();closeUserMenu()">🛒 <span>Магазин</span></button><button onclick="openDuty();closeUserMenu()">🎮 <span>Дежурство</span></button><button onclick="openJob();closeUserMenu()">💼 <span>Работа</span></button><button onclick="openGm();closeUserMenu()">👥 <span>Создать группу</span></button><button onclick="enableNotif();closeUserMenu()" id="notifB">🔔 <span>Уведомления</span></button><button id="soundBtn" onclick="toggleSound();closeUserMenu()">🔊 <span>Звук: вкл</span></button><button id="adminMItem" onclick="toggleAdmin();closeUserMenu()">⚙️ <span>Админка</span></button><button id="ownerMItem" onclick="openOwner();closeUserMenu()">👑 <span>OWNER панель</span></button><div class="umDiv"></div><button onclick="cycleSeason()" id="seasonBtn">🍂 <span>Сезон: осень</span></button><div class="umDiv"></div><button class="umExit" onclick="logout()">🚪 <span>Выйти</span></button></div></div></div>
 <div class="layout"><aside class="sb" id="sb"><div class="sb-h"><span>💬 Мои чаты</span><button class="add-btn" onclick="openDuty()" title="Дежурство" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);font-size:16px">🎮</button><button class="add-btn" onclick="openJob()" title="Работа" style="background:linear-gradient(135deg,#4caf50,#2e7d32);font-size:16px">💼</button><button class="add-btn" onclick="openFrames()" title="Магазин" style="background:linear-gradient(135deg,#a06bff,#6b4aff);font-size:20px">🛒</button><button class="add-btn" onclick="openGarden()" title="Грядка" style="background:linear-gradient(135deg,#2e7d32,#8bc34a);font-size:20px">🌱</button><button class="add-btn" onclick="openGm()">＋</button><button class="cs" id="cs">×</button></div><div id="dml"></div></aside>
-<main class="mn"><button class="mbtn" id="mbtn">☰</button><div id="adminB" onclick="openAdmin()">🔴 ADMIN</div><div id="hb"></div><div id="houseNews"><div class="hn-top"><span class="title">📰 Газета дома</span><span id="hnSub"></span></div><div class="hn-strip" id="hnStrip"><div class="hn-pill">Загрузка…</div></div></div><div id="house"></div>
-</main></div>
+<main class="mn"><button class="mbtn" id="mbtn">☰</button><div id="adminB" onclick="openAdmin()">🔴 ADMIN</div><div id="hb"></div><div id="houseNews"><div class="hn-top"><span class="title">📰 Газета дома</span><span id="hnSub"></span></div><div class="hn-strip" id="hnStrip"><div class="hn-pill">Загрузка…</div></div></div><div id="house"></div></main></div>
 </div>
 <div id="ap"><div class="t"><span>⚙️ Админ</span><button onclick="exitAdmin()">×</button></div><div class="h">Клик по квартире — выселить.</div><button class="ob" onclick="openAdmin()">⚙️ Полное меню</button></div>
 <div id="afm"><div class="afb"><div class="afh"><h3>⚙️ Админ-панель</h3><button onclick="closeAdmin()">×</button></div><div class="aft"><div class="aftab act" data-t="flats" onclick="afSw('flats')">🏠 Квартиры</div><div class="aftab" data-t="ent" onclick="afSw('ent')">🏢 Подъезды</div><div class="aftab" data-t="house" onclick="afSw('house')">🏘 Дом</div><div class="aftab" data-t="users" onclick="afSw('users')">👥 Юзеры</div></div><div class="afbd" id="afB"></div></div></div>
-<div id="ofm"><div class="ofb"><div class="ofh"><h3><span class="crown">👑</span>OWNER ПАНЕЛЬ<span class="badge">v3.1.0</span></h3><button onclick="closeOwner()">✕</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')"><span class="ic">🏠</span>Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')"><span class="ic">🏢</span>Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')"><span class="ic">🏘</span>Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')"><span class="ic">👥</span>Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')"><span class="ic">🎁</span>Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')"><span class="ic">🎄</span>Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')"><span class="ic">🎭</span>Фейки</div><div class="oftab" data-t="dates" onclick="ofSw('dates')"><span class="ic">📅</span>Даты</div><div class="oftab" data-t="logs" onclick="ofSw('logs')"><span class="ic">📜</span>Логи взломов</div><div class="oftab" data-t="appeals" onclick="ofSw('appeals')"><span class="ic">📩</span>Обратная связь</div></div><div class="ofbd" id="ofB"></div></div></div> <div id="fm">
+<div id="ofm"><div class="ofb"><div class="ofh"><h3><span class="crown">👑</span>OWNER ПАНЕЛЬ<span class="badge">v3.1.0</span></h3><button onclick="closeOwner()">✕</button></div><div class="oft"><div class="oftab act" data-t="flats" onclick="ofSw('flats')"><span class="ic">🏠</span>Квартиры</div><div class="oftab" data-t="ent" onclick="ofSw('ent')"><span class="ic">🏢</span>Подъезды</div><div class="oftab" data-t="house" onclick="ofSw('house')"><span class="ic">🏘</span>Дом</div><div class="oftab" data-t="users" onclick="ofSw('users')"><span class="ic">👥</span>Юзеры</div><div class="oftab" data-t="give" onclick="ofSw('give')"><span class="ic">🎁</span>Выдать</div><div class="oftab" data-t="events" onclick="ofSw('events')"><span class="ic">🎄</span>Ивенты</div><div class="oftab" data-t="fakes" onclick="ofSw('fakes')"><span class="ic">🎭</span>Фейки</div><div class="oftab" data-t="dates" onclick="ofSw('dates')"><span class="ic">📅</span>Даты</div><div class="oftab" data-t="logs" onclick="ofSw('logs')"><span class="ic">📜</span>Логи взломов</div><div class="oftab" data-t="appeals" onclick="ofSw('appeals')"><span class="ic">📩</span>Обратная связь</div></div><div class="ofbd" id="ofB"></div></div>
 <div id="fm"><div class="fmb"><h3 id="fmT">🏠 Квартира</h3><div class="fmt"><div class="fmtab act" data-t="media" onclick="fmSw('media')">📷 Медиа</div><div class="fmtab" data-t="room" id="fmTR" onclick="fmSw('room')" style="display:none">💬 Комната</div><div class="fmtab" data-t="manage" id="fmTM" onclick="fmSw('manage')" style="display:none">👥 Сосед</div><div class="fmtab" data-t="work" onclick="fmSw('work')">💼 Работа</div></div>
 <div class="fmp" id="fmPM"><div class="ms"><label>📷 Квадратное фото</label><div class="sp" id="sp"><div class="pi" id="pi"></div><span id="pe">нет фото</span></div><div class="file-row"><label class="file-btn" id="phBtn"><span>📁</span> <span>Выбрать файл</span><input type="file" id="phI" accept="image/*"></label><span class="file-name" id="phName">Файл не выбран</span></div><div class="sliders" id="slidersWrap" style="display:none;margin-top:12px"><div class="sr"><span class="ic">↔</span><input type="range" id="phX" min="0" max="100" value="50"><span class="vl" id="vX">50</span></div><div class="sr"><span class="ic">↕</span><input type="range" id="phY" min="0" max="100" value="50"><span class="vl" id="vY">50</span></div><div class="sr"><span class="ic">🔍</span><input type="range" id="phZ" min="50" max="300" value="100"><span class="vl" id="vZ">100%</span></div></div></div><div class="ms"><label>🎵 Музыка</label><div class="file-row"><label class="file-btn" id="musBtn"><span>🎵</span> <span>Выбрать файл</span><input type="file" id="musI" accept="audio/*"></label><span class="file-name" id="musName">Файл не выбран</span></div><div id="musC" style="font-size:12px;color:#666678;margin-top:8px"></div></div><div class="fms" id="mst"></div></div>
 <div class="fmp" id="fmPR" style="display:none"><div id="rc"></div><div id="roomDecor" style="display:none" title=""></div><div class="ir"><input id="rIn" placeholder="Сообщение..." maxlength="500"><button id="rPB" class="ib">📎</button><button id="rVB" class="ib vb">🎤</button><button id="rSB">→</button></div></div>
@@ -1466,7 +1414,6 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div id="giveM"><div class="give-box"><div class="give-h"><h3 id="giveTitle">🎁 Выдать предмет</h3><button onclick="closeGive()">×</button></div><div class="give-b"><div style="font-size:12px;color:#a0a0b8;margin-bottom:12px">Игрок: <b id="giveNick" style="color:#f5c542">—</b></div><div class="give-tabs"><div class="give-tab act" data-t="frame" onclick="giveSw('frame')">🖼️ Рамка</div><div class="give-tab" data-t="seed" onclick="giveSw('seed')">🌱 Семя</div><div class="give-tab" data-t="fert" onclick="giveSw('fert')">💧 Удобрение</div><div class="give-tab" data-t="coins" onclick="giveSw('coins')">💰 Монеты</div></div><div id="giveBody"></div><div class="give-msg" id="giveMsg"></div></div></div></div>
 <div id="flatPickerM"><div class="fp-box"><div class="fp-h"><h3 id="fpTitle">🏠 Куда заселить</h3><button onclick="closeFlatPicker()">✕</button></div><div class="fp-body" id="fpBody"></div></div></div>
 <div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* === auto-inject CSS for flat-item === */
@@ -1701,6 +1648,7 @@ async function ofLogs(b) {
   if(_logsAutoUpdate) clearInterval(_logsAutoUpdate);
 
   async function renderLogs() {
+    // Если вкладка закрыта или сменилась - выключаем таймер
     if(afT !== 'logs' || !$('ofm').classList.contains('open')) {
       if(_logsAutoUpdate) clearInterval(_logsAutoUpdate);
       return;
@@ -1738,9 +1686,9 @@ async function ofLogs(b) {
   }
 
   await renderLogs();
-  _logsAutoUpdate = setInterval(renderLogs, 3000);
+  _logsAutoUpdate = setInterval(renderLogs, 3000); // Обновляем каждые 3 секунды
 }
-const APP_VERSION='3.7.2';
+const APP_VERSION='3.7.0';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
@@ -2430,31 +2378,38 @@ async function reloadHouse(){await loadHouses();await loadFlats();await loadHM()
 function renderHouses(){const b=$('hb');b.innerHTML='';houses.forEach(h=>{const e=document.createElement('div');e.className='hbtn'+(h.id===curHouse?' act':'')+(h.blocked?' blk':'');e.textContent=h.blocked?'🚫 '+h.name:h.name;e.onclick=()=>switchHouse(h.id);magnetize(e);b.appendChild(e)})}
 async function switchHouse(i){
   const inner = $('houseInner');
-  if(i===curHouse && houses.length>0 && inner) return;
+  if(i===curHouse && houses.length>0 && inner) return; // Если уже отрисован, не перезагружаем
 
   const direction = (Number(i) > Number(curHouse)) ? 'next' : 'prev';
   
+  // Затемняем экран для плавности
   if(inner) inner.style.opacity = '0.3';
   
+  // Меняем данные
   curHouse = i;
   houseData = houses.find(h=>h.id===i)||null;
   
+  // Грузим данные
   await loadFlats();
   await loadHM();
   
+  // Убираем затемнение
   if(inner) inner.style.opacity = '1';
   
+  // Анимация ухода (если дом уже был на экране)
   if(inner){
     inner.style.animation = direction === 'next' ? 'houseSlideOutLeft 0.2s ease-in forwards' : 'houseSlideOutRight 0.2s ease-in forwards';
     await new Promise(r => setTimeout(r, 180));
   }
   
+  // Строим новый дом
   renderHouses();
   buildHouse();
   loadHouseNews();
   subHouseNews();
   showAnn(houseData?.announcement||null);
   
+  // Анимация прихода
   const newInner = $('houseInner');
   if(newInner){
     newInner.style.animation = direction === 'next' ? 'houseSlideInRight 0.2s ease-out forwards' : 'houseSlideInLeft 0.2s ease-out forwards';
@@ -2463,7 +2418,7 @@ async function switchHouse(i){
 }
 function buildHouse(){
   const h=$('house');
-  h.innerHTML='<div id="houseInner"></div>';
+  h.innerHTML='<div id="houseInner"></div>'; // Создаем обертку для анимации
   const inner=$('houseInner');
   let n=1;
   for(let e=1;e<=3;e++){
@@ -2493,7 +2448,7 @@ function buildHouse(){
     magnetize(b);
     w.appendChild(en);
     w.appendChild(b);
-    inner.appendChild(w);
+    inner.appendChild(w); // Добавляем в обертку
   }
   renderFlats();
 }
@@ -2504,6 +2459,7 @@ async function clickFlat(n){
   const f=flats[n];
   const owners=flatOwners(f);
 
+  // админ-режим
   if(adminMode&&owners.length){
     if(owners.includes(meEnc)){openFm(n);return}
     const ok=await askConfirm('Выселить?','Все будут выселены','Выселить',true);
@@ -2514,6 +2470,7 @@ async function clickFlat(n){
     return;
   }
 
+  // пустая — заселяемся
   if(!owners.length){
     if(isHouseBlk()||isEntBlk(gloEnt(curHouse,Math.ceil(n/10))))return showToast('🚫 Закрыто','error');
     if(myAllFlats.length>0)return showToast('У тебя уже есть квартира','error');
@@ -2526,15 +2483,20 @@ async function clickFlat(n){
     return;
   }
 
+  // я живу здесь — открываю свою квартиру
   if(owners.includes(meEnc)){openFm(n);return}
 
+  // чужая квартира
   if(owners.length===1){
+    // один жилец — сразу в личку
     openDm(owners[0]);
   }else{
+    // 2+ жильцов — показываем выбор
     openOwnerPicker(n,owners);
   }
 }
 function openOwnerPicker(flatNum,owners){
+  // если уже открыт — убираем
   const old=document.getElementById('ownerPickM');
   if(old)old.remove();
 
@@ -2546,6 +2508,7 @@ function openOwnerPicker(flatNum,owners){
   const inner=document.createElement('div');
   inner.style.cssText='background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.1);border-radius:22px;width:440px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7)';
 
+  // шапка
   const head=document.createElement('div');
   head.style.cssText='padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(90,171,255,.12),rgba(74,144,217,.04))';
   head.innerHTML='<div style="font-size:16px;font-weight:800;color:#5aabff">🏠 Кв. '+gNum+' · кто здесь живёт</div>';
@@ -2555,6 +2518,7 @@ function openOwnerPicker(flatNum,owners){
   closeBtn.onclick=()=>box.remove();
   head.appendChild(closeBtn);
 
+  // список жильцов
   const list=document.createElement('div');
   list.style.cssText='padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px';
 
@@ -2634,6 +2598,7 @@ async function loadM(){
   
   msgC=(data||[]).reverse().filter(m=>{
     if(m.deleted_for_all) return false;
+    // Скрываем системные сообщения о заселении/выселении
     if(m.text && (
       m.text.includes('заселил') || 
       m.text.includes('выселил') || 
@@ -2702,28 +2667,7 @@ async function stopMus(){try{const a=$('bgA');if(a){a.pause();a.removeAttribute(
 function toggleMus(rid){const a=$('bgA');if(!a)return;if(a.paused){stopAllMedia();if(musUrl)a.play().catch(()=>{});const b=$('mbB');if(b)b.classList.add('playing')}else{a.pause();const b=$('mbB');if(b)b.classList.remove('playing')}}
 function openPV(u){$('pvi').src=u;$('pv').classList.add('open')}
 function closePV(){$('pv').classList.remove('open')}
-function magnetize(btn){
-  if(btn.classList&&btn.classList.contains('frame-vhs'))return;
-  if(window.matchMedia&&window.matchMedia('(hover:none)').matches){
-    btn.addEventListener('touchmove',e=>{
-      const t=e.touches[0];if(!t)return;
-      const r=btn.getBoundingClientRect();
-      const cx=r.left+r.width/2,cy=r.top+r.height/2;
-      const dx=(t.clientX-cx)/(r.width/2),dy=(t.clientY-cy)/(r.height/2);
-      btn.style.transform='perspective(500px) rotateX('+(-dy*14)+'deg) rotateY('+(dx*14)+'deg) scale(1.06)';
-    },{passive:true});
-    btn.addEventListener('touchend',()=>btn.style.transform='');
-    btn.addEventListener('touchcancel',()=>btn.style.transform='');
-    return;
-  }
-  btn.addEventListener('mousemove',e=>{
-    const r=btn.getBoundingClientRect();
-    const cx=r.left+r.width/2,cy=r.top+r.height/2;
-    const dx=(e.clientX-cx)/(r.width/2),dy=(e.clientY-cy)/(r.height/2);
-    btn.style.transform='perspective(500px) rotateX('+(-dy*14)+'deg) rotateY('+(dx*14)+'deg) scale(1.06)';
-  });
-  btn.addEventListener('mouseleave',()=>btn.style.transform='');
-}
+function magnetize(btn){if(window.matchMedia&&window.matchMedia('(hover:none)').matches)return;if(btn.classList&&btn.classList.contains('frame-vhs'))return;btn.addEventListener('mousemove',e=>{const r=btn.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const dx=(e.clientX-cx)/(r.width/2),dy=(e.clientY-cy)/(r.height/2);btn.style.transform='perspective(500px) rotateX('+(-dy*14)+'deg) rotateY('+(dx*14)+'deg) scale(1.06)'});btn.addEventListener('mouseleave',()=>btn.style.transform='')}
 function openAnn(hid){_annHouseId=Number(hid);const h=houses.find(x=>Number(x.id)===_annHouseId);$('annM').classList.add('open');$('annInp').value=(h&&h.announcement)||''}
 function closeAnn(){$('annM').classList.remove('open')}
 async function postAnn(){const t=$('annInp').value.trim();if(!t)return;const hid=_annHouseId||Number(curHouse);const{data,error}=await sb.rpc('owner_announce',{p_house:hid,p_text:t});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');closeAnn();await loadHouses();if(hid===Number(curHouse))showAnn(t);if(afT==='house')afRend()}
@@ -2734,9 +2678,13 @@ async function submitAppeal() {
   const msg = $('appealMsg').value.trim();
   const st = $('appealStatus');
   const btn = $('appealBtn');
+  
   if (!msg) { st.style.color = '#ff6b6b'; st.textContent = 'Напиши причину...'; return; }
+  
   btn.disabled = true; btn.textContent = 'Отправка...'; st.textContent = '';
+  
   const { data, error } = await sb.rpc('submit_appeal', { p_message: msg });
+  
   if (error || (data && data.ok === false)) {
     st.style.color = '#ff6b6b'; st.textContent = error ? error.message : data.error;
     btn.disabled = false; btn.textContent = '📩 Связаться с Администрацией';
@@ -2750,19 +2698,24 @@ let _appealsAutoUpdate = null;
 async function ofAppeals(b) {
   if(!isOwner()){ b.innerHTML='<div class="afe">Только владелец</div>'; return; }
   if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
+
   async function renderAppeals() {
     if(afT !== 'appeals' || !$('ofm').classList.contains('open')) {
       if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
       return;
     }
+
     const { data, error } = await sb.rpc('owner_get_appeals');
     if(error){ b.innerHTML='<div class="afe">Ошибка: '+error.message+'</div>'; return; }
     if(!data || !data.length){ b.innerHTML='<div class="afe">Нет новых запросов на разбан.</div>'; return; }
+    
     let html = '<div class="of-hint">📩 <b>Обратная связь.</b> Запросы от забаненных пользователей.</div>';
+    
     html += data.map(l => {
       const d = new Date(l.created_at);
       const p = n => String(n).padStart(2, '0');
       const timeStr = `${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(-2)};${p(d.getHours())}:${p(d.getMinutes())}`;
+      
       return `<div class="of-user-row" style="border-color:#ffaa00; background:rgba(255,170,0,0.05); flex-direction:column; align-items:flex-start; gap:10px;">
         <div style="width:100%; display:flex; justify-content:space-between;">
           <b style="color:#a06bff; font-size:14px;">${eh(l.nick)}</b>
@@ -2775,8 +2728,10 @@ async function ofAppeals(b) {
         </div>
       </div>`;
     }).join('');
+    
     b.innerHTML = html;
   }
+
   await renderAppeals();
   _appealsAutoUpdate = setInterval(renderAppeals, 3000);
 }
@@ -2784,6 +2739,7 @@ async function ofAppeals(b) {
 async function resolveAppeal(id, action, btn) {
   btn.disabled = true; btn.textContent = '...';
   const { data, error } = await sb.rpc('owner_resolve_appeal', { p_id: id, p_action: action });
+  
   if(error || (data && data.ok === false)) {
     showToast('Ошибка: ' + (error ? error.message : data.error), 'error');
     btn.disabled = false; btn.textContent = action === 'unban' ? '✅ Разбанить' : '🚫 Оставить (Бан)';
@@ -2798,10 +2754,12 @@ function upFm(){
   const mp=f.max_people??2;
   const others=owners.filter(o=>o!==meEnc);
   const gnum=(Number(curHouse)-1)*30+Number(fmN);
+
   $('fmT').textContent='🏠 Кв '+gnum+(isOwnerF?' (хозяин)':' (сосед)');
   $('fmTR').style.display='block';
   $('fmTM').style.display=(isOwnerF&&mp>=2)?'block':'none';
   $('lvB').style.display='block';
+
   const inf=$('rmInfo');
   const list=[];
   owners.forEach((o,i)=>{
@@ -2872,6 +2830,7 @@ function _setupPc(pc){
 
   pc.ontrack=(e)=>{
     _callRemoteStream=e.streams[0];
+    // 1) аудио — через <audio> в DOM
     if(!_remoteAudioEl){
       _remoteAudioEl=document.createElement('audio');
       _remoteAudioEl.autoplay=true;
@@ -2883,6 +2842,7 @@ function _setupPc(pc){
     _remoteAudioEl.volume=1;
     _remoteAudioEl.play().catch(err=>console.warn('audio play:',err));
 
+    // 2) видео — в элемент на экране
     const rv=$('callRemoteVideo');
     if(rv){
       rv.srcObject=_callRemoteStream;
@@ -2972,7 +2932,7 @@ function setupUI(){
     const orig = window[name];
     if(typeof orig !== 'function') return;
     window[name] = async function(){
-      if(!(await guardOwner(name))) return;
+      if(!(await guardOwner(name))) return; // Передаем имя напрямую
       return orig.apply(this, arguments);
     };
   }
@@ -2980,7 +2940,7 @@ function setupUI(){
     const orig = window[name];
     if(typeof orig !== 'function') return;
     window[name] = async function(){
-      if(!(await guardAdmin(name))) return;
+      if(!(await guardAdmin(name))) return; // Передаем имя напрямую
       return orig.apply(this, arguments);
     };
   }
@@ -3020,30 +2980,10 @@ function setupUI(){
   }
   console.log('✅ Все админ-функции обёрнуты защитой');
 })();
-let isReBooting = false;
-
 async function start(){
   meEnc=en(me);
   restoreFakeSession();
   $('auth').style.display='none';$('nickScr').style.display='none';$('app').style.display='block';
-
-  // 👇 БЛОК ДЛЯ ПЕРЕЗАПУСКА ЗАСТАВКИ ПОСЛЕ ЛОГИНА 👇
-  if (sessionStorage.getItem('booted_before_login') === 'true' && !isReBooting) {
-    isReBooting = true;
-    sessionStorage.removeItem('booted_before_login');
-    
-    const screen = document.getElementById('retroBootScreen');
-    const pcSetup = document.getElementById('pcSetup');
-    
-    if(screen) screen.classList.remove('hidden');
-    if(pcSetup) pcSetup.classList.add('zoom-in'); 
-    
-    setTimeout(() => {
-      runBootSequence(false); 
-    }, 100); 
-  }
-  // 👆 КОНЕЦ БЛОКА 👆
-
   $('myNick').textContent=me;$('myAv').innerHTML=avH(me,'sm');
   applyNeonCSS();upAdminTog();updateSoundBtn();
   subProf();subGP();subGroups();subRoomInvites();subCalls();
@@ -3066,6 +3006,7 @@ function subHouses(){if(hc)return;hc=sb.channel('houses-rt').on('postgres_change
 let _hnCh=null;
 async function loadHouseNews(){
   try{
+    // начало ТЕКУЩЕГО дня по МСК (UTC+3)
     const now = new Date();
     const mskOffset = 3*60*60*1000;
     const mskNow = new Date(now.getTime() + mskOffset);
@@ -3077,6 +3018,7 @@ async function loadHouseNews(){
       .gte('created_at',since)
       .order('created_at',{ascending:false}).limit(20);
 
+    // топ-3 по монетам среди жильцов этого дома
     const res=[];
     Object.values(flats).forEach(f=>flatOwners(f).forEach(o=>res.push(o)));
     let top=[];
@@ -3154,317 +3096,22 @@ window.addEventListener('DOMContentLoaded',async()=>{const{data:{session}}=await
   resize();window.addEventListener('resize',()=>{resize();initParticles()});applySeason(getSeasonNow());loop();
 })();
 </script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/moy-dom/sw.js',{scope:'/moy-dom/'}).catch(()=>{});}</script>
 <script>
-/* ============================================================
-   🔥 ОПТИМИЗИРОВАННАЯ ЗАСТАВКА (БЕЗ ЛАГОВ)
-   ============================================================ */
-
-(function() {
-  const style = document.createElement('style');
-  style.innerHTML = `
-    /* Оверлей с искажением и VHS-полосами */
-    #warpOverlay {
-      position: fixed; inset: 0; z-index: 9999999;
-      pointer-events: none; opacity: 0;
-      transition: opacity 0.3s ease;
-      background: radial-gradient(circle at center, transparent 10%, rgba(0,0,0,0.9) 70%, #000 100%);
-      box-shadow: inset 0 0 150px rgba(255, 0, 60, 0.4), inset 0 0 250px rgba(0, 255, 255, 0.2);
-      will-change: transform, opacity; /* Говорим браузеру подготовить GPU */
-    }
-    #warpOverlay.active {
-      opacity: 1;
-      animation: warpPulse 2.5s ease-in forwards;
-    }
-    /* Бегущие полосы VHS */
-    #warpOverlay::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(255,255,255,0.08) 2px, rgba(255,255,255,0.08) 4px);
-      animation: vhsScroll 1s linear infinite;
-    }
-    @keyframes vhsScroll { 0% { background-position: 0 0; } 100% { background-position: 0 20px; } }
-    
-    /* Убрали тяжелый blur, оставили только зум */
-    @keyframes warpPulse {
-      0% { transform: scale(1); opacity: 1; }
-      100% { transform: scale(1.2); opacity: 0; }
-    }
-
-    /* Сама заставка улетает вглубь (без blur, только transform) */
-    #retroBootScreen.warping {
-      animation: warpSuck 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
-      pointer-events: none;
-      will-change: transform, opacity;
-    }
-    @keyframes warpSuck {
-      0% { transform: scale(1) rotate(0deg); opacity: 1; }
-      100% { transform: scale(8) rotate(15deg); opacity: 0; }
-    }
-  `;
-  document.head.appendChild(style);
-})();
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (!document.getElementById('warpOverlay')) {
-    const overlay = document.createElement('div');
-    overlay.id = 'warpOverlay';
-    document.body.appendChild(overlay);
+(function(){
+  var checkUrl = window.location.pathname + '?_=' + Date.now();
+  var lastHash = null;
+  async function checkUpdate(){
+    try{
+      var r = await fetch(checkUrl, {method:'HEAD', cache:'no-store'});
+      var lm = r.headers.get('last-modified') || r.headers.get('etag') || '';
+      if(lastHash === null){ lastHash = lm; return; }
+      if(lm && lm !== lastHash){lastHash = lm;if('caches' in window){var names = await caches.keys();await Promise.all(names.map(n=>caches.delete(n)));}window.location.reload();}
+    }catch(e){}
   }
-});
-
-window._retroAudioCtx = null;
-let _lastSoundTime = 0;
-
-function getAudioCtx() {
-  if(!window._retroAudioCtx) window._retroAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if(window._retroAudioCtx.state === 'suspended') window._retroAudioCtx.resume();
-  return window._retroAudioCtx;
-}
-
-function playBeep() {
-  try {
-    const ctx = getAudioCtx();
-    const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.type = 'square'; osc.frequency.value = 880;
-    gain.gain.setValueAtTime(0.05, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.15);
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.15);
-  } catch(e) {}
-}
-
-function playTypeSound() {
-  try {
-    const now = Date.now();
-    // Играем звук только раз в 40мс, чтобы не перегружать процессор
-    if (now - _lastSoundTime < 40) return;
-    _lastSoundTime = now;
-    
-    const ctx = getAudioCtx();
-    const osc = ctx.createOscillator(); const gain = ctx.createGain();
-    osc.type = 'triangle'; osc.frequency.value = 1200 + Math.random() * 200; 
-    gain.gain.setValueAtTime(0.02, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.03);
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.03);
-  } catch(e) {}
-}
-
-function initRetroBoot() {
-  runBootSequence(true);
-}
-
-function runBootSequence(isFirstTime) {
-  const screen = document.getElementById('retroBootScreen');
-  if(!screen) return;
-
-  const isMobile = window.innerWidth <= 768;
-  
-  let deviceSetup = document.getElementById('phoneSetup');
-  let deviceScreen = document.getElementById('phoneScreen');
-  let bootText = document.getElementById('phoneBootText');
-  
-  if (!isMobile || !deviceSetup || !deviceScreen || !bootText) {
-    deviceSetup = document.getElementById('pcSetup');
-    deviceScreen = document.getElementById('pcScreen');
-    bootText = document.getElementById('bootText');
-  }
-
-  if (!deviceSetup || !deviceScreen || !bootText) return;
-
-  const desk = document.querySelector('.lite-desk');
-  const mug = document.querySelector('.lite-mug');
-  const mouse = document.querySelector('.lite-mouse');
-
-  screen.classList.remove('hidden');
-  screen.classList.remove('warping');
-
-  if (isFirstTime) {
-    screen.onclick = () => {
-      screen.onclick = null;
-      playBeep();
-      startBoot(false);
-    };
-  } else {
-    setTimeout(() => {
-      deviceSetup.classList.remove('zoom-in');
-      setTimeout(() => {
-        startBoot(true);
-      }, 1500); 
-    }, 100);
-  }
-
-  function startBoot(isReboot) {
-    [desk, mug, mouse].forEach(el => {
-      if(el) {
-        el.style.transition = 'opacity 0.8s ease-in';
-        el.style.opacity = '0';
-      }
-    });
-
-    deviceScreen.classList.add('flash');
-    deviceScreen.classList.add('on');
-    
-    bootText.style.animation = 'none';
-    bootText.style.color = '#000000'; 
-    bootText.style.fontSize = isMobile ? '10px' : '12px';
-    bootText.style.textAlign = 'left';
-    bootText.style.padding = isMobile ? '6px' : '15px';
-    bootText.style.overflowY = 'hidden';
-    bootText.style.wordBreak = 'break-word';
-    bootText.textContent = '';
-    
-    const isLoggedIn = !!curUser;
-    
-    const CONFIG_FIRST_RUN = [
-      "Проверка целостности стен... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Синхронизация аккаунта... <span style='color:#d32f2f;font-weight:bold'>[X]</span>"
-    ];
-
-    const CONFIG_REBOOT = [
-      "Проверка целостности стен... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Дешифровка ключей от квартир... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Подключение к районной сети... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Калибровка газонокосилки... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Синхронизация аккаунта... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Загрузка домов и соседей... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Обнаружено соседей: 4 <span style='color:#2e7d32;font-weight:bold'>[OK]</span>",
-      "Подготовка завершена... <span style='color:#2e7d32;font-weight:bold'>[OK]</span>"
-    ];
-
-    let lines = [];
-    if (!isReboot && !isLoggedIn) {
-      lines = ["Запуск HomeOS...", ...CONFIG_FIRST_RUN, "<span style='color:#d32f2f;font-weight:bold'>Аккаунт не найден.</span>"];
-    } else {
-      lines = [isReboot ? "Переподключение..." : "Запуск HomeOS...", ...CONFIG_REBOOT, "<span style='color:#2e7d32;font-weight:bold'>Добро пожаловать!</span>"];
-    }
-    
-    let lineIdx = 0;
-    let charIdx = 0;
-    let activeContainer = bootText;
-    let currentTextNode = document.createTextNode('');
-    
-    function typeNextLine() {
-      if (lineIdx >= lines.length) {
-        setTimeout(triggerWarp, 1200);
-        return;
-      }
-      if(lineIdx > 0) {
-        bootText.appendChild(document.createElement('br'));
-      }
-      
-      const htmlStr = lines[lineIdx];
-      charIdx = 0;
-      activeContainer = bootText;
-      currentTextNode = document.createTextNode('');
-      bootText.appendChild(currentTextNode);
-
-      // Используем requestAnimationFrame для плавности
-      let lastTime = performance.now();
-      
-      function step(time) {
-        if (charIdx >= htmlStr.length) {
-          playTypeSound();
-          lineIdx++;
-          setTimeout(typeNextLine, 50); // небольшая пауза между строками
-          return;
-        }
-
-        // Ограничиваем скорость печати (примерно 15мс на символ)
-        if (time - lastTime >= 15) {
-          lastTime = time;
-          if (htmlStr[charIdx] === '<') {
-            let end = htmlStr.indexOf('>', charIdx);
-            if (end !== -1) {
-              const tag = htmlStr.substring(charIdx, end + 1);
-              if (tag.startsWith('<span')) {
-                 const tempDiv = document.createElement('div');
-                 tempDiv.innerHTML = tag;
-                 const newSpan = tempDiv.firstChild;
-                 const spanTextNode = document.createTextNode('');
-                 newSpan.appendChild(spanTextNode);
-                 activeContainer.appendChild(newSpan);
-                 activeContainer = newSpan;
-                 currentTextNode = spanTextNode;
-              } else if (tag === '</span>') {
-                 activeContainer = activeContainer.parentNode;
-                 currentTextNode = document.createTextNode('');
-                 activeContainer.appendChild(currentTextNode);
-              }
-              charIdx = end + 1;
-              requestAnimationFrame(step);
-              return;
-            }
-          }
-
-          currentTextNode.data += htmlStr[charIdx];
-          charIdx++;
-          
-          // Автоскролл
-          if (charIdx % 5 === 0) {
-             bootText.scrollTop = bootText.scrollHeight;
-          }
-        }
-        
-        requestAnimationFrame(step);
-      }
-      
-      requestAnimationFrame(step);
-    }
-
-    function triggerWarp() {
-      const warp = document.getElementById('warpOverlay');
-      if (warp) warp.classList.add('active');
-      
-      screen.classList.add('warping');
-      
-      setTimeout(() => {
-        screen.classList.add('hidden');
-        screen.classList.remove('warping');
-        if (warp) warp.classList.remove('active');
-
-        if (!isReboot) {
-          if (!isLoggedIn) sessionStorage.setItem('booted_before_login', 'true');
-          else sessionStorage.removeItem('booted_before_login');
-        }
-      }, 2500); 
-    }
-
-    typeNextLine();
-  }
-}
-
-document.addEventListener('DOMContentLoaded', initRetroBoot);
-</script>
-<script>
-/* ============================================================
-   🔄 УМНОЕ АВТО-ОБНОВЛЕНИЕ САЙТА (БЕЗ ВЕРСИЙ)
-   ============================================================ */
-(function() {
-  const INITIAL_LAST_MODIFIED = new Date(document.lastModified).getTime();
-
-  async function checkForUpdates() {
-    try {
-      const response = await fetch(window.location.href, { method: 'HEAD', cache: 'no-store' });
-      const serverLastModified = response.headers.get('last-modified');
-      
-      if (serverLastModified) {
-        const serverDate = new Date(serverLastModified).getTime();
-        if (serverDate > INITIAL_LAST_MODIFIED + 5000) {
-          if (typeof showToast === 'function') {
-            showToast('🔄 Вышло обновление! Перезагрузка...', 'success');
-          }
-          setTimeout(() => {
-            const url = new URL(window.location.href);
-            url.searchParams.set('update', Date.now()); 
-            window.location.href = url.toString();
-          }, 3000);
-        }
-      }
-    } catch (e) {}
-  }
-
-  setInterval(checkForUpdates, 180000);
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) checkForUpdates();
-  });
+  setInterval(checkUpdate, 30000);
+  document.addEventListener('visibilitychange', function(){if(!document.hidden) checkUpdate();});
+  window.addEventListener('focus', checkUpdate);
 })();
 </script>
 </body>
