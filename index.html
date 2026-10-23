@@ -1504,6 +1504,29 @@ let workActive=false,workTimer=null,workStart=0,workCaught=0,workTaskId=null,wor
 let workGameHandlers=null;
 let soundEnabled=(localStorage.getItem('domSound')!=='0');
 let _audioCtx=null;
+function playBootBeep(){
+  try {
+    if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(_audioCtx.state === 'suspended') _audioCtx.resume();
+    
+    const osc = _audioCtx.createOscillator();
+    const gain = _audioCtx.createGain();
+    
+    // Звук "пищит" на частоте 800 Гц
+    osc.type = 'square'; 
+    osc.frequency.setValueAtTime(800, _audioCtx.currentTime);
+    
+    // Очень тихий звук (0.01), чтобы не бесило. Если хочешь громче — поставь 0.05
+    gain.gain.setValueAtTime(0.01, _audioCtx.currentTime); 
+    gain.gain.exponentialRampToValueAtTime(0.00001, _audioCtx.currentTime + 0.05); // Затухание
+    
+    osc.connect(gain);
+    gain.connect(_audioCtx.destination);
+    
+    osc.start();
+    osc.stop(_audioCtx.currentTime + 0.05); // Длительность звука 0.05 сек
+  } catch(e) {}
+}
 let _afTarget='afB';
 let evOverrides={};
 let customEvents=[];
@@ -2905,6 +2928,23 @@ const BOOT_LINES_NO = [
 let _bootLock = false;
 function _bootSleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
 
+function playBootBeep(){
+  try {
+    if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(_audioCtx.state === 'suspended') _audioCtx.resume();
+    const osc = _audioCtx.createOscillator();
+    const gain = _audioCtx.createGain();
+    osc.type = 'square'; 
+    osc.frequency.setValueAtTime(800, _audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.01, _audioCtx.currentTime); 
+    gain.gain.exponentialRampToValueAtTime(0.00001, _audioCtx.currentTime + 0.05);
+    osc.connect(gain);
+    gain.connect(_audioCtx.destination);
+    osc.start();
+    osc.stop(_audioCtx.currentTime + 0.05);
+  } catch(e) {}
+}
+
 async function _bootTypeLine(text, className, suffix) {
     const log = document.getElementById('bootLog');
     if (!log) return;
@@ -2931,35 +2971,30 @@ async function _bootTypeLine(text, className, suffix) {
 
     for (let i = 0; i < text.length; i++) {
         sp.textContent += text[i];
-        await _bootSleep(8); // Скорость печати
+        if (i % 2 === 0) playBootBeep(); // Звук каждые 2 буквы
+        await _bootSleep(20); // <-- ТУТ СКОРОСТЬ (20 миллисекунд)
     }
     
     if (suffix) {
         ss.textContent = suffix;
-        await _bootSleep(100); // Пауза перед след. строкой
+        await _bootSleep(100); 
     }
 }
 
 async function runBootSequence(authorized){
-  // 1. Сначала узнаем количество соседей и версию (если юзер авторизован)
-  let neighborCountText = 'НЗ'; // По умолчанию "Не заселён"
-
+  let neighborCountText = 'НЗ';
+  
   if (authorized && curUser) {
     try {
-      // Узнаём ник игрока
       let userNick = me;
       if (!userNick) {
         const { data: p } = await sb.from('profiles').select('nick').eq('id', curUser.id).maybeSingle();
         if (p) userNick = p.nick;
       }
-
       if (userNick) {
         const encNick = en(userNick);
-        // Ищем, в каком доме живёт этот игрок
         const { data: fl } = await sb.from('flats').select('house_id').contains('owner_nicks', [encNick]).limit(1).maybeSingle();
-        
         if (fl && fl.house_id) {
-          // Считаем всех жителей этого дома
           const { data: houseFlats } = await sb.from('flats').select('owner_nicks').eq('house_id', fl.house_id);
           if (houseFlats) {
             let total = 0;
@@ -2970,25 +3005,20 @@ async function runBootSequence(authorized){
           }
         }
       }
-    } catch(e) {
-      console.error('Ошибка загрузки данных для заставки:', e);
-    }
+    } catch(e) { console.error(e); }
   }
 
-  // Подставляем реальные данные в строки
   const idxNeighbors = BOOT_LINES_OK.findIndex(l => l.t.includes('Обнаружено соседей'));
   if (idxNeighbors !== -1) BOOT_LINES_OK[idxNeighbors].t = `Обнаружено соседей: ${neighborCountText}`;
-
+  
   const idxVersion = BOOT_LINES_OK.findIndex(l => l.t.includes('Загрузка актуальной версии'));
   if (idxVersion !== -1) BOOT_LINES_OK[idxVersion].t = `Загрузка актуальной версии v${APP_VERSION}...`;
 
-  // 2. Твоя старая логика отрисовки заставки
   const log = document.getElementById('bootLog');
   const hint = document.getElementById('bootHint');
   const bs = document.getElementById('bootScreen');
   if(!log || !bs) return;
 
-  // Сброс перед запуском
   bs.classList.remove('done', 'boot-zoom-in', 'boot-zoom-out');
   bs.style.display = 'flex';
   bs.style.opacity = '1';
@@ -3008,13 +3038,24 @@ async function runBootSequence(authorized){
     await _bootSleep(ln.c === 'welcome' ? 400 : 150);
   }
   
-  await _bootSleep(600);
+  // Финальный звук запуска (Два тона)
+  try {
+    if(_audioCtx){
+      const now = _audioCtx.currentTime;
+      const o1 = _audioCtx.createOscillator(); const g1 = _audioCtx.createGain();
+      o1.frequency.value = 523.25; g1.gain.setValueAtTime(0.1, now); g1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      o1.connect(g1); g1.connect(_audioCtx.destination); o1.start(now); o1.stop(now + 0.3);
+      const o2 = _audioCtx.createOscillator(); const g2 = _audioCtx.createGain();
+      o2.frequency.value = 659.25; g2.gain.setValueAtTime(0.1, now + 0.15); g2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+      o2.connect(g2); g2.connect(_audioCtx.destination); o2.start(now + 0.15); o2.stop(now + 0.45);
+    }
+  } catch(e){}
   
-  // ЗУМ ВНУТРЬ (Приближение)
+  await _bootSleep(800);
+  
   bs.classList.add('boot-zoom-in');
-  await _bootSleep(800); // Ждем окончания CSS-перехода
+  await _bootSleep(800);
   
-  // ДЖЕСТКИЙ ФИКС: убираем из потока и запрещаем клики
   bs.classList.add('done');
   bs.style.display = 'none';
   bs.style.pointerEvents = 'none';
