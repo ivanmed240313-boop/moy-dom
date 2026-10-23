@@ -64,6 +64,31 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
     animation: tvScanBar 6s linear infinite;
     will-change: transform; /* Говорим браузеру анимировать через GPU */
 }
+#bootContainer {
+    display: flex;
+    gap: 60px;
+    align-items: flex-start;
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    justify-content: flex-start;
+}
+#bootAscii {
+    color: #2aff2a;
+    text-shadow: 0 0 8px rgba(42,255,42,.6);
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: pre;
+    pointer-events: none;
+}
+@media(max-width: 768px) {
+    #bootContainer { flex-direction: column; gap: 20px; }
+    #bootAscii { display: none; /* На телефонах скроем, чтобы не мешало */ }
+}
 
 @keyframes tvScanBar { 
     0% { transform: translateY(0); } 
@@ -1333,9 +1358,11 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 </head>
 <body>
 
-<!-- ЗАСТАВКА 2003 -->
 <div id="bootScreen" role="button" tabindex="0" aria-label="Включить HomeOS">
-  <div id="bootLog"></div>
+  <div id="bootContainer">
+    <div id="bootLog"></div>
+    <pre id="bootAscii"></pre>
+  </div>
   <div id="bootHint">Нажми</div>
 </div>
 
@@ -3037,6 +3064,15 @@ async function runBootSequence(authorized){
     await _bootTypeLine(ln.t, ln.c, ln.s);
     await _bootSleep(ln.c === 'welcome' ? 400 : 150);
   }
+  const ASCII_ART = [
+  "          ____           ",
+  "         /    \          ",
+  "       /        \        ",
+  "     /            \      ",
+  "     |  [] || []  |      ",
+  "     |_____||_____|      "
+];
+  
   
   // Финальный звук запуска (Два тона)
   try {
