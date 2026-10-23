@@ -3057,14 +3057,13 @@ async function runBootSequence(authorized){
   if(hint) hint.style.display = 'none';
   log.innerHTML = '';
   
-  // Показываем зону для рисунка
   const asciiEl = document.getElementById('bootAscii');
-  if (asciiEl) { asciiEl.textContent = ''; asciiEl.style.opacity = '1'; }
+  if (asciiEl) { asciiEl.innerHTML = ''; asciiEl.style.opacity = '1'; }
 
   await _bootSleep(400);
   const lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
   
-  // --- РИСУЕМ ДОМИК СПРАВА ---
+  // Массив с домиком
   const ASCII_ART = [
     "          ____           ",
     "         /    \\          ",
@@ -3073,27 +3072,29 @@ async function runBootSequence(authorized){
     "     |  [] || []  |      ",
     "     |_____||_____|      "
   ];
-
-  // Таймер для домика
-  let asciiIdx = 0;
-  const asciiTimer = setInterval(() => {
-    if (asciiEl && asciiIdx < ASCII_ART.length) {
-      asciiEl.textContent += ASCII_ART[asciiIdx] + '\n';
-      asciiIdx++;
-    } else {
-      clearInterval(asciiTimer);
-    }
-  }, 120); // Скорость появления строчек домика
-
-  // Печатаем текст слева
-  for(const ln of lines){
+  
+  // Печатаем текст слева и синхронно рисуем домик справа
+  for(let i = 0; i < lines.length; i++){
+    const ln = lines[i];
     await _bootTypeLine(ln.t, ln.c, ln.s);
+    
+    // Привязка строк домика к конкретным строкам текста
+    if (authorized && asciiEl) {
+      let artLine = null;
+      if (i === 1) artLine = ASCII_ART[0];      // Проверка целостности стен
+      else if (i === 3) artLine = ASCII_ART[1]; // Подключение к районной сети
+      else if (i === 5) artLine = ASCII_ART[2]; // Синхронизация аккаунта
+      else if (i === 7) artLine = ASCII_ART[3]; // Обнаружено соседей
+      else if (i === 9) artLine = ASCII_ART[4]; // Подготовка завершена
+      else if (i === 10) artLine = ASCII_ART[5];// Добро пожаловать
+      
+      if (artLine !== null) {
+        asciiEl.textContent += artLine + '\n';
+      }
+    }
+    
     await _bootSleep(ln.c === 'welcome' ? 400 : 150);
   }
-  
-  // Дорисовываем домик до конца, если текст закончился раньше
-  clearInterval(asciiTimer);
-  if (asciiEl) asciiEl.textContent = ASCII_ART.join('\n');
   
   // Финальный звук запуска (Два тона)
   try {
