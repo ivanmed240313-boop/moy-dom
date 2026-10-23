@@ -3057,15 +3057,15 @@ async function runBootSequence(authorized){
   if(hint) hint.style.display = 'none';
   log.innerHTML = '';
   
+  // Показываем зону для рисунка
+  const asciiEl = document.getElementById('bootAscii');
+  if (asciiEl) { asciiEl.textContent = ''; asciiEl.style.opacity = '1'; }
+
   await _bootSleep(400);
   const lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
   
-  for(const ln of lines){
-    await _bootTypeLine(ln.t, ln.c, ln.s);
-    await _bootSleep(ln.c === 'welcome' ? 400 : 150);
-  }
-    // --- НАЧАЛО ОТРИСОВКИ ДОМИКА ---
-   const ASCII_ART = [
+  // --- РИСУЕМ ДОМИК СПРАВА ---
+  const ASCII_ART = [
     "          ____           ",
     "         /    \\          ",
     "       /        \\        ",
@@ -3074,17 +3074,27 @@ async function runBootSequence(authorized){
     "     |_____||_____|      "
   ];
 
-  const asciiEl = document.getElementById('bootAscii');
-  if (asciiEl) {
-    asciiEl.textContent = '';
-    asciiEl.style.opacity = '1';
-    for (let i = 0; i < ASCII_ART.length; i++) {
-      asciiEl.textContent += ASCII_ART[i] + '\n';
-      await _bootSleep(150); // Пауза 150мс между строчками домика
+  // Таймер для домика
+  let asciiIdx = 0;
+  const asciiTimer = setInterval(() => {
+    if (asciiEl && asciiIdx < ASCII_ART.length) {
+      asciiEl.textContent += ASCII_ART[asciiIdx] + '\n';
+      asciiIdx++;
+    } else {
+      clearInterval(asciiTimer);
     }
-  }
-  // --- КОНЕЦ ОТРИСОВКИ ДОМИКА ---
+  }, 120); // Скорость появления строчек домика
 
+  // Печатаем текст слева
+  for(const ln of lines){
+    await _bootTypeLine(ln.t, ln.c, ln.s);
+    await _bootSleep(ln.c === 'welcome' ? 400 : 150);
+  }
+  
+  // Дорисовываем домик до конца, если текст закончился раньше
+  clearInterval(asciiTimer);
+  if (asciiEl) asciiEl.textContent = ASCII_ART.join('\n');
+  
   // Финальный звук запуска (Два тона)
   try {
     if(_audioCtx){
