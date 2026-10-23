@@ -1737,7 +1737,7 @@ async function ofLogs(b) {
   await renderLogs(); _logsAutoUpdate = setInterval(renderLogs, 3000);
 }
 
-const APP_VERSION='3.7.0';
+const APP_VERSION='3.8.5';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
@@ -2549,8 +2549,7 @@ function togIR(c){$('ir').style.display=c?'flex':'none';$('nw').style.display=c?
 function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
 async function loadM(){
   const tk=++mTok,rid=curRoom; if(!rid)return;
-  const oneDayAgo=new Date(Date.now()-24*60*60*1000).toISOString();
-  const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).gte('created_at',oneDayAgo).order('created_at',{ascending:false}).limit(300);
+  const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);
   if(tk!==mTok||rid!==curRoom)return; if(error)return;
   msgC=(data||[]).reverse().filter(m=>{if(m.deleted_for_all) return false;if(m.text && (m.text.includes('заселил') || m.text.includes('выселил') || m.text.includes('вошёл в чат') || m.text.includes('вышел из чата'))) return false;return true;});
   await loadR(msgC); renderMs($('chat'),msgC);
