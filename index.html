@@ -38,26 +38,37 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
     pointer-events: auto !important;
 }
 
-/* ===== ЗАСТАВКА 2003 (СТАРЫЙ ТЕЛИК) ===== */
+/* ===== ЗАСТАВКА 2003 (ОПТИМИЗИРОВАННАЯ) ===== */
 #bootScreen {
-    position: fixed; inset: 0; background: #050505; z-index: 100000;
+    position: fixed; inset: 0; 
+    background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%); /* Легкая виньетка вместо тяжелой тени */
+    z-index: 100000;
     cursor: pointer; display: flex; align-items: center; justify-content: flex-start;
     padding: 40px 44px; font-family: 'Courier New', monospace;
     overflow: hidden; user-select: none; -webkit-user-select: none;
     transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s ease;
+    will-change: transform, opacity; /* Готовим видеокарту к зуму */
 }
-#bootScreen.done { display: none; }
+
+/* Сканлайны (без тяжелых теней) */
 #bootScreen::before {
     content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
     background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 3px);
-    box-shadow: inset 0 0 100px rgba(0,0,0,0.95), inset 0 0 20px rgba(42,255,42,0.1);
 }
+
+/* Бегущая полоса (анимируем ТРАНСФОРМАЦИЮ, а не фон) */
 #bootScreen::after {
-    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 3;
-    background: linear-gradient(180deg, transparent 0%, rgba(42,255,42,0.08) 48%, rgba(42,255,42,0.15) 50%, rgba(42,255,42,0.08) 52%, transparent 100%);
-    background-size: 100% 200%; animation: tvScanBar 6s linear infinite;
+    content: ''; position: absolute; left: 0; right: 0; height: 15vh; pointer-events: none; z-index: 3;
+    background: linear-gradient(180deg, transparent 0%, rgba(42,255,42,0.1) 50%, transparent 100%);
+    top: -20vh; 
+    animation: tvScanBar 6s linear infinite;
+    will-change: transform; /* Говорим браузеру анимировать через GPU */
 }
-@keyframes tvScanBar { 0% { background-position: 0 -100%; } 100% { background-position: 0 200%; } }
+
+@keyframes tvScanBar { 
+    0% { transform: translateY(0); } 
+    100% { transform: translateY(130vh); } 
+}
 
 #bootLog{font-size:14px;line-height:1.8;color:#2aff2a;white-space:pre-wrap;max-width:min(640px,88vw);text-shadow:0 0 8px rgba(42,255,42,.6);letter-spacing:.5px;position:relative;z-index:4;margin:0;}
 #bootLog .bl{opacity:1;margin-bottom:4px;}
@@ -73,7 +84,6 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 
 .boot-zoom-in { transform: scale(2.5) !important; opacity: 0 !important; }
 .boot-zoom-out { transform: scale(0.1) !important; opacity: 0 !important; }
-
 /* ===== ОСТАЛЬНЫЕ АНИМАЦИИ ===== */
 @keyframes shim{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
