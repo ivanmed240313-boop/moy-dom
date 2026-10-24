@@ -1430,6 +1430,16 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <input type="file" id="mPI" accept="image/*" style="display:none"><input type="file" id="rPI" accept="image/*" style="display:none">
 <audio id="bgA" loop preload="auto"></audio>
 
+<div id="cfm">
+  <div class="cfm-box">
+    <h3 class="cfm-title" id="cfmTitle">Подтвердите действие</h3>
+    <div class="cfm-text" id="cfmText"></div>
+    <div class="cfm-actions">
+      <button class="cfm-cancel" id="cfmCancel">Отмена</button>
+      <button class="cfm-ok" id="cfmOk">OK</button>
+    </div>
+  </div>
+</div>
 <div id="sendCoinsM"><div class="sc-box"><h3>💰 Отправить монеты</h3><div class="sc-row"><span>Кому:</span><b id="scNick">—</b></div><div class="sc-row"><span>У него сейчас:</span><b id="scToCoins">0</b></div><div class="sc-row"><span>У тебя:</span><b id="scMyCoins">0</b></div><div class="sc-amt-wrap"><label class="sc-lbl">Сумма</label><input class="sc-inp" id="scAmt" type="number" min="1" max="1000000" placeholder="0" inputmode="numeric"><div class="sc-quick"><button type="button" onclick="scQuick(0.25)">25%</button><button type="button" onclick="scQuick(0.5)">50%</button><button type="button" onclick="scQuick(1)">Всё</button></div></div><div class="sc-err" id="scErr"></div><div class="sc-acts"><button class="cn" onclick="closeSendCoins()">Отмена</button><button class="go" id="scSendBtn" onclick="doSendCoins()">Отправить</button></div></div></div>
 
 <div id="gardenM" class="em" style="z-index:670"><div class="emb" style="width:640px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title" id="gardenTitle">🌱 Моя грядка</div><button class="pf-close" onclick="closeGarden()">✕</button></div><div class="duty-body" style="overflow-y:auto">
