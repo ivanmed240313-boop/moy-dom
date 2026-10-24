@@ -3023,7 +3023,6 @@ async function pickBootLang(lang) {
 }
 
 async function runBootSequence(authorized, layoutLang = 'en'){
-async function runBootSequence(authorized, layoutLang = 'en'){
     if (authorized && curUser) {
     if (!me) {
       try {
@@ -3279,6 +3278,7 @@ window.addEventListener('DOMContentLoaded', async function(){
 })();
 </script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/moy-dom/sw.js',{scope:'/moy-dom/'}).catch(()=>{});}</script>
+<script>
 (function(){
   var checkUrl = window.location.pathname + '?_=' + Date.now();
   var lastHash = null;
