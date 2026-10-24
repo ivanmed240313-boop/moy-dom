@@ -3188,7 +3188,7 @@ window.addEventListener('DOMContentLoaded', async function(){
       document.body.classList.add('ultra-mode');
   }
 
-  const handler = async function(e){
+    const handler = async function(e){
     if(_bootLock) return;
     _bootLock = true;
     
@@ -3196,14 +3196,34 @@ window.addEventListener('DOMContentLoaded', async function(){
     bs.removeEventListener('keydown', keyHandler);
     if(hint) hint.style.display = 'none';
     
-    // Если ULTRADAY — показываем выбор языка и останавливаем загрузку
+    // 1. Сначала получаем сессию
+    let session = null;
+    try { 
+      const r = await sb.auth.getSession(); 
+      session = r && r.data ? r.data.session : null; 
+    } catch(err) {}
+    const authorized = !!(session && session.user);
+
+    // 2. Если залогинен — ПРИНУДИТЕЛЬНО грузим ник и настройки ивентов
+    if (authorized) {
+      curUser = session.user;
+      if (!me) {
+        try {
+          const { data: p } = await sb.from('profiles').select('nick').eq('id', curUser.id).maybeSingle();
+          if (p) me = p.nick;
+        } catch(err) {}
+      }
+      try { await loadEvOverrides(); } catch(err) {}
+    }
+    
+    // 3. ТЕПЕРЬ проверяем ULTRADAY (теперь он знает, включен он или нет)
     if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
       const lp = document.getElementById('langPicker');
       if (lp) lp.classList.add('on');
-      return;
+      return; // Останавливаемся и ждем выбора языка
     }
     
-    // Определяем раскладку (если ULTRADAY выключен)
+    // 4. Если ULTRADAY выключен — запускаем как обычно
     let layoutLang = 'en';
     if (e && e.key) {
         if (/[а-яё]/i.test(e.key)) layoutLang = 'ru'; 
@@ -3214,18 +3234,9 @@ window.addEventListener('DOMContentLoaded', async function(){
         layoutLang = locale.includes('ru') ? 'ru' : 'en';
     }
     
-    let session = null;
-    try { 
-      const r = await sb.auth.getSession(); 
-      session = r && r.data ? r.data.session : null; 
-    } catch(err) {}
-    
-    const authorized = !!(session && session.user);
-    
     await runBootSequence(authorized, layoutLang);
     
     if(authorized){
-      curUser = session.user;
       try { await afterAuth(); } catch(err) { 
         console.error('afterAuth', err); 
         showToast('Ошибка входа: '+(err.message||err),'error'); 
