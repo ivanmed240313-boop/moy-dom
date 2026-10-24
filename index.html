@@ -2166,7 +2166,7 @@ function isEventMSK(evId){
 }
 function shouldShowEvent(evId){const m=evModeFor(me,evId);if(m==='on')return true;if(m==='off')return false;return isEventMSK(evId)}
 function checkAllEvents(){if(!me)return;checkXmas();checkEaster();checkFireworks();checkMaslenitsa();checkKnowledge();checkTeacher();checkMemorials();checkUtHeart();checkDtsStar();checkGameIcons();checkULTRADAY();}
-function checkULTRADAY(){const isUltra=shouldShowEvent('ULTRADAY');document.body.classList.toggle('ULTRA-mode',isUltra);}
+function checkULTRADAY(){const isUltra=shouldShowEvent('ULTRADAY');document.body.classList.toggle('ultra-mode',isUltra);}
 function checkXmas(){const t=$('xmasTree'),g=$('xmasGifts');if(!t)return;const show=shouldShowEvent('xmas');t.classList.toggle('on',show);if(g)g.classList.toggle('on',show)}
 function checkEaster(){const t=$('easterDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('easter'))}
 function checkMaslenitsa(){const t=$('maslenitsaDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('maslenitsa'))}
@@ -2239,11 +2239,6 @@ function pickWeightedRarity(weights) {
         if (r <= 0) return k;
     }
     return 'common';
-}
-function openCasesShop() {
-    if ($('caseMsg')) $('caseMsg').innerHTML = '';
-    $('casesM').classList.add('open');
-    renderCasesShop();
 }
 function openCasesShop() {
     if ($('caseMsg')) $('caseMsg').innerHTML = '';
@@ -2942,6 +2937,17 @@ async function _bootTypeLine(text, className, suffix) {
 }
 
 async function runBootSequence(authorized){
+    if (authorized && curUser) {
+    if (!me) {
+      try {
+        const { data: p } = await sb.from('profiles').select('nick').eq('id', curUser.id).maybeSingle();
+        if (p) me = p.nick;
+      } catch(e) {}
+    }
+    if (me && Object.keys(evOverrides).length === 0) {
+      try { await loadEvOverrides(); } catch(e) {}
+    }
+  }
   let neighborCountText = 'НЗ';
   
   if (authorized && curUser) {
