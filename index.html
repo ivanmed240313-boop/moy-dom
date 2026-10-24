@@ -3085,9 +3085,10 @@ async function runBootSequence(authorized, layoutLang = 'en'){
   const asciiEl = document.getElementById('bootAscii');
   if (asciiEl) { asciiEl.innerHTML = ''; asciiEl.style.opacity = '1'; }
 
+    const isUltra = shouldShowEvent('ULTRADAY');
+  if (isUltra) document.body.classList.add('ultra-mode'); // СРАЗУ КРАСИМ В КРАСНЫЙ
+  
   await _bootSleep(400);
-      const isUltra = shouldShowEvent('ULTRADAY');
-  if (isUltra) document.body.classList.add('ultra-mode');
   let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
   
   if (authorized && isUltra) {
@@ -3180,13 +3181,26 @@ async function runBootSequence(authorized, layoutLang = 'en'){
 window.addEventListener('DOMContentLoaded', async function(){
   const bs = document.getElementById('bootScreen'); 
   if(!bs) return;
-  const hint = document.getElementById('bootHint'); 
+    const hint = document.getElementById('bootHint'); 
   if(hint) hint.style.display = 'block';
   
-  // Красим фон заставки, если ULTRADAY
-  if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
-      document.body.classList.add('ultra-mode');
-  }
+  // === НОВОЕ: Проверяем ULTRADAY сразу при загрузке, чтобы даже "Нажми" было красным ===
+  (async () => {
+      try {
+          const { data: { session } } = await sb.auth.getSession();
+          if (session && session.user) {
+              curUser = session.user;
+              const { data: p } = await sb.from('profiles').select('nick').eq('id', curUser.id).maybeSingle();
+              if (p) {
+                  me = p.nick;
+                  await loadEvOverrides();
+                  if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
+                      document.body.classList.add('ultra-mode');
+                  }
+              }
+          }
+      } catch(e) {}
+  })();
 
     const handler = async function(e){
     if(_bootLock) return;
@@ -3216,8 +3230,9 @@ window.addEventListener('DOMContentLoaded', async function(){
       try { await loadEvOverrides(); } catch(err) {}
     }
     
-    // 3. ТЕПЕРЬ проверяем ULTRADAY (теперь он знает, включен он или нет)
+        // 3. ТЕПЕРЬ проверяем ULTRADAY (теперь он знает, включен он или нет)
     if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
+      document.body.classList.add('ultra-mode'); // СРАЗУ КРАСИМ В КРАСНЫЙ
       const lp = document.getElementById('langPicker');
       if (lp) lp.classList.add('on');
       return; // Останавливаемся и ждем выбора языка
