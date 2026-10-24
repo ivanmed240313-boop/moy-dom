@@ -885,7 +885,7 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 #verBadge{position:fixed;left:10px;bottom:10px;z-index:9999;font-size:11px;font-weight:700;color:#666678;background:rgba(10,10,16,.75);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:5px 10px;font-family:'Courier New',monospace;pointer-events:auto;cursor:pointer;letter-spacing:.4px;user-select:none;transition:color .2s,border-color .2s}
 #verBadge:hover{color:#f5c542;border-color:rgba(245,197,66,.4)}
 #verBadge .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#4caf50;margin-right:6px;vertical-align:middle;box-shadow:0 0 6px #4caf50;animation:pulse 2s infinite}
-#cfm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);align-items:center;justify-content:center;z-index:9700;padding:20px}
+#cfm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);align-items:center;justify-content:center;z-index:2147483647 !important;padding:20px} #cfm.open { z-index: 2147483647 !important; }
 #cfm.open{display:flex;animation:fadeIn .15s}
 .cfm-box{background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.08);border-radius:20px;width:400px;max-width:100%;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 .cfm-title{margin:0 0 10px;font-size:17px;font-weight:800;color:#fff}
@@ -2019,27 +2019,35 @@ async function afTogHouse(hid,bl){if(!(await guardAdmin())) return;if(!hasAdmin(
 const CASES = {
     '100': {
         price: 100, name: 'Обычный кейс', color: '#4caf50',
-        desc: 'Обычные и необычные семена',
-        seedPool: ['common', 'uncommon'],
-        fertPool: ['fert1'],
-        fertChance: 0.25
+        desc: 'Базовые семена и удобрения',
+        weights: { common: 65, uncommon: 25, rare: 8, mythic: 1.8, legendary: 0.2, secret: 0 },
+        fertChance: 0.25, fertPool: ['fert1']
     },
     '500': {
         price: 500, name: 'Редкий кейс', color: '#3b82f6',
-        desc: 'Необычные, редкие, мифические',
-        seedPool: ['uncommon', 'rare', 'mythic'],
-        fertPool: ['fert1', 'fert2'],
-        fertChance: 0.35
+        desc: 'Хороший шанс на мифические',
+        weights: { common: 10, uncommon: 40, rare: 30, mythic: 15, legendary: 4, secret: 1 },
+        fertChance: 0.35, fertPool: ['fert1', 'fert2']
     },
     '1000': {
         price: 1000, name: 'Легендарный кейс', color: '#f5c542',
-        desc: 'Редкие, мифические, легендарные',
-        seedPool: ['rare', 'mythic', 'legendary'],
-        fertPool: ['fert2', 'fert3'],
-        fertChance: 0.45
+        desc: 'Высокий шанс на легендарки',
+        weights: { common: 0, uncommon: 5, rare: 30, mythic: 40, legendary: 20, secret: 5 },
+        fertChance: 0.45, fertPool: ['fert2', 'fert3']
     }
 };
 
+// Функция для выбора редкости по весам
+function pickWeightedRarity(weights) {
+    let total = 0;
+    for (const k in weights) total += weights[k];
+    let r = Math.random() * total;
+    for (const k in weights) {
+        r -= weights[k];
+        if (r <= 0) return k;
+    }
+    return 'common';
+}
 function openCasesShop() {
     if ($('caseMsg')) $('caseMsg').innerHTML = '';
     $('casesM').classList.add('open');
@@ -2079,16 +2087,22 @@ async function buyCase(tier) {
     const c = CASES[tier];
     if (!c) return;
     if (myCoins < c.price) return showToast('Мало монет', 'error');
+    
     const ok = await askConfirm('Открыть кейс?', `Потратить ${c.price}💰 на «${c.name}»?`, 'Открыть');
     if (!ok) return;
+
     const { data, error } = await sb.rpc('add_coins', { p_delta: -c.price });
     if (error) return showToast('❌ ' + error.message, 'error');
     if (data && data.ok === false) return showToast('❌ ' + (data.error || ''), 'error');
+
     myCoins = (data && typeof data.coins === 'number') ? data.coins : myCoins - c.price;
     updateCoinsUI();
+
     const g = loadGarden(me);
     let resultText = '';
     let isEpic = false;
+
+    // Проверяем шанс на удобрение
     if (Math.random() < c.fertChance) {
         const fertId = c.fertPool[Math.floor(Math.random() * c.fertPool.length)];
         g.ferts[fertId] = (g.ferts[fertId] || 0) + 1;
@@ -2096,20 +2110,38 @@ async function buyCase(tier) {
         resultText = `💧 ${f ? f.name : fertId} (удобрение) ×1`;
         isEpic = fertId === 'fert3';
     } else {
-        const pool = SEEDS.filter(s => c.seedPool.includes(s.rarity));
-        if (!pool.length) { showToast('Ошибка пула', 'error'); return; }
-        const winSeed = pool[Math.floor(Math.random() * pool.length)];
-        g.inv[winSeed.id] = (g.inv[winSeed.id] || 0) + 1;
-        resultText = `${winSeed.icon} ${winSeed.name} ×1`;
-        isEpic = winSeed.rarity === 'legendary' || winSeed.rarity === 'secret' || winSeed.rarity === 'mythic';
+        // Выбираем редкость по весам
+        const rolledRarity = pickWeightedRarity(c.weights);
+        const pool = SEEDS.filter(s => s.rarity === rolledRarity);
+        
+        if (pool.length > 0) {
+            const winSeed = pool[Math.floor(Math.random() * pool.length)];
+            g.inv[winSeed.id] = (g.inv[winSeed.id] || 0) + 1;
+            resultText = `${winSeed.icon} ${winSeed.name} ×1`;
+            isEpic = winSeed.rarity === 'legendary' || winSeed.rarity === 'secret';
+        } else {
+            // Если пул пустой (на всякий случай), даем обычное
+            const fallback = SEEDS.filter(s => s.rarity === 'common');
+            const winSeed = fallback[Math.floor(Math.random() * fallback.length)];
+            g.inv[winSeed.id] = (g.inv[winSeed.id] || 0) + 1;
+            resultText = `${winSeed.icon} ${winSeed.name} ×1`;
+        }
     }
+
     saveGarden(me, g);
     spawnConfetti(isEpic);
-    const msgEl = $('caseMsg');
-    if (msgEl) msgEl.innerHTML = `<div style="font-size:20px;margin-top:18px;padding:16px;border-radius:14px;background:rgba(76,175,80,.12);border:1px solid rgba(76,175,80,.4);color:#8bc34a;animation:pulse 1s">🎉 Выпало: ${resultText}!</div>`;
-    setTimeout(() => { if (msgEl) msgEl.innerHTML = ''; renderCasesShop(); }, 3200);
-}
 
+    const msgEl = $('caseMsg');
+    if (msgEl) {
+        msgEl.innerHTML = `<div style="font-size:20px;margin-top:18px;padding:16px;border-radius:14px;background:rgba(76,175,80,.12);border:1px solid rgba(76,175,80,.4);color:#8bc34a;animation:pulse 1s">🎉 Выпало: ${resultText}!</div>`;
+        
+        // Очищаем сообщение через 4 секунды и обновляем витрину
+        setTimeout(() => { 
+            if (msgEl) msgEl.innerHTML = ''; 
+            renderCasesShop(); 
+        }, 4000);
+    }
+}
 const JOBS={teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,tasks:['Проверить контрольные','Решить примеры','Проверить диктант'],types:['check','math','dictation']},police:{id:'police',name:'Полицейский',icon:'👮',reward:750,tasks:['Патруль','Скорость','Документы'],types:['patrol','radar','docs']},welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,tasks:['Шов','Замер','Резка'],types:['seam','measure','cut']}};
 const JOB_TASKS_PER_DAY=3,JOB_BAN_DAYS=30,JOB_MAX_MISSED=3,JOB_STATE_VERSION=3;
 function jobKey(){return 'job_'+meEnc}
