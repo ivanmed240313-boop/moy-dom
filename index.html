@@ -3277,9 +3277,8 @@ window.addEventListener('DOMContentLoaded', async function(){
   window.resetSeason=function(){localStorage.removeItem('dom_season');applySeason(getSeasonNow())};
   resize();window.addEventListener('resize',()=>{resize();initParticles()});applySeason(getSeasonNow());loop();
 })();
-
-<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/moy-dom/sw.js',{scope:'/moy-dom/'}).catch(()=>{});}
-<script>
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/moy-dom/sw.js',{scope:'/moy-dom/'}).catch(()=>{});}</script>
 (function(){
   var checkUrl = window.location.pathname + '?_=' + Date.now();
   var lastHash = null;
