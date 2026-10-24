@@ -3147,7 +3147,7 @@ window.addEventListener('DOMContentLoaded', async function(){
   const hint = document.getElementById('bootHint'); 
   if(hint) hint.style.display = 'block';
   
-  // Если ULTRADAY включен, красим фон заставки сразу, не дожидаясь клика
+  // Красим фон сразу, если включен ULTRADAY
   if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
       document.body.classList.add('ultra-mode');
   }
@@ -3159,16 +3159,16 @@ window.addEventListener('DOMContentLoaded', async function(){
     bs.removeEventListener('keydown', keyHandler);
     if(hint) hint.style.display = 'none';
     
-    // Определяем раскладку по нажатой клавише (100% точность)
+    // По умолчанию - английский
     let layoutLang = 'en';
-    if (e && e.key) {
-        if (/[а-яё]/i.test(e.key)) layoutLang = 'ru'; // Нажали русскую букву
-        else if (/[a-z]/i.test(e.key)) layoutLang = 'en'; // Нажали английскую
-        else layoutLang = (navigator.language || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
-    } else {
-        // Если кликнули мышкой (на телефоне), смотрим язык системы
-        const locale = (Intl.DateTimeFormat().resolvedOptions().locale || navigator.language || 'en').toLowerCase();
-        layoutLang = locale.includes('ru') ? 'ru' : 'en';
+    
+    // Если было нажатие клавиши - определяем по букве
+    if (e && e.key && e.key.length === 1) {
+        if (/[а-яё]/i.test(e.key)) {
+            layoutLang = 'ru'; // Нажали русскую букву
+        } else if (/[a-z]/i.test(e.key)) {
+            layoutLang = 'en'; // Нажали английскую букву
+        }
     }
     
     let session = null;
@@ -3189,7 +3189,6 @@ window.addEventListener('DOMContentLoaded', async function(){
   bs.addEventListener('click', handler);
   bs.addEventListener('keydown', keyHandler);
 });
-
 (function(){
   const cv=document.getElementById('seasons');if(!cv)return;
   const ctx=cv.getContext('2d');let W=0,H=0,DPR=1,curSeason='autumn',particles=[],raf=null,sunAngle=0;
