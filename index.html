@@ -1380,7 +1380,7 @@ body.ultra-mode .mbox,
 body.ultra-mode .fmb, 
 body.ultra-mode .afb, 
 body.ultra-mode .ofb, 
-body.ultra-mode .emb,
+body.ultra-mode .emb:not([class*="fr-bg-"]),
 body.ultra-mode .gmb,
 body.ultra-mode .duty-body,
 body.ultra-mode .fmp,
@@ -1477,14 +1477,24 @@ body.ultra-mode .msg .nick {
 }
 
 /* Квартиры */
-body.ultra-mode .flat.mine, 
-body.ultra-mode .flat.taken {
+/* Фон — только для квартир БЕЗ фото */
+body.ultra-mode .flat.mine:not(.has-photo), 
+body.ultra-mode .flat.taken:not(.has-photo) {
     background: linear-gradient(145deg, #4a0000, #1a0000) !important;
+}
+/* Для квартир С фото — только цвет фона, не трогаем background-image */
+body.ultra-mode .flat.mine.has-photo, 
+body.ultra-mode .flat.taken.has-photo {
+    background-color: #1a0000 !important;
+}
+/* Рамку и свечение перебиваем только если на квартире нет кастомной рамки */
+body.ultra-mode .flat.mine:not([class*="frame-"]),
+body.ultra-mode .flat.taken:not([class*="frame-"]) {
     border-color: #ff0000 !important;
     box-shadow: inset 0 0 20px rgba(255,0,0,0.4), 0 0 10px rgba(255,0,0,0.2) !important;
 }
-body.ultra-mode .flat:hover {
-    border-color: #ff3333 !important;
+body.ultra-mode .flat:not([class*="frame-"]):hover {
+    border-color: #ff5555 !important;
     box-shadow: 0 0 20px #ff0000 !important;
 }
 
@@ -1521,7 +1531,8 @@ body.ultra-mode #bootScreen::before {
     background: repeating-linear-gradient(0deg, rgba(255,0,0,0.05), rgba(255,0,0,0.05) 1px, transparent 1px, transparent 3px) !important;
 }
 body.ultra-mode #bootScreen::after {
-    background: linear-gradient(180deg, transparent 0%, rgba(255,0,0,0.15) 50%, transparent 100%) !important;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,0,0,0.4) 50%, transparent 100%) !important;
+    box-shadow: 0 0 40px rgba(255,0,0,0.6) !important;
 }
 body.ultra-mode #bootLog .bl.ok,
 body.ultra-mode #bootLog .bl.dim,
@@ -1540,11 +1551,33 @@ body.ultra-mode #bootLog .boot-cursor {
 /* Спец-класс для красных фраз в заставке */
 #bootLog .bl.ultra-red {
     color: #ff0000 !important;
-    text-shadow: 0 0 15px #ff0000, 0 0 35px #8b0000, 0 0 50px #ff0000 !important;
     font-weight: 900 !important;
-    letter-spacing: 2px;
-    font-size: 18px;
-    margin-top: 10px;
+    letter-spacing: 3px;
+    font-size: 24px;
+    margin-top: 16px;
+    padding: 12px 26px;
+    border: 2px solid #ff0000;
+    border-radius: 8px;
+    background: rgba(139, 0, 0, 0.25);
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    font-family: 'Courier New', monospace;
+    text-transform: uppercase;
+    box-shadow: 0 0 25px rgba(255,0,0,0.6), inset 0 0 15px rgba(255,0,0,0.3);
+    animation: ultraPulse 1.5s ease-in-out infinite;
+}
+@keyframes ultraPulse {
+    0%, 100% { 
+        box-shadow: 0 0 25px rgba(255,0,0,0.6), inset 0 0 15px rgba(255,0,0,0.3);
+        border-color: #ff0000;
+        text-shadow: 0 0 15px #ff0000, 0 0 35px #8b0000, 0 0 50px #ff0000 !important;
+    }
+    50% { 
+        box-shadow: 0 0 50px rgba(255,0,0,1), inset 0 0 25px rgba(255,0,0,0.5);
+        border-color: #ff5555;
+        text-shadow: 0 0 20px #ff0000, 0 0 45px #ff0000, 0 0 70px #ff5555 !important;
+    }
 }
 /* ========================== */
 </style>
@@ -3000,7 +3033,7 @@ async function runBootSequence(authorized){
   if (asciiEl) { asciiEl.innerHTML = ''; asciiEl.style.opacity = '1'; }
 
   await _bootSleep(400);
-    const isUltra = shouldShowEvent('ULTRADAY');   let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;   if (authorized && isUltra) {     lines = [       {t:'BOOT UP SEQUENCE... READY', c:'ok'},       {t:'FIRMWARE: LATEST VERSION (2112.08.06)', c:'ok'},       {t:'CALIBRATION: RECENTLY UPDATED', c:'ok'},       {t:'ALL SYSTEMS OPERATIONAL', c:'ok'},       {t:'LOADING STATUS UPDATE...', c:'ok'},       {t:'STATUS UPDATE:', c:'ok'},       {t:'MACHINE ID: V1', c:'ok'},       {t:'LOCATION: HOMEOS', c:'ok'},       {t:'CURRENT OBJECTIVE: FIND A FRIEND', c:'ok'},       {t:'MANKIND IS DEAD.', c:'ultra-red'},       {t:'BLOOD IS FUEL.', c:'ultra-red'},       {t:'HELL IS FULL.', c:'ultra-red'}     ];   }
+    const isUltra = shouldShowEvent('ULTRADAY'); if (isUltra) document.body.classList.add('ultra-mode'); let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;   if (authorized && isUltra) {     lines = [       {t:'BOOT UP SEQUENCE... READY', c:'ok'},       {t:'FIRMWARE: LATEST VERSION (2112.08.06)', c:'ok'},       {t:'CALIBRATION: RECENTLY UPDATED', c:'ok'},       {t:'ALL SYSTEMS OPERATIONAL', c:'ok'},       {t:'LOADING STATUS UPDATE...', c:'ok'},       {t:'STATUS UPDATE:', c:'ok'},       {t:'MACHINE ID: V1', c:'ok'},       {t:'LOCATION: HOMEOS', c:'ok'},       {t:'CURRENT OBJECTIVE: FIND A FRIEND', c:'ok'},       {t:'MANKIND IS DEAD.', c:'ultra-red'},       {t:'BLOOD IS FUEL.', c:'ultra-red'},       {t:'HELL IS FULL.', c:'ultra-red'}     ];   }
   
   const ASCII_ART = [
     "          ____           ",
