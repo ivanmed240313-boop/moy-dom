@@ -3000,15 +3000,23 @@ async function detectKeyboardLayout() {
   const lang = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en').toLowerCase();
   return lang.startsWith('ru') ? 'ru' : 'en';
 }
-async function pickBootLang(lang){
-  document.getElementById('langPicker').classList.remove('on');
+async function pickBootLang(lang) {
+  const lp = document.getElementById('langPicker');
+  if (lp) lp.classList.remove('on');
+  
   let session = null;
-  try { const r = await sb.auth.getSession(); session = r && r.data ? r.data.session : null; } catch(e){}
+  try { const r = await sb.auth.getSession(); session = r && r.data ? r.data.session : null; } catch(err) {}
   const authorized = !!(session && session.user);
+  
   if (authorized) curUser = session.user;
+  
   await runBootSequence(authorized, lang);
+  
   if (authorized) {
-    try { await afterAuth(); } catch(err){ showToast('Ошибка входа: '+(err.message||err),'error'); }
+    try { await afterAuth(); } catch(err) { 
+      console.error('afterAuth', err); 
+      showToast('Ошибка входа: ' + (err.message||err), 'error'); 
+    }
   } else {
     document.getElementById('auth').style.display = 'flex';
   }
@@ -3175,57 +3183,70 @@ window.addEventListener('DOMContentLoaded', async function(){
   if(!bs) return;
   const hint = document.getElementById('bootHint'); 
   if(hint) hint.style.display = 'block';
-  if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
-    const lp = document.getElementById('langPicker');
-    if (lp) lp.classList.add('on');
-  }
   
-  // Красим фон сразу, если включен ULTRADAY
+  // Красим фон заставки, если ULTRADAY
   if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
       document.body.classList.add('ultra-mode');
   }
 
-    const handler = async function(e){
+  const handler = async function(e){
     if(_bootLock) return;
     _bootLock = true;
+    
     bs.removeEventListener('click', handler);
     bs.removeEventListener('keydown', keyHandler);
     if(hint) hint.style.display = 'none';
+    
+    // Если ULTRADAY — показываем выбор языка и останавливаем загрузку
     if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
-      document.getElementById('langPicker').classList.add('on');
+      const lp = document.getElementById('langPicker');
+      if (lp) lp.classList.add('on');
       return;
     }
     
-    // По умолчанию - английский
+    // Определяем раскладку (если ULTRADAY выключен)
     let layoutLang = 'en';
-    
-    // Если было нажатие клавиши - определяем по букве
-    if (e && e.key && e.key.length === 1) {
-        if (/[а-яё]/i.test(e.key)) {
-            layoutLang = 'ru'; // Нажали русскую букву
-        } else if (/[a-z]/i.test(e.key)) {
-            layoutLang = 'en'; // Нажали английскую букву
-        }
+    if (e && e.key) {
+        if (/[а-яё]/i.test(e.key)) layoutLang = 'ru'; 
+        else if (/[a-z]/i.test(e.key)) layoutLang = 'en'; 
+        else layoutLang = (navigator.language || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
+    } else {
+        const locale = (Intl.DateTimeFormat().resolvedOptions().locale || navigator.language || 'en').toLowerCase();
+        layoutLang = locale.includes('ru') ? 'ru' : 'en';
     }
     
     let session = null;
-    try{ const r = await sb.auth.getSession(); session = r && r.data ? r.data.session : null; }catch(err){}
+    try { 
+      const r = await sb.auth.getSession(); 
+      session = r && r.data ? r.data.session : null; 
+    } catch(err) {}
+    
     const authorized = !!(session && session.user);
     
-    // Передаем язык в заставку
     await runBootSequence(authorized, layoutLang);
     
     if(authorized){
       curUser = session.user;
-      try{ await afterAuth(); }catch(err){ console.error('afterAuth', err); showToast('Ошибка входа: '+(err.message||err),'error'); }
-    }else{
+      try { await afterAuth(); } catch(err) { 
+        console.error('afterAuth', err); 
+        showToast('Ошибка входа: '+(err.message||err),'error'); 
+      }
+    } else {
       document.getElementById('auth').style.display = 'flex';
     }
   };
-  const keyHandler = function(e){ if(e.key==='Enter' || e.key===' ' || e.key.length===1){ e.preventDefault(); handler(e); } };
+  
+  const keyHandler = function(e){ 
+    if(e.key==='Enter' || e.key===' ' || e.key.length===1){ 
+      e.preventDefault(); 
+      handler(e); 
+    } 
+  };
+  
   bs.addEventListener('click', handler);
   bs.addEventListener('keydown', keyHandler);
 });
+
 (function(){
   const cv=document.getElementById('seasons');if(!cv)return;
   const ctx=cv.getContext('2d');let W=0,H=0,DPR=1,curSeason='autumn',particles=[],raf=null,sunAngle=0;
