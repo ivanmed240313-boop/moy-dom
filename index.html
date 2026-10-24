@@ -936,7 +936,12 @@ body.admin-mode .flat.taken{cursor:crosshair;box-shadow:0 0 0 3px rgba(211,47,47
 .gbed-fill{height:100%;background:linear-gradient(90deg,#4caf50,#8bc34a);transition:width .5s}
 .gbed-time{font-size:10px;color:#8888a0;font-weight:700}
 .gbed.ready .gbed-time{color:#8bc34a}
-.seed-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.seed-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px;transition:all .3s ease}
+.seed-card.rarity-uncommon { border-color: rgba(76,175,80,.5); box-shadow: 0 0 15px rgba(76,175,80,.2); }
+.seed-card.rarity-rare { border-color: rgba(59,130,246,.6); box-shadow: 0 0 20px rgba(59,130,246,.3); }
+.seed-card.rarity-mythic { border-color: rgba(160,107,255,.7); box-shadow: 0 0 25px rgba(160,107,255,.4); }
+.seed-card.rarity-legendary { border-color: rgba(245,197,66,.8); box-shadow: 0 0 30px rgba(245,197,66,.5); animation: giftPulse 2s infinite; }
+.seed-card.rarity-secret { border-color: rgba(255,77,109,.9); box-shadow: 0 0 40px rgba(255,77,109,.6); animation: giftPulse 1.5s infinite; }
 .seed-icon{font-size:26px;width:38px;text-align:center;flex-shrink:0}
 .seed-info{flex:1;min-width:0}
 .seed-name{font-size:13px;font-weight:800;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1348,11 +1353,11 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     visibility: visible !important;
     opacity: 1 !important;
     z-index: 999999 !important;
-    animation: forcePaint 0.01s linear !important;
+    animation: modalSmoothIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
 }
-@keyframes forcePaint {
-    0% { transform: translateZ(0); opacity: 0.99; }
-    100% { transform: translateZ(0); opacity: 1; }
+@keyframes modalSmoothIn {
+    0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 </style>
 </head>
@@ -1478,7 +1483,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div id="verBadge" title="Версия сайта. Клик — подробнее"><span class="dot"></span><span id="verText">v…</span></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
 /* === auto-inject CSS for flat-item === */
 (function(){const s=document.createElement('style');s.textContent='.flat .flat-item{position:absolute;right:2px;bottom:2px;font-size:16px;line-height:1;z-index:5;filter:drop-shadow(0 1px 3px rgba(0,0,0,.85));pointer-events:none;animation:roomItemFloat 3.4s ease-in-out infinite}';document.head.appendChild(s)})();
@@ -1600,6 +1605,17 @@ function applyNeonFromUI(){const c=$('npColor');const r=$('npRgb');const er=$('f
 function saveCurrentNeon(){const [r,g,b]=getNeonRGB();const ok=saveNeonPreset(r,g,b);const er=$('framesMsg');if(er){er.style.color=ok?'#8bc34a':'#ff8888';er.textContent=ok?'💾 Сохранено':'Уже есть';setTimeout(()=>{er.textContent=''},1500)}renderFramesList()}
 function pfFxClear(){const f=$('pfFx');if(f)f.innerHTML=''}
 function pfFxSpawn(frameId){const fx=$('pfFx');if(!fx)return;pfFxClear();if(!frameId||frameId==='none')return;if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;const add=(cls,style)=>{const i=document.createElement('i');i.className=cls;if(style)i.setAttribute('style',style);fx.appendChild(i)};const R=(a,b)=>a+Math.random()*(b-a);if(frameId==='fire'){for(let k=0;k<18;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.2)+'s')}else if(frameId==='ice'){for(let k=0;k<5;k++)add('fish'+(k%2?' rev':''),'top:'+R(30,80)+'%;--dy:'+R(-12,12)+'px;animation-duration:'+R(11,18)+'s')}else if(frameId==='cosmic'){for(let k=0;k<4;k++)add('shooting','top:'+R(-15,5)+'%;left:'+R(-15,20)+'%;animation-duration:'+R(3.5,6)+'s')}else if(frameId==='angelic'){for(let k=0;k<20;k++)add('spark','left:'+R(5,95)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(4.5,7.5)+'s')}else if(frameId==='devil'){for(let k=0;k<16;k++)add('ember','left:'+R(2,98)+'%;--dx:'+R(-25,25)+'px;animation-duration:'+R(2.4,4.8)+'s')}else if(frameId==='vhs'){for(let k=0;k<24;k++){const rnd=Math.random();const cls=rnd<0.33?'static r':(rnd<0.66?'static c':'static');add(cls,'left:'+R(5,95)+'%;top:'+R(5,95)+'%;--dx:'+R(-40,40)+'px;--dy:'+R(-40,40)+'px;animation-duration:'+R(0.5,1.4)+'s')}}else if(frameId==='sakura'){for(let k=0;k<22;k++)add('petal','left:'+R(2,98)+'%;--dx:'+R(-40,40)+'px;animation-duration:'+R(6,10)+'s')}else if(frameId==='aqua'){for(let k=0;k<24;k++)add('bubble'+(Math.random()<0.25?' big':''),'left:'+R(2,98)+'%;--dx:'+R(-20,20)+'px;animation-duration:'+R(3.5,7)+'s')}else if(frameId==='storm'){for(let k=0;k<30;k++)add('rain','left:'+R(0,100)+'%;--dx:'+R(-40,-15)+'px;animation-duration:'+R(0.6,1.2)+'s')}else if(frameId==='galaxy'){for(let k=0;k<20;k++)add('swirl','left:50%;top:50%;animation-duration:'+R(5,10)+'s')}else if(frameId==='dragon'){for(let k=0;k<22;k++)add('dember','left:'+R(2,98)+'%;--dx:'+R(-30,30)+'px;animation-duration:'+R(2.2,4.5)+'s')}}
+
+function spawnConfetti(isEpic) {
+    if (typeof confetti !== 'function') return;
+    if (isEpic) {
+        confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#ff0055','#ffd700','#00d4ff','#ffffff'] });
+        setTimeout(() => confetti({ particleCount: 100, spread: 120, origin: { y: 0.5 }, colors: ['#ff0055','#ffd700'] }), 250);
+    } else {
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 }, colors: ['#f5c542','#a06bff'] });
+    }
+}
+
 let _toastEl=null,_toastTimer=null;
 function showToast(msg,type){if(!_toastEl){_toastEl=document.createElement('div');_toastEl.className='dom-toast';document.body.appendChild(_toastEl)}_toastEl.className='dom-toast '+(type==='error'?'err':type==='success'?'ok':'');_toastEl.textContent=String(msg||'');requestAnimationFrame(()=>{if(_toastEl)_toastEl.classList.add('on')});if(_toastTimer)clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>{if(_toastEl)_toastEl.classList.remove('on')},2800)}
 window.alert=function(m){showToast(String(m||''))};
@@ -1787,7 +1803,7 @@ async function ofLogs(b) {
   await renderLogs(); _logsAutoUpdate = setInterval(renderLogs, 3000);
 }
 
-const APP_VERSION='3.8.5';
+const APP_VERSION='3.9.0';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
@@ -1947,7 +1963,6 @@ function checkMemorials(){const b=$('memorial911'),c=$('memorialCrocus');if(b)b.
 function checkUtHeart(){const t=$('utHeart');if(!t)return;t.classList.toggle('on',shouldShowEvent('utHeart'))}
 function checkDtsStar(){const t=$('dtsStar');if(!t)return;t.classList.toggle('on',shouldShowEvent('dtsStar'))}
 function checkGameIcons(){const box=$('gameIcons');if(!box)return;const games=EVENTS.filter(e=>e.md);const active=games.filter(g=>shouldShowEvent(g.id));if(!active.length){box.classList.remove('on');box.innerHTML='';return}box.innerHTML=active.map(g=>'<div class="game-icon" onclick="openGameArticle(\''+g.id+'\')" title="'+eh(g.name)+'">'+g.icon+'</div>').join('');box.classList.add('on')}
-
 const MEMORIAL_DATA={
   '911':{icon:'🏙️',title:'11 сентября 2001',date:'Теракт в США · 2 977 погибших',text:'Утром 11 сентября 2001 года террористы захватили четыре пассажирских самолёта. Два из них врезались в башни-близнецы.\n\nПогибли 2 977 человек.\n\nМы помним всех.'},
   'crocus':{icon:'🕯️',title:'22 марта 2024',date:'Теракт в Крокус Сити Холл, Москва',text:'Вечером 22 марта 2024 года террористы ворвались в «Крокус Сити Холл».\n\nПогибли 145 человек, более 550 пострадали.\n\nМы скорбим вместе со всеми.'}
@@ -1970,67 +1985,66 @@ async function quickCreateHouse(){if(!isOwner())return showToast('Только �
 async function autoCheckNewHouse(){}
 async function afUsers(b){b.innerHTML='<div class="afe">Загрузка...</div>';const{data,error}=await sb.from('profiles').select('*').order('nick');if(error){b.innerHTML='<div class="afe">Ошибка</div>';return}usersAll=data||[];const bannedCount=usersAll.filter(u=>u.banned).length;const visible=showBanned?usersAll:usersAll.filter(u=>!u.banned);const o=hasAdmin();const isOwn=isOwner();let top='<div class="afr" style="border-left:4px solid '+(showBanned?'#d32f2f':'#4caf50')+'"><div class="info"><div class="ti">🚫 Забанено: '+bannedCount+'</div></div><div class="ac">'+(showBanned?'<button class="afbtn gr" onclick="toggleBannedView()">👁 Скрыть</button>':'<button class="afbtn r" onclick="toggleBannedView()">👁 Показать ('+bannedCount+')</button>')+'</div></div>';if(!visible.length){b.innerHTML=top+'<div class="afe">Пусто</div>';return}b.innerHTML=top+visible.map(u=>{const bn=!!u.banned,ad=!!u.is_admin,coins=u.coins||0;const nickEnc=eh(u.nick);const coinBtns=isOwn?('<button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 100)">+100</button><button class="of-ev-btn" onclick="admCoins(\''+nickEnc+'\', 1000)">+1000</button><button class="of-ev-btn danger" onclick="admCoins(\''+nickEnc+'\', -100)">−100</button>'):'';const banBtns=o?(bn?'<button class="of-ev-btn on" onclick="unBan(\''+nickEnc+'\')">Разбан</button>':'<button class="of-ev-btn danger" onclick="banU(\''+nickEnc+'\')">Бан</button>'):'';const admBtns=isOwn?(ad?'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',false)">−адм</button>':'<button class="of-ev-btn" onclick="togAdm(\''+nickEnc+'\',true)">+адм</button>'):'';const flatBtns=isOwn?('<button class="of-ev-btn" onclick="ownerSetFlat(\''+nickEnc+'\')">🏠 Заселить</button><button class="of-ev-btn danger" onclick="ownerKickUser(\''+nickEnc+'\')">🚪 Выселить</button>'):'';return '<div class="of-user-row">'+avH(u.nick,'sm')+'<div style="flex:1;min-width:140px;margin-left:4px">'+'<div class="nik" style="cursor:pointer;color:#fff" onclick="openProfile(\''+nickEnc+'\')">'+eh(u.nick)+(bn?' 🚫':'')+(ad?' ⚙️':'')+'</div>'+'<div style="color:#f5c542;font-size:12px;margin-top:2px">💰 '+coins+'</div>'+(u.ban_reason?'<div style="font-size:11px;color:#ff6666;margin-top:2px;font-weight:bold;background:rgba(255,0,0,0.1);padding:2px 6px;border-radius:4px;display:inline-block;">🚫 '+eh(u.ban_reason)+'</div>':'')+'</div>'+'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto">'+flatBtns+coinBtns+banBtns+admBtns+'</div></div>'}).join('')}
 function toggleBannedView(){showBanned=!showBanned;afRend()}
-async function admCoins(nick,delta){
-  if(!(await guardOwner())) return;
-  const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:nick,p_delta:delta});
-  if(error) return showToast('Ошибка: '+error.message,'error');
-  if(data&&data.ok===false) return showToast(data.error||'Ошибка','error');
-  if(nick===me && typeof data.coins==='number'){ myCoins=data.coins; updateCoinsUI(); }
-  afRend();
-}
-async function banU(n){
-  if(!(await guardAdmin())) return;
-  if(n===me) return showToast('Себя нельзя','error');
-  const r=prompt('Причина','нарушение');
-  if(r===null)return;
-  const{data,error}=await sb.rpc('admin_ban',{p_nick:n,p_reason:r||''});
-  if(error) return showToast('❌ '+error.message,'error');
-  if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');
-  afRend();
-}
-async function unBan(n){
-  if(!(await guardAdmin())) return;
-  const{data,error}=await sb.rpc('admin_unban',{p_nick:n});
-  if(error) return showToast('❌ '+error.message,'error');
-  if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');
-  afRend();
-}
-async function togAdm(n,m){
-  if(!(await guardOwner())) return;
-  const{data,error}=await sb.rpc('owner_set_admin',{p_nick:n,p_val:m});
-  if(error) return showToast('❌ '+error.message,'error');
-  if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');
-  afRend();
-}
-async function afEvict(houseId,n){
-  if(!(await guardAdmin())) return;
-  if(!hasAdmin())return;
-  const gNum=(houseId-1)*30+Number(n);
-  const ok=await askConfirm('Выселить?','Дом '+houseId+', кв. '+gNum,'Выселить',true);
-  if(!ok)return;
-  const{data,error}=await sb.rpc('owner_evict',{p_house:houseId,p_flat:n});
-  if(error)return showToast('❌ '+error.message,'error');
-  if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');
-  await reloadHouse(); await afRend(); showToast('🚪 Выселено','success');
-}
-async function openChiefPicker(houseId, number){
-  if(!(await guardAdmin())) return;
-  if(!hasAdmin())return;
-  const{data:f}=await sb.from('flats').select('owner_nicks').eq('house_id',houseId).eq('number',number).maybeSingle();
-  if(!f||!Array.isArray(f.owner_nicks)||f.owner_nicks.length<2){ return showToast('В квартире 1 жилец','error'); }
-  const owners=f.owner_nicks; const names=owners.map(de);
-  const txt='Кто главный?\n\n'+names.map((n,i)=>(i+1)+'. '+n+(i===0?' (сейчас главный)':'')).join('\n')+'\n\nНапиши номер.';
-  const v=prompt(txt,'1'); if(v===null)return; const idx=parseInt(v)-1;
-  if(isNaN(idx)||idx<0||idx>=owners.length)return showToast('Неверный номер','error');
-  const chosen=owners[idx]; if(idx===0)return showToast('Уже главный','error');
-  const{data,error}=await sb.rpc('admin_set_chief',{p_house:houseId,p_flat:number,p_nick:chosen});
-  if(error)return showToast('❌ '+error.message,'error');
-  if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');
-  await reloadHouse(); await afRend(); showToast('👑 Теперь главный: '+de(chosen),'success');
-}
+async function admCoins(nick,delta){if(!(await guardOwner())) return;const{data,error}=await sb.rpc('owner_give_coins',{p_target_nick:nick,p_delta:delta});if(error) return showToast('Ошибка: '+error.message,'error');if(data&&data.ok===false) return showToast(data.error||'Ошибка','error');if(nick===me && typeof data.coins==='number'){ myCoins=data.coins; updateCoinsUI(); }afRend();}
+async function banU(n){if(!(await guardAdmin())) return;if(n===me) return showToast('Себя нельзя','error');const r=prompt('Причина','нарушение');if(r===null)return;const{data,error}=await sb.rpc('admin_ban',{p_nick:n,p_reason:r||''});if(error) return showToast('❌ '+error.message,'error');if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');afRend();}
+async function unBan(n){if(!(await guardAdmin())) return;const{data,error}=await sb.rpc('admin_unban',{p_nick:n});if(error) return showToast('❌ '+error.message,'error');if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');afRend();}
+async function togAdm(n,m){if(!(await guardOwner())) return;const{data,error}=await sb.rpc('owner_set_admin',{p_nick:n,p_val:m});if(error) return showToast('❌ '+error.message,'error');if(data&&data.ok===false) return showToast('❌ '+(data.error||''),'error');afRend();}
+async function afEvict(houseId,n){if(!(await guardAdmin())) return;if(!hasAdmin())return;const gNum=(houseId-1)*30+Number(n);const ok=await askConfirm('Выселить?','Дом '+houseId+', кв. '+gNum,'Выселить',true);if(!ok)return;const{data,error}=await sb.rpc('owner_evict',{p_house:houseId,p_flat:n});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse(); await afRend(); showToast('🚪 Выселено','success');}
+async function openChiefPicker(houseId, number){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data:f}=await sb.from('flats').select('owner_nicks').eq('house_id',houseId).eq('number',number).maybeSingle();if(!f||!Array.isArray(f.owner_nicks)||f.owner_nicks.length<2){ return showToast('В квартире 1 жилец','error'); }const owners=f.owner_nicks; const names=owners.map(de);const txt='Кто главный?\n\n'+names.map((n,i)=>(i+1)+'. '+n+(i===0?' (сейчас главный)':'')).join('\n')+'\n\nНапиши номер.';const v=prompt(txt,'1'); if(v===null)return; const idx=parseInt(v)-1;if(isNaN(idx)||idx<0||idx>=owners.length)return showToast('Неверный номер','error');const chosen=owners[idx]; if(idx===0)return showToast('Уже главный','error');const{data,error}=await sb.rpc('admin_set_chief',{p_house:houseId,p_flat:number,p_nick:chosen});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse(); await afRend(); showToast('👑 Теперь главный: '+de(chosen),'success');}
 async function afMax(houseId,n){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data:f}=await sb.from('flats').select('*').eq('house_id',houseId).eq('number',n).maybeSingle();if(!f)return;const cur=f.max_people??2;const val=prompt('Мест (1-9999)',String(cur));if(val===null)return;const nx=Math.max(1,Math.min(9999,parseInt(val)||2));const{data,error}=await sb.rpc('admin_set_max',{p_house:houseId,p_flat:n,p_max:nx});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse();await afRend()}
 async function afTogEnt(g,bl){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data,error}=await sb.rpc('owner_toggle_entrance',{p_house:curHouse,p_ent:g,p_blocked:bl});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse();afRend()}
 async function afTogHouse(hid,bl){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data,error}=await sb.rpc('owner_toggle_house',{p_id:hid,p_blocked:bl});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await loadHouses();renderHouses();await afRend()}
+
+// ====== КЕЙСЫ (ЛУТБОКСЫ) ======
+const CASES = {
+    '100': { price: 100, name: 'Обычный кейс', color: '#4caf50', pool: ['common', 'uncommon'] },
+    '500': { price: 500, name: 'Редкий кейс', color: '#3b82f6', pool: ['uncommon', 'rare', 'mythic'] },
+    '1000': { price: 1000, name: 'Легендарный кейс', color: '#f5c542', pool: ['rare', 'mythic', 'legendary'] }
+};
+
+function openCasesShop() {
+    const g = loadGarden(me);
+    let html = '<div class="of-hint">🎁 <b>Кейсы с семенами.</b> Испытай удачу!</div><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">';
+    for (const key in CASES) {
+        const c = CASES[key];
+        html += `<div style="background:rgba(255,255,255,.04);border:1px solid ${c.color};border-radius:16px;padding:20px;text-align:center;min-width:200px;box-shadow:0 0 20px ${c.color}44">
+            <div style="font-size:40px;margin-bottom:10px">🎁</div>
+            <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:5px">${c.name}</div>
+            <div style="font-size:13px;color:#aaa;margin-bottom:15px">Шанс на редкие семена!</div>
+            <button class="duty-start" onclick="buyCase('${key}')">Открыть за ${c.price}💰</button>
+        </div>`;
+    }
+    html += '</div><div class="duty-msg" id="caseMsg"></div>';
+    $('invMsg').innerHTML = html;
+    $('invM').classList.add('open');
+}
+
+async function buyCase(tier) {
+    const c = CASES[tier];
+    if (myCoins < c.price) return showToast('Мало монет', 'error');
+    const ok = await askConfirm('Открыть кейс?', `Потратить ${c.price}💰?`, 'Открыть');
+    if(!ok) return;
+    
+    // Проверка баланса на сервере и списание
+    const { data, error } = await sb.rpc('add_coins', { p_delta: -c.price });
+    if (error || (data && data.ok === false)) return showToast('Ошибка', 'error');
+    
+    myCoins -= c.price; updateCoinsUI();
+    
+    // Выбор семени
+    const pool = SEEDS.filter(s => c.pool.includes(s.rarity));
+    const winSeed = pool[Math.floor(Math.random() * pool.length)];
+    
+    const g = loadGarden(me);
+    g.inv[winSeed.id] = (g.inv[winSeed.id] || 0) + 1;
+    saveGarden(me, g);
+    
+    spawnConfetti(winSeed.rarity === 'legendary' || winSeed.rarity === 'mythic');
+    
+    $('caseMsg').innerHTML = `<div style="font-size:24px;margin-top:20px;animation:pulse 1s">🎉 Выпало: ${winSeed.icon} ${winSeed.name}!</div>`;
+    setTimeout(() => { $('caseMsg').innerHTML = ''; openCasesShop(); }, 3000);
+}
+// =====================================
 
 const JOBS={teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,tasks:['Проверить контрольные','Решить примеры','Проверить диктант'],types:['check','math','dictation']},police:{id:'police',name:'Полицейский',icon:'👮',reward:750,tasks:['Патруль','Скорость','Документы'],types:['patrol','radar','docs']},welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,tasks:['Шов','Замер','Резка'],types:['seam','measure','cut']}};
 const JOB_TASKS_PER_DAY=3,JOB_BAN_DAYS=30,JOB_MAX_MISSED=3,JOB_STATE_VERSION=3;
@@ -2066,32 +2080,9 @@ function jobWelderCut(i){
   body.innerHTML='<div class="job-timer">✂️ Веди ЛКМ / пальцем</div><div class="job-field job-cut-field" id="jobField"><div class="job-cut-line" id="jobCutLine" style="top:50%;left:8%;right:8%;transform:translateY(-50%)"><div class="job-cut-progress" id="jobCutProg" style="width:0%"></div></div></div><button class="duty-start" style="background:rgba(255,255,255,.06);margin-top:14px" onclick="openJob()">← Назад</button>';
   const field=$('jobField'),line=$('jobCutLine'),prog=$('jobCutProg');
   let progress=0,pressing=false,lastX=null,done=false;
-  const updateProg=()=>{
-    if(done) return;
-    const pct=Math.min(100,Math.round(progress));
-    prog.style.width=pct+'%';
-    if(pct>=100){
-      done=true;
-      line.classList.add('job-cut-done');
-      const st=jobLoad()||jobDefault();
-      st.tasksDone=Math.max(st.tasksDone,i+1);
-      jobSave(st);
-      setTimeout(()=>{
-        const s2=jobLoad()||jobDefault();
-        if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,1);
-        else openJob();
-      },500);
-    }
-  };
+  const updateProg=()=>{if(done) return;const pct=Math.min(100,Math.round(progress));prog.style.width=pct+'%';if(pct>=100){done=true;line.classList.add('job-cut-done');const st=jobLoad()||jobDefault();st.tasksDone=Math.max(st.tasksDone,i+1);jobSave(st);setTimeout(()=>{const s2=jobLoad()||jobDefault();if(s2.tasksDone>=JOB_TASKS_PER_DAY)jobFinishTask(i,true,1);else openJob();},500);}};
   const onDown=(x)=>{pressing=true;lastX=x};
-  const onMove=(x)=>{
-    if(!pressing)return;
-    if(lastX!==null&&x>lastX){
-      progress+=(x-lastX)*0.6;
-      updateProg();
-    }
-    lastX=x;
-  };
+  const onMove=(x)=>{if(!pressing)return;if(lastX!==null&&x>lastX){progress+=(x-lastX)*0.6;updateProg();}lastX=x;};
   const onUp=()=>{pressing=false;lastX=null};
   field.addEventListener('mousedown',e=>onDown(e.clientX));
   field.addEventListener('mousemove',e=>onMove(e.clientX));
@@ -2110,39 +2101,20 @@ async function jobFinishTask(i,won,p){
   const st=jobLoad()||jobDefault();
   if(!st.job)return;
   if(st.completedToday){ openJob(); return; }
-  
   _jobFinishing = true;
   try {
     st.tasksDone=Math.min(JOB_TASKS_PER_DAY,Math.max(st.tasksDone,i+1));
     if(st.tasksDone>=JOB_TASKS_PER_DAY){
       const{data,error}=await sb.rpc('do_job',{p_job:st.job});
-      if(error){
-        showToast('❌ '+error.message,'error');
-        openJob();
-        return;
-      }
-      if(data&&data.ok===false){
-        showToast('❌ '+(data.error||'Ошибка'),'error');
-        openJob();
-        return;
-      }
+      if(error){showToast('❌ '+error.message,'error');openJob();return;}
+      if(data&&data.ok===false){showToast('❌ '+(data.error||'Ошибка'),'error');openJob();return;}
       const applied=data.reward||0;
-      st.completedToday=true;
-      st.lastComplete=jobToday();
-      st.finishedDays=(st.finishedDays||0)+1;
-      st.weldPrecisions=[];
+      st.completedToday=true; st.lastComplete=jobToday(); st.finishedDays=(st.finishedDays||0)+1; st.weldPrecisions=[];
       jobSave(st);
-      if(typeof data.coins==='number')myCoins=data.coins;
-      else myCoins+=applied;
-      updateCoinsUI();
-      showToast('💰 +'+applied+' монет','success');
-    } else {
-      jobSave(st);
-    }
-  } finally {
-    _jobFinishing = false;
-    openJob();
-  }
+      if(typeof data.coins==='number')myCoins=data.coins; else myCoins+=applied;
+      updateCoinsUI(); showToast('💰 +'+applied+' монет','success');
+    } else { jobSave(st); }
+  } finally { _jobFinishing = false; openJob(); }
 }
 
 async function getEntranceOccupants(houseId,le){try{const{data}=await sb.from('flats').select('number,owner_nicks').eq('house_id',houseId);const start=(le-1)*10+1,end=le*10;const arr=[];(data||[]).forEach(f=>{if(f.number>=start&&f.number<=end){const o=f.owner_nicks||[];if(o.length)arr.push({num:f.number,owner:o[0]})}});arr.sort((a,b)=>a.num-b.num);return arr.map(x=>x.owner)}catch(e){return[]}}
@@ -2161,19 +2133,11 @@ function clearWorkHandlers(){if(workGameHandlers&&workGameHandlers.extraCleanup)
 function startWork(id) {
   const task = WORK_TASKS.find(t => t.id === id);
   if (!task || workActive || workCdLeft(id) > 0) return;
-  workTaskId = id;
-  workActive = true;
-  workCaught = 0;
-  workStart = Date.now();
-  $('workTasks').style.display = 'none';
-  $('workGame').style.display = 'block';
+  workTaskId = id; workActive = true; workCaught = 0; workStart = Date.now();
+  $('workTasks').style.display = 'none'; $('workGame').style.display = 'block';
   const target = task.target || 8;
-  $('workTotal').textContent = target;
-  $('workScore').textContent = '0';
-  $('workTime').textContent = '15.0';
-  const f = $('workField');
-  f.innerHTML = '';
-  f.className = 'work-field ' + id;
+  $('workTotal').textContent = target; $('workScore').textContent = '0'; $('workTime').textContent = '15.0';
+  const f = $('workField'); f.innerHTML = ''; f.className = 'work-field ' + id;
   if (id === 'dishes') initDishesGame(f, target);
   else if (id === 'vacuum') initVacuumGame(f, target);
   else initFlowersGame(f, target);
@@ -2184,179 +2148,59 @@ function startWork(id) {
     if (left <= 0) stopWork(true);
   }, 80);
 }
+function initDishesGame(field, target) {for (let i = 0; i < target; i++) {const d = 1 + Math.floor(Math.random() * 3);const p = document.createElement('div');p.className = 'plate d' + d;p.style.left = (10 + Math.random() * (field.clientWidth - 70)) + 'px';p.style.top = (10 + Math.random() * (field.clientHeight - 70)) + 'px';p.dataset.dirt = d;p.onclick = () => {if (!workActive) return;let x = parseInt(p.dataset.dirt) - 1;p.dataset.dirt = x;p.classList.remove('d1', 'd2', 'd3');if (x > 0) {p.classList.add('d' + x);} else {p.classList.add('clean-mark');p.textContent = '✨';p.style.pointerEvents = 'none';workCaught++;$('workScore').textContent = workCaught;if (workCaught >= target) stopWork(true);}};field.appendChild(p);}}
+function initVacuumGame(field, target) {const dirts = [];for (let i = 0; i < target; i++) {const s = 32 + Math.random() * 20;const el = document.createElement('div');el.className = 'vac-dirt';el.style.width = s + 'px';el.style.height = s * 0.7 + 'px';el.style.left = (Math.random() * (field.clientWidth - s - 8) + 4) + 'px';el.style.top = (Math.random() * (field.clientHeight - s * 0.7 - 8) + 4) + 'px';field.appendChild(el);dirts.push({ el: el, x: parseFloat(el.style.left) + s / 2, y: parseFloat(el.style.top) + s * 0.35, hp: 2, alive: true });}const cur = document.createElement('div');cur.className = 'vac-cursor';field.appendChild(cur);const onMove = (e) => {if (!workActive) return;const r = field.getBoundingClientRect();const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;cur.classList.add('on');cur.style.left = cx + 'px';cur.style.top = cy + 'px';for (const d of dirts) {if (!d.alive) continue;const dx = d.x - cx, dy = d.y - cy;const dist = Math.sqrt(dx * dx + dy * dy);if (dist < 60) {d.hp -= 0.5;if (d.hp <= 0) {d.alive = false;d.el.classList.add('cleaned');workCaught++;$('workScore').textContent = workCaught;if (workCaught >= target) stopWork(true);}}}};field.addEventListener('mousemove', onMove);field.addEventListener('touchmove', onMove, { passive: false });workGameHandlers = { field: field, onMove: onMove, extraCleanup: () => {field.removeEventListener('mousemove', onMove);field.removeEventListener('touchmove', onMove);} };}
+function initFlowersGame(field, target) {const r = field.getBoundingClientRect();const spacing = Math.min(130, r.width / (target + 0.5));const startX = (r.width - (target - 1) * spacing) / 2;for (let i = 0; i < target; i++) {const w = 80;const el = document.createElement('div');el.className = 'flower';el.style.left = (startX + i * spacing - w / 2) + 'px';el.style.top = (r.height / 2 - 40) + 'px';el.style.width = w + 'px';el.innerHTML = '<div class="flower-icon" style="font-size:56px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';field.appendChild(el);const fill = el.querySelector('.flower-fill');const icon = el.querySelector('.flower-icon');let prog = 0, watering = false, tick = null, doneFlower = false;const startW = (e) => {if (e && e.type === 'touchstart') e.preventDefault();if (!workActive || doneFlower) return;watering = true;if (tick) clearInterval(tick);tick = setInterval(() => {if (!workActive || !watering || doneFlower) return;prog = Math.min(100, prog + 8);fill.style.width = prog + '%';if (prog >= 100) {doneFlower = true;watering = false;clearInterval(tick);el.classList.add('watered', 'full');icon.textContent = '🌸';workCaught++;$('workScore').textContent = workCaught;if (workCaught >= target) stopWork(true);}}, 60);};const stopW = () => {watering = false;if (tick) { clearInterval(tick); tick = null; }};el.addEventListener('mousedown', startW);el.addEventListener('mouseup', stopW);el.addEventListener('mouseleave', stopW);el.addEventListener('touchstart', startW, { passive: false });el.addEventListener('touchend', stopW);el.addEventListener('touchcancel', stopW);}}
+async function stopWork(t){if(!workActive)return;workActive=false;if(workTimer)clearInterval(workTimer);$('workGame').style.display='none';clearWorkHandlers();$('workField').innerHTML='';$('workField').className='work-field';const task=WORK_TASKS.find(x=>x.id===workTaskId);const target=(task&&task.target)||8;if(workCaught>=target){const{data,error}=await sb.rpc('earn_coins',{p_reason:'mini_work'});if(error){$('workMsg').style.color='#ff8888';$('workMsg').textContent='❌ '+error.message;}else if(data&&data.ok===false){$('workMsg').style.color='#ff8888';$('workMsg').textContent='⏳ '+data.error;}else{if(workTaskId)workCdSet(workTaskId);const r=(data&&data.reward)||5;if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=r;updateCoinsUI();$('workMsg').style.color='#8bc34a';$('workMsg').textContent='✨ +'+r+'💰';}}else{$('workMsg').style.color='#ff8888';$('workMsg').textContent='Сделано '+workCaught+'/'+target;}workTaskId=null;renderWork();}
 
-function initDishesGame(field, target) {
-  for (let i = 0; i < target; i++) {
-    const d = 1 + Math.floor(Math.random() * 3);
-    const p = document.createElement('div');
-    p.className = 'plate d' + d;
-    p.style.left = (10 + Math.random() * (field.clientWidth - 70)) + 'px';
-    p.style.top = (10 + Math.random() * (field.clientHeight - 70)) + 'px';
-    p.dataset.dirt = d;
-    p.onclick = () => {
-      if (!workActive) return;
-      let x = parseInt(p.dataset.dirt) - 1;
-      p.dataset.dirt = x;
-      p.classList.remove('d1', 'd2', 'd3');
-      if (x > 0) {
-        p.classList.add('d' + x);
-      } else {
-        p.classList.add('clean-mark');
-        p.textContent = '✨';
-        p.style.pointerEvents = 'none';
-        workCaught++;
-        $('workScore').textContent = workCaught;
-        if (workCaught >= target) stopWork(true);
-      }
-    };
-    field.appendChild(p);
-  }
-}
-
-function initVacuumGame(field, target) {
-  const dirts = [];
-  for (let i = 0; i < target; i++) {
-    const s = 32 + Math.random() * 20;
-    const el = document.createElement('div');
-    el.className = 'vac-dirt';
-    el.style.width = s + 'px';
-    el.style.height = s * 0.7 + 'px';
-    el.style.left = (Math.random() * (field.clientWidth - s - 8) + 4) + 'px';
-    el.style.top = (Math.random() * (field.clientHeight - s * 0.7 - 8) + 4) + 'px';
-    field.appendChild(el);
-    dirts.push({ el: el, x: parseFloat(el.style.left) + s / 2, y: parseFloat(el.style.top) + s * 0.35, hp: 2, alive: true });
-  }
-  const cur = document.createElement('div');
-  cur.className = 'vac-cursor';
-  field.appendChild(cur);
-  
-  const onMove = (e) => {
-    if (!workActive) return;
-    const r = field.getBoundingClientRect();
-    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
-    const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
-    cur.classList.add('on');
-    cur.style.left = cx + 'px';
-    cur.style.top = cy + 'px';
-    for (const d of dirts) {
-      if (!d.alive) continue;
-      const dx = d.x - cx, dy = d.y - cy;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 60) {
-        d.hp -= 0.5;
-        if (d.hp <= 0) {
-          d.alive = false;
-          d.el.classList.add('cleaned');
-          workCaught++;
-          $('workScore').textContent = workCaught;
-          if (workCaught >= target) stopWork(true);
-        }
-      }
+// ====== ДИНАМИЧЕСКАЯ ПОГОДА ======
+function startDynamicWeather() {
+    // Эмуляция запроса погоды (вставь сюда реальный fetch, если будет ключ)
+    const isRaining = Math.random() > 0.7; // 30% шанс дождя
+    if (!isRaining) return;
+    
+    const canvas = document.getElementById('seasons');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    let w = canvas.width, h = canvas.height;
+    const drops = [];
+    const dropCount = 80;
+    
+    for(let i=0; i<dropCount; i++) {
+        drops.push({
+            x: Math.random() * w,
+            y: Math.random() * h,
+            len: Math.random() * 20 + 10,
+            speed: Math.random() * 10 + 10
+        });
     }
-  };
-  
-  field.addEventListener('mousemove', onMove);
-  field.addEventListener('touchmove', onMove, { passive: false });
-  workGameHandlers = { 
-    field: field, 
-    onMove: onMove, 
-    extraCleanup: () => {
-      field.removeEventListener('mousemove', onMove);
-      field.removeEventListener('touchmove', onMove);
-    } 
-  };
-}
-
-function initFlowersGame(field, target) {
-  const r = field.getBoundingClientRect();
-  const spacing = Math.min(130, r.width / (target + 0.5));
-  const startX = (r.width - (target - 1) * spacing) / 2;
-
-  for (let i = 0; i < target; i++) {
-    const w = 80;
-    const el = document.createElement('div');
-    el.className = 'flower';
-    el.style.left = (startX + i * spacing - w / 2) + 'px';
-    el.style.top = (r.height / 2 - 40) + 'px';
-    el.style.width = w + 'px';
-    el.innerHTML = '<div class="flower-icon" style="font-size:56px">🌱</div><div class="flower-bar" style="width:90%"><div class="flower-fill"></div></div>';
-    field.appendChild(el);
-
-    const fill = el.querySelector('.flower-fill');
-    const icon = el.querySelector('.flower-icon');
-    let prog = 0, watering = false, tick = null, doneFlower = false;
-
-    const startW = (e) => {
-      if (e && e.type === 'touchstart') e.preventDefault();
-      if (!workActive || doneFlower) return;
-      watering = true;
-      if (tick) clearInterval(tick);
-      
-      tick = setInterval(() => {
-        if (!workActive || !watering || doneFlower) return;
-        prog = Math.min(100, prog + 8);
-        fill.style.width = prog + '%';
-        
-        if (prog >= 100) {
-          doneFlower = true;
-          watering = false;
-          clearInterval(tick);
-          el.classList.add('watered', 'full');
-          icon.textContent = '🌸';
-          workCaught++;
-          $('workScore').textContent = workCaught;
-          if (workCaught >= target) stopWork(true);
+    
+    function drawRain() {
+        if (window.getSeason() !== 'summer') { // Если не лето, пусть идет дождь
+            ctx.strokeStyle = 'rgba(150, 180, 255, 0.3)';
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            for(let i=0; i<drops.length; i++) {
+                const d = drops[i];
+                ctx.moveTo(d.x, d.y);
+                ctx.lineTo(d.x - (d.len*0.2), d.y + d.len); // Легкий наклон
+                d.y += d.speed;
+                d.x -= d.speed * 0.2;
+                if (d.y > h) {
+                    d.y = -20;
+                    d.x = Math.random() * w;
+                }
+            }
+            ctx.stroke();
         }
-      }, 60);
-    };
-
-    const stopW = () => {
-      watering = false;
-      if (tick) { clearInterval(tick); tick = null; }
-    };
-
-    el.addEventListener('mousedown', startW);
-    el.addEventListener('mouseup', stopW);
-    el.addEventListener('mouseleave', stopW);
-    el.addEventListener('touchstart', startW, { passive: false });
-    el.addEventListener('touchend', stopW);
-    el.addEventListener('touchcancel', stopW);
-  }
-}
-
-async function stopWork(t){
-  if(!workActive)return;
-  workActive=false;
-  if(workTimer)clearInterval(workTimer);
-  $('workGame').style.display='none';
-  clearWorkHandlers();
-  $('workField').innerHTML='';
-  $('workField').className='work-field';
-  const task=WORK_TASKS.find(x=>x.id===workTaskId);
-  const target=(task&&task.target)||8;
-  if(workCaught>=target){
-    const{data,error}=await sb.rpc('earn_coins',{p_reason:'mini_work'});
-    if(error){
-      $('workMsg').style.color='#ff8888';
-      $('workMsg').textContent='❌ '+error.message;
-    }else if(data&&data.ok===false){
-      $('workMsg').style.color='#ff8888';
-      $('workMsg').textContent='⏳ '+data.error;
-    }else{
-      if(workTaskId)workCdSet(workTaskId);
-      const r=(data&&data.reward)||5;
-      if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=r;
-      updateCoinsUI();
-      $('workMsg').style.color='#8bc34a';
-      $('workMsg').textContent='✨ +'+r+'💰';
     }
-  }else{
-    $('workMsg').style.color='#ff8888';
-    $('workMsg').textContent='Сделано '+workCaught+'/'+target;
-  }
-  workTaskId=null;
-  renderWork();
+    
+    // Запускаем дождь параллельно с листьями
+    setInterval(drawRain, 50);
 }
+// =====================================
 
 const SEEDS=[
   {id:'carrot',name:'Морковь',rarity:'common',price:5,grow:30,sell:10,icon:'🥕'},{id:'potato',name:'Картошка',rarity:'common',price:8,grow:45,sell:16,icon:'🥔'},{id:'wheat',name:'Пшеница',rarity:'common',price:10,grow:60,sell:20,icon:'🌾'},{id:'tomato',name:'Помидор',rarity:'common',price:12,grow:75,sell:25,icon:'🍅'},{id:'cucumber',name:'Огурец',rarity:'common',price:15,grow:90,sell:30,icon:'🥒'},{id:'onion',name:'Лук',rarity:'common',price:18,grow:100,sell:36,icon:'🧅'},{id:'cabbage',name:'Капуста',rarity:'common',price:22,grow:110,sell:44,icon:'🥬'},{id:'garlic',name:'Чеснок',rarity:'common',price:26,grow:120,sell:52,icon:'🧄'},
@@ -2386,11 +2230,11 @@ let _invMode='view',_plantBedIdx=null,_giftSeedId=null,_visitNick=null,_visitGar
 function plantSeed(bi,sid){const g=loadGarden(me);if(!g.inv[sid]||g.inv[sid]<=0)return showToast('Нет семян','error');if(g.beds[bi])return showToast('Занято','error');const s=SEEDS.find(x=>x.id===sid);if(!s)return;g.inv[sid]--;if(g.inv[sid]<=0)delete g.inv[sid];g.beds[bi]={seed:sid,plantedAt:Date.now(),growMs:s.grow*1000};saveGarden(me,g);showToast('🌱 Посажено','success');closeInv();renderMyGarden()}
 function plantFirstFree(sid){const g=loadGarden(me);const i=g.beds.findIndex(x=>!x);if(i<0)return showToast('Нет места','error');plantSeed(i,sid)}
 function applyFert(bi){const g=loadGarden(me);const b=g.beds[bi];if(!b)return;const order=['fert3','fert2','fert1'];let u=null;for(const f of order)if(g.ferts[f]>0){u=f;break}if(!u)return showToast('Нет удобрений','error');const f=FERTS.find(x=>x.id===u);const now=Date.now();const tot=b.growMs||SEEDS.find(x=>x.id===b.seed).grow*1000;const rem=Math.max(0,tot-(now-b.plantedAt));b.plantedAt=now;b.growMs=rem/f.mult;g.ferts[u]--;if(g.ferts[u]<=0)delete g.ferts[u];saveGarden(me,g);showToast('💧 '+f.name,'success');renderMyGarden()}
-async function harvestBed(i,guest){if(guest)return showToast('🚫 Только просмотр','error');const g=loadGarden(me);const b=g.beds[i];if(!b)return;const s=SEEDS.find(x=>x.id===b.seed);if(!s)return;let r=s.sell;if(myFrame==='gardener')r=Math.round(r*1.25);const{data,error}=await sb.rpc('earn_harvest',{p_amount:r});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||''),'error');return}const applied=r;if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=applied;updateCoinsUI();g.beds[i]=null;saveGarden(me,g);renderMyGarden();showToast('✅ +'+applied+'💰','success')}
+async function harvestBed(i,guest){if(guest)return showToast('🚫 Только просмотр','error');const g=loadGarden(me);const b=g.beds[i];if(!b)return;const s=SEEDS.find(x=>x.id===b.seed);if(!s)return;let r=s.sell;if(myFrame==='gardener')r=Math.round(r*1.25);const{data,error}=await sb.rpc('earn_harvest',{p_amount:r});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||''),'error');return}const applied=r;if(data&&typeof data.coins==='number')myCoins=data.coins;else myCoins+=applied;updateCoinsUI();g.beds[i]=null;saveGarden(me,g);renderMyGarden();if(s.rarity === 'legendary' || s.rarity === 'secret' || s.rarity === 'mythic') { spawnConfetti(true); } else { spawnConfetti(false); }showToast('✅ +'+applied+'💰','success')}
 function openSeedShop(){$('seedShopM').classList.add('open');renderSeedShop();if(window._seedTick)clearInterval(window._seedTick);window._seedTick=setInterval(()=>{if($('seedShopM').classList.contains('open'))renderSeedShop();else{clearInterval(window._seedTick);window._seedTick=null}},1000)}
 function closeSeedShop(){$('seedShopM').classList.remove('open')}
-function renderSeedShop(){const slot=mskSlot();const stock=genSeedStock(slot);const bought=JSON.parse(localStorage.getItem('seedBought_'+slot)||'{}');const left=mskSlotLeft();const t=$('seedStockTimer');if(t)t.textContent='⏱ Обновление через '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0');const list=$('seedStockList');if(!list)return;const f=stock.filter(it=>it.always||(bought[it.id]||0)<it.qty);list.innerHTML=f.map(it=>{const s=SEEDS.find(x=>x.id===it.id);const r=RARITY[s.rarity];const can=myCoins>=s.price;return '<div class="seed-card"><div class="seed-icon">'+s.icon+'</div><div class="seed-info"><div class="seed-name">'+s.name+'</div><div class="seed-rarity" style="color:'+r.color+'">'+r.name+'</div><div class="seed-stats">💰'+s.price+' · 🌱'+s.grow+'с · 💵'+s.sell+'</div></div><button class="seed-buy'+(can?' buy':'')+'" '+(can?'':'disabled')+' onclick="buySeed(\''+s.id+'\')">Купить</button></div>'}).join('')}
-async function buySeed(sid){const s=SEEDS.find(x=>x.id===sid);if(!s)return;if(myCoins<s.price)return showToast('Мало монет','error');const slot=mskSlot();const stock=genSeedStock(slot);const it=stock.find(x=>x.id===sid);if(!it)return;const bought=JSON.parse(localStorage.getItem('seedBought_'+slot)||'{}');if(!it.always&&(bought[sid]||0)>=it.qty)return;const{data,error}=await sb.rpc('add_coins',{p_delta:-s.price});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||''),'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}const g=loadGarden(me);g.inv[sid]=(g.inv[sid]||0)+1;saveGarden(me,g);bought[sid]=(bought[sid]||0)+1;localStorage.setItem('seedBought_'+slot,JSON.stringify(bought));showToast('🌱 '+s.name,'success');renderSeedShop()}
+function renderSeedShop(){const slot=mskSlot();const stock=genSeedStock(slot);const bought=JSON.parse(localStorage.getItem('seedBought_'+slot)||'{}');const left=mskSlotLeft();const t=$('seedStockTimer');if(t)t.textContent='⏱ Обновление через '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0');const list=$('seedStockList');if(!list)return;const f=stock.filter(it=>it.always||(bought[it.id]||0)<it.qty);list.innerHTML=f.map(it=>{const s=SEEDS.find(x=>x.id===it.id);const r=RARITY[s.rarity];const can=myCoins>=s.price;return '<div class="seed-card rarity-'+s.rarity+'"><div class="seed-icon">'+s.icon+'</div><div class="seed-info"><div class="seed-name">'+s.name+'</div><div class="seed-rarity" style="color:'+r.color+'">'+r.name+'</div><div class="seed-stats">💰'+s.price+' · 🌱'+s.grow+'с · 💵'+s.sell+'</div></div><button class="seed-buy'+(can?' buy':'')+'" '+(can?'':'disabled')+' onclick="buySeed(\''+s.id+'\')">Купить</button></div>'}).join('')}
+async function buySeed(sid){const s=SEEDS.find(x=>x.id===sid);if(!s)return;if(myCoins<s.price)return showToast('Мало монет','error');const slot=mskSlot();const stock=genSeedStock(slot);const it=stock.find(x=>x.id===sid);if(!it)return;const bought=JSON.parse(localStorage.getItem('seedBought_'+slot)||'{}');if(!it.always&&(bought[sid]||0)>=it.qty)return;const{data,error}=await sb.rpc('add_coins',{p_delta:-s.price});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||''),'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}const g=loadGarden(me);g.inv[sid]=(g.inv[sid]||0)+1;saveGarden(me,g);bought[sid]=(bought[sid]||0)+1;localStorage.setItem('seedBought_'+slot,JSON.stringify(bought));showToast('🌱 '+s.name,'success');spawnConfetti(false);renderSeedShop()}
 function openFertShop(){$('fertShopM').classList.add('open');renderFertShop()}
 function closeFertShop(){$('fertShopM').classList.remove('open')}
 function renderFertShop(){const slot=mskSlot();const stock=genFertStock(slot);const bought=JSON.parse(localStorage.getItem('fertBought_'+slot)||'{}');const left=mskSlotLeft();const t=$('fertStockTimer');if(t)t.textContent='⏱ '+Math.floor(left/60)+':'+String(left%60).padStart(2,'0');const list=$('fertStockList');if(!list)return;const f=stock.filter(it=>it.always||(bought[it.id]||0)<it.qty);list.innerHTML=f.map(it=>{const ff=FERTS.find(x=>x.id===it.id);const can=myCoins>=ff.price;return '<div class="seed-card"><div class="seed-icon">💧</div><div class="seed-info"><div class="seed-name">'+ff.name+'</div><div class="seed-rarity" style="color:'+ff.color+'">×'+ff.mult+'</div><div class="seed-stats">💰'+ff.price+'</div></div><button class="seed-buy'+(can?' buy':'')+'" '+(can?'':'disabled')+' onclick="buyFert(\''+ff.id+'\')">Купить</button></div>'}).join('')}
@@ -2406,6 +2250,7 @@ async function doVisit(){const nick=$('visitInp').value.trim();if(!nick)return;i
 async function openVisitGarden(nick){if(!nick)return;if(nick===me)return openGarden();closeUserMenu();const{data}=await sb.from('gardens').select('*').eq('nick',en(nick)).maybeSingle();_visitNick=nick;let beds=(data&&data.beds)||[null,null,null,null,null,null];if(!Array.isArray(beds))beds=[null,null,null,null,null,null];while(beds.length<6)beds.push(null);if(beds.length>6)beds.length=6;_visitGarden={beds,inv:(data&&data.inventory)||{},ferts:(data&&data.ferts)||{}};$('gardenMain').style.display='none';$('gardenVisit').style.display='block';$('gardenTitle').textContent='👀 '+nick;$('visitInfo').innerHTML='<b>'+eh(nick)+'</b> · только просмотр';$('gardenM').classList.add('open');renderVisitGarden()}
 function renderVisitGarden(){if(!_visitGarden)return;const b=$('visitBeds');const now=Date.now();b.innerHTML=_visitGarden.beds.map((bed,i)=>{if(!bed)return '<div class="gbed empty guest"><div class="gbed-icon">🌾</div><div class="gbed-label">Пусто</div></div>';const s=SEEDS.find(x=>x.id===bed.seed);if(!s)return '<div class="gbed empty guest"><div class="gbed-icon">?</div></div>';const tot=bed.growMs||s.grow*1000;const pct=Math.min(100,(now-bed.plantedAt)/tot*100);const ready=pct>=100;return '<div class="gbed guest '+(ready?'ready':'grow')+'"><div class="gbed-icon">'+(ready?s.icon:'🌱')+'</div><div class="gbed-label">'+s.name+'</div><div class="gbed-bar"><div class="gbed-fill" style="width:'+pct+'%"></div></div><div class="gbed-time">'+(ready?'✅':Math.ceil((tot-(now-bed.plantedAt))/1000)+'с')+'</div></div>'}).join('')}
 if(!window._gardenVisitTick)window._gardenVisitTick=setInterval(()=>{if($('gardenM')?.classList.contains('open')&&$('gardenVisit')?.style.display==='block'&&_visitGarden)renderVisitGarden()},800)
+
 async function openProfile(nick){closeUserMenu();pfCurrent=nick||null;const target=nick||me;const isMine=(!nick||nick===me);const av=$('pfAv');av.classList.remove('has-img');FRAMES.forEach(f=>av.classList.remove('frame-'+f.id));av.style.backgroundImage='';av.style.background='';try{const{data:um}=await sb.from('user_media').select('photo_url').eq('nick',en(target)).maybeSingle();if(um&&um.photo_url){av.style.backgroundImage='url("'+um.photo_url+'")';av.classList.add('has-img');av.textContent=''}else throw 0}catch(e){av.textContent=firstL(target);av.style.background='linear-gradient(135deg,'+nCol(target)+','+shCol(nCol(target),-18)+')'}const fr=getFrame(target);if(fr&&fr!=='none')av.classList.add('frame-'+fr);decorateFrame(av,fr);const pfEmb=$('pf').querySelector('.emb');if(pfEmb){const allBg=FRAMES.map(f=>'fr-bg-'+f.id);allBg.push('fr-bg-rainbow-anim');pfEmb.classList.remove(...allBg);if(fr&&fr!=='none')pfEmb.classList.add('fr-bg-'+fr)}pfFxSpawn(fr);$('pfNick').textContent=target;const isOnline=online.has(en(target));$('pfOnline').style.display=(!isMine&&isOnline)?'inline':'none';let p=null;try{const r=await sb.from('profiles').select('*').eq('nick',target).maybeSingle();p=r.data}catch(e){}if(p&&p.status)$('pfStatus').textContent=((p.status_emoji||'')+' '+p.status).trim();else $('pfStatus').textContent=isMine?'Нажми «Редактировать»':'';$('pfBio').textContent=(p&&p.bio)?p.bio:(isMine?'Расскажи о себе':'');
 const pfItemsEl=$('pfItems');
 if(pfItemsEl){
@@ -2427,30 +2272,14 @@ function closeFrames(){$('framesM').classList.remove('open')}
 function shopSw(t){shopTab=t;document.querySelectorAll('.shop-tab').forEach(x=>x.classList.toggle('act',x.dataset.tab===t));const fp=$('shopFramesPane'),ip=$('shopItemsPane');if(fp)fp.style.display=(t==='frames')?'block':'none';if(ip)ip.style.display=(t==='items')?'block':'none';if(t==='items')renderItemsList();else renderFramesList()}
 function renderFramesList(){const l=$('framesList');if(!l)return;l.innerHTML=FRAMES.map(f=>{const owned=myOwnedFrames.includes(f.id);const isActive=myFrame===f.id;const canBuy=myCoins>=f.price;const bonus=FRAME_BONUS[f.id];let btn='';if(isActive)btn='<div class="fr-active">✅ Активна</div>';else if(owned)btn='<button class="fr-btn fr-set" onclick="setFrame(\''+f.id+'\')">Надеть</button>';else if(f.id==='none')btn='<button class="fr-btn fr-set" onclick="setFrame(\'none\')">Снять</button>';else btn='<button class="fr-btn fr-buy'+(canBuy?'':' disabled')+'" '+(canBuy?'onclick="buyFrame(\''+f.id+'\','+f.price+')"':'')+'>Купить '+f.price+'💰</button>';let bH='';if(f.id==='gardener')bH='<div class="fr-bonus">+25% к грядке</div>';else if(bonus)bH='<div class="fr-bonus">+'+bonus+'% к доходу</div>';const ic=iconsFor(f.id);return '<div class="fr-item'+(isActive?' active':'')+'"><div class="fr-preview'+(f.id!=='none'?' frame-'+f.id:'')+'"><span style="font-size:24px">'+ic+'</span></div><div class="fr-name">'+f.name+'</div>'+bH+btn+'</div>'}).join('');if($('neonPicker')&&$('neonPicker').style.display!=='none')renderNeonPicker()}
 function renderItemsList(){const l=$('itemsList');if(!l)return;const owned=myOwnedItems||[];l.innerHTML=ITEMS.map(it=>{const has=owned.includes(it.id);const can=myCoins>=it.price;const btn=has?'<button class="item-btn owned" disabled>✅ Куплено</button>':'<button class="item-btn buy" '+(can?'':'disabled')+' onclick="buyItem(\''+it.id+'\','+it.price+')">Купить '+it.price+'💰</button>';return '<div class="item-card'+(has?' owned':'')+'" title="'+eh(it.desc||'')+'"><div class="item-preview">'+it.icon+'</div><div class="item-name">'+eh(it.name)+'</div><div class="item-price">'+it.price+' 💰</div>'+btn+'</div>'}).join('')}
-async function buyItem(id,price){if((myOwnedItems||[]).includes(id))return;if(myCoins<price)return showToast('Мало монет','error');const it=ITEMS.find(x=>x.id===id);if(!it)return;const ok=await askConfirm('Купить?','Купить «'+it.name+'» за '+price+'💰?','Купить');if(!ok)return;const{data,error}=await sb.rpc('buy_item',{p_item_id:id,p_price:price});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||'Ошибка'),'error');myOwnedItems=[...(myOwnedItems||[]),id];myCoins=Math.max(0,myCoins-price);updateCoinsUI();renderItemsList();showToast('✅ '+it.name,'success')}
-async function buyFrame(id,price){if(myOwnedFrames.includes(id))return;if(myCoins<price)return showToast('Мало монет','error');const ok=await askConfirm('Купить?','Купить рамку за '+price+'💰?','Купить');if(!ok)return;const{data,error}=await sb.rpc('buy_frame',{p_frame_id:id,p_price:price});if(error)return showToast(error.message,'error');if(data&&data.ok===false)return showToast(data.error||'Ошибка','error');await loadCoins();renderFramesList();await loadPhotoCache();renderFlats();showToast('✅ Куплено','success')}
+async function buyItem(id,price){if((myOwnedItems||[]).includes(id))return;if(myCoins<price)return showToast('Мало монет','error');const it=ITEMS.find(x=>x.id===id);if(!it)return;const ok=await askConfirm('Купить?','Купить «'+it.name+'» за '+price+'💰?','Купить');if(!ok)return;const{data,error}=await sb.rpc('buy_item',{p_item_id:id,p_price:price});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||'Ошибка'),'error');myOwnedItems=[...(myOwnedItems||[]),id];myCoins=Math.max(0,myCoins-price);updateCoinsUI();renderItemsList();spawnConfetti(false);showToast('✅ '+it.name,'success')}
+async function buyFrame(id,price){if(myOwnedFrames.includes(id))return;if(myCoins<price)return showToast('Мало монет','error');const ok=await askConfirm('Купить?','Купить рамку за '+price+'💰?','Купить');if(!ok)return;const{data,error}=await sb.rpc('buy_frame',{p_frame_id:id,p_price:price});if(error)return showToast(error.message,'error');if(data&&data.ok===false)return showToast(data.error||'Ошибка','error');await loadCoins();renderFramesList();await loadPhotoCache();renderFlats();spawnConfetti(true);showToast('✅ Куплено','success')}
 async function setFrame(id){if(id!=='none'&&!myOwnedFrames.includes(id))return showToast('Не куплено','error');const{data,error}=await sb.rpc('set_active_frame',{p_frame_id:id});if(error)return showToast(error.message,'error');if(data&&data.ok===false)return showToast(data.error||'Ошибка','error');myFrame=id;frameCache[meEnc]=id;renderFramesList();renderFlats();const np=$('neonPicker');if(np)np.style.display=(id==='neon')?'block':'none';if(id==='neon')renderNeonPicker();if($('pf').classList.contains('open'))openProfile(pfCurrent?de(pfCurrent):null);showToast('✅ Надета','success')}
 function renderNeonPicker(){const cur=getNeonRGB();const cI=$('npColor');if(cI&&document.activeElement!==cI)cI.value=rgbToHex(cur[0],cur[1],cur[2]);const rI=$('npRgb');if(rI&&document.activeElement!==rI)rI.value=cur.join(', ');const box=$('npSaved');if(!box)return;const saved=getSavedNeons();if(!saved.length){box.innerHTML='<span style="color:#666678;font-size:12px">Пусто</span>';return}box.innerHTML=saved.map(key=>{const p=key.split(',').map(Number);const hex=rgbToHex(p[0],p[1],p[2]);return '<div class="np-chip" style="background:'+hex+'" onclick="applyNeonPreset(\''+key+'\')"><button class="np-x" onclick="event.stopPropagation();removeNeonPreset(\''+key+'\')">✕</button></div>'}).join('')}
 function applyNeonPreset(key){const p=key.split(',').map(Number);if(p.length>=3)setNeonRGB(p[0],p[1],p[2]);renderNeonPicker()}
 async function loadCoins(){try{const{data}=await sb.from('profiles').select('coins,active_frame,owned_frames,owned_items,room_item_id').eq('nick',me).maybeSingle();myCoins=(data&&data.coins)||0;myFrame=(data&&data.active_frame)||'none';myOwnedFrames=(data&&data.owned_frames)||['none'];myOwnedItems=(data&&data.owned_items)||[];if(data&&data.room_item_id)roomItemCache[meEnc]=data.room_item_id}catch(e){myCoins=0;myFrame='none';myOwnedFrames=['none'];myOwnedItems=[]}updateCoinsUI()}
 var _coinsSyncTimer=null;
-function updateCoinsUI(){
-  const b=$('myCoinsBadge');if(b)b.textContent='💰 '+myCoins;
-  const d=$('dutyCoins');if(d)d.textContent=myCoins;
-  const f=$('framesCoins');if(f)f.textContent=myCoins;
-  if(_coinsSyncTimer)clearTimeout(_coinsSyncTimer);
-  _coinsSyncTimer=setTimeout(async()=>{
-    try{
-      const{data}=await sb.from('profiles').select('coins').eq('nick',me).maybeSingle();
-      if(data&&typeof data.coins==='number'&&data.coins!==myCoins){
-        myCoins=data.coins;
-        const b2=$('myCoinsBadge');if(b2)b2.textContent='💰 '+myCoins;
-        const d2=$('dutyCoins');if(d2)d2.textContent=myCoins;
-        const f2=$('framesCoins');if(f2)f2.textContent=myCoins;
-      }
-    }catch(e){}
-  },800);
-}
+function updateCoinsUI(){const b=$('myCoinsBadge');if(b)b.textContent='💰 '+myCoins;const d=$('dutyCoins');if(d)d.textContent=myCoins;const f=$('framesCoins');if(f)f.textContent=myCoins;if(_coinsSyncTimer)clearTimeout(_coinsSyncTimer);_coinsSyncTimer=setTimeout(async()=>{try{const{data}=await sb.from('profiles').select('coins').eq('nick',me).maybeSingle();if(data&&typeof data.coins==='number'&&data.coins!==myCoins){myCoins=data.coins;const b2=$('myCoinsBadge');if(b2)b2.textContent='💰 '+myCoins;const d2=$('dutyCoins');if(d2)d2.textContent=myCoins;const f2=$('framesCoins');if(f2)f2.textContent=myCoins;}}catch(e){}},800);}
 async function addCoins(n){if(n>=0){console.warn('addCoins: положительные суммы запрещены, используй earn_* RPC');return}try{const{data,error}=await sb.rpc('add_coins',{p_delta:n});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||'Ошибка'),'error');return}if(data&&typeof data.coins==='number'){myCoins=data.coins;updateCoinsUI()}}catch(e){showToast('❌ '+e.message,'error')}}
 function withBonus(b){const bo=frameBonusPct(myFrame);return bo>0?Math.round(b*(1+bo/100)):b}
 function myFlat(){for(const n in flats)if(flatOwners(flats[n])[0]===meEnc)return Number(n);return null}
@@ -2465,123 +2294,16 @@ async function loadFlats(){const{data}=await sb.from('flats').select('*').eq('ho
 async function loadHM(){const ns=[];Object.values(flats).forEach(f=>{flatOwners(f).forEach(o=>ns.push(o))});if(!ns.length){hm={};return}const{data}=await sb.from('user_media').select('*').in('nick',ns);hm={};(data||[]).forEach(m=>hm[m.nick]=m)}
 async function reloadHouse(){await loadHouses();await loadFlats();await loadHM();renderHouses();renderFlats()}
 function renderHouses(){const b=$('hb');b.innerHTML='';houses.forEach(h=>{const e=document.createElement('div');e.className='hbtn'+(h.id===curHouse?' act':'')+(h.blocked?' blk':'');e.textContent=h.blocked?'🚫 '+h.name:h.name;e.onclick=()=>switchHouse(h.id);magnetize(e);b.appendChild(e)})}
-async function switchHouse(i){
-  const inner = $('houseInner');
-  if(i===curHouse && houses.length>0 && inner) return;
-  const direction = (Number(i) > Number(curHouse)) ? 'next' : 'prev';
-  if(inner) inner.style.opacity = '0.3';
-  curHouse = i;
-  houseData = houses.find(h=>h.id===i)||null;
-  await loadFlats(); await loadHM();
-  if(inner) inner.style.opacity = '1';
-  if(inner){
-    inner.style.animation = direction === 'next' ? 'houseSlideOutLeft 0.2s ease-in forwards' : 'houseSlideOutRight 0.2s ease-in forwards';
-    await new Promise(r => setTimeout(r, 180));
-  }
-  renderHouses(); buildHouse(); loadHouseNews(); subHouseNews(); showAnn(houseData?.announcement||null);
-  const newInner = $('houseInner');
-  if(newInner){
-    newInner.style.animation = direction === 'next' ? 'houseSlideInRight 0.2s ease-out forwards' : 'houseSlideInLeft 0.2s ease-out forwards';
-    setTimeout(() => { newInner.style.animation = ''; }, 200);
-  }
-}
-function buildHouse(){
-  const h=$('house');
-  h.innerHTML='<div id="houseInner"></div>';
-  const inner=$('houseInner');
-  let n=1;
-  for(let e=1;e<=3;e++){
-    const w=document.createElement('div'); w.className='ewr';
-    const en=document.createElement('div'); en.className='ent';
-    for(let f=0;f<5;f++){
-      const fl=document.createElement('div'); fl.className='flr';
-      for(let a=0;a<2;a++){
-        const ft=document.createElement('div'); ft.className='flat'; ft.dataset.number=n;
-        fl.appendChild(ft); magnetize(ft); n++;
-      }
-      en.appendChild(fl);
-    }
-    const g=gloEnt(curHouse,e);
-    const b=document.createElement('button'); b.className='ebtn'; b.dataset.global=g; b.textContent='🏢 Подъезд '+g;
-    b.onclick=()=>openEntChat(g); magnetize(b);
-    w.appendChild(en); w.appendChild(b); inner.appendChild(w);
-  }
-  renderFlats();
-}
+async function switchHouse(i){const inner = $('houseInner');if(i===curHouse && houses.length>0 && inner) return;const direction = (Number(i) > Number(curHouse)) ? 'next' : 'prev';if(inner) inner.style.opacity = '0.3';curHouse = i;houseData = houses.find(h=>h.id===i)||null;await loadFlats(); await loadHM();if(inner) inner.style.opacity = '1';if(inner){inner.style.animation = direction === 'next' ? 'houseSlideOutLeft 0.2s ease-in forwards' : 'houseSlideOutRight 0.2s ease-in forwards';await new Promise(r => setTimeout(r, 180));}renderHouses(); buildHouse(); loadHouseNews(); subHouseNews(); showAnn(houseData?.announcement||null);const newInner = $('houseInner');if(newInner){newInner.style.animation = direction === 'next' ? 'houseSlideInRight 0.2s ease-out forwards' : 'houseSlideInLeft 0.2s ease-out forwards';setTimeout(() => { newInner.style.animation = ''; }, 200);}}
+function buildHouse(){const h=$('house');h.innerHTML='<div id="houseInner"></div>';const inner=$('houseInner');let n=1;for(let e=1;e<=3;e++){const w=document.createElement('div'); w.className='ewr';const en=document.createElement('div'); en.className='ent';for(let f=0;f<5;f++){const fl=document.createElement('div'); fl.className='flr';for(let a=0;a<2;a++){const ft=document.createElement('div'); ft.className='flat'; ft.dataset.number=n;fl.appendChild(ft); magnetize(ft); n++;}en.appendChild(fl);}const g=gloEnt(curHouse,e);const b=document.createElement('button'); b.className='ebtn'; b.dataset.global=g; b.textContent='🏢 Подъезд '+g;b.onclick=()=>openEntChat(g); magnetize(b);w.appendChild(en); w.appendChild(b); inner.appendChild(w);}renderFlats();}
 function applyPh(el,m){if(!m||!m.photo_url){el.style.backgroundImage='';el.classList.remove('has-photo');return}el.style.backgroundImage='url("'+m.photo_url+'")';el.style.backgroundSize=(m.photo_zoom??100)+'% '+(m.photo_zoom??100)+'%';el.style.backgroundPosition=(m.photo_x??50)+'% '+(m.photo_y??50)+'%';el.classList.add('has-photo')}
 function renderFlats(){const myE=myEnt();const off=(Number(curHouse)-1)*30;document.querySelectorAll('.flat').forEach(el=>{const n=el.dataset.number,f=flats[n];el.classList.remove('mine','taken','has-photo','blk');FRAMES.forEach(f=>el.classList.remove('frame-'+f.id));el.style.backgroundImage='';el.querySelectorAll(':scope > .halo, :scope > .horn, :scope > .flat-item').forEach(x=>x.remove());if(isFlatBlk(Number(n)))el.classList.add('blk');const owners=flatOwners(f);const dn=off+Number(n);if(!owners.length)el.innerHTML='<div class="num">'+dn+'</div>';else{const meIn=owners.includes(meEnc);if(meIn)el.classList.add('mine');else el.classList.add('taken');const names=owners.map(de);let h='<div class="num">'+dn+'</div><div class="nick">'+(meIn&&owners[0]===meEnc?'ты':eh(names[0]))+'</div>';if(names[1])h+='<div class="nick2">'+eh(names[1])+'</div>';const riId=roomItemCache[owners[0]];if(riId){const it=ITEMS.find(x=>x.id===riId);if(it)h+='<span class="flat-item">'+it.icon+'</span>';}el.innerHTML=h;applyPh(el,hm[owners[0]]);const fr=getFrame(de(owners[0]));if(fr&&fr!=='none'){el.classList.add('frame-'+fr);decorateFrame(el,fr)}}el.onclick=()=>clickFlat(Number(n))});document.querySelectorAll('.ebtn').forEach(b=>{const g=Number(b.dataset.global),im=myE===g;b.classList.toggle('mine',im);b.classList.toggle('blk',isEntBlk(g));b.classList.toggle('oth',!adminMode&&!im)})}
 
-// ФИКС КЛИКА ПО КВАРТИРЕ (ЧАТЫ)
-async function clickFlat(n){
-  if(lock)return;
-  const f=flats[n];
-  const owners=flatOwners(f);
-  if(adminMode&&owners.length){
-    if(owners.includes(meEnc)){openFm(n);return}
-    const ok=await askConfirm('Выселить?','Все будут выселены','Выселить',true);
-    if(!ok)return;
-    lock=true;
-    try{await sb.rpc('owner_evict',{p_house:curHouse,p_flat:n})}
-    finally{await reloadHouse();await loadMyRooms();lock=false}
-    return;
-  }
-  if(!owners.length){
-    if(isHouseBlk()||isEntBlk(gloEnt(curHouse,Math.ceil(n/10))))return showToast('🚫 Закрыто','error');
-    if(myAllFlats.length>0)return showToast('У тебя уже есть квартира','error');
-    lock=true;
-    try{
-      const{data,error}=await sb.rpc('join_flat',{p_house:curHouse,p_flat:n});
-      if(error){showToast('❌ '+error.message,'error');return}
-      if(data&&data.ok===false){showToast('❌ '+(data.error||''),'error');return}
-    }finally{await reloadHouse();await loadMyRooms();lock=false}
-    return;
-  }
-  if(owners.includes(meEnc)){openFm(n);return}
-  if(owners.length===1){ openDm(owners[0]); }
-  else { openOwnerPicker(n,owners); }
-}
-function openOwnerPicker(flatNum,owners){
-  const old=document.getElementById('ownerPickM'); if(old)old.remove();
-  const gNum=(Number(curHouse)-1)*30+Number(flatNum);
-  const box=document.createElement('div');
-  box.id='ownerPickM';
-  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9700;display:flex;align-items:center;justify-content:center;padding:20px;';
-  const inner=document.createElement('div');
-  inner.style.cssText='background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.1);border-radius:22px;width:440px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7)';
-  const head=document.createElement('div');
-  head.style.cssText='padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(90,171,255,.12),rgba(74,144,217,.04))';
-  head.innerHTML='<div style="font-size:16px;font-weight:800;color:#5aabff">🏠 Кв. '+gNum+' · кто здесь живёт</div>';
-  const closeBtn=document.createElement('button');
-  closeBtn.textContent='✕';
-  closeBtn.style.cssText='background:rgba(90,171,255,.1);border:1px solid rgba(90,171,255,.3);color:#5aabff;font-size:16px;width:30px;height:30px;border-radius:9px;cursor:pointer;font-weight:700;line-height:1';
-  closeBtn.onclick=()=>box.remove(); head.appendChild(closeBtn);
-  const list=document.createElement('div');
-  list.style.cssText='padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px';
-  owners.forEach((enc,i)=>{
-    const nick=de(enc); const online_=online.has(enc);
-    const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:.15s';
-    row.innerHTML=avOn(nick,'sm',online_)+'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+eh(nick)+(i===0?' <span style="color:#f5c542;font-size:11px">👑</span>':'')+'</div><div style="font-size:11px;color:'+(online_?'#6fdc6f':'#666678')+';margin-top:2px">'+(online_?'в сети':'не в сети')+'</div></div><span style="color:#5aabff;font-size:18px">💬</span>';
-    row.onmouseenter=()=>{row.style.background='rgba(90,171,255,.12)';row.style.borderColor='rgba(90,171,255,.4)'};
-    row.onmouseleave=()=>{row.style.background='rgba(255,255,255,.04)';row.style.borderColor='rgba(255,255,255,.08)'};
-    row.onclick=()=>{box.remove();openDm(enc);};
-    list.appendChild(row);
-  });
-  inner.appendChild(head); inner.appendChild(list); box.appendChild(inner);
-  box.onclick=(e)=>{if(e.target===box)box.remove()};
-  document.body.appendChild(box);
-}
+async function clickFlat(n){if(lock)return;const f=flats[n];const owners=flatOwners(f);if(adminMode&&owners.length){if(owners.includes(meEnc)){openFm(n);return}const ok=await askConfirm('Выселить?','Все будут выселены','Выселить',true);if(!ok)return;lock=true;try{await sb.rpc('owner_evict',{p_house:curHouse,p_flat:n})}finally{await reloadHouse();await loadMyRooms();lock=false}return;}if(!owners.length){if(isHouseBlk()||isEntBlk(gloEnt(curHouse,Math.ceil(n/10))))return showToast('🚫 Закрыто','error');if(myAllFlats.length>0)return showToast('У тебя уже есть квартира','error');lock=true;try{const{data,error}=await sb.rpc('join_flat',{p_house:curHouse,p_flat:n});if(error){showToast('❌ '+error.message,'error');return}if(data&&data.ok===false){showToast('❌ '+(data.error||''),'error');return}}finally{await reloadHouse();await loadMyRooms();lock=false}return;}if(owners.includes(meEnc)){openFm(n);return}if(owners.length===1){ openDm(owners[0]); }else { openOwnerPicker(n,owners); }}
+function openOwnerPicker(flatNum,owners){const old=document.getElementById('ownerPickM'); if(old)old.remove();const gNum=(Number(curHouse)-1)*30+Number(flatNum);const box=document.createElement('div');box.id='ownerPickM';box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9700;display:flex;align-items:center;justify-content:center;padding:20px;';const inner=document.createElement('div');inner.style.cssText='background:linear-gradient(180deg,#1a1a22,#14141c);border:1px solid rgba(255,255,255,.1);border-radius:22px;width:440px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.7)';const head=document.createElement('div');head.style.cssText='padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(90,171,255,.12),rgba(74,144,217,.04))';head.innerHTML='<div style="font-size:16px;font-weight:800;color:#5aabff">🏠 Кв. '+gNum+' · кто здесь живёт</div>';const closeBtn=document.createElement('button');closeBtn.textContent='✕';closeBtn.style.cssText='background:rgba(90,171,255,.1);border:1px solid rgba(90,171,255,.3);color:#5aabff;font-size:16px;width:30px;height:30px;border-radius:9px;cursor:pointer;font-weight:700;line-height:1';closeBtn.onclick=()=>box.remove(); head.appendChild(closeBtn);const list=document.createElement('div');list.style.cssText='padding:14px;overflow-y:auto;display:flex;flex-direction:column;gap:8px';owners.forEach((enc,i)=>{const nick=de(enc); const online_=online.has(enc);const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);cursor:pointer;transition:.15s';row.innerHTML=avOn(nick,'sm',online_)+'<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:700;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+eh(nick)+(i===0?' <span style="color:#f5c542;font-size:11px">👑</span>':'')+'</div><div style="font-size:11px;color:'+(online_?'#6fdc6f':'#666678')+';margin-top:2px">'+(online_?'в сети':'не в сети')+'</div></div><span style="color:#5aabff;font-size:18px">💬</span>';row.onmouseenter=()=>{row.style.background='rgba(90,171,255,.12)';row.style.borderColor='rgba(90,171,255,.4)'};row.onmouseleave=()=>{row.style.background='rgba(255,255,255,.04)';row.style.borderColor='rgba(255,255,255,.08)'};row.onclick=()=>{box.remove();openDm(enc);};list.appendChild(row);});inner.appendChild(head); inner.appendChild(list); box.appendChild(inner);box.onclick=(e)=>{if(e.target===box)box.remove()};document.body.appendChild(box);}
 
 async function loadAllProfiles(){try{const{data}=await sb.from('profiles').select('nick');const{data:fl}=await sb.from('flats').select('house_id,number,owner_nicks');const fm={};(fl||[]).forEach(f=>{(f.owner_nicks||[]).forEach(o=>{fm[o]=(Number(f.house_id)-1)*30+Number(f.number)})});allProfiles=(data||[]).map(p=>({nick:p.nick,flat:fm[en(p.nick)]||null}))}catch(e){allProfiles=[]}}
-async function loadPhotoCache(){
-  try{
-    const{data}=await sb.from('user_media').select('nick,photo_url');
-    photoCache={}; (data||[]).forEach(m=>{if(m.photo_url)photoCache[m.nick]=m.photo_url});
-    const{data:fr}=await sb.from('profiles').select('nick,active_frame,room_item_id');
-    frameCache={};roomItemCache={};
-    (fr||[]).forEach(p=>{ if(p.active_frame)frameCache[en(p.nick)]=p.active_frame; if(p.room_item_id)roomItemCache[en(p.nick)]=p.room_item_id; });
-  }catch(e){}
-}
+async function loadPhotoCache(){try{const{data}=await sb.from('user_media').select('nick,photo_url');photoCache={}; (data||[]).forEach(m=>{if(m.photo_url)photoCache[m.nick]=m.photo_url});const{data:fr}=await sb.from('profiles').select('nick,active_frame,room_item_id');frameCache={};roomItemCache={};(fr||[]).forEach(p=>{ if(p.active_frame)frameCache[en(p.nick)]=p.active_frame; if(p.room_item_id)roomItemCache[en(p.nick)]=p.room_item_id; });}catch(e){}}
 async function loadMyRooms(){const{data}=await sb.from('flats').select('house_id,number,owner_nicks');myRooms.clear();myAllFlats=[];(data||[]).forEach(f=>{const o=f.owner_nicks||[];if(o.includes(meEnc)){myAllFlats.push({house_id:f.house_id,number:f.number,owner:o[0]===meEnc});if(o.length>=2)myRooms.add('h'+f.house_id+'_flat'+f.number+'_room')}})}
 function getHC(){try{return new Set(JSON.parse(localStorage.getItem('hc_'+meEnc)||'[]'))}catch(e){return new Set()}}
 function saveHC(s){localStorage.setItem('hc_'+meEnc,JSON.stringify(Array.from(s)))}
@@ -2597,13 +2319,7 @@ async function openEntChat(g){curGroup=null;curRoom='entrance_'+g;curRoomType='e
 async function closeM(){if(mr&&mr.state==='recording')mr.stop();if(cRec&&cRec.state==='recording')cRec.stop();$('modal').classList.remove('open');$('gearBtn').classList.remove('on');if(ch){sb.removeChannel(ch);ch=null}if(pt){clearInterval(pt);pt=null}stopMus();showMusBtn(null);musUrl=null;curRoom=null;curRoomType=null;curEntG=null;curPartner=null;curGroup=null;rcId=null;clrCh($('chat'))}
 function togIR(c){$('ir').style.display=c?'flex':'none';$('nw').style.display=c?'none':'block'}
 function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
-async function loadM(){
-  const tk=++mTok,rid=curRoom; if(!rid)return;
-  const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);
-  if(tk!==mTok||rid!==curRoom)return; if(error)return;
-  msgC=(data||[]).reverse().filter(m=>{if(m.deleted_for_all) return false;if(m.text && (m.text.includes('заселил') || m.text.includes('выселил') || m.text.includes('вошёл в чат') || m.text.includes('вышел из чата'))) return false;return true;});
-  await loadR(msgC); renderMs($('chat'),msgC);
-}
+async function loadM(){const tk=++mTok,rid=curRoom; if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);if(tk!==mTok||rid!==curRoom)return; if(error)return;msgC=(data||[]).reverse().filter(m=>{if(m.deleted_for_all) return false;if(m.text && (m.text.includes('заселил') || m.text.includes('выселил') || m.text.includes('вошёл в чат') || m.text.includes('вышел из чата'))) return false;return true;});await loadR(msgC); renderMs($('chat'),msgC);}
 async function loadR(list){try{const ids=(list||[]).map(m=>m.id).filter(Boolean);if(!ids.length){allR={};return}const{data}=await sb.from('reactions').select('*').in('message_id',ids);allR={};(data||[]).forEach(r=>{if(!allR[r.message_id])allR[r.message_id]=[];allR[r.message_id].push(r)})}catch(e){allR={}}}
 function voiceBarHTML(id,dur,played){const bars=Math.max(12,Math.min(40,Math.round((dur||3)*3)));let h='';for(let i=0;i<bars;i++){const hgt=6+Math.round(Math.abs(Math.sin(i*0.9+id.length))*18);h+='<div class="wb'+(played&&i/bars<played?' played':'')+'" style="height:'+hgt+'px"></div>'}return h}
 function renderMs(el,list,opts){const top=(opts&&opts.topBanner)?'<div class="msg roomtitle">'+opts.topBanner+'</div>':'';const nh=top+list.map(m=>{const mine=m.nick===meEnc;let body='';if(m.voice_url){const d=m.voice_dur||vDur[m.id]||3;body='<div class="voice-msg" data-id="'+m.id+'" onclick="playVoice(\''+m.id+'\',\''+m.voice_url+'\','+d+')"><button class="voice-play-btn" type="button"></button><div class="voice-bar" data-id="'+m.id+'">'+voiceBarHTML(m.id,d,0)+'</div><div class="voice-time">'+fT(d)+'</div></div>'}else if(m.video_url){body='<div class="mc paused" onclick="toggleCirclePlay(this)"><video src="'+m.video_url+'" playsinline preload="metadata"></video></div>'}else if(m.photo_url){body='<img class="mp" src="'+m.photo_url+'" onclick="openPV(\''+m.photo_url+'\')">'}else{body='<span class="txt">'+eh(m.text||'')+'</span>'}const tm='<span class="time">'+new Date(m.created_at).toLocaleTimeString().slice(0,5)+'</span>'+(m.edited?'<span class="med">ред.</span>':'');const nk=mine?'':'<span class="nick" onclick="openProfile(\''+eh(de(m.nick))+'\')">'+eh(de(m.nick))+'</span>';const rl=(allR[m.id]||[]).reduce((acc,r)=>{const k=r.emoji;if(!acc[k])acc[k]={c:0,mine:false};acc[k].c++;if(r.nick===meEnc)acc[k].mine=true;return acc},{});const rlH=Object.keys(rl).length?'<div class="mr">'+Object.entries(rl).map(([e,o])=>'<div class="rc'+(o.mine?' mine':'')+'" onclick="event.stopPropagation();addReaction(\''+m.id+'\',\''+e+'\')"><span>'+e+'</span><span class="rn">'+o.c+'</span></div>').join('')+'</div>':'';return '<div class="msg '+(mine?'own':'other')+'" data-id="'+m.id+'" oncontextmenu="showCtxMenu(event,\''+m.id+'\')">'+nk+body+tm+rlH+'</div>'}).join('');const fh=nh||'<div style="color:#55556a;text-align:center;padding:30px">Пусто</div>';if(el.dataset.lastHtml!==fh){const ab=el.scrollTop+el.clientHeight>=el.scrollHeight-40,fr=!el.dataset.lastHtml;el.innerHTML=fh;el.dataset.lastHtml=fh;if(fr||ab)el.scrollTop=el.scrollHeight}}
@@ -2654,7 +2370,6 @@ async function saveGroupSettings(){if(!curGroup)return;const name=$('gsmName').v
 async function uploadAvaToStorage(file,prefix){const path='group_ava/'+prefix+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.'+(file.name.split('.').pop()||'jpg');const up=await sb.storage.from('media').upload(path,file,{cacheControl:'3600',upsert:false});if(up.error)return null;const{data:pub}=sb.storage.from('media').getPublicUrl(path);return pub?pub.publicUrl:null}
 async function invite(){if(!fmN)return;const inp=$('invI');if(!inp)return;const v=(inp.value||'').trim();if(!v)return;const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(owners[0]!==meEnc)return showToast('Только хозяин','error');const mp=f.max_people??2;if(owners.length>=mp)return showToast('Мест нет','error');let nick=null;if(/^\d+$/.test(v)){const n=parseInt(v);const tg=flats[n];const tOwners=flatOwners(tg);if(!tOwners.length)return showToast('Квартира пуста','error');nick=de(tOwners[0])}else{nick=v}if(nick===me)return showToast('Себя нельзя','error');const enc=en(nick);if(owners.includes(enc))return showToast('Уже в квартире','error');const{data:p}=await sb.from('profiles').select('nick').eq('nick',nick).maybeSingle();if(!p)return showToast('Игрок не найден','error');const{data:ex}=await sb.from('room_invites').select('id').eq('from_nick',meEnc).eq('to_nick',enc).eq('house_id',curHouse).eq('flat_number',fmN).maybeSingle();if(ex)return showToast('Уже приглашён','error');const{error}=await sb.from('room_invites').insert({from_nick:meEnc,to_nick:enc,house_id:curHouse,flat_number:fmN});if(error)return showToast('❌ '+error.message,'error');inp.value='';showToast('📨 Приглашение отправлено','success')}
 async function saveM(){if(!fmN)return;const f=flats[fmN];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Только жильцы','error');const mst=$('mst');mst.textContent='Сохранение...';try{let phUrl=phU||null;let musUpload=musU||null;if(musU&&musU.startsWith('data:')){const blob=await (await fetch(musU)).blob();const path='flat_music/'+meEnc+'/'+Date.now()+'.mp3';const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:true});if(!up.error){const{data:pub}=sb.storage.from('media').getPublicUrl(path);musUpload=pub?pub.publicUrl:null}}const x=parseInt($('phX').value)||50,y=parseInt($('phY').value)||50,z=parseInt($('phZ').value)||100;const rec={nick:meEnc,photo_url:phUrl,photo_x:x,photo_y:y,photo_zoom:z,music_url:musUpload,updated_at:new Date().toISOString()};const{error}=await sb.from('user_media').upsert(rec,{onConflict:'nick'});if(error){mst.textContent='❌ '+error.message;return}await loadPhotoCache();await loadHM();renderFlats();mst.textContent='✅ Сохранено';showToast('✅ Сохранено','success')}catch(e){mst.textContent='❌ '+e.message}}
-
 async function startMus(rid){try{const mm=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!mm)return null;const hn=mm[1],fn=mm[2];const{data:fl}=await sb.from('flats').select('owner_nicks').eq('house_id',hn).eq('number',fn).maybeSingle();if(!fl)return null;const owner=(fl.owner_nicks||[])[0];if(!owner)return null;const{data:um}=await sb.from('user_media').select('music_url').eq('nick',owner).maybeSingle();const url=(um&&um.music_url)||null;if(url){const a=$('bgA');if(a&&a.src!==url){a.src=url;a.loop=true;a.load()}}return url}catch(e){return null}}
 async function startMusFor(nickEnc){try{if(!nickEnc)return null;const{data:um}=await sb.from('user_media').select('music_url').eq('nick',nickEnc).maybeSingle();const url=(um&&um.music_url)||null;if(url){const a=$('bgA');if(a&&a.src!==url){a.src=url;a.loop=true;a.load()}}return url}catch(e){return null}}
 function showMusBtn(url,onLabel){const b=$('mbB');if(!b)return;if(url){b.style.display='flex';b.textContent=onLabel||'🎵 Включить';b.classList.remove('playing')}else{b.style.display='none';b.textContent='';b.classList.remove('playing')}}
@@ -2672,76 +2387,17 @@ async function delAnn(hid){const h=hid||Number(curHouse);const{data,error}=await
 function showAnn(t){const b=$('annBanner');if(!b)return;if(!t){b.classList.remove('on');return}$('annText').textContent=t;b.classList.add('on')}
 async function openFm(n){const f=flats[n];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return;fmN=n;$('fm').classList.add('open');upFm();fmSw('media')}
 
-async function submitAppeal() {
-  const msg = $('appealMsg').value.trim(); const st = $('appealStatus'); const btn = $('appealBtn');
-  if (!msg) { st.style.color = '#ff6b6b'; st.textContent = 'Напиши причину...'; return; }
-  btn.disabled = true; btn.textContent = 'Отправка...'; st.textContent = '';
-  const { data, error } = await sb.rpc('submit_appeal', { p_message: msg });
-  if (error || (data && data.ok === false)) {
-    st.style.color = '#ff6b6b'; st.textContent = error ? error.message : data.error;
-    btn.disabled = false; btn.textContent = '📩 Связаться с Администрацией'; return;
-  }
-  st.style.color = '#8bc34a'; st.textContent = '✅ Запрос отправлен! Ожидайте.'; btn.textContent = 'Отправлено';
-}
+async function submitAppeal() {const msg = $('appealMsg').value.trim(); const st = $('appealStatus'); const btn = $('appealBtn');if (!msg) { st.style.color = '#ff6b6b'; st.textContent = 'Напиши причину...'; return; }btn.disabled = true; btn.textContent = 'Отправка...'; st.textContent = '';const { data, error } = await sb.rpc('submit_appeal', { p_message: msg });if (error || (data && data.ok === false)) {st.style.color = '#ff6b6b'; st.textContent = error ? error.message : data.error;btn.disabled = false; btn.textContent = '📩 Связаться с Администрацией'; return;}st.style.color = '#8bc34a'; st.textContent = '✅ Запрос отправлен! Ожидайте.'; btn.textContent = 'Отправлено';}
 let _appealsAutoUpdate = null;
-async function ofAppeals(b) {
-  if(!isOwner()){ b.innerHTML='<div class="afe">Только владелец</div>'; return; }
-  if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);
-  async function renderAppeals() {
-    if(afT !== 'appeals' || !$('ofm').classList.contains('open')) { if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate); return; }
-    const { data, error } = await sb.rpc('owner_get_appeals');
-    if(error){ b.innerHTML='<div class="afe">Ошибка: '+error.message+'</div>'; return; }
-    if(!data || !data.length){ b.innerHTML='<div class="afe">Нет новых запросов на разбан.</div>'; return; }
-    let html = '<div class="of-hint">📩 <b>Обратная связь.</b> Запросы от забаненных пользователей.</div>';
-    html += data.map(l => {
-      const d = new Date(l.created_at); const p = n => String(n).padStart(2, '0');
-      const timeStr = `${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(-2)};${p(d.getHours())}:${p(d.getMinutes())}`;
-      return `<div class="of-user-row" style="border-color:#ffaa00; background:rgba(255,170,0,0.05); flex-direction:column; align-items:flex-start; gap:10px;"><div style="width:100%; display:flex; justify-content:space-between;"><b style="color:#a06bff; font-size:14px;">${eh(l.nick)}</b><span style="color:#888; font-size:11px;">${timeStr}</span></div><div style="font-size:13px; color:#ddd; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; width:100%; white-space:pre-wrap;">${eh(l.message)}</div><div style="display:flex; gap:8px; width:100%; margin-top:5px;"><button class="afbtn g" style="flex:1" onclick="resolveAppeal(${l.id}, 'unban', this)">✅ Разбанить</button><button class="afbtn r" style="flex:1" onclick="resolveAppeal(${l.id}, 'keep', this)">🚫 Оставить (Бан)</button></div></div>`;
-    }).join('');
-    b.innerHTML = html;
-  }
-  await renderAppeals(); _appealsAutoUpdate = setInterval(renderAppeals, 3000);
-}
-async function resolveAppeal(id, action, btn) {
-  btn.disabled = true; btn.textContent = '...';
-  const { data, error } = await sb.rpc('owner_resolve_appeal', { p_id: id, p_action: action });
-  if(error || (data && data.ok === false)) {
-    showToast('Ошибка: ' + (error ? error.message : data.error), 'error');
-    btn.disabled = false; btn.textContent = action === 'unban' ? '✅ Разбанить' : '🚫 Оставить (Бан)'; return;
-  }
-  showToast(action === 'unban' ? '✅ Пользователь разбанен' : '🚫 Запрос отклонён', 'success');
-}
-function upFm(){
-  const f=flats[fmN];if(!f)return closeFm();
-  const owners=flatOwners(f); const isOwnerF=owners[0]===meEnc; const mp=f.max_people??2; const others=owners.filter(o=>o!==meEnc); const gnum=(Number(curHouse)-1)*30+Number(fmN);
-  $('fmT').textContent='🏠 Кв '+gnum+(isOwnerF?' (хозяин)':' (сосед)'); $('fmTR').style.display='block'; $('fmTM').style.display=(isOwnerF&&mp>=2)?'block':'none'; $('lvB').style.display='block';
-  const inf=$('rmInfo'); const list=[];
-  owners.forEach((o,i)=>{
-    const isMe=(o===meEnc); const isChief=(i===0); const nick=de(o); const canPromote=!isMe&&!isChief&&isOwnerF; const canKick=isOwnerF&&!isMe;
-    list.push('<div class="rmc">'+avH(nick,'sm')+'<div style="flex:1;margin-left:10px">'+eh(nick)+(isMe?' (ты)':'')+(isChief?' <span style="color:#f5c542;font-weight:800">👑</span>':'')+'</div>'+(canPromote?'<button onclick="promoteR(\''+o+'\')" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;margin-right:6px">👑 Сделать главным</button>':'')+(canKick?'<button onclick="kickR(\''+o+'\')">Выгнать</button>':'')+'</div>');
-  });
-  inf.innerHTML=list.join('')||'<div class="reme">Пока никого</div>';
-}
-async function promoteR(ownerHex){
-  if(!fmN)return; const{data,error}=await sb.rpc('promote_flat_owner',{p_house:curHouse,p_flat:fmN,p_nick:ownerHex});
-  if(error)return showToast('❌ '+error.message,'error'); if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');
-  await reloadHouse(); upFm(); showToast('👑 Сменили хозяина','success');
-}
-function fmSw(t){
-  document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');
-  const m={media:'fmPM',room:'fmPR',manage:'fmPN',work:'fmPW'};$(m[t]).style.display='flex';$('svB').style.display=t==='media'?'block':'none';
-  if(t==='work')renderWork();
-  if(t==='room'){rcId='h'+curHouse+'_flat'+fmN+'_room';clrCh($('rc'));loadRM();subRM();loadRoomItem();if(rcPt){clearInterval(rcPt);rcPt=null}rcPt=setInterval(loadRM,3000);startMus(rcId).then(url=>{musUrl=url;showMusBtn(url,'🎵 Включить')}).catch(()=>{showMusBtn(null)})}else{if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}}
-}
+async function ofAppeals(b) {if(!isOwner()){ b.innerHTML='<div class="afe">Только владелец</div>'; return; }if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate);async function renderAppeals() {if(afT !== 'appeals' || !$('ofm').classList.contains('open')) { if(_appealsAutoUpdate) clearInterval(_appealsAutoUpdate); return; }const { data, error } = await sb.rpc('owner_get_appeals');if(error){ b.innerHTML='<div class="afe">Ошибка: '+error.message+'</div>'; return; }if(!data || !data.length){ b.innerHTML='<div class="afe">Нет новых запросов на разбан.</div>'; return; }let html = '<div class="of-hint">📩 <b>Обратная связь.</b> Запросы от забаненных пользователей.</div>';html += data.map(l => {const d = new Date(l.created_at); const p = n => String(n).padStart(2, '0');const timeStr = `${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(-2)};${p(d.getHours())}:${p(d.getMinutes())}`;return `<div class="of-user-row" style="border-color:#ffaa00; background:rgba(255,170,0,0.05); flex-direction:column; align-items:flex-start; gap:10px;"><div style="width:100%; display:flex; justify-content:space-between;"><b style="color:#a06bff; font-size:14px;">${eh(l.nick)}</b><span style="color:#888; font-size:11px;">${timeStr}</span></div><div style="font-size:13px; color:#ddd; background:rgba(0,0,0,0.3); padding:10px; border-radius:8px; width:100%; white-space:pre-wrap;">${eh(l.message)}</div><div style="display:flex; gap:8px; width:100%; margin-top:5px;"><button class="afbtn g" style="flex:1" onclick="resolveAppeal(${l.id}, 'unban', this)">✅ Разбанить</button><button class="afbtn r" style="flex:1" onclick="resolveAppeal(${l.id}, 'keep', this)">🚫 Оставить (Бан)</button></div></div>`;}).join('');b.innerHTML = html;}await renderAppeals(); _appealsAutoUpdate = setInterval(renderAppeals, 3000);}
+async function resolveAppeal(id, action, btn) {btn.disabled = true; btn.textContent = '...';const { data, error } = await sb.rpc('owner_resolve_appeal', { p_id: id, p_action: action });if(error || (data && data.ok === false)) {showToast('Ошибка: ' + (error ? error.message : data.error), 'error');btn.disabled = false; btn.textContent = action === 'unban' ? '✅ Разбанить' : '🚫 Оставить (Бан)'; return;}showToast(action === 'unban' ? '✅ Пользователь разбанен' : '🚫 Запрос отклонён', 'success');}
+function upFm(){const f=flats[fmN];if(!f)return closeFm();const owners=flatOwners(f); const isOwnerF=owners[0]===meEnc; const mp=f.max_people??2; const others=owners.filter(o=>o!==meEnc); const gnum=(Number(curHouse)-1)*30+Number(fmN);$('fmT').textContent='🏠 Кв '+gnum+(isOwnerF?' (хозяин)':' (сосед)'); $('fmTR').style.display='block'; $('fmTM').style.display=(isOwnerF&&mp>=2)?'block':'none'; $('lvB').style.display='block';const inf=$('rmInfo'); const list=[];owners.forEach((o,i)=>{const isMe=(o===meEnc); const isChief=(i===0); const nick=de(o); const canPromote=!isMe&&!isChief&&isOwnerF; const canKick=isOwnerF&&!isMe;list.push('<div class="rmc">'+avH(nick,'sm')+'<div style="flex:1;margin-left:10px">'+eh(nick)+(isMe?' (ты)':'')+(isChief?' <span style="color:#f5c542;font-weight:800">👑</span>':'')+'</div>'+(canPromote?'<button onclick="promoteR(\''+o+'\')" style="background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000;margin-right:6px">👑 Сделать главным</button>':'')+(canKick?'<button onclick="kickR(\''+o+'\')">Выгнать</button>':'')+'</div>');});inf.innerHTML=list.join('')||'<div class="reme">Пока никого</div>';}
+async function promoteR(ownerHex){if(!fmN)return; const{data,error}=await sb.rpc('promote_flat_owner',{p_house:curHouse,p_flat:fmN,p_nick:ownerHex});if(error)return showToast('❌ '+error.message,'error'); if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse(); upFm(); showToast('👑 Сменили хозяина','success');}
+function fmSw(t){document.querySelectorAll('.fmtab').forEach(x=>x.classList.toggle('act',x.dataset.t===t));document.querySelectorAll('.fmp').forEach(x=>x.style.display='none');const m={media:'fmPM',room:'fmPR',manage:'fmPN',work:'fmPW'};$(m[t]).style.display='flex';$('svB').style.display=t==='media'?'block':'none';if(t==='work')renderWork();if(t==='room'){rcId='h'+curHouse+'_flat'+fmN+'_room';clrCh($('rc'));loadRM();subRM();loadRoomItem();if(rcPt){clearInterval(rcPt);rcPt=null}rcPt=setInterval(loadRM,3000);startMus(rcId).then(url=>{musUrl=url;showMusBtn(url,'🎵 Включить')}).catch(()=>{showMusBtn(null)})}else{if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}}}
 async function loadRoomItem(){try{const{data}=await sb.from('profiles').select('room_item_id').eq('nick',me).maybeSingle();const id=(data&&data.room_item_id)||null;const el=$('roomDecor');if(!el)return;if(!id){el.style.display='none';el.textContent='';el.title='';return}const it=ITEMS.find(x=>x.id===id);if(!it){el.style.display='none';return}el.textContent=it.icon;el.title=it.name;el.style.display='block'}catch(e){const el=$('roomDecor');if(el)el.style.display='none'}}
 async function setRoomItem(id){if(id && !(myOwnedItems||[]).includes(id)) return showToast('Не куплено','error');const{data,error}=await sb.rpc('set_room_item',{p_item_id:id||null});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');if(id)roomItemCache[meEnc]=id;else delete roomItemCache[meEnc];showToast(id?'✅ Поставлено в комнату':'🗑 Убрано','success');await loadRoomItem();renderFlats();if($('pf').classList.contains('open')) openProfile(null)}
 function closeFm(){if(workActive)stopWork(false);stopMus();if(rcCh){try{sb.removeChannel(rcCh)}catch(e){}rcCh=null}if(rcPt){clearInterval(rcPt);rcPt=null}rcId=null;$('fm').classList.remove('open');fmN=null}
-async function kickR(o){
-  const f=flats[fmN];if(!f)return; const owners=flatOwners(f); if(owners[0]!==meEnc)return showToast('Только хозяин','error'); if(!o||o===meEnc)return;
-  const{data,error}=await sb.rpc('kick_from_flat',{p_house:curHouse,p_flat:fmN,p_nick:o});
-  if(error)return showToast('❌ '+error.message,'error'); if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');
-  await reloadHouse(); upFm(); showToast('🚪 Выгнан','success');
-}
+async function kickR(o){const f=flats[fmN];if(!f)return; const owners=flatOwners(f); if(owners[0]!==meEnc)return showToast('Только хозяин','error'); if(!o||o===meEnc)return;const{data,error}=await sb.rpc('kick_from_flat',{p_house:curHouse,p_flat:fmN,p_nick:o});if(error)return showToast('❌ '+error.message,'error'); if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse(); upFm(); showToast('🚪 Выгнан','success');}
 async function leaveFlat(){const f=flats[fmN];if(!f)return;const{data,error}=await sb.rpc('leave_flat',{p_house:curHouse,p_flat:fmN});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');closeFm();await reloadHouse();await loadMyRooms()}
 async function openRFromN(rid){const m=rid.match(/^h(\d+)_flat(\d+)_room$/);if(!m)return;const hn=Number(m[1]),fn=Number(m[2]);if(hn!==Number(curHouse)){await switchHouse(hn)}const f=flats[fn];if(!f)return;const owners=flatOwners(f);if(!owners.includes(meEnc))return showToast('Нет доступа','error');if($('modal').classList.contains('open'))await closeM();fmN=fn;$('fm').classList.add('open');upFm();fmSw('room')}
 async function loadRM(){const tk=++rmTok,rid=rcId;if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);if(tk!==rmTok||rid!==rcId)return;if(error)return;const{data:hid}=await sb.from('hidden_messages').select('message_id').eq('user_nick',meEnc);const hI=new Set((hid||[]).map(h=>h.message_id));rmC=(data||[]).reverse().filter(m=>!hI.has(m.id)&&!m.deleted_for_all);await loadR(rmC);const gNum=(Number(curHouse)-1)*30+Number(fmN||0);const owners=fmN&&flats[fmN]?flatOwners(flats[fmN]).map(de):[];const ownersTxt=owners.length?'<br><span style="font-size:11px;font-weight:600;opacity:.8">👥 '+owners.map(n=>n===me?'ты':eh(n)).join(' · ')+'</span>':'';renderMs($('rc'),rmC,{topBanner:'🏠 Ваша Комната · Кв. '+gNum+ownersTxt})}
@@ -2750,22 +2406,10 @@ function sendRoomMsg(){const inp=$('rIn');if(!inp)return;const t=(inp.value||'')
 async function startRoomRec(){if(vRec&&vRec.state==='recording')return;if(!rcId)return;try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});vCh=[];vStr=stream;const mime=window.MediaRecorder&&MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':'audio/webm';vRec=new MediaRecorder(stream,{mimeType:mime});vRec.ondataavailable=e=>{if(e.data&&e.data.size>0)vCh.push(e.data)};vRec.onstop=async()=>{const dur=vS/10;if(vStr)vStr.getTracks().forEach(t=>t.stop());vStr=null;const blob=new Blob(vCh,{type:vRec.mimeType||'audio/webm'});vCh=[];vRec=null;vS=0;if(vTimer){clearInterval(vTimer);vTimer=null}const b=$('rVB');if(b){b.classList.remove('rec');b.textContent='🎤'}if(dur>=1){try{const path='voice/'+rcId+'/'+Date.now()+'_'+Math.random().toString(36).slice(2,8)+'.webm';const up=await sb.storage.from('media').upload(path,blob,{cacheControl:'3600',upsert:false});if(up.error){showToast('❌ '+up.error.message,'error');return}const{data:pub}=sb.storage.from('media').getPublicUrl(path);const url=pub&&pub.publicUrl;if(!url)return;const{data:ins,error}=await sb.from('messages').insert({room_id:rcId,nick:meEnc,voice_url:url,voice_dur:Math.max(1,Math.round(dur)),user_id:curUser.id}).select().single();if(error){showToast('❌ '+error.message,'error');return}if(ins&&ins.id){vDur[ins.id]=Math.max(1,Math.round(dur));vWaveCache[ins.id]=Math.random()}await loadRM();showToast('🎤','success')}catch(e){showToast('❌ '+e.message,'error')}}};vRec.start();vS=0;const b=$('rVB');if(b){b.classList.add('rec');b.textContent='⏹'}if(vTimer)clearInterval(vTimer);vTimer=setInterval(()=>{vS++;if(vS>=60)stopRec()},100)}catch(e){showToast('🎤 '+e.message,'error')}}
 
 let _callPc=null,_callId=null,_callFrom=null,_callTo=null,_callKind='audio',_callRole='caller',_callTimerInt=null,_callStartTs=0,_callLocalStream=null,_callRemoteStream=null,_callMiniMode=false,_callSubCh=null;
-const _ICE_CONFIG={iceServers:[
-  {urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:stun.cloudflare.com:3478'},
-  {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}
-]};
+const _ICE_CONFIG={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:stun.cloudflare.com:3478'},{urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}]};
 let _remoteAudioEl=null;
 async function startCall(toNickEnc,kind){if(_callPc){showToast('Уже в звонке','error');return}if(!curUser)return;const toNick=de(toNickEnc);if(!toNick||toNick===me)return;_callKind=kind||'audio';_callRole='caller';_callTo=toNickEnc;_callFrom=meEnc;try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(kind==='video'?'камере':'микрофону'),'error');return}const{data,error}=await sb.from('calls').insert({from_nick:meEnc,to_nick:toNickEnc,status:'ringing',kind:_callKind}).select().single();if(error){showToast('❌ '+error.message,'error');_cleanupCallLocal();return}_callId=data.id;_callPc=new RTCPeerConnection(_ICE_CONFIG);_setupPc(_callPc);_callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));const offer=await _callPc.createOffer();await _callPc.setLocalDescription(offer);await sb.from('calls').update({sdp_offer:JSON.stringify(offer)}).eq('id',_callId);_callSub();_showCallScreen(toNick,'Звоним...');if(_callKind==='video')_showLocalVideo();showToast('📞 '+toNick,'success')}
-function _setupPc(pc){
-  pc.onicecandidate=(e)=>{if(e.candidate){const cand=e.candidate.toJSON();sb.from('calls').select('ice_from,ice_to').eq('id',_callId).maybeSingle().then(({data})=>{if(!data)return;if(_callRole==='caller'){const arr=Array.isArray(data.ice_from)?data.ice_from:[];arr.push(cand);sb.from('calls').update({ice_from:arr}).eq('id',_callId)}else{const arr=Array.isArray(data.ice_to)?data.ice_to:[];arr.push(cand);sb.from('calls').update({ice_to:arr}).eq('id',_callId)}})}};
-  pc.ontrack=(e)=>{ _callRemoteStream=e.streams[0];
-    if(!_remoteAudioEl){ _remoteAudioEl=document.createElement('audio'); _remoteAudioEl.autoplay=true; _remoteAudioEl.setAttribute('playsinline',''); document.body.appendChild(_remoteAudioEl); }
-    _remoteAudioEl.srcObject=_callRemoteStream; _remoteAudioEl.muted=false; _remoteAudioEl.volume=1; _remoteAudioEl.play().catch(err=>console.warn('audio play:',err));
-    const rv=$('callRemoteVideo'); if(rv){ rv.srcObject=_callRemoteStream; rv.muted=false; rv.play().catch(()=>{}); }
-  };
-  pc.onconnectionstatechange=()=>{ console.log('PC state:',pc.connectionState,'ice:',pc.iceConnectionState); if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){endCall(false)} };
-  pc.oniceconnectionstatechange=()=>{ console.log('ICE state:',pc.iceConnectionState); };
-}
+function _setupPc(pc){pc.onicecandidate=(e)=>{if(e.candidate){const cand=e.candidate.toJSON();sb.from('calls').select('ice_from,ice_to').eq('id',_callId).maybeSingle().then(({data})=>{if(!data)return;if(_callRole==='caller'){const arr=Array.isArray(data.ice_from)?data.ice_from:[];arr.push(cand);sb.from('calls').update({ice_from:arr}).eq('id',_callId)}else{const arr=Array.isArray(data.ice_to)?data.ice_to:[];arr.push(cand);sb.from('calls').update({ice_to:arr}).eq('id',_callId)}})}};pc.ontrack=(e)=>{ _callRemoteStream=e.streams[0];if(!_remoteAudioEl){ _remoteAudioEl=document.createElement('audio'); _remoteAudioEl.autoplay=true; _remoteAudioEl.setAttribute('playsinline',''); document.body.appendChild(_remoteAudioEl); }_remoteAudioEl.srcObject=_callRemoteStream; _remoteAudioEl.muted=false; _remoteAudioEl.volume=1; _remoteAudioEl.play().catch(err=>console.warn('audio play:',err));const rv=$('callRemoteVideo'); if(rv){ rv.srcObject=_callRemoteStream; rv.muted=false; rv.play().catch(()=>{}); }};pc.onconnectionstatechange=()=>{ console.log('PC state:',pc.connectionState,'ice:',pc.iceConnectionState); if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){endCall(false)} };pc.oniceconnectionstatechange=()=>{ console.log('ICE state:',pc.iceConnectionState); };}
 function _callSub(){if(_callSubCh)return;_callSubCh=sb.channel('call-'+_callId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'calls',filter:'id=eq.'+_callId},async p=>{if(!p.new)return;const r=p.new;if(_callRole==='caller'&&r.sdp_answer&&_callPc&&!_callPc.currentRemoteDescription){try{await _callPc.setRemoteDescription(JSON.parse(r.sdp_answer))}catch(e){}const iceTo=Array.isArray(r.ice_to)?r.ice_to:[];for(const c of iceTo){try{await _callPc.addIceCandidate(c)}catch(e){}}_startCallTimer();_hideRinging()}if(_callRole==='caller'&&Array.isArray(r.ice_to)){const applied=_callPc&&_callPc._appliedIceTo||0;const fresh=r.ice_to.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceTo=r.ice_to.length}if(_callRole==='callee'&&Array.isArray(r.ice_from)){const applied=_callPc&&_callPc._appliedIceFrom||0;const fresh=r.ice_from.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceFrom=r.ice_from.length}if(r.status==='ended'||r.status==='rejected'||r.status==='missed'){_endCallLocal();if(r.status==='rejected')showToast('📵 Отклонено','error');else if(r.status==='missed')showToast('📵 Не ответил','error')}}).subscribe()}
 function _showCallScreen(name,subtitle){const av=$('callAv');const url=photoCache[_callFrom===meEnc?_callTo:_callFrom];if(url){av.style.backgroundImage='url("'+url+'")';av.textContent='';av.classList.add('has-img')}else{const nick=_callFrom===meEnc?_callTo:_callFrom;av.textContent=firstL(de(nick));av.style.background='linear-gradient(135deg,'+nCol(de(nick))+','+shCol(nCol(de(nick)),-18)+')'}$('callName').textContent=de(name);$('callVideoName').textContent=de(name);$('callSubtitle').textContent=subtitle||'';$('callSubtitle').style.display=subtitle?'block':'none';$('callTimer').style.display='none';$('callVideoTimer').textContent='0:00';$('callMiniName').textContent=de(name);const sc=$('callScreen');sc.classList.toggle('video',_callKind==='video');sc.classList.add('on');const btn=$('callMuteBtn');if(btn)btn.classList.remove('on');const cbtn=$('callCamBtn');if(cbtn)cbtn.classList.toggle('on',_callKind==='video')}
 function _hideRinging(){$('callSubtitle').textContent='';$('callSubtitle').style.display='none'}
@@ -2784,7 +2428,6 @@ async function acceptCall(){const inc=_incomingCall;if(!inc)return;try{const{dat
 async function rejectCall(){const inc=_incomingCall;if(!inc)return;_incomingCall=null;$('callIncoming').classList.remove('open');try{await sb.from('calls').update({status:'rejected',ended_at:new Date().toISOString()}).eq('id',inc.id)}catch(e){}}
 function closeIncomingUI(){_incomingCall=null;$('callIncoming').classList.remove('open')}
 
-// ====== ФИКС КНОПОК И НАБЛЮДАТЕЛЬ ======
 function setupUI(){
   document.getElementById('mbtn').onclick=()=>document.getElementById('sb').classList.add('open');
   document.getElementById('cs').onclick=()=>document.getElementById('sb').classList.remove('open');
@@ -2835,7 +2478,6 @@ function setupUI(){
   const incRej=$('callIncReject');if(incRej)incRej.onclick=rejectCall;
 }
 
-/* ====== ХАК-ЗАЩИТА: авто-обёртки ====== */
 (function(){
   function wrapOwner(name){ const orig = window[name]; if(typeof orig !== 'function') return; window[name] = async function(){ if(!(await guardOwner(name))) return; return orig.apply(this, arguments); }; }
   function wrapAdmin(name){ const orig = window[name]; if(typeof orig !== 'function') return; window[name] = async function(){ if(!(await guardAdmin(name))) return; return orig.apply(this, arguments); }; }
@@ -2862,7 +2504,7 @@ async function start(){
     $('auth').style.display='none'; $('nickScr').style.display='none'; $('app').style.display='block';
     $('myNick').textContent = me; $('myAv').innerHTML = avH(me,'sm');
     applyNeonCSS(); upAdminTog(); updateSoundBtn();
-    setupUI(); updateSeasonBtn(); // ВАЖНО: вызов как можно раньше
+    setupUI(); updateSeasonBtn();
     subProf(); subGP(); subGroups(); subRoomInvites(); subCalls();
     await Promise.all([
       loadAllProfiles().catch(e=>console.warn('loadAllProfiles',e)),
@@ -2886,6 +2528,10 @@ async function start(){
     checkAllEvents(); setInterval(checkAllEvents, 60000);
     setTimeout(checkPendingInvites, 1500); setInterval(checkPendingInvites, 90000);
     setInterval(checkGifts, 120000); setInterval(autoCheckNewHouse, 60000); setTimeout(checkGifts, 2000);
+    
+    // Запуск погоды
+    startDynamicWeather();
+    
   }catch(e){
     console.error('START FAILED:', e);
     showToast('Ошибка запуска: '+(e.message||e), 'error');
@@ -2931,7 +2577,6 @@ function subHouseNews(){
 }
 function subFlats(){if(fc)return;fc=sb.channel('flats-rt').on('postgres_changes',{event:'*',schema:'public',table:'flats'},async p=>{const r=p.new||p.old;if(!r||r.house_id!==curHouse)return;if(p.eventType==='DELETE')delete flats[r.number];else flats[r.number]=p.new;renderFlats()}).subscribe()}
 
-// ====== МАГИЯ ЗАСТАВКИ 2003 ======
 const BOOT_LINES_OK = [
   {t:'Запуск HomeOS...', c:'dim'},
   {t:'Проверка целостности стен...', c:'ok', s:'[OK]'},
@@ -2998,8 +2643,8 @@ async function _bootTypeLine(text, className, suffix) {
 
     for (let i = 0; i < text.length; i++) {
         sp.textContent += text[i];
-        if (i % 2 === 0) playBootBeep(); // Звук каждые 2 буквы
-        await _bootSleep(20); // <-- ТУТ СКОРОСТЬ (20 миллисекунд)
+        if (i % 2 === 0) playBootBeep(); 
+        await _bootSleep(20); 
     }
     
     if (suffix) {
@@ -3063,7 +2708,6 @@ async function runBootSequence(authorized){
   await _bootSleep(400);
   const lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
   
-  // Массив с домиком
   const ASCII_ART = [
     "          ____           ",
     "         /    \\          ",
@@ -3073,20 +2717,18 @@ async function runBootSequence(authorized){
     "     |_____||_____|      "
   ];
   
-  // Печатаем текст слева и синхронно рисуем домик справа
   for(let i = 0; i < lines.length; i++){
     const ln = lines[i];
     await _bootTypeLine(ln.t, ln.c, ln.s);
     
-    // Привязка строк домика к конкретным строкам текста
     if (authorized && asciiEl) {
       let artLine = null;
-      if (i === 1) artLine = ASCII_ART[0];      // Проверка целостности стен
-      else if (i === 3) artLine = ASCII_ART[1]; // Подключение к районной сети
-      else if (i === 5) artLine = ASCII_ART[2]; // Синхронизация аккаунта
-      else if (i === 7) artLine = ASCII_ART[3]; // Обнаружено соседей
-      else if (i === 9) artLine = ASCII_ART[4]; // Подготовка завершена
-      else if (i === 10) artLine = ASCII_ART[5];// Добро пожаловать
+      if (i === 1) artLine = ASCII_ART[0];
+      else if (i === 3) artLine = ASCII_ART[1];
+      else if (i === 5) artLine = ASCII_ART[2];
+      else if (i === 7) artLine = ASCII_ART[3];
+      else if (i === 9) artLine = ASCII_ART[4];
+      else if (i === 10) artLine = ASCII_ART[5];
       
       if (artLine !== null) {
         asciiEl.textContent += artLine + '\n';
@@ -3096,7 +2738,6 @@ async function runBootSequence(authorized){
     await _bootSleep(ln.c === 'welcome' ? 400 : 150);
   }
   
-  // Финальный звук запуска (Два тона)
   try {
     if(_audioCtx){
       const now = _audioCtx.currentTime;
@@ -3110,7 +2751,6 @@ async function runBootSequence(authorized){
   } catch(e){}
   
   await _bootSleep(800);
-  
   bs.classList.add('boot-zoom-in');
   await _bootSleep(800);
   
@@ -3121,7 +2761,6 @@ async function runBootSequence(authorized){
   bs.style.zIndex = '-1';
 }
 
-// Инициализация заставки при загрузке страницы
 window.addEventListener('DOMContentLoaded', function(){
   const bs = document.getElementById('bootScreen'); if(!bs) return;
   const handler = async function(){
@@ -3132,9 +2771,7 @@ window.addEventListener('DOMContentLoaded', function(){
     let session = null;
     try{ const r = await sb.auth.getSession(); session = r && r.data ? r.data.session : null; }catch(e){ console.warn('getSession', e); }
     const authorized = !!(session && session.user);
-    
     await runBootSequence(authorized);
-    
     if(authorized){
       curUser = session.user;
       try{ await afterAuth(); }catch(e){ console.error('afterAuth', e); showToast('Ошибка входа: '+(e.message||e),'error'); }
@@ -3147,7 +2784,6 @@ window.addEventListener('DOMContentLoaded', function(){
   bs.addEventListener('keydown', keyHandler);
 });
 
-// Оптимизация Canvas (Остановка анимации)
 (function(){
   const cv=document.getElementById('seasons');if(!cv)return;
   const ctx=cv.getContext('2d');let W=0,H=0,DPR=1,curSeason='autumn',particles=[],raf=null,sunAngle=0;
@@ -3166,7 +2802,7 @@ window.addEventListener('DOMContentLoaded', function(){
   function drawPetal(p){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.color;const s=p.size;ctx.beginPath();ctx.moveTo(0,-s);ctx.bezierCurveTo(s*0.9,-s*0.3,s*0.9,s*0.4,0,s);ctx.bezierCurveTo(-s*0.4,s*0.5,-s*0.7,-s*0.2,0,-s);ctx.fill();ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=0.6;ctx.stroke();ctx.restore()}
   function drawSun(){const cx=W-110,cy=110,R=52;sunAngle+=0.002;ctx.save();ctx.translate(cx,cy);ctx.rotate(sunAngle);for(let i=0;i<12;i++){const a=(i/12)*Math.PI*2;const r2=R+22+Math.sin(sunAngle*3+i)*4;ctx.save();ctx.rotate(a);const grd=ctx.createLinearGradient(R,0,r2,0);grd.addColorStop(0,'rgba(255,215,80,0.75)');grd.addColorStop(1,'rgba(255,215,80,0)');ctx.fillStyle=grd;ctx.beginPath();ctx.moveTo(R,0);ctx.lineTo(r2,-6);ctx.lineTo(r2,6);ctx.closePath();ctx.fill();ctx.restore()}ctx.restore();const g=ctx.createRadialGradient(cx,cy,4,cx,cy,R);g.addColorStop(0,'rgba(255,255,220,1)');g.addColorStop(0.4,'rgba(255,220,90,0.95)');g.addColorStop(0.8,'rgba(255,180,50,0.55)');g.addColorStop(1,'rgba(255,160,40,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,255,200,0.95)';ctx.beginPath();ctx.arc(cx,cy,R*0.45,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(255,240,150,0.85)';ctx.beginPath();ctx.arc(cx,cy,R*0.28,0,Math.PI*2);ctx.fill()}
   function loop(){
-    if(document.hidden){raf=requestAnimationFrame(loop);return;} // Не рисуем если вкладка скрыта
+    if(document.hidden){raf=requestAnimationFrame(loop);return;} 
     ctx.clearRect(0,0,W,H);
     if(curSeason==='summer'){drawSun();raf=requestAnimationFrame(loop);return}
     for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.sway+=p.swaySpeed;p.x+=p.vx+Math.sin(p.sway)*p.swayAmp;p.y+=p.vy;p.rot+=p.vrot;if(p.y>H+30||p.x<-40||p.x>W+40){particles[i]=mkParticle(curSeason);continue}if(curSeason==='autumn')drawLeaf(p);else if(curSeason==='winter')drawSnow(p);else if(curSeason==='spring')drawPetal(p)}raf=requestAnimationFrame(loop)
