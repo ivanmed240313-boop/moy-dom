@@ -1359,6 +1359,194 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
     0% { opacity: 0; transform: scale(0.9) translateY(20px); }
     100% { opacity: 1; transform: scale(1) translateY(0); }
 }
+/* ===== ULTRADAY EVENT (ULTRAKILL THEME) ===== */
+body.ultra-mode {
+    --neon-rgb: 255, 0, 0 !important;
+    background: #050000 !important;
+    color: #ff3333 !important;
+}
+
+/* Кровавый фон */
+body.ultra-mode::before {
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(139, 0, 0, 0.15), transparent 60%),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,0,0,0.03) 2px, rgba(255,0,0,0.03) 4px) !important;
+    animation: none !important;
+}
+
+/* Все окна и панели */
+body.ultra-mode .sb, 
+body.ultra-mode .mbox, 
+body.ultra-mode .fmb, 
+body.ultra-mode .afb, 
+body.ultra-mode .ofb, 
+body.ultra-mode .emb,
+body.ultra-mode .gmb,
+body.ultra-mode .duty-body,
+body.ultra-mode .fmp,
+body.ultra-mode #houseNews {
+    background: #0a0000 !important;
+    border: 1px solid #ff0000 !important;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2), inset 0 0 20px rgba(255, 0, 0, 0.05) !important;
+}
+
+/* Шапки окон */
+body.ultra-mode .chd,
+body.ultra-mode .sb-h,
+body.ultra-mode .hn-top,
+body.ultra-mode .duty-head {
+    background: #000 !important;
+    border-bottom: 1px solid #ff0000 !important;
+}
+
+/* Текст, заголовки, ники */
+body.ultra-mode .nname, 
+body.ultra-mode .duty-title, 
+body.ultra-mode .chi .chn,
+body.ultra-mode .pf-name,
+body.ultra-mode .hn-top .title,
+body.ultra-mode .chi .chs.online,
+body.ultra-mode h3,
+body.ultra-mode label,
+body.ultra-mode .sb-h > span {
+    color: #ff0000 !important;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.8) !important;
+}
+
+/* Инпуты и поля ввода */
+body.ultra-mode input,
+body.ultra-mode textarea,
+body.ultra-mode .ir input,
+body.ultra-mode .gm-inp,
+body.ultra-mode .sc-inp {
+    background: #000 !important;
+    border: 1px solid #8b0000 !important;
+    color: #ff3333 !important;
+    box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.2) !important;
+}
+body.ultra-mode input:focus,
+body.ultra-mode textarea:focus {
+    border-color: #ff0000 !important;
+    outline: none !important;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5) !important;
+}
+body.ultra-mode input::placeholder,
+body.ultra-mode textarea::placeholder {
+    color: #550000 !important;
+}
+
+/* Кнопки (включая активные вкладки и магазин) */
+body.ultra-mode .hbtn.act, 
+body.ultra-mode .add-btn, 
+body.ultra-mode .duty-start, 
+body.ultra-mode .fma .sv, 
+body.ultra-mode .gbtn,
+body.ultra-mode .ema .sv,
+body.ultra-mode .ir button,
+body.ultra-mode .of-ev-btn,
+body.ultra-mode .ir .ib {
+    background: #1a0000 !important;
+    color: #ff0000 !important;
+    border: 1px solid #ff0000 !important;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4) !important;
+    transition: all 0.2s;
+}
+body.ultra-mode .hbtn.act:hover, 
+body.ultra-mode .add-btn:hover, 
+body.ultra-mode .duty-start:hover, 
+body.ultra-mode .ir button:hover {
+    background: #ff0000 !important;
+    color: #000 !important;
+    box-shadow: 0 0 25px rgba(255, 0, 0, 0.8) !important;
+}
+
+/* Сообщения в чате */
+body.ultra-mode .msg.own {
+    background: linear-gradient(180deg, #8b0000, #4a0000) !important;
+    color: #fff !important;
+    border: 1px solid #ff0000 !important;
+}
+body.ultra-mode .msg.other {
+    background: #110000 !important;
+    color: #ff8888 !important;
+    border: 1px solid #550000 !important;
+}
+body.ultra-mode .msg .nick {
+    color: #ff0000 !important;
+    text-shadow: 0 0 5px #ff0000 !important;
+}
+
+/* Квартиры */
+body.ultra-mode .flat.mine, 
+body.ultra-mode .flat.taken {
+    background: linear-gradient(145deg, #4a0000, #1a0000) !important;
+    border-color: #ff0000 !important;
+    box-shadow: inset 0 0 20px rgba(255,0,0,0.4), 0 0 10px rgba(255,0,0,0.2) !important;
+}
+body.ultra-mode .flat:hover {
+    border-color: #ff3333 !important;
+    box-shadow: 0 0 20px #ff0000 !important;
+}
+
+/* Скроллбары (чтобы были красными) */
+body.ultra-mode ::-webkit-scrollbar-thumb {
+    background: rgba(255, 0, 0, 0.3) !important;
+}
+body.ultra-mode ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 0, 0, 0.6) !important;
+}
+
+/* Меню пользователя и верхняя панель */
+body.ultra-mode #topRight .umBtn,
+body.ultra-mode .hbtn,
+body.ultra-mode .umDropdown {
+    border-color: #8b0000 !important;
+    background: #0a0000 !important;
+    color: #ff0000 !important;
+}
+body.ultra-mode .umDropdown button:hover {
+    background: #4a0000 !important;
+}
+
+/* Модалки и оверлеи */
+body.ultra-mode .bgl::after {
+    background: rgba(10, 0, 0, 0.9) !important;
+}
+
+/* === ЗАСТАВКА (BOOT SCREEN) === */
+body.ultra-mode #bootScreen {
+    background: radial-gradient(circle at center, #1a0000 0%, #000 100%) !important;
+}
+body.ultra-mode #bootScreen::before {
+    background: repeating-linear-gradient(0deg, rgba(255,0,0,0.05), rgba(255,0,0,0.05) 1px, transparent 1px, transparent 3px) !important;
+}
+body.ultra-mode #bootScreen::after {
+    background: linear-gradient(180deg, transparent 0%, rgba(255,0,0,0.15) 50%, transparent 100%) !important;
+}
+body.ultra-mode #bootLog .bl.ok,
+body.ultra-mode #bootLog .bl.dim,
+body.ultra-mode #bootLog .bl {
+    color: #ff3333 !important;
+    text-shadow: 0 0 8px rgba(255,0,0,0.8) !important;
+}
+body.ultra-mode #bootLog .bl .bs {
+    color: #ff0000 !important;
+}
+body.ultra-mode #bootLog .boot-cursor {
+    background: #ff0000 !important;
+    box-shadow: 0 0 10px #ff0000 !important;
+}
+
+/* Спец-класс для красных фраз в заставке */
+#bootLog .bl.ultra-red {
+    color: #ff0000 !important;
+    text-shadow: 0 0 15px #ff0000, 0 0 35px #8b0000, 0 0 50px #ff0000 !important;
+    font-weight: 900 !important;
+    letter-spacing: 2px;
+    font-size: 18px;
+    margin-top: 10px;
+}
+/* ========================== */
 </style>
 </head>
 <body>
@@ -1530,7 +1718,8 @@ const EVENTS=[
   {id:'minecraft',name:'⛏️ Minecraft',icon:'⛏️',md:'05-17',title:'Minecraft — первый публичный релиз'},
   {id:'roblox',name:'🟥 Roblox',icon:'🟥',md:'09-01',title:'Roblox — день рождения'},
   {id:'portal',name:'🟦 Portal',icon:'🟦',md:'10-10',title:'Portal — с кубом и тортом'},
-  {id:'terraria',name:'🌳 Terraria',icon:'🌳',md:'05-16',title:'Terraria — 2D-песочница'}
+  {id:'terraria',name:'🌳 Terraria',icon:'🌳',md:'05-16',title:'Terraria — 2D-песочница'},
+  {id:'ULTRADAY',name:'🩸 ULTRADAY',icon:'🩸',md:'09-03',title:'ULTRADAY — 3 сентября'}
 ];
 let adminMode=false,pendingUser=null,curEmail='',emId=null,emRoom=null,notifPerm='default',epOpen=false;
 let curUser=null,me=null,meEnc=null,iAmAdmin=false,isBanned=false,banR='';
@@ -1971,10 +2160,12 @@ function isEventMSK(evId){
   if(evId==='teacher')return mo===9&&date===5;
   if(evId==='911')return mo===8&&date>=11&&date<=18;
   if(evId==='crocus')return mo===2&&date>=22&&date<=29;
+  if(evId==='ULTRADAY') return mo===8 && date===3; // 3 сентября
   return false;
 }
 function shouldShowEvent(evId){const m=evModeFor(me,evId);if(m==='on')return true;if(m==='off')return false;return isEventMSK(evId)}
-function checkAllEvents(){if(!me)return;checkXmas();checkEaster();checkFireworks();checkMaslenitsa();checkKnowledge();checkTeacher();checkMemorials();checkUtHeart();checkDtsStar();checkGameIcons()}
+function checkAllEvents(){if(!me)return;checkXmas();checkEaster();checkFireworks();checkMaslenitsa();checkKnowledge();checkTeacher();checkMemorials();checkUtHeart();checkDtsStar();checkGameIcons();checkULTRADAY();}
+function checkULTRADAY(){const isUltra=shouldShowEvent('ULTRADAY');document.body.classList.toggle('ULTRA-mode',isUltra);}
 function checkXmas(){const t=$('xmasTree'),g=$('xmasGifts');if(!t)return;const show=shouldShowEvent('xmas');t.classList.toggle('on',show);if(g)g.classList.toggle('on',show)}
 function checkEaster(){const t=$('easterDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('easter'))}
 function checkMaslenitsa(){const t=$('maslenitsaDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('maslenitsa'))}
@@ -2802,7 +2993,7 @@ async function runBootSequence(authorized){
   if (asciiEl) { asciiEl.innerHTML = ''; asciiEl.style.opacity = '1'; }
 
   await _bootSleep(400);
-  const lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
+    const isUltra = shouldShowEvent('ULTRADAY');   let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;   if (authorized && isUltra) {     lines = [       {t:'BOOT UP SEQUENCE... READY', c:'ok'},       {t:'FIRMWARE: LATEST VERSION (2112.08.06)', c:'ok'},       {t:'CALIBRATION: RECENTLY UPDATED', c:'ok'},       {t:'ALL SYSTEMS OPERATIONAL', c:'ok'},       {t:'LOADING STATUS UPDATE...', c:'ok'},       {t:'STATUS UPDATE:', c:'ok'},       {t:'MACHINE ID: V1', c:'ok'},       {t:'LOCATION: HOMEOS', c:'ok'},       {t:'CURRENT OBJECTIVE: FIND A FRIEND', c:'ok'},       {t:'MANKIND IS DEAD.', c:'ultra-red'},       {t:'BLOOD IS FUEL.', c:'ultra-red'},       {t:'HELL IS FULL.', c:'ultra-red'}     ];   }
   
   const ASCII_ART = [
     "          ____           ",
@@ -2817,7 +3008,7 @@ async function runBootSequence(authorized){
     const ln = lines[i];
     await _bootTypeLine(ln.t, ln.c, ln.s);
     
-    if (authorized && asciiEl) {
+    if (authorized && asciiEl && !isUltra) {
       let artLine = null;
       if (i === 1) artLine = ASCII_ART[0];
       else if (i === 3) artLine = ASCII_ART[1];
