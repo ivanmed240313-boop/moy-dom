@@ -1434,7 +1434,7 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 
 <div id="gardenM" class="em" style="z-index:670"><div class="emb" style="width:640px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title" id="gardenTitle">🌱 Моя грядка</div><button class="pf-close" onclick="closeGarden()">✕</button></div><div class="duty-body" style="overflow-y:auto">
 <div id="gardenMain">
-<div class="garden-toolbar"><button style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff" onclick="openSeedShop()">🛒 Семена</button><button style="background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff" onclick="openFertShop()">💧 Удобрения</button><button style="background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff" onclick="openInv()">🎒 Инвентарь</button></div>
+<div class="garden-toolbar">   <button style="background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff" onclick="openSeedShop()">🛒 Семена</button>   <button style="background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff" onclick="openFertShop()">💧 Удобрения</button>   <button style="background:linear-gradient(135deg,#a06bff,#6b4aff);color:#fff" onclick="openInv()">🎒 Инвентарь</button>   <button style="background:linear-gradient(135deg,#f5c542,#ff9d2e);color:#000" onclick="openCasesShop()">🎁 Кейсы</button> </div>
 <div class="visit-input-row"><input id="visitInp" placeholder="Ник для визита..." maxlength="20" autocomplete="off"><button onclick="doVisit()">👀 Посмотреть</button></div>
 <div class="garden-beds" id="gardenBeds"></div>
 <div class="duty-msg" id="gardenMsg"></div>
@@ -1450,7 +1450,18 @@ button, .hbtn, .ebtn, .oftab, .aftab, .of-ev-btn, .afbtn, .call-btn, .flat {
 <div id="seedShopM" class="em" style="z-index:680"><div class="emb" style="width:560px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title">🛒 Магазин семян</div><button class="pf-close" onclick="closeSeedShop()">✕</button></div><div class="duty-body" style="overflow-y:auto"><div class="garden-stock-timer" id="seedStockTimer">⏱ Обновление через 00:00</div><div id="seedStockList"></div><div class="duty-msg" id="seedShopMsg"></div></div></div></div>
 <div id="fertShopM" class="em" style="z-index:680"><div class="emb" style="width:500px;padding:0;overflow:hidden"><div class="duty-head"><div class="duty-title">💧 Магазин удобрений</div><button class="pf-close" onclick="closeFertShop()">✕</button></div><div class="duty-body"><div class="garden-stock-timer" id="fertStockTimer">⏱ Обновление через 00:00</div><div id="fertStockList"></div><div class="duty-msg" id="fertShopMsg"></div></div></div></div>
 <div id="invM" class="em" style="z-index:690"><div class="emb" style="width:520px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column"><div class="duty-head"><div class="duty-title">🎒 Инвентарь</div><button class="pf-close" onclick="closeInv()">✕</button></div><div class="duty-body" style="overflow-y:auto"><div style="font-size:13px;color:#a0a0b8;margin-bottom:10px;font-weight:700">🌱 Семена:</div><div class="inv-grid" id="invSeeds"></div><div style="font-size:13px;color:#a0a0b8;margin:16px 0 10px;font-weight:700">💧 Удобрения:</div><div class="inv-grid" id="invFerts"></div><div class="duty-msg" id="invMsg"></div></div></div></div>
-
+<div id="casesM" class="em" style="z-index:695">
+  <div class="emb" style="width:640px;padding:0;overflow:hidden;max-height:92vh;display:flex;flex-direction:column">
+    <div class="duty-head">
+      <div class="duty-title">🎁 Кейсы с наградами</div>
+      <button class="pf-close" onclick="closeCases()">✕</button>
+    </div>
+    <div class="duty-body" style="overflow-y:auto">
+      <div id="casesBody"></div>
+      <div class="duty-msg" id="caseMsg" style="font-weight:700;min-height:22px"></div>
+    </div>
+  </div>
+</div>
 <div id="giftM" class="em" style="z-index:700"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800" id="giftTitle">🎁 Подарить семя</h3><label class="gm-lbl">Кому (ник)</label><input id="giftNickInp" class="gm-inp" maxlength="20" placeholder="Ник получателя" autocomplete="off"><label class="gm-lbl">Количество</label><input id="giftQtyInp" class="gm-inp" type="number" min="1" value="1" inputmode="numeric"><div class="gm-err" id="giftErr"></div><div class="ema"><button class="cn" onclick="closeGift()">Отмена</button><button class="sv" onclick="sendGift()">🎁 Подарить</button></div></div></div>
 
 <div id="roomInviteM" class="em" style="z-index:750"><div class="emb" style="width:440px;padding:24px"><h3 style="margin:0 0 14px;font-size:17px;font-weight:800">👥 Приглашение в комнату</h3><div id="riText" style="font-size:14px;color:#c8c8d0;line-height:1.65;margin-bottom:18px"></div><div class="ema"><button class="cn" onclick="declineInvite()">Отклонить</button><button class="sv" onclick="acceptInvite()">✅ Согласиться</button></div></div></div>
@@ -1803,7 +1814,7 @@ async function ofLogs(b) {
   await renderLogs(); _logsAutoUpdate = setInterval(renderLogs, 3000);
 }
 
-const APP_VERSION='3.9.0';
+const APP_VERSION='3.9.3';
 (function(){function fmt(d){const p=n=>String(n).padStart(2,'0');return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()+' '+p(d.getHours())+':'+p(d.getMinutes())}function render(){const el=document.getElementById('verText');if(!el)return;const lm=new Date(document.lastModified);const valid=!isNaN(lm.getTime());const stamp=valid?fmt(lm):'—';el.textContent='v'+APP_VERSION+' · '+stamp;const b=document.getElementById('verBadge');if(b){b.onclick=function(){alert('Дом — версия сайта\n\nAPP_VERSION: '+APP_VERSION+'\nФайл обновлён: '+stamp+'\nСейчас: '+fmt(new Date()))}}}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render()})();
 async function afRend(){const b=$(_afTarget);if(afT==='flats')return await afFlats(b);if(afT==='ent')return afEnt(b);if(afT==='house')return await afHouse(b);if(afT==='users')return await afUsers(b)}
 async function ofGive(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}b.innerHTML='<div class="of-hint">🎁 <b>Выдача предметов.</b> Введи ник игрока, выбери вкладку и предмет.</div>'+'<div class="give-confirm"><span style="font-size:13px;color:#c8c8d0">Ник:</span><input id="giveNickField" placeholder="nick" style="width:140px;text-align:left" maxlength="20"><button onclick="giveLoadUser()">Загрузить</button></div>'+'<div id="giveBodyInline"></div>';await loadAllProfiles()}
@@ -1995,56 +2006,99 @@ async function afMax(houseId,n){if(!(await guardAdmin())) return;if(!hasAdmin())
 async function afTogEnt(g,bl){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data,error}=await sb.rpc('owner_toggle_entrance',{p_house:curHouse,p_ent:g,p_blocked:bl});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await reloadHouse();afRend()}
 async function afTogHouse(hid,bl){if(!(await guardAdmin())) return;if(!hasAdmin())return;const{data,error}=await sb.rpc('owner_toggle_house',{p_id:hid,p_blocked:bl});if(error)return showToast('❌ '+error.message,'error');if(data&&data.ok===false)return showToast('❌ '+(data.error||''),'error');await loadHouses();renderHouses();await afRend()}
 
-// ====== КЕЙСЫ (ЛУТБОКСЫ) ======
 const CASES = {
-    '100': { price: 100, name: 'Обычный кейс', color: '#4caf50', pool: ['common', 'uncommon'] },
-    '500': { price: 500, name: 'Редкий кейс', color: '#3b82f6', pool: ['uncommon', 'rare', 'mythic'] },
-    '1000': { price: 1000, name: 'Легендарный кейс', color: '#f5c542', pool: ['rare', 'mythic', 'legendary'] }
+    '100': {
+        price: 100, name: 'Обычный кейс', color: '#4caf50',
+        desc: 'Обычные и необычные семена',
+        seedPool: ['common', 'uncommon'],
+        fertPool: ['fert1'],
+        fertChance: 0.25
+    },
+    '500': {
+        price: 500, name: 'Редкий кейс', color: '#3b82f6',
+        desc: 'Необычные, редкие, мифические',
+        seedPool: ['uncommon', 'rare', 'mythic'],
+        fertPool: ['fert1', 'fert2'],
+        fertChance: 0.35
+    },
+    '1000': {
+        price: 1000, name: 'Легендарный кейс', color: '#f5c542',
+        desc: 'Редкие, мифические, легендарные',
+        seedPool: ['rare', 'mythic', 'legendary'],
+        fertPool: ['fert2', 'fert3'],
+        fertChance: 0.45
+    }
 };
 
 function openCasesShop() {
-    const g = loadGarden(me);
-    let html = '<div class="of-hint">🎁 <b>Кейсы с семенами.</b> Испытай удачу!</div><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">';
+    if ($('caseMsg')) $('caseMsg').innerHTML = '';
+    $('casesM').classList.add('open');
+    renderCasesShop();
+}
+function openCasesShop() {
+    if ($('caseMsg')) $('caseMsg').innerHTML = '';
+    $('casesM').classList.add('open');
+    renderCasesShop();
+}
+function closeCases() {
+    const m = $('casesM'); if (m) m.classList.remove('open');
+}
+function renderCasesShop() {
+    const box = $('casesBody'); if (!box) return;
+    let html = '<div class="of-hint">🎁 <b>Кейсы с наградами.</b> Чем дороже кейс — тем лучше награда. Внутри: 🌱 семена или 💧 удобрения.</div>';
+    html += '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">';
     for (const key in CASES) {
         const c = CASES[key];
-        html += `<div style="background:rgba(255,255,255,.04);border:1px solid ${c.color};border-radius:16px;padding:20px;text-align:center;min-width:200px;box-shadow:0 0 20px ${c.color}44">
-            <div style="font-size:40px;margin-bottom:10px">🎁</div>
-            <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:5px">${c.name}</div>
-            <div style="font-size:13px;color:#aaa;margin-bottom:15px">Шанс на редкие семена!</div>
-            <button class="duty-start" onclick="buyCase('${key}')">Открыть за ${c.price}💰</button>
+        const canBuy = myCoins >= c.price;
+        html += `<div style="background:rgba(255,255,255,.04);border:2px solid ${c.color};border-radius:16px;padding:20px 14px;text-align:center;min-width:170px;max-width:210px;flex:1;box-shadow:0 0 22px ${c.color}44;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+                <div style="font-size:44px;margin-bottom:8px">🎁</div>
+                <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:5px">${c.name}</div>
+                <div style="font-size:11.5px;color:#aaa;margin-bottom:8px;line-height:1.4">${c.desc}</div>
+            </div>
+            <div>
+                <div style="font-size:15px;color:${c.color};font-weight:800;margin-bottom:12px">${c.price}💰</div>
+                <button class="duty-start" style="padding:10px;font-size:13px;${canBuy ? '' : 'opacity:.5;cursor:not-allowed'}" ${canBuy ? `onclick="buyCase('${key}')"` : ''}>${canBuy ? 'Открыть' : 'Мало монет'}</button>
+            </div>
         </div>`;
     }
-    html += '</div><div class="duty-msg" id="caseMsg"></div>';
-    $('invMsg').innerHTML = html;
-    $('invM').classList.add('open');
+    html += '</div>';
+    box.innerHTML = html;
 }
-
 async function buyCase(tier) {
     const c = CASES[tier];
+    if (!c) return;
     if (myCoins < c.price) return showToast('Мало монет', 'error');
-    const ok = await askConfirm('Открыть кейс?', `Потратить ${c.price}💰?`, 'Открыть');
-    if(!ok) return;
-    
-    // Проверка баланса на сервере и списание
+    const ok = await askConfirm('Открыть кейс?', `Потратить ${c.price}💰 на «${c.name}»?`, 'Открыть');
+    if (!ok) return;
     const { data, error } = await sb.rpc('add_coins', { p_delta: -c.price });
-    if (error || (data && data.ok === false)) return showToast('Ошибка', 'error');
-    
-    myCoins -= c.price; updateCoinsUI();
-    
-    // Выбор семени
-    const pool = SEEDS.filter(s => c.pool.includes(s.rarity));
-    const winSeed = pool[Math.floor(Math.random() * pool.length)];
-    
+    if (error) return showToast('❌ ' + error.message, 'error');
+    if (data && data.ok === false) return showToast('❌ ' + (data.error || ''), 'error');
+    myCoins = (data && typeof data.coins === 'number') ? data.coins : myCoins - c.price;
+    updateCoinsUI();
     const g = loadGarden(me);
-    g.inv[winSeed.id] = (g.inv[winSeed.id] || 0) + 1;
+    let resultText = '';
+    let isEpic = false;
+    if (Math.random() < c.fertChance) {
+        const fertId = c.fertPool[Math.floor(Math.random() * c.fertPool.length)];
+        g.ferts[fertId] = (g.ferts[fertId] || 0) + 1;
+        const f = FERTS.find(x => x.id === fertId);
+        resultText = `💧 ${f ? f.name : fertId} (удобрение) ×1`;
+        isEpic = fertId === 'fert3';
+    } else {
+        const pool = SEEDS.filter(s => c.seedPool.includes(s.rarity));
+        if (!pool.length) { showToast('Ошибка пула', 'error'); return; }
+        const winSeed = pool[Math.floor(Math.random() * pool.length)];
+        g.inv[winSeed.id] = (g.inv[winSeed.id] || 0) + 1;
+        resultText = `${winSeed.icon} ${winSeed.name} ×1`;
+        isEpic = winSeed.rarity === 'legendary' || winSeed.rarity === 'secret' || winSeed.rarity === 'mythic';
+    }
     saveGarden(me, g);
-    
-    spawnConfetti(winSeed.rarity === 'legendary' || winSeed.rarity === 'mythic');
-    
-    $('caseMsg').innerHTML = `<div style="font-size:24px;margin-top:20px;animation:pulse 1s">🎉 Выпало: ${winSeed.icon} ${winSeed.name}!</div>`;
-    setTimeout(() => { $('caseMsg').innerHTML = ''; openCasesShop(); }, 3000);
+    spawnConfetti(isEpic);
+    const msgEl = $('caseMsg');
+    if (msgEl) msgEl.innerHTML = `<div style="font-size:20px;margin-top:18px;padding:16px;border-radius:14px;background:rgba(76,175,80,.12);border:1px solid rgba(76,175,80,.4);color:#8bc34a;animation:pulse 1s">🎉 Выпало: ${resultText}!</div>`;
+    setTimeout(() => { if (msgEl) msgEl.innerHTML = ''; renderCasesShop(); }, 3200);
 }
-// =====================================
 
 const JOBS={teacher:{id:'teacher',name:'Учитель',icon:'👨‍🏫',reward:500,tasks:['Проверить контрольные','Решить примеры','Проверить диктант'],types:['check','math','dictation']},police:{id:'police',name:'Полицейский',icon:'👮',reward:750,tasks:['Патруль','Скорость','Документы'],types:['patrol','radar','docs']},welder:{id:'welder',name:'Сварщик',icon:'👨‍🏭',reward:800,maxReward:800,tasks:['Шов','Замер','Резка'],types:['seam','measure','cut']}};
 const JOB_TASKS_PER_DAY=3,JOB_BAN_DAYS=30,JOB_MAX_MISSED=3,JOB_STATE_VERSION=3;
@@ -2314,7 +2368,7 @@ async function loadDMs(){const p1='dm_'+meEnc+'__%',p2='dm_%__'+meEnc;const dp=s
 function renderDMs(){const l=$('dml');if(!dms.length){l.innerHTML='<div class="nempty">Пусто</div>';return}const hid=getHC();const v=dms.filter(d=>!hid.has(d.room_id)||(unread[d.room_id]||0)>0);if(!v.length){l.innerHTML='<div class="nempty">Все скрыто</div>';return}l.innerHTML=v.map(d=>{const c=unread[d.room_id]||0;let dn,av_,o=false;if(d.isGrp){const gid=d.room_id.replace('group_','');const g=groups.find(x=>String(x.id)===gid);dn=g?g.name:'Группа';av_=grpAvHTML(g,'')}else if(d.isRM){const mm=d.room_id.match(/^h(\d+)_flat(\d+)_room$/);dn='Комната '+((Number(mm[1])-1)*30+Number(mm[2]));av_='<div class="av" style="background:linear-gradient(135deg,#4a9eff,#2a6ecc)">🏠</div>'}else{const n=de(d.partner);dn=n;o=d.partner&&online.has(d.partner);av_=avOn(n,'',o)}const pv=d.last.voice_url?'🎤':(d.last.video_url?'⚪':(d.last.photo_url?'📷':d.last.text));const lt=sT(d.last.created_at);const prefix=d.isGrp?(de(d.last.nick)+': '):(d.last.nick===meEnc?'Ты: ':'');return '<div class="ntf" data-room="'+d.room_id+'" data-rm="'+(d.isRM?'1':'')+'" data-grp="'+(d.isGrp?'1':'')+'"><button class="hc" onclick="hideC(\''+d.room_id+'\',event)">✕</button>'+av_+'<div class="nbody"><div class="ntop"><div class="nname">'+eh(dn)+'</div><div class="ntime">'+lt+'</div></div><div class="ntext'+(c>0?' unread':'')+'">'+eh(prefix+pv)+'</div></div>'+(c>0?'<div class="nbadge">'+c+'</div>':'')+'</div>'}).join('');l.querySelectorAll('.ntf').forEach(el=>{el.onclick=async()=>{const rid=el.dataset.room,rm=el.dataset.rm==='1',grp=el.dataset.grp==='1';$('sb').classList.remove('open');if(grp){await openGroup(rid.replace('group_',''));return}if(rm)await openRFromN(rid);else{const p=pFR(rid);if(p)openDm(p)}};el.oncontextmenu=e=>{e.preventDefault();const p=pFR(el.dataset.room);if(p)openProfile(de(p))}})}
 function updateGroupHeader(){if(!curGroup)return;const g=curGroup;$('rt').textContent=g.name;$('chAv').innerHTML=grpAvHTML(g,'lg')}
 async function openGroup(gid){const g=groups.find(x=>String(x.id)===String(gid));if(!g)return;curGroup=g;curRoom='group_'+gid;curRoomType='group';curPartner=null;$('rt').textContent=g.name;$('chAv').innerHTML=grpAvHTML(g,'lg');$('modal').classList.add('open');$('gearBtn').classList.add('on');togIR(true);delete unread[curRoom];renderDMs();clrCh($('chat'));await loadM();startMusFor(g.owner_nick).then(url=>{musUrl=url;showMusBtn(url,'🎵 Музыка группы')}).catch(()=>{showMusBtn(null)});subM();startPt()}
-async function openDm(p){curGroup=null;curRoom=dmr(meEnc,p);curRoomType='dm';curPartner=p;const pn=de(p);$('rt').textContent=pn;$('chAv').innerHTML='<div onclick="openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(p))+'</div>';$('modal').classList.add('open');$('gearBtn').classList.remove('on');togIR(true);delete unread[curRoom];renderDMs();clrCh($('chat'));await loadM();startMusFor(p).then(url=>{musUrl=url;showMusBtn(url,'🎵 Включить')}).catch(()=>{showMusBtn(null)});subM();startPt()}
+async function openDm(p){curGroup=null;curRoom=dmr(meEnc,p);curRoomType='dm';curPartner=p;const pn=de(p);$('rt').textContent=pn;$('chAv').innerHTML='<div onclick="closeM();openProfile(\''+pn+'\')" style="cursor:pointer">'+avOn(pn,'lg',online.has(p))+'</div>';$('modal').classList.add('open');$('gearBtn').classList.remove('on');togIR(true);delete unread[curRoom];renderDMs();clrCh($('chat'));await loadM();startMusFor(p).then(url=>{musUrl=url;showMusBtn(url,'🎵 Включить')}).catch(()=>{showMusBtn(null)});subM();startPt()}
 async function openEntChat(g){curGroup=null;curRoom='entrance_'+g;curRoomType='entrance';curEntG=g;curPartner=null;$('rt').textContent='Подъезд '+g;$('chAv').innerHTML='<div class="av av-lg" style="background:linear-gradient(135deg,#4a4a5a,#2a2a3a)">🏢</div>';$('gearBtn').classList.remove('on');$('modal').classList.add('open');togIR(myEnt()===g);clrCh($('chat'));await loadM();musUrl=null;showMusBtn(null);subM();startPt()}
 async function closeM(){if(mr&&mr.state==='recording')mr.stop();if(cRec&&cRec.state==='recording')cRec.stop();$('modal').classList.remove('open');$('gearBtn').classList.remove('on');if(ch){sb.removeChannel(ch);ch=null}if(pt){clearInterval(pt);pt=null}stopMus();showMusBtn(null);musUrl=null;curRoom=null;curRoomType=null;curEntG=null;curPartner=null;curGroup=null;rcId=null;clrCh($('chat'))}
 function togIR(c){$('ir').style.display=c?'flex':'none';$('nw').style.display=c?'none':'block'}
@@ -2322,7 +2376,7 @@ function clrCh(el){el.innerHTML='';el.dataset.lastHtml='';el.scrollTop=0}
 async function loadM(){const tk=++mTok,rid=curRoom; if(!rid)return;const{data,error}=await sb.from('messages').select('*').eq('room_id',rid).order('created_at',{ascending:false}).limit(300);if(tk!==mTok||rid!==curRoom)return; if(error)return;msgC=(data||[]).reverse().filter(m=>{if(m.deleted_for_all) return false;if(m.text && (m.text.includes('заселил') || m.text.includes('выселил') || m.text.includes('вошёл в чат') || m.text.includes('вышел из чата'))) return false;return true;});await loadR(msgC); renderMs($('chat'),msgC);}
 async function loadR(list){try{const ids=(list||[]).map(m=>m.id).filter(Boolean);if(!ids.length){allR={};return}const{data}=await sb.from('reactions').select('*').in('message_id',ids);allR={};(data||[]).forEach(r=>{if(!allR[r.message_id])allR[r.message_id]=[];allR[r.message_id].push(r)})}catch(e){allR={}}}
 function voiceBarHTML(id,dur,played){const bars=Math.max(12,Math.min(40,Math.round((dur||3)*3)));let h='';for(let i=0;i<bars;i++){const hgt=6+Math.round(Math.abs(Math.sin(i*0.9+id.length))*18);h+='<div class="wb'+(played&&i/bars<played?' played':'')+'" style="height:'+hgt+'px"></div>'}return h}
-function renderMs(el,list,opts){const top=(opts&&opts.topBanner)?'<div class="msg roomtitle">'+opts.topBanner+'</div>':'';const nh=top+list.map(m=>{const mine=m.nick===meEnc;let body='';if(m.voice_url){const d=m.voice_dur||vDur[m.id]||3;body='<div class="voice-msg" data-id="'+m.id+'" onclick="playVoice(\''+m.id+'\',\''+m.voice_url+'\','+d+')"><button class="voice-play-btn" type="button"></button><div class="voice-bar" data-id="'+m.id+'">'+voiceBarHTML(m.id,d,0)+'</div><div class="voice-time">'+fT(d)+'</div></div>'}else if(m.video_url){body='<div class="mc paused" onclick="toggleCirclePlay(this)"><video src="'+m.video_url+'" playsinline preload="metadata"></video></div>'}else if(m.photo_url){body='<img class="mp" src="'+m.photo_url+'" onclick="openPV(\''+m.photo_url+'\')">'}else{body='<span class="txt">'+eh(m.text||'')+'</span>'}const tm='<span class="time">'+new Date(m.created_at).toLocaleTimeString().slice(0,5)+'</span>'+(m.edited?'<span class="med">ред.</span>':'');const nk=mine?'':'<span class="nick" onclick="openProfile(\''+eh(de(m.nick))+'\')">'+eh(de(m.nick))+'</span>';const rl=(allR[m.id]||[]).reduce((acc,r)=>{const k=r.emoji;if(!acc[k])acc[k]={c:0,mine:false};acc[k].c++;if(r.nick===meEnc)acc[k].mine=true;return acc},{});const rlH=Object.keys(rl).length?'<div class="mr">'+Object.entries(rl).map(([e,o])=>'<div class="rc'+(o.mine?' mine':'')+'" onclick="event.stopPropagation();addReaction(\''+m.id+'\',\''+e+'\')"><span>'+e+'</span><span class="rn">'+o.c+'</span></div>').join('')+'</div>':'';return '<div class="msg '+(mine?'own':'other')+'" data-id="'+m.id+'" oncontextmenu="showCtxMenu(event,\''+m.id+'\')">'+nk+body+tm+rlH+'</div>'}).join('');const fh=nh||'<div style="color:#55556a;text-align:center;padding:30px">Пусто</div>';if(el.dataset.lastHtml!==fh){const ab=el.scrollTop+el.clientHeight>=el.scrollHeight-40,fr=!el.dataset.lastHtml;el.innerHTML=fh;el.dataset.lastHtml=fh;if(fr||ab)el.scrollTop=el.scrollHeight}}
+function renderMs(el,list,opts){const top=(opts&&opts.topBanner)?'<div class="msg roomtitle">'+opts.topBanner+'</div>':'';const nh=top+list.map(m=>{const mine=m.nick===meEnc;let body='';if(m.voice_url){const d=m.voice_dur||vDur[m.id]||3;body='<div class="voice-msg" data-id="'+m.id+'" onclick="playVoice(\''+m.id+'\',\''+m.voice_url+'\','+d+')"><button class="voice-play-btn" type="button"></button><div class="voice-bar" data-id="'+m.id+'">'+voiceBarHTML(m.id,d,0)+'</div><div class="voice-time">'+fT(d)+'</div></div>'}else if(m.video_url){body='<div class="mc paused" onclick="toggleCirclePlay(this)"><video src="'+m.video_url+'" playsinline preload="metadata"></video></div>'}else if(m.photo_url){body='<img class="mp" src="'+m.photo_url+'" onclick="openPV(\''+m.photo_url+'\')">'}else{body='<span class="txt">'+eh(m.text||'')+'</span>'}const tm='<span class="time">'+new Date(m.created_at).toLocaleTimeString().slice(0,5)+'</span>'+(m.edited?'<span class="med">ред.</span>':'');const nk=mine?'':'<span class="nick" onclick="closeM();openProfile(\''+eh(de(m.nick))+'\')">'+eh(de(m.nick))+'</span>';const rl=(allR[m.id]||[]).reduce((acc,r)=>{const k=r.emoji;if(!acc[k])acc[k]={c:0,mine:false};acc[k].c++;if(r.nick===meEnc)acc[k].mine=true;return acc},{});const rlH=Object.keys(rl).length?'<div class="mr">'+Object.entries(rl).map(([e,o])=>'<div class="rc'+(o.mine?' mine':'')+'" onclick="event.stopPropagation();addReaction(\''+m.id+'\',\''+e+'\')"><span>'+e+'</span><span class="rn">'+o.c+'</span></div>').join('')+'</div>':'';return '<div class="msg '+(mine?'own':'other')+'" data-id="'+m.id+'" oncontextmenu="showCtxMenu(event,\''+m.id+'\')">'+nk+body+tm+rlH+'</div>'}).join('');const fh=nh||'<div style="color:#55556a;text-align:center;padding:30px">Пусто</div>';if(el.dataset.lastHtml!==fh){const ab=el.scrollTop+el.clientHeight>=el.scrollHeight-40,fr=!el.dataset.lastHtml;el.innerHTML=fh;el.dataset.lastHtml=fh;if(fr||ab)el.scrollTop=el.scrollHeight}}
 function subM(){if(ch)sb.removeChannel(ch);if(!curRoom)return;ch=sb.channel('rm-'+curRoom).on('postgres_changes',{event:'*',schema:'public',table:'messages',filter:'room_id=eq.'+curRoom},()=>loadM()).on('postgres_changes',{event:'*',schema:'public',table:'reactions'},()=>loadM()).subscribe()}
 var _subGlobCh=null;
 function subGlob(){if(_subGlobCh)return;_subGlobCh=sb.channel('glob-msg').on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},async p=>{const m=p.new;if(!m)return;if(!isMyR(m.room_id))return;if(m.nick===meEnc){await loadDMs();renderDMs();return}if(curRoom===m.room_id)return;if(rcId===m.room_id){if($('fm').classList.contains('open'))loadRM();return}unread[m.room_id]=(unread[m.room_id]||0)+1;const w=de(m.nick),pr=m.voice_url?'🎤':(m.video_url?'⚪':(m.photo_url?'📷':m.text));showNotif('💬 '+w,pr);await loadDMs();renderDMs()}).subscribe()}
@@ -2441,7 +2495,7 @@ function setupUI(){
   $('gardenM').addEventListener('click',e=>{if(e.target.id==='gardenM')closeGarden()});
   $('seedShopM').addEventListener('click',e=>{if(e.target.id==='seedShopM')closeSeedShop()});
   $('fertShopM').addEventListener('click',e=>{if(e.target.id==='fertShopM')closeFertShop()});
-  $('invM').addEventListener('click',e=>{if(e.target.id==='invM')closeInv()});
+  $('casesM').addEventListener('click',e=>{if(e.target.id==='casesM')closeCases()});
   $('giftM').addEventListener('click',e=>{if(e.target.id==='giftM')closeGift()});
   $('ofm').addEventListener('click',e=>{if(e.target.id==='ofm')closeOwner()});
   $('visitInp').addEventListener('keydown',e=>{if(e.key==='Enter')doVisit()});
