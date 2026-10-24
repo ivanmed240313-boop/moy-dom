@@ -1581,6 +1581,13 @@ body.ultra-mode #bootLog .boot-cursor {
         text-shadow: 0 0 20px #ff0000, 0 0 45px #ff0000, 0 0 70px #ff5555 !important;
     }
 }
+#langPicker{display:none;position:fixed;inset:0;z-index:100001;background:radial-gradient(circle at center,#1a0000 0%,#000 100%);align-items:center;justify-content:center;flex-direction:column;gap:34px;font-family:'Courier New',monospace;padding:20px;user-select:none}
+#langPicker.on{display:flex}
+#langPicker .lp-title{color:#f00;font-size:24px;font-weight:900;letter-spacing:4px;text-shadow:0 0 20px #f00;text-transform:uppercase;padding:16px 32px;border:2px solid #f00;background:rgba(139,0,0,.25);border-radius:6px;text-align:center;animation:ultraPulse 1.5s ease-in-out infinite}
+#langPicker .lp-buttons{display:flex;gap:30px}
+#langPicker .lp-btn{padding:22px 56px;background:rgba(139,0,0,.3);border:2px solid #f00;color:#f00;font-family:'Courier New',monospace;font-size:26px;font-weight:900;cursor:pointer;letter-spacing:6px;box-shadow:0 0 25px rgba(255,0,0,.6);transition:all .2s;border-radius:4px}
+#langPicker .lp-btn:hover{background:#f00;color:#000;box-shadow:0 0 60px rgba(255,0,0,1);transform:scale(1.06)}
+@media(max-width:500px){#langPicker .lp-title{font-size:15px;padding:12px 20px;letter-spacing:2px}#langPicker .lp-btn{padding:18px 38px;font-size:22px;letter-spacing:4px}#langPicker .lp-buttons{gap:20px}}
 /* ========================== */
 </style>
 </head>
@@ -1592,6 +1599,13 @@ body.ultra-mode #bootLog .boot-cursor {
     <pre id="bootAscii"></pre>
   </div>
   <div id="bootHint">Нажми</div>
+</div>
+<div id="langPicker">
+  <div class="lp-title">Выберите язык · Select Language</div>
+  <div class="lp-buttons">
+    <button class="lp-btn" type="button" onclick="pickBootLang('ru')">RU</button>
+    <button class="lp-btn" type="button" onclick="pickBootLang('en')">EN</button>
+  </div>
 </div>
 
 <canvas id="seasons"></canvas>
@@ -2986,6 +3000,21 @@ async function detectKeyboardLayout() {
   const lang = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en').toLowerCase();
   return lang.startsWith('ru') ? 'ru' : 'en';
 }
+async function pickBootLang(lang){
+  document.getElementById('langPicker').classList.remove('on');
+  let session = null;
+  try { const r = await sb.auth.getSession(); session = r && r.data ? r.data.session : null; } catch(e){}
+  const authorized = !!(session && session.user);
+  if (authorized) curUser = session.user;
+  await runBootSequence(authorized, lang);
+  if (authorized) {
+    try { await afterAuth(); } catch(err){ showToast('Ошибка входа: '+(err.message||err),'error'); }
+  } else {
+    document.getElementById('auth').style.display = 'flex';
+  }
+}
+
+async function runBootSequence(authorized, layoutLang = 'en'){
 async function runBootSequence(authorized, layoutLang = 'en'){
     if (authorized && curUser) {
     if (!me) {
@@ -3146,18 +3175,26 @@ window.addEventListener('DOMContentLoaded', async function(){
   if(!bs) return;
   const hint = document.getElementById('bootHint'); 
   if(hint) hint.style.display = 'block';
+  if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
+    const lp = document.getElementById('langPicker');
+    if (lp) lp.classList.add('on');
+  }
   
   // Красим фон сразу, если включен ULTRADAY
   if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
       document.body.classList.add('ultra-mode');
   }
 
-  const handler = async function(e){
+    const handler = async function(e){
     if(_bootLock) return;
     _bootLock = true;
     bs.removeEventListener('click', handler);
     bs.removeEventListener('keydown', keyHandler);
     if(hint) hint.style.display = 'none';
+    if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
+      document.getElementById('langPicker').classList.add('on');
+      return;
+    }
     
     // По умолчанию - английский
     let layoutLang = 'en';
