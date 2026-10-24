@@ -3256,7 +3256,7 @@ window.addEventListener('DOMContentLoaded', async function(){
   window.resetSeason=function(){localStorage.removeItem('dom_season');applySeason(getSeasonNow())};
   resize();window.addEventListener('resize',()=>{resize();initParticles()});applySeason(getSeasonNow());loop();
 })();
-</script>
+
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/moy-dom/sw.js',{scope:'/moy-dom/'}).catch(()=>{});}</script>
 <script>
 (function(){
