@@ -1801,22 +1801,37 @@ function playBootBeep(){
     if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if(_audioCtx.state === 'suspended') _audioCtx.resume();
     
-    const osc = _audioCtx.createOscillator();
-    const gain = _audioCtx.createGain();
+    const now = _audioCtx.currentTime;
+    const isUltra = document.body.classList.contains('ultra-mode');
     
-    // Звук "пищит" на частоте 800 Гц
-    osc.type = 'square'; 
-    osc.frequency.setValueAtTime(800, _audioCtx.currentTime);
-    
-    // Очень тихий звук (0.01), чтобы не бесило. Если хочешь громче — поставь 0.05
-    gain.gain.setValueAtTime(0.01, _audioCtx.currentTime); 
-    gain.gain.exponentialRampToValueAtTime(0.00001, _audioCtx.currentTime + 0.05); // Затухание
-    
-    osc.connect(gain);
-    gain.connect(_audioCtx.destination);
-    
-    osc.start();
-    osc.stop(_audioCtx.currentTime + 0.05); // Длительность звука 0.05 сек
+    if (isUltra) {
+      // ЗЛОЙ ЗВУК ДЛЯ ULTRADAY (низкий, скрежещущий)
+      const osc = _audioCtx.createOscillator();
+      const gain = _audioCtx.createGain();
+      osc.type = 'sawtooth'; // Более резкая волна
+      osc.frequency.setValueAtTime(120 + Math.random() * 40, now); 
+      osc.frequency.exponentialRampToValueAtTime(40, now + 0.08); // Падение частоты (как выдох машины)
+      
+      gain.gain.setValueAtTime(0.04, now); // Чуть громче обычного
+      gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.08);
+      
+      osc.connect(gain);
+      gain.connect(_audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else {
+      // ОБЫЧНЫЙ ЗЕЛЕНЫЙ ПИСК
+      const osc = _audioCtx.createOscillator();
+      const gain = _audioCtx.createGain();
+      osc.type = 'square'; 
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.01, now); 
+      gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.05);
+      osc.connect(gain);
+      gain.connect(_audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.05);
+    }
   } catch(e) {}
 }
 let _afTarget='afB';
@@ -2167,12 +2182,27 @@ function setCustomDates(a){try{localStorage.setItem('dom_custom_dates',JSON.stri
 function getHiddenDates(){try{const s=localStorage.getItem('dom_hidden_dates');const a=s?JSON.parse(s):[];return Array.isArray(a)?a:[]}catch(e){return[]}}
 function setHiddenDates(a){try{localStorage.setItem('dom_hidden_dates',JSON.stringify(a))}catch(e){}}
 function getAllDates(){const hidden=getHiddenDates();const custom=getCustomDates();const defs=DATES_DEFAULT.filter(d=>!hidden.includes('def:'+d.title));const customs=custom.filter(d=>!hidden.includes('cus:'+d.title));return [...customs,...defs].sort((a,b)=>{const pa=(a.date||'').split('.').map(Number),pb=(b.date||'').split('.').map(Number);return (pa[1]-pb[1])||(pa[0]-pb[0])})}
-function openDtsPanel(){const list=$('dtsList');if(!list)return;const all=getAllDates();if(!all.length){list.innerHTML='<div class="dts-art-empty">Пока нет дат</div>'}else{list.innerHTML=all.map((d,i)=>'<div class="dts-item" onclick="openDtsArticle('+i+')"><div class="dts-date">'+eh(d.date)+'</div><div class="dts-meta"><div class="dts-t">'+eh(d.title)+'</div><div class="dts-s">'+eh(d.short||'')+'</div></div></div>').join('')}$('dtsPanel').classList.add('open')}
+function openDtsPanel(){const list=$('dtsList');if(!list)return;const all=getAllDates();if(!all.length){list.innerHTML='<div class="dts-art-empty">Пока нет дат</div>'}else{list.innerHTML=all.map((d,i)=>'<div class="dts-item" onclick="openDtsArticle(\''+encodeURIComponent(d.title)+'\')"><div class="dts-date">'+eh(d.date)+'</div><div class="dts-meta"><div class="dts-t">'+eh(d.title)+'</div><div class="dts-s">'+eh(d.short||'')+'</div></div></div>').join('')}$('dtsPanel').classList.add('open')}
 function closeDtsPanel(){$('dtsPanel').classList.remove('open')}
 function _renderDtsArticle(d){$('dtsArtTitleBar').textContent='★ '+d.title;$('dtsArtDate').textContent=d.date;$('dtsArtHead').textContent=d.title;const img=$('dtsArtImg');const hero=img.parentElement;if(d.img){img.src=d.img;img.style.display='block';hero.style.background='#0a0a10';hero.dataset.emoji=''}else{img.style.display='none';hero.style.background='linear-gradient(135deg,#3a1a00,#1a0a00,#3a0a00)';hero.dataset.emoji=d.emoji||'📅'}$('dtsArtBody').innerHTML=d.body}
+function openDtsArticle(titleEnc){const title=decodeURIComponent(titleEnc);const d=getAllDates().find(x=>x.title===title);if(!d)return;_renderDtsArticle(d);closeDtsPanel();$('dtsArticle').classList.add('open')}
 function openDtsArticle(i){const d=getAllDates()[i];if(!d)return;_renderDtsArticle(d);closeDtsPanel();$('dtsArticle').classList.add('open')}
 function closeDtsArticle(){$('dtsArticle').classList.remove('open')}
-function openGameArticle(evId){const g=EVENTS.find(e=>e.id===evId);if(!g||!g.title)return;const d=DATES_DEFAULT.find(x=>x.title===g.title);if(!d){showToast('Статья не найдена','error');return}_renderDtsArticle(d);$('dtsArticle').classList.add('open')}
+function openGameArticle(evId){
+  const g = EVENTS.find(e=>e.id===evId);
+  if(!g) return;
+  let d = null;
+  if (evId === 'ULTRADAY') {
+    // Умный поиск для ULTRADAY (ищет любое совпадение с этим словом)
+    d = DATES_DEFAULT.find(x => x.title.includes('ULTRADAY'));
+  } else {
+    // Для остальных игр оставляем точное совпадение
+    d = DATES_DEFAULT.find(x => x.title === g.title);
+  }
+  if(!d){showToast('Статья не найдена','error');return}
+  _renderDtsArticle(d);
+  $('dtsArticle').classList.add('open');
+}
 async function ofDates(b){if(!isOwner()){b.innerHTML='<div class="afe">Только владелец</div>';return}const custom=getCustomDates();const hidden=getHiddenDates();b.innerHTML='<div class="of-hint">📅 <b>Памятные даты.</b> Добавляй свои статьи с эмодзи.</div>'+'<div class="odt-form">'+'<input id="odtDate" placeholder="ДД.ММ" maxlength="5">'+'<input id="odtTitle" placeholder="Заголовок" maxlength="80">'+'<input id="odtShort" class="odt-full" placeholder="Краткое описание" maxlength="120">'+'<input id="odtEmoji" placeholder="📅" maxlength="4">'+'<input id="odtImg" placeholder="URL картинки">'+'<textarea id="odtBody" placeholder="Текст статьи"></textarea>'+'<button onclick="odtAdd()">➕ Добавить дату</button>'+'</div>'+'<div class="odt-default-title">🌐 Встроенные (можно скрыть)</div>'+'<div id="odtDefList">'+DATES_DEFAULT.map(d=>{const isHidden=hidden.includes('def:'+d.title);const k='def:'+d.title.replace(/'/g,"\\'");return '<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><span class="bd def">ВСТР</span><button class="toggle" onclick="odtToggle(\''+k+'\')">'+(isHidden?'👁 Показать':'🙈 Скрыть')+'</button></div>'}).join('')+'</div>'+'<div class="odt-default-title" style="margin-top:22px">✏️ Свои ('+custom.length+')</div>'+'<div id="odtCustomList">'+(custom.length?custom.map((d,i)=>'<div class="odt-row"><div class="dt">'+eh(d.date)+'</div><div class="nm">'+eh(d.emoji||'')+' '+eh(d.title)+'</div><button class="del" onclick="odtDel('+i+')">🗑</button></div>').join(''):'<div class="afe">Пока пусто</div>')+'</div>'+'<div class="give-msg" id="odtMsg" style="min-height:18px;margin-top:10px"></div>'}
 function odtToggle(titleKey){const hidden=getHiddenDates();const i=hidden.indexOf(titleKey);if(i>=0)hidden.splice(i,1);else hidden.push(titleKey);setHiddenDates(hidden);ofSw('dates')}
 function odtAdd(){const date=$('odtDate').value.trim();const title=$('odtTitle').value.trim();const short=$('odtShort').value.trim();const emoji=$('odtEmoji').value.trim()||'📅';const img=$('odtImg').value.trim();const body=$('odtBody').value.trim();const msg=$('odtMsg');msg.style.color='#ff6b6b';if(!/^\d{2}\.\d{2}$/.test(date)){msg.textContent='❌ Дата в формате ДД.ММ';return}if(!title){msg.textContent='❌ Впиши заголовок';return}if(!body){msg.textContent='❌ Впиши текст статьи';return}const custom=getCustomDates();custom.push({date,title,short,emoji,img,body});setCustomDates(custom);msg.style.color='#8bc34a';msg.textContent='✅ Добавлено';setTimeout(()=>ofSw('dates'),400)}
@@ -3174,12 +3204,23 @@ async function runBootSequence(authorized, layoutLang = 'en'){
   try {
     if(_audioCtx){
       const now = _audioCtx.currentTime;
-      const o1 = _audioCtx.createOscillator(); const g1 = _audioCtx.createGain();
-      o1.frequency.value = 523.25; g1.gain.setValueAtTime(0.1, now); g1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-      o1.connect(g1); g1.connect(_audioCtx.destination); o1.start(now); o1.stop(now + 0.3);
-      const o2 = _audioCtx.createOscillator(); const g2 = _audioCtx.createGain();
-      o2.frequency.value = 659.25; g2.gain.setValueAtTime(0.1, now + 0.15); g2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
-      o2.connect(g2); g2.connect(_audioCtx.destination); o2.start(now + 0.15); o2.stop(now + 0.45);
+      if (isUltra) {
+        // ТЯЖЕЛЫЙ ЗВУК ДЛЯ ULTRADAY (глубокий бас)
+        const o1 = _audioCtx.createOscillator(); const g1 = _audioCtx.createGain();
+        o1.type = 'sawtooth';
+        o1.frequency.setValueAtTime(150, now); 
+        o1.frequency.exponentialRampToValueAtTime(40, now + 1.0);
+        g1.gain.setValueAtTime(0.15, now); g1.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+        o1.connect(g1); g1.connect(_audioCtx.destination); o1.start(now); o1.stop(now + 1.0);
+      } else {
+        // ОБЫЧНЫЙ ЗВУК
+        const o1 = _audioCtx.createOscillator(); const g1 = _audioCtx.createGain();
+        o1.frequency.value = 523.25; g1.gain.setValueAtTime(0.1, now); g1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        o1.connect(g1); g1.connect(_audioCtx.destination); o1.start(now); o1.stop(now + 0.3);
+        const o2 = _audioCtx.createOscillator(); const g2 = _audioCtx.createGain();
+        o2.frequency.value = 659.25; g2.gain.setValueAtTime(0.1, now + 0.15); g2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        o2.connect(g2); g2.connect(_audioCtx.destination); o2.start(now + 0.15); o2.stop(now + 0.45);
+      }
     }
   } catch(e){}
   
