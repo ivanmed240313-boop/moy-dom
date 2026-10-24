@@ -2929,6 +2929,19 @@ const BOOT_LINES_NO = [
   {t:'Синхронизация аккаунта...', c:'err', s:'[X]'},
   {t:'Аккаунт не найден.', c:'err'}
 ];
+const ULTRA_LINES_NO_EN = [
+  {t:'AUDIO: UNTUNED', c:'ok'},
+  {t:'VIDEO: UNTUNED', c:'ok'},
+  {t:'MECHANICS: UNTUNED', c:'ok'},
+  {t:'MACHINE ID: NOT FOUND', c:'err'}
+];
+
+const ULTRA_LINES_NO_RU = [
+  {t:'АУДИО: НЕ НАСТРОЕНО', c:'ok'},
+  {t:'ВИДЕО: НЕ НАСТРОЕНО', c:'ok'},
+  {t:'МЕХАНИКА: НЕ НАСТРОЕНА', c:'ok'},
+  {t:'ID МАШИНЫ: НЕ НАЙДЕН', c:'err'}
+];
 
 let _bootLock = false;
 function _bootSleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
@@ -3090,6 +3103,9 @@ async function runBootSequence(authorized, layoutLang = 'en'){
   
   await _bootSleep(400);
   let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
+    if (!authorized && isUltra) {
+    lines = (layoutLang === 'ru') ? ULTRA_LINES_NO_RU : ULTRA_LINES_NO_EN;
+  }
   
   if (authorized && isUltra) {
     const ultraLinesEN = [
@@ -3099,7 +3115,7 @@ async function runBootSequence(authorized, layoutLang = 'en'){
       {t:'ALL SYSTEMS OPERATIONAL', c:'ok'},
       {t:'LOADING STATUS UPDATE...', c:'ok'},
       {t:'STATUS UPDATE:', c:'ok'},
-      {t:'MACHINE ID: V1', c:'ok'},
+      {t:'MACHINE ID: ' + (me ? me.toUpperCase() : 'V1'), c:'ok'},
       {t:'LOCATION: HOMEOS', c:'ok'},
       {t:'CURRENT OBJECTIVE: FIND A FRIEND', c:'ok'},
       {t:'MANKIND IS DEAD.', c:'ultra-red'},
@@ -3113,7 +3129,7 @@ async function runBootSequence(authorized, layoutLang = 'en'){
       {t:'ВСЕ СИСТЕМЫ В НОРМЕ', c:'ok'},
       {t:'ЗАГРУЗКА ОБНОВЛЕНИЯ СТАТУСА...', c:'ok'},
       {t:'ОБНОВЛЕНИЕ СТАТУСА:', c:'ok'},
-      {t:'ID МАШИНЫ: V1', c:'ok'},
+      {t:'ID МАШИНЫ: ' + (me ? me.toUpperCase() : 'V1'), c:'ok'},
       {t:'МЕСТОПОЛОЖЕНИЕ: HOMEOS', c:'ok'},
       {t:'ТЕКУЩАЯ ЦЕЛЬ: НАЙТИ ДРУГА', c:'ok'},
       {t:'ЧЕЛОВЕЧЕСТВО МЕРТВО.', c:'ultra-red'},
