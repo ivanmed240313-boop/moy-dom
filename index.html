@@ -58,11 +58,11 @@ body::before{content:'';position:fixed;inset:-50%;background:radial-gradient(cir
 
 /* Бегущая полоса (анимируем ТРАНСФОРМАЦИЮ, а не фон) */
 #bootScreen::after {
-    content: ''; position: absolute; left: 0; right: 0; height: 15vh; pointer-events: none; z-index: 3;
-    background: linear-gradient(180deg, transparent 0%, rgba(42,255,42,0.1) 50%, transparent 100%);
-    top: -20vh; 
+    content: ''; position: absolute; left: 0; right: 0; height: 40px; pointer-events: none; z-index: 3;
+    background: linear-gradient(180deg, transparent 0%, rgba(42,255,42,0.35) 50%, transparent 100%);
+    top: -60px;
     animation: tvScanBar 6s linear infinite;
-    will-change: transform; /* Говорим браузеру анимировать через GPU */
+    will-change: transform;
 }
 #bootContainer {
     display: flex;
@@ -1531,8 +1531,9 @@ body.ultra-mode #bootScreen::before {
     background: repeating-linear-gradient(0deg, rgba(255,0,0,0.05), rgba(255,0,0,0.05) 1px, transparent 1px, transparent 3px) !important;
 }
 body.ultra-mode #bootScreen::after {
-    background: linear-gradient(180deg, transparent 0%, rgba(255,0,0,0.4) 50%, transparent 100%) !important;
-    box-shadow: 0 0 40px rgba(255,0,0,0.6) !important;
+    background: linear-gradient(180deg, transparent 0%, rgba(255,20,20,0.9) 50%, transparent 100%) !important;
+    box-shadow: 0 0 20px rgba(255,0,0,0.9), 0 0 40px rgba(139,0,0,0.6) !important;
+    height: 6px !important;
 }
 body.ultra-mode #bootLog .bl.ok,
 body.ultra-mode #bootLog .bl.dim,
@@ -2143,7 +2144,8 @@ const DATES_DEFAULT=[
   {date:'17.05',title:'Minecraft — первый публичный релиз',short:'17 мая 2009 — Minecraft Classic',emoji:'⛏️',body:'<p><b>17 мая 2009 года</b> Notch выложил первую публичную версию Minecraft.</p>'},
   {date:'01.09',title:'Roblox — день рождения',short:'1 сентября 2006 — запуск Roblox',emoji:'🟥',body:'<p><b>1 сентября 2006 года</b> выпущена платформа <b>Roblox</b>.</p>'},
   {date:'10.10',title:'Portal — с кубом и тортом',short:'10 октября 2007 — релиз Portal',emoji:'🟦',body:'<p><b>10 октября 2007 года</b> вышла <b>Portal</b> от Valve.</p><div class="dts-quote">«The cake is a lie.»</div>'},
-  {date:'16.05',title:'Terraria — 2D-песочница',short:'16 мая 2011 — релиз Terraria',emoji:'🌳',body:'<p><b>16 мая 2011 года</b> вышла <b>Terraria</b> от Re-Logic.</p>'}
+  {date:'16.05',title:'Terraria — 2D-песочница',short:'16 мая 2011 — релиз Terraria',emoji:'🌳',body:'<p><b>16 мая 2011 года</b> вышла <b>Terraria</b> от Re-Logic.</p>'},
+  {date:'03.09',title:'ULTRADAY — день рождения ULTRAKILL',short:'3 сентября 2020 — выход в ранний доступ',emoji:'🩸',body:'<p><b>3 сентября 2020 года</b> в раннем доступе Steam вышла <b>ULTRAKILL</b> — шутер от первого лица от <b>Arsi «Hakita» Patala</b>.</p><div class="dts-quote">MANKIND IS DEAD. BLOOD IS FUEL. HELL IS FULL.</div><p>Игра мгновенно стала культовой благодаря невероятной скорости, стилю и отсылкам к классическим шутерам.</p><p>Главный герой — робот-машина <b>V1</b>, спустившийся в Ад, чтобы найти друга. В этой игре кровь — это топливо, а ад — переполнен.</p><p>С ULTRADAY, брат! 🩸</p>'}
 ];
 function getCustomDates(){try{const s=localStorage.getItem('dom_custom_dates');const a=s?JSON.parse(s):[];return Array.isArray(a)?a:[]}catch(e){return[]}}
 function setCustomDates(a){try{localStorage.setItem('dom_custom_dates',JSON.stringify(a))}catch(e){}}
@@ -2968,7 +2970,21 @@ async function _bootTypeLine(text, className, suffix) {
         await _bootSleep(100); 
     }
 }
-
+async function detectKeyboardLayout() {
+  // 1) Пробуем современное API (Chrome / Edge)
+  if (navigator.keyboard && navigator.keyboard.getLayoutMap) {
+    try {
+      const layoutMap = await navigator.keyboard.getLayoutMap();
+      for (const [code, key] of layoutMap) {
+        if (/[а-яё]/i.test(key)) return 'ru';
+      }
+      return 'en';
+    } catch(e) {}
+  }
+  // 2) Fallback по языку системы
+  const lang = (navigator.language || (navigator.languages && navigator.languages[0]) || 'en').toLowerCase();
+  return lang.startsWith('ru') ? 'ru' : 'en';
+}
 async function runBootSequence(authorized){
     if (authorized && curUser) {
     if (!me) {
@@ -3033,7 +3049,41 @@ async function runBootSequence(authorized){
   if (asciiEl) { asciiEl.innerHTML = ''; asciiEl.style.opacity = '1'; }
 
   await _bootSleep(400);
-    const isUltra = shouldShowEvent('ULTRADAY'); if (isUltra) document.body.classList.add('ultra-mode'); let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;   if (authorized && isUltra) {     lines = [       {t:'BOOT UP SEQUENCE... READY', c:'ok'},       {t:'FIRMWARE: LATEST VERSION (2112.08.06)', c:'ok'},       {t:'CALIBRATION: RECENTLY UPDATED', c:'ok'},       {t:'ALL SYSTEMS OPERATIONAL', c:'ok'},       {t:'LOADING STATUS UPDATE...', c:'ok'},       {t:'STATUS UPDATE:', c:'ok'},       {t:'MACHINE ID: V1', c:'ok'},       {t:'LOCATION: HOMEOS', c:'ok'},       {t:'CURRENT OBJECTIVE: FIND A FRIEND', c:'ok'},       {t:'MANKIND IS DEAD.', c:'ultra-red'},       {t:'BLOOD IS FUEL.', c:'ultra-red'},       {t:'HELL IS FULL.', c:'ultra-red'}     ];   }
+    const isUltra = shouldShowEvent('ULTRADAY');
+if (isUltra) document.body.classList.add('ultra-mode');
+let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
+if (authorized && isUltra) {
+  const layoutLang = await detectKeyboardLayout();
+  const ultraLinesEN = [
+    {t:'BOOT UP SEQUENCE... READY', c:'ok'},
+    {t:'FIRMWARE: LATEST VERSION (2112.08.06)', c:'ok'},
+    {t:'CALIBRATION: RECENTLY UPDATED', c:'ok'},
+    {t:'ALL SYSTEMS OPERATIONAL', c:'ok'},
+    {t:'LOADING STATUS UPDATE...', c:'ok'},
+    {t:'STATUS UPDATE:', c:'ok'},
+    {t:'MACHINE ID: V1', c:'ok'},
+    {t:'LOCATION: HOMEOS', c:'ok'},
+    {t:'CURRENT OBJECTIVE: FIND A FRIEND', c:'ok'},
+    {t:'MANKIND IS DEAD.', c:'ultra-red'},
+    {t:'BLOOD IS FUEL.', c:'ultra-red'},
+    {t:'HELL IS FULL.', c:'ultra-red'}
+  ];
+  const ultraLinesRU = [
+    {t:'ПОСЛЕДОВАТЕЛЬНОСТЬ ЗАГРУЗКИ... ГОТОВО', c:'ok'},
+    {t:'ПРОШИВКА: ПОСЛЕДНЯЯ ВЕРСИЯ (2112.08.06)', c:'ok'},
+    {t:'КАЛИБРОВКА: НЕДАВНО ОБНОВЛЕНА', c:'ok'},
+    {t:'ВСЕ СИСТЕМЫ В НОРМЕ', c:'ok'},
+    {t:'ЗАГРУЗКА ОБНОВЛЕНИЯ СТАТУСА...', c:'ok'},
+    {t:'ОБНОВЛЕНИЕ СТАТУСА:', c:'ok'},
+    {t:'ID МАШИНЫ: V1', c:'ok'},
+    {t:'МЕСТОПОЛОЖЕНИЕ: HOMEOS', c:'ok'},
+    {t:'ТЕКУЩАЯ ЦЕЛЬ: НАЙТИ ДРУГА', c:'ok'},
+    {t:'ЧЕЛОВЕЧЕСТВО МЕРТВО.', c:'ultra-red'},
+    {t:'КРОВЬ — ЭТО ТОПЛИВО.', c:'ultra-red'},
+    {t:'АД ПОЛОН.', c:'ultra-red'}
+  ];
+  lines = (layoutLang === 'ru') ? ultraLinesRU : ultraLinesEN;
+}
   
   const ASCII_ART = [
     "          ____           ",
@@ -3088,27 +3138,20 @@ async function runBootSequence(authorized){
   bs.style.zIndex = '-1';
 }
 
-window.addEventListener('DOMContentLoaded', function(){
+window.addEventListener('DOMContentLoaded', async function(){
   const bs = document.getElementById('bootScreen'); if(!bs) return;
-  const handler = async function(){
-    if(_bootLock) return;
-    _bootLock = true;
-    bs.removeEventListener('click', handler);
-    bs.removeEventListener('keydown', keyHandler);
-    let session = null;
-    try{ const r = await sb.auth.getSession(); session = r && r.data ? r.data.session : null; }catch(e){ console.warn('getSession', e); }
-    const authorized = !!(session && session.user);
-    await runBootSequence(authorized);
-    if(authorized){
-      curUser = session.user;
-      try{ await afterAuth(); }catch(e){ console.error('afterAuth', e); showToast('Ошибка входа: '+(e.message||e),'error'); }
-    }else{
-      document.getElementById('auth').style.display = 'flex';
-    }
-  };
-  const keyHandler = function(e){ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); handler(); } };
-  bs.addEventListener('click', handler);
-  bs.addEventListener('keydown', keyHandler);
+  if(_bootLock) return;
+  _bootLock = true;
+  let session = null;
+  try{ const r = await sb.auth.getSession(); session = r && r.data ? r.data.session : null; }catch(e){}
+  const authorized = !!(session && session.user);
+  await runBootSequence(authorized);
+  if(authorized){
+    curUser = session.user;
+    try{ await afterAuth(); }catch(e){ console.error('afterAuth', e); showToast('Ошибка входа: '+(e.message||e),'error'); }
+  }else{
+    document.getElementById('auth').style.display = 'flex';
+  }
 });
 
 (function(){
