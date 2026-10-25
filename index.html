@@ -3445,6 +3445,8 @@ async function runBootSequence(authorized, layoutLang){
   if (idxNeighborsEN !== -1) BOOT_LINES_OK_EN[idxNeighborsEN].t = `Neighbors detected: ${neighborCountText}`;
   const idxVersionEN = BOOT_LINES_OK_EN.findIndex(l => l.t.includes('Loading current version'));
   if (idxVersionEN !== -1) BOOT_LINES_OK_EN[idxVersionEN].t = `Loading current version v${APP_VERSION}...`;
+
+  const log = document.getElementById('bootLog');   // ← ЭТОЙ СТРОКИ НЕ ХВАТАЕТ
   const hint = document.getElementById('bootHint');
   const bs = document.getElementById('bootScreen');
   if(!log || !bs) return;
