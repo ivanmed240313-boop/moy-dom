@@ -3239,20 +3239,14 @@ async function runBootSequence(authorized, layoutLang = 'en'){
   
   await _bootSleep(400);
   let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
-      let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
   
   if (isMasquerade) {
       lines = (layoutLang === 'ru') ? MASQ_LINES_RU : MASQ_LINES_EN;
   } else if (!authorized && isUltra) {
       lines = (layoutLang === 'ru') ? ULTRA_LINES_NO_RU : ULTRA_LINES_NO_EN;
-  } else if (authorized && isUltra) {
-      // Твой старый код для ULTRADAY (оставь его как есть, он ниже)
-      const ultraLinesEN = [ ... ]; 
-      const ultraLinesRU = [ ... ];
-      lines = (layoutLang === 'ru') ? ultraLinesRU : ultraLinesEN;
   }
   
-  if (authorized && isUltra) {
+  if (authorized && isUltra && !isMasquerade) {
     const ultraLinesEN = [
       {t:'BOOT UP SEQUENCE... READY', c:'ok'},
       {t:'FIRMWARE: LATEST VERSION (2112.08.06)', c:'ok'},
