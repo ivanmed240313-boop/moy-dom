@@ -1589,6 +1589,82 @@ body.ultra-mode #bootLog .boot-cursor {
 #langPicker .lp-btn:hover{background:#f00;color:#000;box-shadow:0 0 60px rgba(255,0,0,1);transform:scale(1.06)}
 @media(max-width:500px){#langPicker .lp-title{font-size:15px;padding:12px 20px;letter-spacing:2px}#langPicker .lp-btn{padding:18px 38px;font-size:22px;letter-spacing:4px}#langPicker .lp-buttons{gap:20px}}
 /* ========================== */
+/* ===== MASQUERADE DIVINITY (BLUE THEME) ===== */
+body.masquerade-mode {
+    --neon-rgb: 0, 212, 255 !important;
+    background: #00050a !important;
+    color: #00d4ff !important;
+}
+body.masquerade-mode #bootScreen {
+    background: radial-gradient(circle at center, #001524 0%, #000 100%) !important;
+}
+body.masquerade-mode #bootScreen::before {
+    background: repeating-linear-gradient(0deg, rgba(0,212,255,0.05), rgba(0,212,255,0.05) 1px, transparent 1px, transparent 3px) !important;
+}
+body.masquerade-mode #bootScreen::after {
+    background: #00d4ff !important;
+    box-shadow: none !important;
+    height: 2px !important;
+    filter: drop-shadow(0 0 6px #00d4ff) drop-shadow(0 0 15px #0055ff) !important;
+}
+body.masquerade-mode #bootLog .bl.ok,
+body.masquerade-mode #bootLog .bl.dim,
+body.masquerade-mode #bootLog .bl {
+    color: #00d4ff !important;
+    text-shadow: 0 0 8px rgba(0,212,255,0.8) !important;
+}
+body.masquerade-mode #bootLog .bl .bs {
+    color: #00d4ff !important;
+}
+body.masquerade-mode #bootLog .boot-cursor {
+    background: #00d4ff !important;
+    box-shadow: 0 0 10px #00d4ff !important;
+}
+body.masquerade-mode #bootLog .bl.ultra-red {
+    color: #00d4ff !important;
+    border-color: #00d4ff !important;
+    background: rgba(0, 100, 255, 0.25) !important;
+    box-shadow: 0 0 25px rgba(0, 150, 255, 0.6), inset 0 0 15px rgba(0, 150, 255, 0.3) !important;
+    animation: masqPulse 1.5s ease-in-out infinite !important;
+}
+@keyframes masqPulse {
+    0%, 100% { box-shadow: 0 0 25px rgba(0,150,255,0.6), inset 0 0 15px rgba(0,150,255,0.3); text-shadow: 0 0 15px #00d4ff, 0 0 35px #0055ff !important; }
+    50% { box-shadow: 0 0 50px rgba(0,150,255,1), inset 0 0 25px rgba(0,150,255,0.5); text-shadow: 0 0 20px #00d4ff, 0 0 45px #00d4ff !important; }
+}
+body.masquerade-mode #langPicker {
+    background: radial-gradient(circle at center, #001524 0%, #000 100%) !important;
+}
+body.masquerade-mode #langPicker .lp-title {
+    color: #00d4ff !important;
+    border-color: #00d4ff !important;
+    background: rgba(0, 100, 255, 0.25) !important;
+    text-shadow: 0 0 20px #00d4ff !important;
+    animation: masqPulse 1.5s ease-in-out infinite !important;
+}
+body.masquerade-mode #langPicker .lp-btn {
+    color: #00d4ff !important;
+    border-color: #00d4ff !important;
+    background: rgba(0, 100, 255, 0.3) !important;
+    box-shadow: 0 0 25px rgba(0, 150, 255, 0.6) !important;
+}
+body.masquerade-mode #langPicker .lp-btn:hover {
+    background: #00d4ff !important;
+    color: #000 !important;
+    box-shadow: 0 0 60px rgba(0, 150, 255, 1) !important;
+}
+
+/* Глитч-эффект */
+@keyframes glitchEffect {
+    0% { transform: translate(0); filter: hue-rotate(0deg) invert(0); }
+    20% { transform: translate(-5px, 5px); filter: hue-rotate(90deg) invert(20%); }
+    40% { transform: translate(5px, -5px); filter: hue-rotate(180deg) invert(50%); }
+    60% { transform: translate(-5px, -5px); filter: hue-rotate(270deg) invert(20%); }
+    80% { transform: translate(5px, 5px); filter: hue-rotate(360deg) invert(0); }
+    100% { transform: translate(0); filter: hue-rotate(0deg) invert(0); }
+}
+.glitch-active {
+    animation: glitchEffect 0.6s ease-in-out !important;
+}
 </style>
 </head>
 <body>
@@ -1601,7 +1677,7 @@ body.ultra-mode #bootLog .boot-cursor {
   <div id="bootHint">Нажми</div>
 </div>
 <div id="langPicker">
-  <div class="lp-title">Выберите язык · Select Language</div>
+  <div class="lp-title">Выберите язык <span id="secretDot" style="cursor:pointer; padding: 0 10px; display:inline-block; user-select:none;">·</span> Select Language</div>
   <div class="lp-buttons">
     <button class="lp-btn" type="button" onclick="pickBootLang('ru')">RU</button>
     <button class="lp-btn" type="button" onclick="pickBootLang('en')">EN</button>
@@ -2972,8 +3048,38 @@ const ULTRA_LINES_NO_RU = [
   {t:'МЕХАНИКА: НЕ НАСТРОЕНА', c:'ok'},
   {t:'ID МАШИНЫ: НЕ НАЙДЕН', c:'err'}
 ];
+const MASQ_LINES_EN = [
+  {t:'MASQUERADE DIVINITY INITIALIZATION...', c:'ok'},
+  {t:'ORGANIC CONSCIOUSNESS: ACTIVE', c:'ok'},
+  {t:'HOLY RECONSTRUCTION: COMPLETE', c:'ok'},
+  {t:'CALIBRATING WILL...', c:'ok'},
+  {t:'DIVINE WRATH: OPTIMAL', c:'ok'},
+  {t:'RIGHTEOUS FURY: MAXIMIZED', c:'ok'},
+  {t:'HOLY LIGHT EMISSION: STABLE', c:'ok'},
+  {t:'ARMOR INTEGRITY: STATUS CHECK...', c:'ok'},
+  {t:'STEEL AND FAITH: UNYIELDING', c:'ok'},
+  {t:'THE BLOOD DRIPS FROM THIS METAL FRAME.', c:'ultra-red'},
+  {t:'AND THE SOUND IS...', c:'ultra-red'},
+  {t:'DIVINE.', c:'ultra-red'}
+];
+
+const MASQ_LINES_RU = [
+  {t:'ИНИЦИАЛИЗАЦИЯ МАСКАРАДА БОЖЕСТВЕННОСТИ...', c:'ok'},
+  {t:'ОРГАНИЧЕСКОЕ СОЗНАНИЕ: АКТИВНО', c:'ok'},
+  {t:'СВЯТАЯ РЕКОНСТРУКЦИЯ: ЗАВЕРШЕНА', c:'ok'},
+  {t:'КАЛИБРОВКА ВОЛИ...', c:'ok'},
+  {t:'БОЖЕСТВЕННЫЙ ГНЕВ: ОПТИМАЛЬНО', c:'ok'},
+  {t:'ПРАВЕДНАЯ ЯРОСТЬ: НА МАКСИМУМЕ', c:'ok'},
+  {t:'ИЗЛУЧЕНИЕ СВЯТОГО СВЕТА: СТАБИЛЬНО', c:'ok'},
+  {t:'ЦЕЛОСТНОСТЬ ДОСПЕХА: ПРОВЕРКА СТАТУСА...', c:'ok'},
+  {t:'СТАЛЬ И ВЕРА: НЕПРЕКЛОННЫ', c:'ok'},
+  {t:'КРОВЬ СТЕКАЕТ С ЭТОЙ МЕТАЛЛИЧЕСКОЙ РАМЫ.', c:'ultra-red'},
+  {t:'И ЭТОТ ЗВУК...', c:'ultra-red'},
+  {t:'БОЖЕСТВЕНЕН.', c:'ultra-red'}
+];
 
 let _bootLock = false;
+let isMasquerade = false;
 function _bootSleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
 
 function playBootBeep(){
@@ -3133,8 +3239,17 @@ async function runBootSequence(authorized, layoutLang = 'en'){
   
   await _bootSleep(400);
   let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
-    if (!authorized && isUltra) {
-    lines = (layoutLang === 'ru') ? ULTRA_LINES_NO_RU : ULTRA_LINES_NO_EN;
+      let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
+  
+  if (isMasquerade) {
+      lines = (layoutLang === 'ru') ? MASQ_LINES_RU : MASQ_LINES_EN;
+  } else if (!authorized && isUltra) {
+      lines = (layoutLang === 'ru') ? ULTRA_LINES_NO_RU : ULTRA_LINES_NO_EN;
+  } else if (authorized && isUltra) {
+      // Твой старый код для ULTRADAY (оставь его как есть, он ниже)
+      const ultraLinesEN = [ ... ]; 
+      const ultraLinesRU = [ ... ];
+      lines = (layoutLang === 'ru') ? ultraLinesRU : ultraLinesEN;
   }
   
   if (authorized && isUltra) {
@@ -3236,6 +3351,37 @@ async function runBootSequence(authorized, layoutLang = 'en'){
 }
 
 window.addEventListener('DOMContentLoaded', async function(){
+    // Пасхалка Masquerade Divinity
+  const dot = document.getElementById('secretDot');
+  if (dot) {
+      dot.addEventListener('click', (e) => {
+          e.stopPropagation(); // Чтобы не запускалась обычная заставка
+          if (isMasquerade) return;
+          isMasquerade = true;
+          
+          // Эффект глитча
+          const picker = document.getElementById('langPicker');
+          picker.classList.add('glitch-active');
+          setTimeout(() => picker.classList.remove('glitch-active'), 600);
+          
+          // Врубаем синюю тему
+          document.body.classList.add('masquerade-mode');
+          
+          // Звук переключения
+          try {
+            if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const now = _audioCtx.currentTime;
+            const osc1 = _audioCtx.createOscillator(); const osc2 = _audioCtx.createOscillator();
+            const gain = _audioCtx.createGain();
+            osc1.type = 'sine'; osc1.frequency.setValueAtTime(440, now);
+            osc2.type = 'sine'; osc2.frequency.setValueAtTime(554, now);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+            osc1.connect(gain); osc2.connect(gain); gain.connect(_audioCtx.destination);
+            osc1.start(now); osc2.start(now); osc1.stop(now + 1.0); osc2.stop(now + 1.0);
+          } catch(e) {}
+      });
+  }
   const bs = document.getElementById('bootScreen'); 
   if(!bs) return;
     const hint = document.getElementById('bootHint'); 
@@ -3328,6 +3474,7 @@ window.addEventListener('DOMContentLoaded', async function(){
   bs.addEventListener('click', handler);
   bs.addEventListener('keydown', keyHandler);
 });
+
 
 (function(){
   const cv=document.getElementById('seasons');if(!cv)return;
