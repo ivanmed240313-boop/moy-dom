@@ -3637,8 +3637,6 @@ window.addEventListener('DOMContentLoaded', async function(){
       try { await loadEvOverrides(); } catch(err) {}
     }
     
-    // 3. ВСЕГДА показываем выбор языка (RU/EN). На самой панели есть
-    //    секретная точка · — клик по ней врубает Masquerade Divinity.
     const isUltra = typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY');
     if (isMasquerade) {
       document.body.classList.remove('ultra-mode');
@@ -3649,7 +3647,8 @@ window.addEventListener('DOMContentLoaded', async function(){
     const lp = document.getElementById('langPicker');
     if (lp) lp.classList.add('on');
     return;
-  
+  };  // <-- ЭТА СТРОКА ПОЯВИЛАСЬ — закрывает handler
+
   const keyHandler = function(e){ 
     if(e.key==='Enter' || e.key===' ' || e.key.length===1){ 
       e.preventDefault(); 
