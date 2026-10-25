@@ -1581,13 +1581,20 @@ body.ultra-mode #bootLog .boot-cursor {
         text-shadow: 0 0 20px #ff0000, 0 0 45px #ff0000, 0 0 70px #ff5555 !important;
     }
 }
-#langPicker{display:none;position:fixed;inset:0;z-index:100001;background:radial-gradient(circle at center,#1a0000 0%,#000 100%);align-items:center;justify-content:center;flex-direction:column;gap:34px;font-family:'Courier New',monospace;padding:20px;user-select:none}
+/* ===== ВЫБОР ЯЗЫКА — БАЗОВЫЙ (ЗЕЛЁНЫЙ, обычная заставка) ===== */
+#langPicker{display:none;position:fixed;inset:0;z-index:100001;background:radial-gradient(circle at center,#0a1f0a 0%,#000 100%);align-items:center;justify-content:center;flex-direction:column;gap:34px;font-family:'Courier New',monospace;padding:20px;user-select:none}
 #langPicker.on{display:flex}
-#langPicker .lp-title{color:#f00;font-size:24px;font-weight:900;letter-spacing:4px;text-shadow:0 0 20px #f00;text-transform:uppercase;padding:16px 32px;border:2px solid #f00;background:rgba(139,0,0,.25);border-radius:6px;text-align:center;animation:ultraPulse 1.5s ease-in-out infinite}
+#langPicker .lp-title{color:#2aff2a;font-size:24px;font-weight:900;letter-spacing:4px;text-shadow:0 0 20px #2aff2a,0 0 40px #0f5a0f;text-transform:uppercase;padding:16px 32px;border:2px solid #2aff2a;background:rgba(0,80,0,.25);border-radius:6px;text-align:center;box-shadow:0 0 25px rgba(42,255,42,.5),inset 0 0 15px rgba(42,255,42,.15)}
 #langPicker .lp-buttons{display:flex;gap:30px}
-#langPicker .lp-btn{padding:22px 56px;background:rgba(139,0,0,.3);border:2px solid #f00;color:#f00;font-family:'Courier New',monospace;font-size:26px;font-weight:900;cursor:pointer;letter-spacing:6px;box-shadow:0 0 25px rgba(255,0,0,.6);transition:all .2s;border-radius:4px}
-#langPicker .lp-btn:hover{background:#f00;color:#000;box-shadow:0 0 60px rgba(255,0,0,1);transform:scale(1.06)}
+#langPicker .lp-btn{padding:22px 56px;background:rgba(0,80,0,.3);border:2px solid #2aff2a;color:#2aff2a;font-family:'Courier New',monospace;font-size:26px;font-weight:900;cursor:pointer;letter-spacing:6px;box-shadow:0 0 25px rgba(42,255,42,.5);transition:all .2s;border-radius:4px}
+#langPicker .lp-btn:hover{background:#2aff2a;color:#000;box-shadow:0 0 60px rgba(42,255,42,1);transform:scale(1.06)}
 @media(max-width:500px){#langPicker .lp-title{font-size:15px;padding:12px 20px;letter-spacing:2px}#langPicker .lp-btn{padding:18px 38px;font-size:22px;letter-spacing:4px}#langPicker .lp-buttons{gap:20px}}
+
+/* ===== ULTRADAY: та же панель, но КРАСНАЯ ===== */
+body.ultra-mode #langPicker{background:radial-gradient(circle at center,#1a0000 0%,#000 100%) !important}
+body.ultra-mode #langPicker .lp-title{color:#f00 !important;border-color:#f00 !important;background:rgba(139,0,0,.25) !important;text-shadow:0 0 20px #f00 !important;box-shadow:0 0 25px rgba(255,0,0,.6),inset 0 0 15px rgba(255,0,0,.3) !important;animation:ultraPulse 1.5s ease-in-out infinite !important}
+body.ultra-mode #langPicker .lp-btn{background:rgba(139,0,0,.3) !important;border-color:#f00 !important;color:#f00 !important;box-shadow:0 0 25px rgba(255,0,0,.6) !important}
+body.ultra-mode #langPicker .lp-btn:hover{background:#f00 !important;color:#000 !important;box-shadow:0 0 60px rgba(255,0,0,1) !important}
 /* ========================== */
 /* ===== MASQUERADE DIVINITY (BLUE THEME) ===== */
 body.masquerade-mode {
@@ -3637,6 +3644,8 @@ window.addEventListener('DOMContentLoaded', async function(){
       try { await loadEvOverrides(); } catch(err) {}
     }
     
+    // 3. Показываем выбор языка RU/EN. Секретная точка · видна ТОЛЬКО
+    //    во время ULTRADAY — там через неё активируется Masquerade.
     const isUltra = typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY');
     if (isMasquerade) {
       document.body.classList.remove('ultra-mode');
@@ -3644,10 +3653,12 @@ window.addEventListener('DOMContentLoaded', async function(){
     } else if (isUltra) {
       document.body.classList.add('ultra-mode');
     }
+    const secretDot = document.getElementById('secretDot');
+    if (secretDot) secretDot.style.display = (isUltra || isMasquerade) ? 'inline-block' : 'none';
     const lp = document.getElementById('langPicker');
     if (lp) lp.classList.add('on');
     return;
-  };  // <-- ЭТА СТРОКА ПОЯВИЛАСЬ — закрывает handler
+  };  // <-- закрывает handler
 
   const keyHandler = function(e){ 
     if(e.key==='Enter' || e.key===' ' || e.key.length===1){ 
