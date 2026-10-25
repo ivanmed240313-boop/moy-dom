@@ -3212,11 +3212,30 @@ const BOOT_LINES_OK = [
   {t:'Подготовка завершена...', c:'ok', s:'[OK]'},
   {t:'Добро пожаловать!', c:'welcome'}
 ];
+const BOOT_LINES_OK_EN = [
+  {t:'Starting HomeOS...', c:'dim'},
+  {t:'Checking wall integrity...', c:'ok', s:'[OK]'},
+  {t:'Decrypting apartment keys...', c:'ok', s:'[OK]'},
+  {t:'Connecting to the district network...', c:'ok', s:'[OK]'},
+  {t:'Calibrating blinds...', c:'ok', s:'[OK]'},
+  {t:'Syncing account...', c:'ok', s:'[OK]'},
+  {t:'Loading houses and neighbors...', c:'ok', s:'[OK]'},
+  {t:'Neighbors detected:', c:'ok', s:'[OK]'},
+  {t:'Loading current version...', c:'ok', s:'[OK]'},
+  {t:'Preparation complete...', c:'ok', s:'[OK]'},
+  {t:'Welcome!', c:'welcome'}
+];
 const BOOT_LINES_NO = [
   {t:'Запуск HomeOS...', c:'dim'},
   {t:'Проверка целостности стен...', c:'ok', s:'[OK]'},
   {t:'Синхронизация аккаунта...', c:'err', s:'[X]'},
   {t:'Аккаунт не найден.', c:'err'}
+];
+const BOOT_LINES_NO_EN = [
+  {t:'Starting HomeOS...', c:'dim'},
+  {t:'Checking wall integrity...', c:'ok', s:'[OK]'},
+  {t:'Syncing account...', c:'err', s:'[X]'},
+  {t:'Account not found.', c:'err'}
 ];
 const ULTRA_LINES_NO_EN = [
   {t:'AUDIO: UNTUNED', c:'ok'},
@@ -3415,13 +3434,17 @@ async function runBootSequence(authorized, layoutLang){
     } catch(e) { console.error(e); }
   }
 
+  // RU: счётчик соседей + версия
   const idxNeighbors = BOOT_LINES_OK.findIndex(l => l.t.includes('Обнаружено соседей'));
   if (idxNeighbors !== -1) BOOT_LINES_OK[idxNeighbors].t = `Обнаружено соседей: ${neighborCountText}`;
-  
   const idxVersion = BOOT_LINES_OK.findIndex(l => l.t.includes('Загрузка актуальной версии'));
   if (idxVersion !== -1) BOOT_LINES_OK[idxVersion].t = `Загрузка актуальной версии v${APP_VERSION}...`;
 
-  const log = document.getElementById('bootLog');
+  // EN: счётчик соседей + версия
+  const idxNeighborsEN = BOOT_LINES_OK_EN.findIndex(l => l.t.includes('Neighbors detected'));
+  if (idxNeighborsEN !== -1) BOOT_LINES_OK_EN[idxNeighborsEN].t = `Neighbors detected: ${neighborCountText}`;
+  const idxVersionEN = BOOT_LINES_OK_EN.findIndex(l => l.t.includes('Loading current version'));
+  if (idxVersionEN !== -1) BOOT_LINES_OK_EN[idxVersionEN].t = `Loading current version v${APP_VERSION}...`;
   const hint = document.getElementById('bootHint');
   const bs = document.getElementById('bootScreen');
   if(!log || !bs) return;
@@ -3450,16 +3473,24 @@ async function runBootSequence(authorized, layoutLang){
   }
   
   await _bootSleep(400);
-  let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
-  
-   if (isMasquerade) {
-      if (authorized) {
-          lines = (layoutLang === 'ru') ? MASQ_LINES_RU : MASQ_LINES_EN;
-      } else {
-          lines = (layoutLang === 'ru') ? MASQ_LINES_NO_RU : MASQ_LINES_NO_EN;
-      }
+
+  // Базовая зелёная заставка — RU/EN
+  let lines;
+  if (authorized) {
+    lines = (layoutLang === 'ru') ? BOOT_LINES_OK : BOOT_LINES_OK_EN;
+  } else {
+    lines = (layoutLang === 'ru') ? BOOT_LINES_NO : BOOT_LINES_NO_EN;
+  }
+
+  // Оверрайды: Masquerade / ULTRADAY
+  if (isMasquerade) {
+    if (authorized) {
+      lines = (layoutLang === 'ru') ? MASQ_LINES_RU : MASQ_LINES_EN;
+    } else {
+      lines = (layoutLang === 'ru') ? MASQ_LINES_NO_RU : MASQ_LINES_NO_EN;
+    }
   } else if (!authorized && isUltra) {
-      lines = (layoutLang === 'ru') ? ULTRA_LINES_NO_RU : ULTRA_LINES_NO_EN;
+    lines = (layoutLang === 'ru') ? ULTRA_LINES_NO_RU : ULTRA_LINES_NO_EN;
   }
   
   if (authorized && isUltra && !isMasquerade) {
