@@ -3303,22 +3303,6 @@ let _bootLock = false;
 let isMasquerade = false;
 function _bootSleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
 
-function playBootBeep(){
-  try {
-    if(!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if(_audioCtx.state === 'suspended') _audioCtx.resume();
-    const osc = _audioCtx.createOscillator();
-    const gain = _audioCtx.createGain();
-    osc.type = 'square'; 
-    osc.frequency.setValueAtTime(800, _audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.01, _audioCtx.currentTime); 
-    gain.gain.exponentialRampToValueAtTime(0.00001, _audioCtx.currentTime + 0.05);
-    osc.connect(gain);
-    gain.connect(_audioCtx.destination);
-    osc.start();
-    osc.stop(_audioCtx.currentTime + 0.05);
-  } catch(e) {}
-}
 
 async function _bootTypeLine(text, className, suffix) {
     const log = document.getElementById('bootLog');
