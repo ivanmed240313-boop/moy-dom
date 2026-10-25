@@ -1653,6 +1653,141 @@ body.masquerade-mode #langPicker .lp-btn:hover {
     box-shadow: 0 0 60px rgba(0, 150, 255, 1) !important;
 }
 
+/* ===== MASQUERADE DIVINITY — ПОЛНЫЙ СИНИЙ UI ===== */
+body.masquerade-mode::before {
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(0, 100, 200, 0.15), transparent 60%),
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 212, 255, 0.03) 2px, rgba(0, 212, 255, 0.03) 4px) !important;
+    animation: none !important;
+}
+body.masquerade-mode .sb, 
+body.masquerade-mode .mbox, 
+body.masquerade-mode .fmb, 
+body.masquerade-mode .afb, 
+body.masquerade-mode .ofb, 
+body.masquerade-mode .emb:not([class*="fr-bg-"]),
+body.masquerade-mode .gmb,
+body.masquerade-mode .duty-body,
+body.masquerade-mode .fmp,
+body.masquerade-mode #houseNews {
+    background: #000a10 !important;
+    border: 1px solid #00d4ff !important;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2), inset 0 0 20px rgba(0, 212, 255, 0.05) !important;
+}
+body.masquerade-mode .chd,
+body.masquerade-mode .sb-h,
+body.masquerade-mode .hn-top,
+body.masquerade-mode .duty-head {
+    background: #000 !important;
+    border-bottom: 1px solid #00d4ff !important;
+}
+body.masquerade-mode .nname, 
+body.masquerade-mode .duty-title, 
+body.masquerade-mode .chi .chn,
+body.masquerade-mode .pf-name,
+body.masquerade-mode .hn-top .title,
+body.masquerade-mode .chi .chs.online,
+body.masquerade-mode h3,
+body.masquerade-mode label,
+body.masquerade-mode .sb-h > span {
+    color: #00d4ff !important;
+    text-shadow: 0 0 10px rgba(0, 212, 255, 0.8) !important;
+}
+body.masquerade-mode input,
+body.masquerade-mode textarea,
+body.masquerade-mode .ir input,
+body.masquerade-mode .gm-inp,
+body.masquerade-mode .sc-inp {
+    background: #000 !important;
+    border: 1px solid #0055ff !important;
+    color: #00d4ff !important;
+    box-shadow: inset 0 0 10px rgba(0, 212, 255, 0.2) !important;
+}
+body.masquerade-mode input:focus,
+body.masquerade-mode textarea:focus {
+    border-color: #00d4ff !important;
+    outline: none !important;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5) !important;
+}
+body.masquerade-mode input::placeholder,
+body.masquerade-mode textarea::placeholder {
+    color: #003a55 !important;
+}
+body.masquerade-mode .hbtn.act, 
+body.masquerade-mode .add-btn, 
+body.masquerade-mode .duty-start, 
+body.masquerade-mode .fma .sv, 
+body.masquerade-mode .gbtn,
+body.masquerade-mode .ema .sv,
+body.masquerade-mode .ir button,
+body.masquerade-mode .of-ev-btn,
+body.masquerade-mode .ir .ib {
+    background: #001a24 !important;
+    color: #00d4ff !important;
+    border: 1px solid #00d4ff !important;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
+    transition: all 0.2s;
+}
+body.masquerade-mode .hbtn.act:hover, 
+body.masquerade-mode .add-btn:hover, 
+body.masquerade-mode .duty-start:hover, 
+body.masquerade-mode .ir button:hover {
+    background: #00d4ff !important;
+    color: #000 !important;
+    box-shadow: 0 0 25px rgba(0, 212, 255, 0.8) !important;
+}
+body.masquerade-mode .msg.own {
+    background: linear-gradient(180deg, #003a5a, #001a2a) !important;
+    color: #fff !important;
+    border: 1px solid #00d4ff !important;
+}
+body.masquerade-mode .msg.other {
+    background: #000a12 !important;
+    color: #88d8ff !important;
+    border: 1px solid #0055aa !important;
+}
+body.masquerade-mode .msg .nick {
+    color: #00d4ff !important;
+    text-shadow: 0 0 5px #00d4ff !important;
+}
+body.masquerade-mode .flat.mine:not(.has-photo), 
+body.masquerade-mode .flat.taken:not(.has-photo) {
+    background: linear-gradient(145deg, #003a5a, #001a2a) !important;
+}
+body.masquerade-mode .flat.mine.has-photo, 
+body.masquerade-mode .flat.taken.has-photo {
+    background-color: #001a2a !important;
+}
+body.masquerade-mode .flat.mine:not([class*="frame-"]),
+body.masquerade-mode .flat.taken:not([class*="frame-"]) {
+    border-color: #00d4ff !important;
+    box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.4), 0 0 10px rgba(0, 212, 255, 0.2) !important;
+}
+body.masquerade-mode .flat:not([class*="frame-"]):hover {
+    border-color: #55e5ff !important;
+    box-shadow: 0 0 20px #00d4ff !important;
+}
+body.masquerade-mode ::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 255, 0.3) !important;
+}
+body.masquerade-mode ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 255, 0.6) !important;
+}
+body.masquerade-mode #topRight .umBtn,
+body.masquerade-mode .hbtn,
+body.masquerade-mode .umDropdown {
+    border-color: #0055ff !important;
+    background: #000a10 !important;
+    color: #00d4ff !important;
+}
+body.masquerade-mode .umDropdown button:hover {
+    background: #001a2a !important;
+}
+body.masquerade-mode .bgl::after {
+    background: rgba(0, 5, 10, 0.9) !important;
+}
+/* ===== /MASQUERADE UI ===== */
+
 /* Глитч-эффект */
 @keyframes glitchEffect {
     0% { transform: translate(0); filter: hue-rotate(0deg) invert(0); }
@@ -1664,6 +1799,39 @@ body.masquerade-mode #langPicker .lp-btn:hover {
 }
 .glitch-active {
     animation: glitchEffect 0.6s ease-in-out !important;
+}
+
+@media (max-width: 768px) {
+    #bootScreen {
+        align-items: flex-start !important;
+        padding: 24px 14px 40px !important;
+    }
+    #bootContainer {
+        flex-direction: column;
+        gap: 16px;
+        max-height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-right: 4px;
+    }
+    #bootLog {
+        font-size: 12px !important;
+        line-height: 1.6 !important;
+        max-width: 92vw !important;
+    }
+    #bootLog .bl {
+        margin-bottom: 2px !important;
+    }
+    #bootLog .bl.welcome {
+        font-size: 15px !important;
+        margin-top: 8px !important;
+    }
+    #bootLog .bl.ultra-red {
+        font-size: 14px !important;
+        padding: 7px 12px !important;
+        margin-top: 8px !important;
+        letter-spacing: 1.5px !important;
+    }
 }
 </style>
 </head>
@@ -2322,7 +2490,15 @@ function isEventMSK(evId){
 }
 function shouldShowEvent(evId){const m=evModeFor(me,evId);if(m==='on')return true;if(m==='off')return false;return isEventMSK(evId)}
 function checkAllEvents(){if(!me)return;checkXmas();checkEaster();checkFireworks();checkMaslenitsa();checkKnowledge();checkTeacher();checkMemorials();checkUtHeart();checkDtsStar();checkGameIcons();checkULTRADAY();}
-function checkULTRADAY(){const isUltra=shouldShowEvent('ULTRADAY');document.body.classList.toggle('ultra-mode',isUltra);}
+function checkULTRADAY(){
+    const isUltra = shouldShowEvent('ULTRADAY');
+    if (isMasquerade) {
+        document.body.classList.remove('ultra-mode');
+        document.body.classList.add('masquerade-mode');
+        return;
+    }
+    document.body.classList.toggle('ultra-mode', isUltra);
+}
 function checkXmas(){const t=$('xmasTree'),g=$('xmasGifts');if(!t)return;const show=shouldShowEvent('xmas');t.classList.toggle('on',show);if(g)g.classList.toggle('on',show)}
 function checkEaster(){const t=$('easterDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('easter'))}
 function checkMaslenitsa(){const t=$('maslenitsaDecor');if(!t)return;t.classList.toggle('on',shouldShowEvent('maslenitsa'))}
@@ -3235,7 +3411,12 @@ async function runBootSequence(authorized, layoutLang = 'en'){
   if (asciiEl) { asciiEl.innerHTML = ''; asciiEl.style.opacity = '1'; }
 
     const isUltra = shouldShowEvent('ULTRADAY');
-  if (isUltra) document.body.classList.add('ultra-mode'); // СРАЗУ КРАСИМ В КРАСНЫЙ
+  if (isMasquerade) {
+    document.body.classList.remove('ultra-mode');
+    document.body.classList.add('masquerade-mode');
+  } else if (isUltra) {
+    document.body.classList.add('ultra-mode');
+  }
   
   await _bootSleep(400);
   let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
@@ -3358,7 +3539,8 @@ window.addEventListener('DOMContentLoaded', async function(){
           picker.classList.add('glitch-active');
           setTimeout(() => picker.classList.remove('glitch-active'), 600);
           
-          // Врубаем синюю тему
+                    // Врубаем синюю тему и убираем красную, если была
+          document.body.classList.remove('ultra-mode');
           document.body.classList.add('masquerade-mode');
           
           // Звук переключения
@@ -3427,9 +3609,9 @@ window.addEventListener('DOMContentLoaded', async function(){
       try { await loadEvOverrides(); } catch(err) {}
     }
     
-        // 3. ТЕПЕРЬ проверяем ULTRADAY (теперь он знает, включен он или нет)
+    // 3. ТЕПЕРЬ проверяем ULTRADAY (теперь он знает, включен он или нет)
     if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
-      document.body.classList.add('ultra-mode'); // СРАЗУ КРАСИМ В КРАСНЫЙ
+      if (!isMasquerade) document.body.classList.add('ultra-mode'); // НЕ красим в красный если включён masquerade
       const lp = document.getElementById('langPicker');
       if (lp) lp.classList.add('on');
       return; // Останавливаемся и ждем выбора языка
