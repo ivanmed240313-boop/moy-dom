@@ -3295,12 +3295,23 @@ const MASQ_LINES_NO_RU = [
 ];
 let _bootLock = false;
 let isMasquerade = false;
+let _skipBoot = false; // <--- ДОБАВЛЯЕМ ЭТО
 function _bootSleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
 
 
 async function _bootTypeLine(text, className, suffix) {
     const log = document.getElementById('bootLog');
     if (!log) return;
+
+    // Если включен пропуск — выводим строку моментально
+    if (_skipBoot) {
+        const div = document.createElement('div');
+        div.className = 'bl ' + (className || '');
+        div.innerHTML = text + (suffix ? ' <span class="bs">' + suffix + '</span>' : '');
+        log.appendChild(div);
+        return;
+    }
+
     const oldC = log.querySelector('.boot-cursor');
     if (oldC) oldC.remove();
 
@@ -3516,7 +3527,11 @@ async function runBootSequence(authorized, layoutLang){
     "     |_____||_____|      "
   ];
   
+  _skipBoot = false; // Сбрасываем флаг при каждом новом запуске!
+
   for(let i = 0; i < lines.length; i++){
+    if (_skipBoot) break; // <--- Если пропуск, выходим из цикла
+    
     const ln = lines[i];
     await _bootTypeLine(ln.t, ln.c, ln.s);
     
@@ -3534,7 +3549,9 @@ async function runBootSequence(authorized, layoutLang){
       }
     }
     
-    await _bootSleep(ln.c === 'welcome' ? 400 : 150);
+    if (!_skipBoot) {
+        await _bootSleep(ln.c === 'welcome' ? 400 : 150);
+    }
   }
   
   try {
@@ -3686,6 +3703,24 @@ window.addEventListener('DOMContentLoaded', async function(){
   
   bs.addEventListener('click', handler);
   bs.addEventListener('keydown', keyHandler);
+
+  // === ДОБАВЛЯЕМ ДАБЛ-КЛИК ДЛЯ ПРОПУСКА ===
+  window.addEventListener('dblclick', function(e) {
+      const bs = document.getElementById('bootScreen');
+      if (!bs || bs.style.display === 'none' || bs.classList.contains('done')) return;
+
+      // 1. Если открыт выбор языка — дабл-клик выбирает английский (или последний сохраненный)
+      const lp = document.getElementById('langPicker');
+      if (lp && lp.classList.contains('on')) {
+          lp.classList.remove('on');
+          const lang = sessionStorage.getItem('dom_boot_lang') || 'en';
+          pickBootLang(lang);
+          return;
+      }
+
+      // 2. Если идет печать текста — дабл-клик включает мгновенный пропуск
+      _skipBoot = true;
+  });
 });
 
 
