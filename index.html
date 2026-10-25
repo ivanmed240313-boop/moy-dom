@@ -3030,8 +3030,90 @@ async function startRoomRec(){if(vRec&&vRec.state==='recording')return;if(!rcId)
 let _callPc=null,_callId=null,_callFrom=null,_callTo=null,_callKind='audio',_callRole='caller',_callTimerInt=null,_callStartTs=0,_callLocalStream=null,_callRemoteStream=null,_callMiniMode=false,_callSubCh=null;
 const _ICE_CONFIG={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:stun.cloudflare.com:3478'},{urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:openrelay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}]};
 let _remoteAudioEl=null;
-async function startCall(toNickEnc,kind){if(_callPc){showToast('Уже в звонке','error');return}if(!curUser)return;const toNick=de(toNickEnc);if(!toNick||toNick===me)return;_callKind=kind||'audio';_callRole='caller';_callTo=toNickEnc;_callFrom=meEnc;try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(kind==='video'?'камере':'микрофону'),'error');return}const{data,error}=await sb.from('calls').insert({from_nick:meEnc,to_nick:toNickEnc,status:'ringing',kind:_callKind}).select().single();if(error){showToast('❌ '+error.message,'error');_cleanupCallLocal();return}_callId=data.id;_callPc=new RTCPeerConnection(_ICE_CONFIG);_setupPc(_callPc);_callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));const offer=await _callPc.createOffer();await _callPc.setLocalDescription(offer);await sb.from('calls').update({sdp_offer:JSON.stringify(offer)}).eq('id',_callId);_callSub();_showCallScreen(toNick,'Звоним...');if(_callKind==='video')_showLocalVideo();showToast('📞 '+toNick,'success')}
-function _setupPc(pc){pc.onicecandidate=(e)=>{if(e.candidate){const cand=e.candidate.toJSON();sb.from('calls').select('ice_from,ice_to').eq('id',_callId).maybeSingle().then(({data})=>{if(!data)return;if(_callRole==='caller'){const arr=Array.isArray(data.ice_from)?data.ice_from:[];arr.push(cand);sb.from('calls').update({ice_from:arr}).eq('id',_callId)}else{const arr=Array.isArray(data.ice_to)?data.ice_to:[];arr.push(cand);sb.from('calls').update({ice_to:arr}).eq('id',_callId)}})}};pc.ontrack=(e)=>{ _callRemoteStream=e.streams[0];if(!_remoteAudioEl){ _remoteAudioEl=document.createElement('audio'); _remoteAudioEl.autoplay=true; _remoteAudioEl.setAttribute('playsinline',''); document.body.appendChild(_remoteAudioEl); }_remoteAudioEl.srcObject=_callRemoteStream; _remoteAudioEl.muted=false; _remoteAudioEl.volume=1; _remoteAudioEl.play().catch(err=>console.warn('audio play:',err));const rv=$('callRemoteVideo'); if(rv){ rv.srcObject=_callRemoteStream; rv.muted=false; rv.play().catch(()=>{}); }};pc.onconnectionstatechange=()=>{ console.log('PC state:',pc.connectionState,'ice:',pc.iceConnectionState); if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){endCall(false)} };pc.oniceconnectionstatechange=()=>{ console.log('ICE state:',pc.iceConnectionState); };}
+async function startCall(toNickEnc,kind){if(_callPc){showToast('Уже в звонке','error');return}if(!curUser)return;const toNick=de(toNickEnc);if(!toNick||toNick===me)return;_callKind=kind||'audio';_callRole='caller';_callTo=toNickEnc;_callFrom=meEnc;try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(kind==='video'?'камере':'микрофону'),'error');return}const{data,error}=await sb.from('calls').insert({from_nick:meEnc,to_nick:toNickEnc,status:'ringing',kind:_callKind}).select().single();if(error){showToast('❌ '+error.message,'error');_cleanupCallLocal();return}_callId=data.id;_callPc=new RTCPeerConnection(_ICE_CONFIG);_setupPc(_callPc);_callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));const offer=await _callPc.createOffer();await _callPc.setLocalDescription(offer);await sb.from('calls').update({sdp_offer:JSON.stringify(offer)}).eq('id',_callId);_callSub();_showCallScreen(toNick,'Звоним...');if(_callKind==='video')_showLocalVideo();showToast('📞 '+toNick,'success');
+// Ре-синк ICE на стороне звонящего через 1с
+setTimeout(async () => {
+  if (!_callPc || !_callId) return;
+  try {
+    const { data: fresh } = await sb.from('calls').select('ice_to').eq('id', _callId).maybeSingle();
+    if (fresh && Array.isArray(fresh.ice_to)) {
+      const applied = _callPc._appliedIceTo || 0;
+      const freshCands = fresh.ice_to.slice(applied);
+      for (const c of freshCands) {
+        try { await _callPc.addIceCandidate(c); } catch(e) {}
+      }
+      _callPc._appliedIceTo = fresh.ice_to.length;
+    }
+  } catch(e) {}
+}, 1000);
+}
+function _setupPc(pc){
+  let myCands = [];
+  let lastWrittenLen = 0;
+  let flushTimer = null;
+  const iceField = _callRole === 'caller' ? 'ice_from' : 'ice_to';
+
+  const flushMyCands = async () => {
+    if (!_callId || myCands.length <= lastWrittenLen) return;
+    const writingLen = myCands.length;
+    const payload = {};
+    payload[iceField] = myCands.slice();
+    try {
+      await sb.from('calls').update(payload).eq('id', _callId);
+      lastWrittenLen = Math.max(lastWrittenLen, writingLen);
+    } catch(e) { console.warn('ICE flush error:', e); }
+    if (myCands.length > lastWrittenLen) setTimeout(flushMyCands, 50);
+  };
+
+  pc.onicecandidate = (e) => {
+    if (e.candidate) {
+      myCands.push(e.candidate.toJSON());
+      if (flushTimer) clearTimeout(flushTimer);
+      flushTimer = setTimeout(flushMyCands, 150);
+    } else {
+      if (flushTimer) clearTimeout(flushTimer);
+      flushMyCands();
+    }
+  };
+
+  pc.onicegatheringstatechange = () => {
+    if (pc.iceGatheringState === 'complete') {
+      if (flushTimer) clearTimeout(flushTimer);
+      flushMyCands();
+    }
+  };
+
+  pc.ontrack = (e) => {
+    _callRemoteStream = e.streams[0];
+    if (!_remoteAudioEl) {
+      _remoteAudioEl = document.createElement('audio');
+      _remoteAudioEl.autoplay = true;
+      _remoteAudioEl.setAttribute('playsinline', '');
+      document.body.appendChild(_remoteAudioEl);
+    }
+    _remoteAudioEl.srcObject = _remoteAudioStream;
+    _remoteAudioEl.muted = false;
+    _remoteAudioEl.volume = 1;
+    _remoteAudioEl.play().catch(err => console.warn('audio play:', err));
+    const rv = $('callRemoteVideo');
+    if (rv) {
+      rv.srcObject = _callRemoteStream;
+      rv.muted = false;
+      rv.play().catch(() => {});
+    }
+  };
+
+  pc.onconnectionstatechange = () => {
+    console.log('PC state:', pc.connectionState, 'ice:', pc.iceConnectionState);
+    if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
+      endCall(false);
+    }
+  };
+
+  pc.oniceconnectionstatechange = () => {
+    console.log('ICE state:', pc.iceConnectionState);
+  };
+}
 function _callSub(){if(_callSubCh)return;_callSubCh=sb.channel('call-'+_callId).on('postgres_changes',{event:'UPDATE',schema:'public',table:'calls',filter:'id=eq.'+_callId},async p=>{if(!p.new)return;const r=p.new;if(_callRole==='caller'&&r.sdp_answer&&_callPc&&!_callPc.currentRemoteDescription){try{await _callPc.setRemoteDescription(JSON.parse(r.sdp_answer))}catch(e){}const iceTo=Array.isArray(r.ice_to)?r.ice_to:[];for(const c of iceTo){try{await _callPc.addIceCandidate(c)}catch(e){}}_startCallTimer();_hideRinging()}if(_callRole==='caller'&&Array.isArray(r.ice_to)){const applied=_callPc&&_callPc._appliedIceTo||0;const fresh=r.ice_to.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceTo=r.ice_to.length}if(_callRole==='callee'&&Array.isArray(r.ice_from)){const applied=_callPc&&_callPc._appliedIceFrom||0;const fresh=r.ice_from.slice(applied);for(const c of fresh){try{_callPc.addIceCandidate(c).catch(()=>{})}catch(e){}}if(_callPc)_callPc._appliedIceFrom=r.ice_from.length}if(r.status==='ended'||r.status==='rejected'||r.status==='missed'){_endCallLocal();if(r.status==='rejected')showToast('📵 Отклонено','error');else if(r.status==='missed')showToast('📵 Не ответил','error')}}).subscribe()}
 function _showCallScreen(name,subtitle){const av=$('callAv');const url=photoCache[_callFrom===meEnc?_callTo:_callFrom];if(url){av.style.backgroundImage='url("'+url+'")';av.textContent='';av.classList.add('has-img')}else{const nick=_callFrom===meEnc?_callTo:_callFrom;av.textContent=firstL(de(nick));av.style.background='linear-gradient(135deg,'+nCol(de(nick))+','+shCol(nCol(de(nick)),-18)+')'}$('callName').textContent=de(name);$('callVideoName').textContent=de(name);$('callSubtitle').textContent=subtitle||'';$('callSubtitle').style.display=subtitle?'block':'none';$('callTimer').style.display='none';$('callVideoTimer').textContent='0:00';$('callMiniName').textContent=de(name);const sc=$('callScreen');sc.classList.toggle('video',_callKind==='video');sc.classList.add('on');const btn=$('callMuteBtn');if(btn)btn.classList.remove('on');const cbtn=$('callCamBtn');if(cbtn)cbtn.classList.toggle('on',_callKind==='video')}
 function _hideRinging(){$('callSubtitle').textContent='';$('callSubtitle').style.display='none'}
@@ -3046,7 +3128,23 @@ function minimizeCallScreen(){_callMiniMode=true;$('callScreen').classList.remov
 function expandCallScreen(){_callMiniMode=false;$('callMini').classList.remove('on');$('callScreen').classList.add('on')}
 let _incomingCall=null;
 function subCalls(){if(window._callsSubCh)return;window._callsSubCh=sb.channel('calls-incoming').on('postgres_changes',{event:'INSERT',schema:'public',table:'calls',filter:'to_nick=eq.'+meEnc},async p=>{const r=p.new;if(!r)return;if(r.status!=='ringing')return;if(_callPc){try{await sb.from('calls').update({status:'rejected',ended_at:new Date().toISOString()}).eq('id',r.id)}catch(e){}return}_incomingCall=r;$('callIncName').textContent=de(r.from_nick);$('callIncSubtitle').textContent=(r.kind==='video'?'📹 Видеозвонок':'📞 Аудиозвонок');$('callIncoming').classList.add('open');try{playNotifSound()}catch(e){}setTimeout(()=>{if(_incomingCall&&_incomingCall.id===r.id){_incomingCall=null;$('callIncoming').classList.remove('open');sb.from('calls').update({status:'missed',ended_at:new Date().toISOString()}).eq('id',r.id)}},30000)}).subscribe()}
-async function acceptCall(){const inc=_incomingCall;if(!inc)return;try{const{data:fresh}=await sb.from('calls').select('*').eq('id',inc.id).maybeSingle();if(fresh&&fresh.sdp_offer)inc.sdp_offer=fresh.sdp_offer;if(fresh&&fresh.ice_from)inc.ice_from=fresh.ice_from;}catch(e){}_incomingCall=null;$('callIncoming').classList.remove('open');_callId=inc.id;_callFrom=inc.from_nick;_callTo=inc.to_nick;_callKind=inc.kind||'audio';_callRole='callee';try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(inc.kind==='video'?'камере':'микрофону'),'error');sb.from('calls').update({status:'rejected'}).eq('id',inc.id);return}await sb.from('calls').update({status:'accepted'}).eq('id',_callId);_callPc=new RTCPeerConnection(_ICE_CONFIG);_setupPc(_callPc);_callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));try{const offer=JSON.parse(inc.sdp_offer);await _callPc.setRemoteDescription(offer);const answer=await _callPc.createAnswer();await _callPc.setLocalDescription(answer);await sb.from('calls').update({sdp_answer:JSON.stringify(answer)}).eq('id',_callId);const iceFrom=Array.isArray(inc.ice_from)?inc.ice_from:[];for(const c of iceFrom){try{await _callPc.addIceCandidate(c)}catch(e){}}_callPc._appliedIceFrom=iceFrom.length}catch(e){showToast('❌ '+e.message,'error');endCall();return}_callSub();_showCallScreen(de(_callFrom),'');_hideRinging();_startCallTimer();if(_callKind==='video')_showLocalVideo()}
+async function acceptCall(){const inc=_incomingCall;if(!inc)return;try{const{data:fresh}=await sb.from('calls').select('*').eq('id',inc.id).maybeSingle();if(fresh&&fresh.sdp_offer)inc.sdp_offer=fresh.sdp_offer;if(fresh&&fresh.ice_from)inc.ice_from=fresh.ice_from;}catch(e){}_incomingCall=null;$('callIncoming').classList.remove('open');_callId=inc.id;_callFrom=inc.from_nick;_callTo=inc.to_nick;_callKind=inc.kind||'audio';_callRole='callee';try{const constraints=_callKind==='video'?{audio:true,video:{width:640,height:480,facingMode:'user'}}:{audio:true,video:false};_callLocalStream=await navigator.mediaDevices.getUserMedia(constraints)}catch(e){showToast('Нет доступа к '+(inc.kind==='video'?'камере':'микрофону'),'error');sb.from('calls').update({status:'rejected'}).eq('id',inc.id);return}await sb.from('calls').update({status:'accepted'}).eq('id',_callId);_callPc=new RTCPeerConnection(_ICE_CONFIG);_setupPc(_callPc);_callLocalStream.getTracks().forEach(t=>_callPc.addTrack(t,_callLocalStream));try{const offer=JSON.parse(inc.sdp_offer);await _callPc.setRemoteDescription(offer);const answer=await _callPc.createAnswer();await _callPc.setLocalDescription(answer);await sb.from('calls').update({sdp_answer:JSON.stringify(answer)}).eq('id',_callId);const iceFrom=Array.isArray(inc.ice_from)?inc.ice_from:[];for(const c of iceFrom){try{await _callPc.addIceCandidate(c)}catch(e){}}_callPc._appliedIceFrom=iceFrom.length}catch(e){showToast('❌ '+e.message,'error');endCall();return}_callSub();_showCallScreen(de(_callFrom),'');_hideRinging();_startCallTimer();if(_callKind==='video')_showLocalVideo();
+// Принудительный ре-синк ICE
+setTimeout(async () => {
+  if (!_callPc || !_callId) return;
+  try {
+    const { data: fresh } = await sb.from('calls').select('ice_from').eq('id', _callId).maybeSingle();
+    if (fresh && Array.isArray(fresh.ice_from)) {
+      const applied = _callPc._appliedIceFrom || 0;
+      const freshCands = fresh.ice_from.slice(applied);
+      for (const c of freshCands) {
+        try { await _callPc.addIceCandidate(c); } catch(e) {}
+      }
+      _callPc._appliedIceFrom = fresh.ice_from.length;
+    }
+  } catch(e) {}
+}, 1000);
+}
 async function rejectCall(){const inc=_incomingCall;if(!inc)return;_incomingCall=null;$('callIncoming').classList.remove('open');try{await sb.from('calls').update({status:'rejected',ended_at:new Date().toISOString()}).eq('id',inc.id)}catch(e){}}
 function closeIncomingUI(){_incomingCall=null;$('callIncoming').classList.remove('open')}
 
