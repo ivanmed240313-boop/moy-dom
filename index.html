@@ -3253,7 +3253,26 @@ const MASQ_LINES_RU = [
   {t:'И ЭТОТ ЗВУК...', c:'ultra-red'},
   {t:'БОЖЕСТВЕНЕН.', c:'ultra-red'}
 ];
-
+const MASQ_LINES_NO_EN = [
+  {t:'MASQUERADE DIVINITY INITIALIZATION...', c:'ok'},
+  {t:'ORGANIC CONSCIOUSNESS: NOT DETECTED', c:'err'},
+  {t:'SOUL SIGNATURE: MISSING', c:'err'},
+  {t:'HOLY SCANNING IN PROGRESS...', c:'ok'},
+  {t:'ACCESS TO SANCTUM: DENIED', c:'err'},
+  {t:'NO SOUL DETECTED.', c:'ultra-red'},
+  {t:'NO SALVATION.', c:'ultra-red'},
+  {t:'TURN BACK.', c:'ultra-red'}
+];
+const MASQ_LINES_NO_RU = [
+  {t:'ИНИЦИАЛИЗАЦИЯ МАСКАРАДА БОЖЕСТВЕННОСТИ...', c:'ok'},
+  {t:'ОРГАНИЧЕСКОЕ СОЗНАНИЕ: НЕ ОБНАРУЖЕНО', c:'err'},
+  {t:'СИГНАТУРА ДУШИ: ОТСУТСТВУЕТ', c:'err'},
+  {t:'СВЯТОЕ СКАНИРОВАНИЕ В ПРОЦЕССЕ...', c:'ok'},
+  {t:'ДОСТУП В СВЯТИЛИЩЕ: ЗАПРЕЩЁН', c:'err'},
+  {t:'ДУША НЕ ОБНАРУЖЕНА.', c:'ultra-red'},
+  {t:'СПАСЕНИЯ НЕТ.', c:'ultra-red'},
+  {t:'ПОВЕРНИ НАЗАД.', c:'ultra-red'}
+];
 let _bootLock = false;
 let isMasquerade = false;
 function _bootSleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
@@ -3328,6 +3347,7 @@ async function detectKeyboardLayout() {
 async function pickBootLang(lang) {
   const lp = document.getElementById('langPicker');
   if (lp) lp.classList.remove('on');
+  try { sessionStorage.setItem('dom_boot_lang', lang); } catch(e) {}
   
   let session = null;
   try { const r = await sb.auth.getSession(); session = r && r.data ? r.data.session : null; } catch(err) {}
@@ -3347,7 +3367,10 @@ async function pickBootLang(lang) {
   }
 }
 
-async function runBootSequence(authorized, layoutLang = 'en'){
+async function runBootSequence(authorized, layoutLang){
+  if (!layoutLang) {
+    try { layoutLang = sessionStorage.getItem('dom_boot_lang') || 'en'; } catch(e) { layoutLang = 'en'; }
+  }
     if (authorized && curUser) {
     if (!me) {
       try {
@@ -3410,19 +3433,24 @@ async function runBootSequence(authorized, layoutLang = 'en'){
   const asciiEl = document.getElementById('bootAscii');
   if (asciiEl) { asciiEl.innerHTML = ''; asciiEl.style.opacity = '1'; }
 
-    const isUltra = shouldShowEvent('ULTRADAY');
+  const isUltra = shouldShowEvent('ULTRADAY');
   if (isMasquerade) {
     document.body.classList.remove('ultra-mode');
     document.body.classList.add('masquerade-mode');
-  } else if (isUltra) {
-    document.body.classList.add('ultra-mode');
+  } else {
+    document.body.classList.remove('masquerade-mode');
+    if (isUltra) document.body.classList.add('ultra-mode');
   }
   
   await _bootSleep(400);
   let lines = authorized ? BOOT_LINES_OK : BOOT_LINES_NO;
   
-  if (isMasquerade) {
-      lines = (layoutLang === 'ru') ? MASQ_LINES_RU : MASQ_LINES_EN;
+   if (isMasquerade) {
+      if (authorized) {
+          lines = (layoutLang === 'ru') ? MASQ_LINES_RU : MASQ_LINES_EN;
+      } else {
+          lines = (layoutLang === 'ru') ? MASQ_LINES_NO_RU : MASQ_LINES_NO_EN;
+      }
   } else if (!authorized && isUltra) {
       lines = (layoutLang === 'ru') ? ULTRA_LINES_NO_RU : ULTRA_LINES_NO_EN;
   }
@@ -3609,36 +3637,18 @@ window.addEventListener('DOMContentLoaded', async function(){
       try { await loadEvOverrides(); } catch(err) {}
     }
     
-    // 3. ТЕПЕРЬ проверяем ULTRADAY (теперь он знает, включен он или нет)
-    if (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY')) {
-      if (!isMasquerade) document.body.classList.add('ultra-mode'); // НЕ красим в красный если включён masquerade
-      const lp = document.getElementById('langPicker');
-      if (lp) lp.classList.add('on');
-      return; // Останавливаемся и ждем выбора языка
+    // 3. ВСЕГДА показываем выбор языка (RU/EN). На самой панели есть
+    //    секретная точка · — клик по ней врубает Masquerade Divinity.
+    const isUltra = typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY');
+    if (isMasquerade) {
+      document.body.classList.remove('ultra-mode');
+      document.body.classList.add('masquerade-mode');
+    } else if (isUltra) {
+      document.body.classList.add('ultra-mode');
     }
-    
-    // 4. Если ULTRADAY выключен — запускаем как обычно
-    let layoutLang = 'en';
-    if (e && e.key) {
-        if (/[а-яё]/i.test(e.key)) layoutLang = 'ru'; 
-        else if (/[a-z]/i.test(e.key)) layoutLang = 'en'; 
-        else layoutLang = (navigator.language || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
-    } else {
-        const locale = (Intl.DateTimeFormat().resolvedOptions().locale || navigator.language || 'en').toLowerCase();
-        layoutLang = locale.includes('ru') ? 'ru' : 'en';
-    }
-    
-    await runBootSequence(authorized, layoutLang);
-    
-    if(authorized){
-      try { await afterAuth(); } catch(err) { 
-        console.error('afterAuth', err); 
-        showToast('Ошибка входа: '+(err.message||err),'error'); 
-      }
-    } else {
-      document.getElementById('auth').style.display = 'flex';
-    }
-  };
+    const lp = document.getElementById('langPicker');
+    if (lp) lp.classList.add('on');
+    return;
   
   const keyHandler = function(e){ 
     if(e.key==='Enter' || e.key===' ' || e.key.length===1){ 
