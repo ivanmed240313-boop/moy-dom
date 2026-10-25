@@ -2498,7 +2498,7 @@ function isEventMSK(evId){
 function shouldShowEvent(evId){const m=evModeFor(me,evId);if(m==='on')return true;if(m==='off')return false;return isEventMSK(evId)}
 function checkAllEvents(){if(!me)return;checkXmas();checkEaster();checkFireworks();checkMaslenitsa();checkKnowledge();checkTeacher();checkMemorials();checkUtHeart();checkDtsStar();checkGameIcons();checkULTRADAY();}
 function checkULTRADAY(){
-    const isUltra = shouldShowEvent('ULTRADAY');
+    const isUltra = window.forceUltraForGuest || shouldShowEvent('ULTRADAY');
     if (isMasquerade) {
         document.body.classList.remove('ultra-mode');
         document.body.classList.add('masquerade-mode');
@@ -3449,7 +3449,7 @@ async function runBootSequence(authorized, layoutLang){
   const asciiEl = document.getElementById('bootAscii');
   if (asciiEl) { asciiEl.innerHTML = ''; asciiEl.style.opacity = '1'; }
 
-  const isUltra = shouldShowEvent('ULTRADAY');
+  const isUltra = window.forceUltraForGuest || shouldShowEvent('ULTRADAY');
   if (isMasquerade) {
     document.body.classList.remove('ultra-mode');
     document.body.classList.add('masquerade-mode');
@@ -3615,7 +3615,7 @@ window.addEventListener('DOMContentLoaded', async function(){
     const hint = document.getElementById('bootHint'); 
   if(hint) hint.style.display = 'block';
   
-  // === НОВОЕ: Проверяем ULTRADAY сразу при загрузке, чтобы даже "Нажми" было красным ===
+  // === НОВОЕ: Проверяем ULTRADAY сразу при загрузке ===
   (async () => {
       try {
           const { data: { session } } = await sb.auth.getSession();
@@ -3629,10 +3629,16 @@ window.addEventListener('DOMContentLoaded', async function(){
                       document.body.classList.add('ultra-mode');
                   }
               }
+          } else {
+              // Если это ГОСТЬ, спрашиваем у базы, включен ли глобальный ULTRADAY
+              const { data: ge } = await sb.from('global_events').select('is_active').eq('event_id', 'ULTRADAY').maybeSingle();
+              if (ge && ge.is_active) {
+                  window.forceUltraForGuest = true;
+                  document.body.classList.add('ultra-mode');
+              }
           }
       } catch(e) {}
   })();
-
     const handler = async function(e){
     if(_bootLock) return;
     _bootLock = true;
@@ -3663,7 +3669,7 @@ window.addEventListener('DOMContentLoaded', async function(){
     
     // 3. Показываем выбор языка RU/EN. Секретная точка · видна ТОЛЬКО
     //    во время ULTRADAY — там через неё активируется Masquerade.
-    const isUltra = typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY');
+    const isUltra = window.forceUltraForGuest || (typeof shouldShowEvent === 'function' && shouldShowEvent('ULTRADAY'));
     if (isMasquerade) {
       document.body.classList.remove('ultra-mode');
       document.body.classList.add('masquerade-mode');
